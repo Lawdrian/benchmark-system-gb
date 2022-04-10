@@ -1,0 +1,14 @@
+# PyCharm IDE
+.idea/
+
+# SQLite3
+db.sqlite3
+
+# Python cache
+__pycache__/
+
+# Node.js
+node_modules/
+
+# Webpack.js
+frontend/static/frontend/
