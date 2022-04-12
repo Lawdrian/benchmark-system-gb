@@ -1,0 +1,10 @@
+name: benchmark-system-gb
+
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - django=4.0.3
+  - djangorestframework=3.13.1
+  - python=3.9.12
