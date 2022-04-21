@@ -60,7 +60,7 @@ and choose _"Existing environment"_. Your newly created conda-environment should
 located at ``path/to/conda/installation/envs/benchmark-system-gb/``, where you 
 should find the ``python.exe`` to select in PyCharm.
 
-Alternatively, you can activate the environment for a comand or conda prompt session using:
+Alternatively, you can activate the environment for a command or conda prompt session using:
 
 ```
 conda activate benchmark-system-gb
@@ -106,11 +106,11 @@ npm run dev
 
 ## Configuring your IDE
 
-Make sure that theses things are set in your IDE:
-line seperator/ line ending = CRLF
-tab size = 4 spaces
-encoding = UTF-8
-Python Version = 3.9
+Make sure that these things are set in your IDE:
+- line seperator/ line ending = CRLF
+- tab size = 4 spaces
+- encoding = UTF-8
+- Python Version = 3.9
 
 ## Configuring git
     
