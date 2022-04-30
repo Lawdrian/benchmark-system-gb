@@ -4,7 +4,7 @@ from .models import GreenhouseData
 class CO2Serializer(serializers.ModelSerializer):
     class Meta:
         model = GreenhouseData
-        fields = ('co2_footprint')
+        fields = ('id', 'co2_footprint')
         
 class CreateDataSetSerializer(serializers.ModelSerializer):
     class Meta:
