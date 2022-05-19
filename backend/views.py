@@ -9,6 +9,7 @@ from .fillDatabase import fill_database
 from .serializers import CO2Serializer
 from datetime import datetime
 
+
 class GetGreenhouseData(APIView):
     """API endpoint for retrieving the calculated GreenhouseData
     """
@@ -52,9 +53,11 @@ class GetGreenhouseData(APIView):
             if(column_name == 'co2_footprint'):
                 data = CO2Serializer(dataset,many=True).data
             elif(column_name == 'water_usage'):
-                data = WaterSerializer(dataset, many=True).data
+                data = CO2Serializer(dataset, many=True).data
+                # data = WaterSerializer(dataset, many=True).data
             elif (column_name == 'benchmark'):
-                data = BenchmarkSerializer(dataset, many=True).data
+                data = CO2Serializer(dataset, many=True).data
+                # data = BenchmarkSerializer(dataset, many=True).data
             else:
                 return Response({'Bad Request': 'No data found'}, status=status.HTTP_400_BAD_REQUEST)
             return Response(data, status=status.HTTP_200_OK)
@@ -65,7 +68,7 @@ class GetGreenhouseData(APIView):
 class CreateGreenhouseData(APIView):
     """API endpoint for storing greenhouse data into the database
     """
-    serializer_class = GreenhouseDataSerializer
+    # serializer_class = GreenhouseDataSerializer
 
     def post(self, request, fromat=None):
         """Post request that stores the given greenhouse data into the database
@@ -93,14 +96,14 @@ class CreateGreenhouseData(APIView):
         greenhouse_operator_id = GreenhouseOperator.objects.get(id=user_id)
         greenhouse_name_id = GreenhouseName.objects.filter(greenhouse_name=request.data.get('greenhouse_name')).values('id')
         construction_type_id = ConstructionType.objects.filter(construction_type=request.data.get('construction_type')).values('id')
-        production_type_id = ProductionType.objects.filter(production_type=request.data.get('production_type')).values('id')
-        cultivation_type_id = CultivationType.objects.filter(cultivation_type=request.data.get('cultivation_type')).values('id')
-        fruit_weight_id = FruitWeight.objects.filter(fruit_weight=request.data.get('fruit_weight')).values('id')
-        roofing_material_id = RoofingMaterial.objects.filter(roofing_material=request.data.get('roofing_material')).values('id')
-        energy_screen_brand_id = EnergyScreenBrand.objects.filter(
-            energy_screen_brand=request.data.get('energy_screen_brand')).values('id')
+        # production_type_id = ProductionType.objects.filter(production_type=request.data.get('production_type')).values('id')
+        # cultivation_type_id = CultivationType.objects.filter(cultivation_type=request.data.get('cultivation_type')).values('id')
+        # fruit_weight_id = FruitWeight.objects.filter(fruit_weight=request.data.get('fruit_weight')).values('id')
+        # roofing_material_id = RoofingMaterial.objects.filter(roofing_material=request.data.get('roofing_material')).values('id')
+        # energy_screen_brand_id = EnergyScreenBrand.objects.filter(
+        # energy_screen_brand=request.data.get('energy_screen_brand')).values('id')
         energy_source_id = EnergySource.objects.filter(energy_source=request.data.get('energy_source')).values('id')
-        irrigation_system_id = IrrigationSystem.objects.filter(irrigation_system=request.data.get('irrigation_system')).values('id')
+        # irrigation_system_id = IrrigationSystem.objects.filter(irrigation_system=request.data.get('irrigation_system')).values('id')
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
@@ -128,13 +131,13 @@ class CreateGreenhouseData(APIView):
                 greenhouse_operator=greenhouse_operator_id,
                 greenhouse_name=greenhouse_name_id,
                 construction_type=construction_type_id,
-                production_type=production_type_id,
-                cultivation_type=cultivation_type_id,
-                fruit_weight=fruit_weight_id,
-                energy_source=energy_source_id,
-                irrigation_system=irrigation_system_id,
-                roofing_material=roofing_material_id,
-                energy_screen_brand=energy_screen_brand_id,
+                # production_type=production_type_id,
+                # cultivation_type=cultivation_type_id,
+                # fruit_weight=fruit_weight_id,
+                # energy_source=energy_source_id,
+                # irrigation_system=irrigation_system_id,
+                # roofing_material=roofing_material_id,
+                # energy_screen_brand=energy_screen_brand_id,
 
                 # general data
                 datetime=datetime.now(),
@@ -145,7 +148,7 @@ class CreateGreenhouseData(APIView):
                 greenhouse_age=greenhouse_age,
                 standing_wall_height=standing_wall_height,
                 total_area=total_area,
-                energy_screen=energy_screen,
+                # energy_screen=energy_screen,
                 closing_time_begin=closing_time_begin,
                 closing_time_end=closing_time_end,
                 drop_per_bag=drop_per_bag,
@@ -156,7 +159,7 @@ class CreateGreenhouseData(APIView):
                 harvest=harvest
             )
             greenhouse_data.save()
-            return Response(GreenhouseSerializer(greenhouse_data).data, status=status.HTTP_201_CREATED)
+            # return Response(GreenhouseSerializer(greenhouse_data).data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
 
