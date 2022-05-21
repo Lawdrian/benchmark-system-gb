@@ -36,14 +36,14 @@ class GetGreenhouseData(APIView):
 
         # map the requested datatype to the correct column name in the GreenhouseData table
         map_data_type = {
-           'co2FootprintData': 'co2_footprint',
+           'co2FootprintData': ['electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2'],
            'waterUsageData': 'water_usage',
            'benchmarkData': 'benchmark'
         }
-        column_name = map_data_type.get(data_type, None)
+        column_name = str(map_data_type.get(data_type, None))[1:-1]
 
         if user_id != '1':
-            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values(column_name)
+            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values_list('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')
         elif self.request.session.session_key is not None:
             dataset = GreenhouseData.objects.filter(SessionKey=self.request.session.session_key,greenhouse_operator_id='1').values(column_name)
         else:
