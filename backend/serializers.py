@@ -61,3 +61,5 @@ class CreateGreenhouseDataSerializer(serializers.ModelSerializer):
                   'post_harvest_packaging_amount', 
                   'post_harvest_transport_distance'
                   )
+        def create(self, validated_data):
+            return GreenhouseData.objects.create(**validated_data)

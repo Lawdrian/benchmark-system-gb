@@ -42,16 +42,20 @@ class GetGreenhouseData(APIView):
         }
         column_name = map_data_type.get(data_type, None)
 
+        print(column_name)
+
         if user_id != '1':
-            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values_list(*column_name)
+            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values_list('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')
         elif self.request.session.session_key is not None:
             dataset = GreenhouseData.objects.filter(SessionKey=self.request.session.session_key,greenhouse_operator_id='1').values(column_name)
         else:
             return Response({'Bad Request': 'Unknown user'}, status=status.HTTP_400_BAD_REQUEST)
 
+        print(dataset[0])
+
         if len(dataset) > 0:
-            if(column_name == 'co2_footprint'):
-                data = CO2Serializer(dataset,many=True).data
+            if(column_name == ('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')):
+                data = CO2Serializer(dataset[0]).data
             elif(column_name == 'water_usage'):
                 data = CO2Serializer(dataset, many=True).data
                 # data = WaterSerializer(dataset, many=True).data
@@ -62,7 +66,7 @@ class GetGreenhouseData(APIView):
                 return Response({'Bad Request': 'No data found'}, status=status.HTTP_400_BAD_REQUEST)
             return Response(data, status=status.HTTP_200_OK)
         print(dataset)
-        return Response({'Bad Request': 'No data found'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Data corrupted'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetLoopUpTableNames(APIView):
@@ -130,8 +134,31 @@ class CreateGreenhouseData(APIView):
             else:
                 session_key = None
 
-            """"
-            greenhouse_operator = serializer.data.get('greenhouse_operator_id')
+            """
+            greenhouse_operator = serializer.data.get('greenhouse_operator')
+            greenhouse_name = serializer.data.get('greenhouse_name')
+            construction_type = serializer.data.get('construction_type')
+            production_type = serializer.data.get('production_type')
+            cultivation_type = serializer.data.get('cultivation_type')
+            fruit_weight = serializer.data.get('fruit_weight')
+            energysource_type = serializer.data.get('energysource_type')
+            roofing_material = serializer.data.get('roofing_material')
+            energy_screen_brand = serializer.data.get('energy_screen_brand')
+            powerusage_lighting_type = serializer.data.get('powerusage_lighting_type')
+            powermix_type = serializer.data.get('powermix_type')
+            fertilizer_type = serializer.data.get('fertilizer_type')
+            pesticide_type = serializer.data.get('pesticide_type')
+            used_materials_substrate_type = serializer.data.get('used_materials_substrate_type')
+            used_materials_cord_type = serializer.data.get('used_materials_cord_type')
+            used_materials_clip_type = serializer.data.get('used_materials_clip_type')
+            post_harvest_packaging_type = serializer.data.get('post_harvest_packaging_type')
+
+            # general data
+            datetime = models.DateTimeField(
+                default=timezone.now())  # '2006-10-25 14:30:59'
+            # store session key for handling anonymous users
+            session_key = models.CharField(max_length=50, unique=True,
+                                           null=True)
             location = serializer.data.get('location')
             greenhouse_age = serializer.data.get('greenhouse_age')
             standing_wall_height = serializer.data.get('standing_wall_height')
@@ -179,8 +206,9 @@ class CreateGreenhouseData(APIView):
             )
             """
 
-            greenhouse_data = GreenhouseData(serializer.get('__all_'))
-            greenhouse_data.save()
+            serializer.save(electric_power_co2=2, heat_consumption_co2=1,
+                            psm_co2=2, fertilizer_co2=2)
+
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 

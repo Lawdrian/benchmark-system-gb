@@ -204,7 +204,7 @@ class GreenhouseData(models.Model):
                                                     on_delete=models.SET_NULL)
 
     # general data
-    datetime = models.DateTimeField(default=timezone.now())
+    datetime = models.DateTimeField(default=timezone.now())  # '2006-10-25 14:30:59'
     # store session key for handling anonymous users
     session_key = models.CharField(max_length=50, unique=True, null=True)
 
@@ -215,7 +215,7 @@ class GreenhouseData(models.Model):
                                                decimal_places=3)  # m
     total_area = models.DecimalField(max_digits=8, decimal_places=3)  # m**2
     # closing time of energy screen from closing_time_begin to closing_time_end
-    closing_time_begin = models.TimeField(null=True)
+    closing_time_begin = models.TimeField(null=True)  # '14:30:59'
     closing_time_end = models.TimeField(null=True)
     # if production is hydroponic closed, then the following attribute is
     # relevant:
@@ -223,7 +223,7 @@ class GreenhouseData(models.Model):
 
     greenhouse_area = models.DecimalField(max_digits=8,
                                           decimal_places=3)  # m**2
-    plantation_begin = models.DateField()
+    plantation_begin = models.DateField()  # '2006-10-25'
     plantation_duration = models.DecimalField(max_digits=6,  # calendar week
                                               decimal_places=2)
     planting_density = models.DecimalField(max_digits=10,
