@@ -45,27 +45,14 @@ class GetGreenhouseData(APIView):
         print(column_name)
 
         if user_id != '1':
-            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values_list('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')
+            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')
         elif self.request.session.session_key is not None:
             dataset = GreenhouseData.objects.filter(SessionKey=self.request.session.session_key,greenhouse_operator_id='1').values(column_name)
         else:
             return Response({'Bad Request': 'Unknown user'}, status=status.HTTP_400_BAD_REQUEST)
 
-        print(dataset[0])
-
         if len(dataset) > 0:
-            if(column_name == ('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')):
-                data = CO2Serializer(dataset[0]).data
-            elif(column_name == 'water_usage'):
-                data = CO2Serializer(dataset, many=True).data
-                # data = WaterSerializer(dataset, many=True).data
-            elif (column_name == 'benchmark'):
-                data = CO2Serializer(dataset, many=True).data
-                # data = BenchmarkSerializer(dataset, many=True).data
-            else:
-                return Response({'Bad Request': 'No data found'}, status=status.HTTP_400_BAD_REQUEST)
-            return Response(data, status=status.HTTP_200_OK)
-        print(dataset)
+            return Response(dataset, status=status.HTTP_200_OK)
         return Response({'Bad Request': 'Data corrupted'}, status=status.HTTP_400_BAD_REQUEST)
 
 
