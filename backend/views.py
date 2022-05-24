@@ -199,13 +199,3 @@ class CreateGreenhouseData(APIView):
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CreateDummyData(APIView):
-    serializer_class = None
-
-    def get(self, request, format=None):
-        fill_database("HSWT", "HSWT-Testhaus", "hydroph.-geschlossen", "Erdgas",
-                      "Tropfschlauch", 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
-                      110, 120)
-        return Response({'Good Request': 'Dummy data filled in'},
-                        status=status.HTTP_200_OK)
