@@ -9,6 +9,8 @@ examples.
 
   co2_footprint = calc_co2_footprint()
 """
+
+# Change here the parameters for the calculation algorithms.
 calc_params = {
     "electric_equivalent": 2.0,
     "heat_equivalent": 2.0,

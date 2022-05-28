@@ -40,7 +40,7 @@ class ProductionType(models.Model):
 
 class CultivationType(models.Model):
     """This class defines a django model to store the possible cultivation
-    types. A production type could be "bio" or "conventional".
+    types. A cultivation type could be "bio" or "conventional".
 
     This model is intended to be used as a lookup-table.
     """
@@ -55,6 +55,15 @@ class FruitWeight(models.Model):
     This model is intended to be used as a lookup-table.
     """
     fruit_weight = models.CharField(max_length=100, unique=True)
+
+
+# class CultureType(models.Model):
+#     """This class defines a django model to store the possible cultivation
+#     types. A culture type could be "eintriebig" or "zweitriebig".
+#
+#     This model is intended to be used as a lookup-table.
+#     """
+#     culture_type = models.CharField(max_length=100, unique=True)
 
 
 class RoofingMaterial(models.Model):
@@ -176,6 +185,8 @@ class GreenhouseData(models.Model):
                                          on_delete=models.SET_NULL)
     fruit_weight = models.ForeignKey("backend.FruitWeight", null=True,
                                      on_delete=models.SET_NULL)
+    # culture_type = models.ForeignKey("backend.CultureType", null=True,
+    #                                      on_delete=models.SET_NULL)
     energysource_type = models.ForeignKey("backend.EnergySourceType", null=True,
                                           on_delete=models.SET_NULL)
     roofing_material = models.ForeignKey("backend.RoofingMaterial", null=True,
@@ -229,6 +240,7 @@ class GreenhouseData(models.Model):
     planting_density = models.DecimalField(max_digits=10,
                                            decimal_places=3)  # plants/m**2
     harvest = models.DecimalField(max_digits=10, decimal_places=3)  # kg/day
+    culture_type = models.IntegerField()  # number of shoots
     # energy-related data
     energy_usage = models.DecimalField(max_digits=10,
                                        decimal_places=3)  # per day
@@ -254,15 +266,13 @@ class GreenhouseData(models.Model):
                                                        decimal_places=3)  # m
     used_materials_foils_area = models.DecimalField(max_digits=10,
                                                     decimal_places=3)  # m**2
-
     youngplants_travelling_distance = models.DecimalField(max_digits=10,
                                                           decimal_places=3)  # km
-
+    youngplants_number = models.IntegerField()
     post_harvest_packaging_amount = models.DecimalField(max_digits=10,
                                                         decimal_places=3)  # kg
     post_harvest_transport_distance = models.DecimalField(max_digits=10,
                                                           decimal_places=3)  # km
-
     # post_harvest_leftovers # still open for discussion
 
     # calculated values needed for the co2-footprint
