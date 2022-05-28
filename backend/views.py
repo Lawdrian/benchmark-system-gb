@@ -1,6 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -99,21 +97,6 @@ class CreateGreenhouseData(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        # Get the primary keys from the lookup tables. Since the frontend already knows the ids for the lookup tables
-        # it will send the id's directly and not the names
-        """
-        greenhouse_operator_id = GreenhouseOperator.objects.get(id=user_id)
-        greenhouse_name_id = GreenhouseName.objects.filter(greenhouse_name=request.data.get('greenhouse_name')).values('id')
-        construction_type_id = ConstructionType.objects.filter(construction_type=request.data.get('construction_type')).values('id')
-        # production_type_id = ProductionType.objects.filter(production_type=request.data.get('production_type')).values('id')
-        # cultivation_type_id = CultivationType.objects.filter(cultivation_type=request.data.get('cultivation_type')).values('id')
-        # fruit_weight_id = FruitWeight.objects.filter(fruit_weight=request.data.get('fruit_weight')).values('id')
-        # roofing_material_id = RoofingMaterial.objects.filter(roofing_material=request.data.get('roofing_material')).values('id')
-        # energy_screen_brand_id = EnergyScreenBrand.objects.filter(
-        # energy_screen_brand=request.data.get('energy_screen_brand')).values('id')
-        energy_source_type_id = EnergySourceType.objects.filter(energy_source=request.data.get('energy_source')).values('id')
-        # irrigation_system_id = IrrigationSystem.objects.filter(irrigation_system=request.data.get('irrigation_system')).values('id')
-        """
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             if user_id == '1':
@@ -121,81 +104,10 @@ class CreateGreenhouseData(APIView):
             else:
                 session_key = None
 
-            """
-            greenhouse_operator = serializer.data.get('greenhouse_operator')
-            greenhouse_name = serializer.data.get('greenhouse_name')
-            construction_type = serializer.data.get('construction_type')
-            production_type = serializer.data.get('production_type')
-            cultivation_type = serializer.data.get('cultivation_type')
-            fruit_weight = serializer.data.get('fruit_weight')
-            energysource_type = serializer.data.get('energysource_type')
-            roofing_material = serializer.data.get('roofing_material')
-            energy_screen_brand = serializer.data.get('energy_screen_brand')
-            powerusage_lighting_type = serializer.data.get('powerusage_lighting_type')
-            powermix_type = serializer.data.get('powermix_type')
-            fertilizer_type = serializer.data.get('fertilizer_type')
-            pesticide_type = serializer.data.get('pesticide_type')
-            used_materials_substrate_type = serializer.data.get('used_materials_substrate_type')
-            used_materials_cord_type = serializer.data.get('used_materials_cord_type')
-            used_materials_clip_type = serializer.data.get('used_materials_clip_type')
-            post_harvest_packaging_type = serializer.data.get('post_harvest_packaging_type')
-
-            # general data
-            datetime = models.DateTimeField(
-                default=timezone.now())  # '2006-10-25 14:30:59'
-            # store session key for handling anonymous users
-            session_key = models.CharField(max_length=50, unique=True,
-                                           null=True)
-            location = serializer.data.get('location')
-            greenhouse_age = serializer.data.get('greenhouse_age')
-            standing_wall_height = serializer.data.get('standing_wall_height')
-            total_area = serializer.data.get('total_area')
-            closing_time_begin = serializer.data.get('closing_time_begin')
-            closing_time_end = serializer.data.get('closing_time_end')
-            drop_per_bag = serializer.data.get('drop_per_bag')
-            greenhouse_area = serializer.data.get('greenhouse_area')
-            plantation_begin = serializer.data.get('plantation_begin')
-            plantation_duration = serializer.data.get('plantation_duration')
-            plantation_density = serializer.data.get('plantation_density')
-            harvest = serializer.data.get('harvest')
-
-            greenhouse_data = GreenhouseData(
-                # Foreign Keys
-                greenhouse_operator=greenhouse_operator_id,
-                greenhouse_name=greenhouse_name_id,
-                construction_type=construction_type_id,
-                # production_type=production_type_id,
-                # cultivation_type=cultivation_type_id,
-                # fruit_weight=fruit_weight_id,
-                # energy_source=energy_source_id,
-                # irrigation_system=irrigation_system_id,
-                # roofing_material=roofing_material_id,
-                # energy_screen_brand=energy_screen_brand_id,
-
-                # general data
-                datetime=datetime.now(),
-                session_key=session_key,
-
-                # greenhouse-specific data
-                location=location,
-                greenhouse_age=greenhouse_age,
-                standing_wall_height=standing_wall_height,
-                total_area=total_area,
-                # energy_screen=energy_screen,
-                closing_time_begin=closing_time_begin,
-                closing_time_end=closing_time_end,
-                drop_per_bag=drop_per_bag,
-                greenhouse_area=greenhouse_area,
-                plantation_begin=plantation_begin,
-                plantation_duration=plantation_duration,
-                planting_density=plantation_density,
-                harvest=harvest
-            )
-            """
-
             serializer.save(electric_power_co2=2, heat_consumption_co2=1,
                             psm_co2=2, fertilizer_co2=2)
 
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
+
 
