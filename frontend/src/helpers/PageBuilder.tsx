@@ -3,7 +3,7 @@ import { Page, Section } from "../types/PageConfigTypes";
 
 class PageBuilder {
 
-    component: ReactNode;
+    component: JSX.Element;
 
     urlSnippet: string;
 
@@ -27,7 +27,7 @@ class PageBuilder {
     };
 
     constructor(
-        component: ReactNode,
+        component: JSX.Element,
         urlSnippet: string,
         includeInLayout: boolean
     ) {
@@ -97,7 +97,7 @@ class PageBuilder {
 }
 
 export function generatePage(
-    component: ReactNode,
+    component: JSX.Element,
     urlSnippet: string,
     includeInLayout: boolean = true
 ): PageBuilder {

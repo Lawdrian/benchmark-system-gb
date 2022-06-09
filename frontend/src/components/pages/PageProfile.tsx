@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 type ProfileProps = {
 
 }
 
-const PageProfile: FunctionComponent<ProfileProps> = (props) => {
+const PageProfile = (props: ProfileProps) => {
     return (
         <div id="manage-profile" className="page">
           <p style={{textAlign: "center"}}> Profil </p>

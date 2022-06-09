@@ -1,44 +1,88 @@
-import React, { FunctionComponent, ReactNode } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import React, {ReactNode, useEffect} from "react";
+import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import PageHelper from "./utils/PageHelper";
-import layoutConfig from "../configuration/LayoutConfig";
-import pageConfig from "../configuration/PageConfig";
-import { Page, Section } from "../types/PageConfigTypes";
-import { DrawerListItem } from "../types/SharedLayoutTypes";
+import {Page, Section} from "../types/PageConfigTypes";
+import {DrawerListItem} from "../types/SharedLayoutTypes";
+import AppBasicTheme from "./layout/AppBasicTheme";
+import {connect, ConnectedProps, Provider} from "react-redux";
+import {AppStore} from "../store";
+import {loadUser} from "../actions/auth";
+import {LayoutConfig} from "../types/LayoutConfigTypes";
 
-type AppProps = {
+const connector = connect(null, {loadUser});
 
+type ReduxProps = ConnectedProps<typeof connector>
+
+type AppProps = ReduxProps & {
+    store: AppStore
+    layoutConfig: LayoutConfig
+    pageDefinitions: Page[],
+    loginPageUrl: string
 }
 
-const generateIndependentPageRoutes = (pageConfig: Page[]): ReactNode => {
+const App = ({store, layoutConfig, pageDefinitions, loginPageUrl, loadUser}: AppProps) => {
+    loadUser()
+
+    useEffect(() => {
+       loadUser()
+    });
+
     return (
-        pageConfig
+        <Provider store={store}>
+            <Router>
+                <Routes>
+                    {generateIndependentPageRoutes(pageDefinitions)}
+                    <Route path="/" element={<AppLayout config={layoutConfig}
+                                                        drawerItems={generateDrawerItems(pageDefinitions)}/>}>
+                        {<Route index
+                                element={<PageHelper
+                                    loginUrl={loginPageUrl}
+                                    isPrivate={true}/>}/>}
+                        {generateLayoutedPageRoutes(pageDefinitions, loginPageUrl)}
+                    </Route>
+                </Routes>
+            </Router>
+        </Provider>
+    );
+}
+
+
+const generateIndependentPageRoutes = (pageDef: Page[]): ReactNode => {
+    return (
+        pageDef
             .filter(page => !page.includeInLayout)
             .map<ReactNode>(page => {
-                return <Route
-                    path={page.urlSnippet}
-                    element={page.component}
-                />
+                return (
+                    <Route
+                        path={page.urlSnippet}
+                        element={
+                            <AppBasicTheme>
+                                {page.component}
+                            </AppBasicTheme>
+                        }
+                    />
+                );
             })
     );
 };
 
-const generateLayoutedPageRoutes = (pageConfig: Page[]): ReactNode => {
+const generateLayoutedPageRoutes = (pageDef: Page[], loginPageUrl: string): ReactNode => {
     return (
-        pageConfig
+        pageDef
             .filter(page => page.includeInLayout)
             .map<ReactNode>(page => {
-                return <Route
-                    path={page.urlSnippet}
-                    element={
+                return (
+                    <Route path={page.urlSnippet} element={
                         <PageHelper
                             pageTitle={page.headerTitle ? page.headerTitle : 'header title undefined'}
+                            isPrivate={true}
+                            loginUrl={loginPageUrl}
                         >
                             {page.component}
                         </PageHelper>
-                    }
-                />
+                    }/>
+                );
             })
     );
 };
@@ -64,26 +108,4 @@ const generateDrawerItems = (pageConfig: Page[]): DrawerListItem[] => {
     )
 }
 
-const App: FunctionComponent<AppProps> = (props: AppProps) => {
-
-    return (
-      <Router>
-          <Routes>
-              {generateIndependentPageRoutes(pageConfig)}
-              <Route
-                  path=""
-                  element={
-                      <AppLayout
-                          config={layoutConfig}
-                          drawerItems={generateDrawerItems(pageConfig)}
-                      />
-                  }
-              >
-                {generateLayoutedPageRoutes(pageConfig)}
-              </Route>
-          </Routes>
-      </Router>
-    );
-}
-
-export default App;
+export default connector(App);

@@ -1,10 +1,13 @@
 from django.urls import path
+
+from .mocks import MockLookupValues
 from .views import CreateGreenhouseData
 from .views import GetGreenhouseData
 from .weather import GetWeatherData
 
 urlpatterns = [
-    path('get-data', GetGreenhouseData.as_view()),
-    path('create-greenhouse-data', CreateGreenhouseData.as_view()),
-    path('get-weather', GetWeatherData.as_view())
+	path('get-data', GetGreenhouseData.as_view()),
+	path('create-greenhouse-data', CreateGreenhouseData.as_view()),
+	path('get-weather', GetWeatherData.as_view()),
+	path('mock-lookup', MockLookupValues.as_view())
 ]

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import {ReactNode} from "react";
 
 export enum Section {
     Default,
@@ -28,11 +28,17 @@ type NavigationSlots = {
     readonly accountMenu?: AccountMenuAttributes
 }
 
-
 export type Page = {
-    readonly component: ReactNode
+    readonly component: JSX.Element
     readonly urlSnippet: string
     readonly includeInLayout: boolean
     readonly headerTitle?: string
     readonly slots: NavigationSlots
+}
+
+export type PageConfig = {
+    readonly loginUrl: string
+    readonly registerUrl: string
+    readonly homeUrl: string
+    readonly proceedUrl: string
 }

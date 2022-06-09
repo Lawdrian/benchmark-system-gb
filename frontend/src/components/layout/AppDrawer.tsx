@@ -32,13 +32,13 @@ const getSectionDivider = (): ReactNode => {
 }
 
 
-const AppDrawer: FunctionComponent<DrawerProps> = (
+const AppDrawer = (
     {
         open,
         toggleDrawer,
         drawerWidth,
         listItems
-    }
+    }: DrawerProps
 ) => {
     const diagramSection = listItems.filter(item => item.section == Section.Diagrams);
     const profileSection = listItems.filter(item => item.section == Section.Profile);

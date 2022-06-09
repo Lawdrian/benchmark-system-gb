@@ -1,11 +1,9 @@
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import GreenhouseData, GreenhouseOperator, GreenhouseName, ConstructionType, EnergySourceType
-from .fillDatabase import fill_database
-from .serializers import CO2Serializer, CreateGreenhouseDataSerializer
-from datetime import datetime
+
+from .models import GreenhouseData
+from .serializers import CreateGreenhouseDataSerializer
 
 
 class GetGreenhouseData(APIView):
@@ -34,24 +32,34 @@ class GetGreenhouseData(APIView):
 
         # map the requested datatype to the correct column names in the GreenhouseData table
         map_data_type = {
-           'co2FootprintData': ('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2'),
-           'waterUsageData': 'water_usage',
-           'benchmarkData': 'benchmark'
+            'co2FootprintData': (
+                'electric_power_co2', 'heat_consumption_co2', 'psm_co2',
+                'fertilizer_co2'),
+            'waterUsageData': 'water_usage',
+            'benchmarkData': 'benchmark'
         }
         column_name = map_data_type.get(data_type, None)
 
         print(column_name)
 
         if user_id != '1':
-            dataset = GreenhouseData.objects.filter(greenhouse_operator_id=user_id).values('electric_power_co2', 'heat_consumption_co2', 'psm_co2', 'fertilizer_co2')
+            dataset = GreenhouseData.objects.filter(
+                greenhouse_operator_id=user_id).values('electric_power_co2',
+                                                       'heat_consumption_co2',
+                                                       'psm_co2',
+                                                       'fertilizer_co2')
         elif self.request.session.session_key is not None:
-            dataset = GreenhouseData.objects.filter(SessionKey=self.request.session.session_key,greenhouse_operator_id='1').values(column_name)
+            dataset = GreenhouseData.objects.filter(
+                SessionKey=self.request.session.session_key,
+                greenhouse_operator_id='1').values(column_name)
         else:
-            return Response({'Bad Request': 'Unknown user'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Bad Request': 'Unknown user'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         if len(dataset) > 0:
             return Response(dataset, status=status.HTTP_200_OK)
-        return Response({'Bad Request': 'Data corrupted'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Bad Request': 'Data corrupted'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 
 class GetLoopUpTableNames(APIView):
@@ -108,6 +116,7 @@ class CreateGreenhouseData(APIView):
                             psm_co2=2, fertilizer_co2=2)
 
             return Response(request.data, status=status.HTTP_201_CREATED)
-        return Response({'Bad Request': 'Invalid data...'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+        print(serializer.errors)
+        return Response({'Bad Request': 'Invalid data...'},
+                        status=status.HTTP_400_BAD_REQUEST)

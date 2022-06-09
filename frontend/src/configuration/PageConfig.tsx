@@ -15,44 +15,62 @@ import PageLogin from "../components/pages/PageLogin";
 import PageRegister from "../components/pages/PageRegister";
 import PageImpressum from "../components/pages/PageImpressum";
 import PageAbout from "../components/pages/PageAbout";
-import { generatePage } from "../helpers/PageBuilder";
-import { Page, Section } from "../types/PageConfigTypes";
+import {generatePage} from "../helpers/PageBuilder";
+import {Page, PageConfig, Section} from "../types/PageConfigTypes";
+import EndpointTest from "../components/tests/EndpointTest";
 
-const pageConfig: Array<Page> = [
-    generatePage(<PageWaterBenchmark />, "water-benchmark")
+export const pageConfig: PageConfig = {
+    loginUrl: "/login",
+    registerUrl: "/register",
+    homeUrl: "/",
+    proceedUrl: "", // TODO: Still necessary?!
+}
+
+const pageDefinitions: Array<Page> = [
+    generatePage(<PageWaterBenchmark/>, "water-benchmark")
         .withHeaderTitle("Water Benchmark - Vergleich mit anderen Gewächshausbetreibern")
-        .includeInDrawer(<SpeedIcon />, "Water Benchmark")
+        .includeInDrawer(<SpeedIcon/>, "Water Benchmark")
         .finalize(),
-    generatePage(<PageWaterFootprint />, "water-footprint")
+    generatePage(<PageWaterFootprint/>, "water-footprint")
         .withHeaderTitle("Water Footprint - Berechnung des Wasserverbrauchs")
-        .includeInDrawer(<InvertColorsIcon />, "Water Footprint")
+        .includeInDrawer(<InvertColorsIcon/>, "Water Footprint")
         .finalize(),
-    generatePage(<PageC02Footprint />, "co2-footprint")
+    generatePage(<PageC02Footprint/>, "co2-footprint")
         .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
-        .includeInDrawer(<Co2Icon />, "CO2 Footprint")
+        .includeInDrawer(<Co2Icon/>, "CO2 Footprint")
         .finalize(),
-    generatePage(<PageInputData />, "input-data")
+    generatePage(<PageInputData/>, "input-data")
         .withHeaderTitle("Eingabe der Gewächshausdaten")
-        .includeInDrawer(<NoteAddIcon />, "Dateneingabe", Section.Profile)
+        .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Profile)
         .finalize(),
-    generatePage(<PageProfile />, "profile")
+    generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")
-        .includeInDrawer(<AccountCircle />, "Profil", Section.Profile)
+        .includeInDrawer(<AccountCircle/>, "Profil", Section.Profile)
         .includeInAccountMenu("Profil")
         .finalize(),
-    generatePage(<PageAbout />, "about")
+    generatePage(<PageAbout/>, "about")
         .withHeaderTitle("Über uns")
-        .includeInDrawer(<InfoIcon />, "Über uns", Section.FurtherReading)
+        .includeInDrawer(<InfoIcon/>, "Über uns", Section.FurtherReading)
         .finalize(),
-    generatePage(<PageImpressum />, "impressum")
+    generatePage(<PageImpressum/>, "impressum")
         .withHeaderTitle("Impressum")
-        .includeInDrawer(<GroupsIcon />, "Impressum", Section.FurtherReading)
+        .includeInDrawer(<GroupsIcon/>, "Impressum", Section.FurtherReading)
         .finalize(),
-    generatePage(<PageLogin />, "login", false)
-        .includeInAccountMenu("Logout")
+    generatePage(
+        <PageLogin
+            loggedInUrl={pageConfig.homeUrl}
+            registerUrl={pageConfig.registerUrl}
+        />, pageConfig.loginUrl, false)
         .finalize(),
-    generatePage(<PageRegister />, "register", false)
+    generatePage(
+        <PageRegister
+            registeredUrl={pageConfig.homeUrl}
+            loginUrl={pageConfig.loginUrl}
+        />, pageConfig.registerUrl, false)
+        .finalize(),
+    generatePage(<EndpointTest/>, "ep-test")
+        .withHeaderTitle("Endpoint Test für Backend-API")
         .finalize()
 ];
 
-export default pageConfig;
+export default pageDefinitions;

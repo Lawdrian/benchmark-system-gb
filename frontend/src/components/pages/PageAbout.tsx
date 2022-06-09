@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 type AboutProps = {
 
 }
 
-const PageAbout: FunctionComponent<AboutProps> = (props) => {
+const PageAbout = (props: AboutProps) => {
     return (
         <div id="login" className="page">
           <p style={{textAlign: "center"}}> Login </p>
