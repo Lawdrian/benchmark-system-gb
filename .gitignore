@@ -13,6 +13,9 @@ node_modules/
 # Webpack.js
 frontend/static/frontend/
 
+# IDE specific run configurations
+.run/
+
 # Django migrations except __init__.py
 migrations/
 !migrations/__init__.py
