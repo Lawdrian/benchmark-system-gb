@@ -2,4 +2,5 @@ django==4.0.3
 djangorestframework==3.13.1
 pandas==1.4.2
 wetterdienst==0.31.1
+django-rest-knox==4.2.0
 pgeocode==0.3.0

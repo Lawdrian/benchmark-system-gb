@@ -40,10 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Imported applications
     'rest_framework',
+    'knox',
     # Local applications
     'backend.apps.BackendConfig',
-    'frontend.apps.FrontendConfig'
+    'frontend.apps.FrontendConfig',
+    'accounts.apps.AccountsConfig'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('knox.auth.TokenAuthentication', )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

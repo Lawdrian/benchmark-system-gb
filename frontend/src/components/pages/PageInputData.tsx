@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 type InputDataProps = {
 
 }
 
-const PageInputDataProps: FunctionComponent<InputDataProps> = (props) => {
+const PageInputDataProps = (props: InputDataProps) => {
     return (
         <div id="input-data" className="page">
           <p style={{textAlign: "center"}}> Dateneingabe </p>

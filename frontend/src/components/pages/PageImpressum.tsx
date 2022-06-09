@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 type ImpressumProps = {
 
 }
 
-const PageImpressum: FunctionComponent<ImpressumProps> = (props) => {
+const PageImpressum = (props: ImpressumProps) => {
     return (
         <div id="login" className="page">
           <p style={{textAlign: "center"}}> Login </p>

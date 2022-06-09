@@ -11,3 +11,6 @@ dependencies:
   - pandas=1.4.2
   - wetterdienst=0.31.1
   - pgeocode=0.3.0
+  - pip=22.1.1
+  - pip:
+      - django-rest-knox==4.2.0

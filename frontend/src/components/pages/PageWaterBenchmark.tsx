@@ -1,10 +1,10 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
 
 type WaterBenchmarkProps = {
 
 }
 
-const PageWaterBenchmark: FunctionComponent<WaterBenchmarkProps> = (props) => {
+const PageWaterBenchmark  = (props: WaterBenchmarkProps) => {
     return (
         <div id="water-benchmark" className="page">
           <p style={{textAlign: "center"}}> Water Benchmark </p>
