@@ -16,7 +16,6 @@ const initialState: SubmissionState = {
 }
 
 export default function (state: SubmissionState = initialState, action: any): SubmissionState {
-    // This reducer is a noop
     switch (action.type) {
         case SUBMISSION_INPROGRESS:
             return {

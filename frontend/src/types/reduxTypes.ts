@@ -22,6 +22,9 @@ export const WEATHER_ERROR = "WEATHER_ERROR";
 export const SUBMISSION_INPROGRESS = "SUBMISSION_INPROGRESS";
 export const SUBMISSION_SUCCESS = "SUBMISSION_SUCCESS";
 export const SUBMISSION_ERROR = "SUBMISSION_ERROR";
+export const LOOKUP_LOADING = "LOOKUP_LOADING";
+export const LOOKUP_LOADED = "LOOKUP_LOADED";
+export const LOOKUP_FAILED = "LOOKUP_FAILED";
 
 type Profile = {
     company_name?: string

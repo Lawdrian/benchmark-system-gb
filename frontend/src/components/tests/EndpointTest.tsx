@@ -22,6 +22,8 @@ import {WaterFootprintState} from "../../reducers/waterfootprint";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
+import {loadLookupValues} from "../../actions/lookup";
+import {LookupState} from "../../reducers/lookup";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -30,7 +32,8 @@ const mapStateToProps = (state: RootState) => ({
     water: state.water,
     benchmark: state.benchmark,
     weather: state.weather,
-    submission: state.submission
+    submission: state.submission,
+    lookup: state.lookup
 });
 
 const mapDispatchToProps = {
@@ -39,7 +42,8 @@ const mapDispatchToProps = {
     loadWaterFootprint,
     loadWeatherData,
     submitGreenhouseData,
-    resetData
+    resetData,
+    loadLookupValues
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -139,6 +143,7 @@ const performTests = (props: EndpointTestProps) => {
         //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
         //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
     });
+    props.loadLookupValues();
 }
 
 const dataAvailable = (
@@ -150,8 +155,14 @@ const dataAvailable = (
     );
 }
 
+const lookupAvailable = (
+    data: LookupState
+): boolean => {
+    return data.lookupValues.AnzahlTriebe.length > 0
+}
+
 const dataLoading = (
-    data: CO2FootprintState | WaterBenchmarkState | WaterFootprintState
+    data: CO2FootprintState | WaterBenchmarkState | WaterFootprintState | LookupState
 ): boolean => {
     return data.isLoading
 }
@@ -179,6 +190,10 @@ const EndpointTest = (props: EndpointTestProps) => {
             name: "Save Greenhouse Data",
             loading: props.submission.inProgress,
             successful: !!props.submission.successful
+        }, {
+            name: "Load Lookup Values",
+            loading: dataLoading(props.lookup),
+            successful: lookupAvailable(props.lookup)
         }
     ]
 
