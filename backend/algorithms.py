@@ -10,32 +10,35 @@ examples.
   co2_footprint = calc_co2_footprint()
 """
 
-# Change here the parameters for the calculation algorithms.
-calc_params = {
-    "electric_equivalent": 2.0,
-    "heat_equivalent": 2.0,
-    "pesticide_equivalent": 1.0,
-    "fertilizer_equivalent": 1.0
-}
+import random
 
 
-def calc_co2_footprint(lighting_power, lighting_runtime_per_day,
-                       powerusage_total_without_lighting, energy_usage,
-                       pesticide_amount, fertilizer_amount):
-    electric_power = powerusage_total_without_lighting + \
-                     lighting_power * lighting_runtime_per_day
-    electric_power_co2 = electric_power * calc_params["electric_equivalent"]
-
-    heat_consumption_co2 = energy_usage * calc_params["heat_equivalent"]
-    psm_co2 = pesticide_amount * calc_params["pesticide_equivalent"]
-    fertilizer_co2 = fertilizer_amount * calc_params["fertilizer_equivalent"]
-
-    return [electric_power_co2, heat_consumption_co2, psm_co2, fertilizer_co2]
+def calc_co2_footprint(data):
+    
+    calculation_data = {
+        "electric_power_co2":calc_electric_power_co2(data),
+        "heat_consumption_co2":calc_heat_consumption_co2(data),
+        "psm_co2":calc_psm_co2(data),
+        "fertilizer_co2":calc_fertilizer_co2(data),
+        }
+    return calculation_data
 
 
-def calc_water_footprint():
-    pass
+def calc_electric_power_co2(data):
+    
+    return random.random()
 
 
-def calc_benchmark_score():
-    pass
+def calc_heat_consumption_co2(data):
+    
+    return random.random()
+
+
+def calc_psm_co2(data):
+    
+    return random.random()
+
+
+def calc_fertilizer_co2(data):
+    
+    return random.random()
