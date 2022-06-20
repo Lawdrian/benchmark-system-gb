@@ -1,5 +1,5 @@
 import {
-    BenchmarkPlot,
+    GreenhouseBenchmark,
     RESET_DATA,
     WATERBM_ERROR,
     WATERBM_LOADED,
@@ -8,15 +8,12 @@ import {
 
 export type WaterBenchmarkState = {
     isLoading: boolean
-    plotData: BenchmarkPlot
+    plotData: GreenhouseBenchmark[]
 }
 
 const initialState: WaterBenchmarkState = {
     isLoading: false,
-    plotData: {
-        labels: [],
-        datasets: []
-    }
+    plotData: []
 }
 
 export default function (state: WaterBenchmarkState = initialState, action: any): WaterBenchmarkState {
@@ -36,10 +33,7 @@ export default function (state: WaterBenchmarkState = initialState, action: any)
             return {
                 ...state,
                 isLoading: false,
-                plotData: {
-                    labels: [],
-                    datasets: []
-                }
+                plotData: []
             };
         case RESET_DATA:
             return initialState

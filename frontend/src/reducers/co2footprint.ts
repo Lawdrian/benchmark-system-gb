@@ -2,21 +2,18 @@ import {
     CO2FP_ERROR,
     CO2FP_LOADED,
     CO2FP_LOADING,
-    FootprintPlot,
+    GreenhouseFootprint,
     RESET_DATA
 } from "../types/reduxTypes";
 
 export type CO2FootprintState = {
     isLoading: boolean
-    plotData: FootprintPlot
+    plotData: GreenhouseFootprint[]
 }
 
 const initialState: CO2FootprintState = {
     isLoading: false,
-    plotData: {
-        labels: [],
-        datasets: []
-    }
+    plotData: []
 }
 
 export default function (state: CO2FootprintState = initialState, action: any): CO2FootprintState {
@@ -36,10 +33,7 @@ export default function (state: CO2FootprintState = initialState, action: any): 
             return {
                 ...state,
                 isLoading: false,
-                plotData: {
-                    labels: [],
-                    datasets: []
-                }
+                plotData: []
             };
         case RESET_DATA:
             return initialState

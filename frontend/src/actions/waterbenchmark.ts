@@ -1,5 +1,5 @@
 import {
-    BenchmarkPlot,
+    GreenhouseBenchmark,
     WATERBM_ERROR,
     WATERBM_LOADED,
     WATERBM_LOADING
@@ -15,7 +15,7 @@ export const loadWaterBenchmark = () => (dispatch: AppDispatch, getState: ReduxS
     dispatch({type: WATERBM_LOADING});
 
     // Send request
-    axios.get('/backend/get-data?userId=' + userID + '&dataType=benchmarkData')
+    axios.get('/backend/get-calculated-data?userId=' + userID + '&dataType=benchmarkData')
         .then((response) => {
             console.log("Benchmark Response", response)
             dispatch({
@@ -31,6 +31,6 @@ export const loadWaterBenchmark = () => (dispatch: AppDispatch, getState: ReduxS
 }
 
 
-const toBenchmarkPlot = (responseData: any): BenchmarkPlot => {
+const toBenchmarkPlot = (responseData: any): GreenhouseBenchmark[] => {
     return responseData;
 }

@@ -1,5 +1,5 @@
 import {
-    FootprintPlot,
+    GreenhouseFootprint,
     RESET_DATA,
     WATERFP_ERROR,
     WATERFP_LOADED,
@@ -8,15 +8,12 @@ import {
 
 export type WaterFootprintState = {
     isLoading: boolean
-    plotData: FootprintPlot
+    plotData: GreenhouseFootprint[]
 }
 
 const initialState: WaterFootprintState = {
     isLoading: false,
-    plotData: {
-        labels: [],
-        datasets: []
-    }
+    plotData: []
 }
 
 export default function (state: WaterFootprintState = initialState, action: any): WaterFootprintState {
@@ -36,10 +33,7 @@ export default function (state: WaterFootprintState = initialState, action: any)
             return {
                 ...state,
                 isLoading: false,
-                plotData: {
-                    labels: [],
-                    datasets: []
-                }
+                plotData: []
             };
         case RESET_DATA:
             return initialState
