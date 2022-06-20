@@ -1,5 +1,3 @@
-from django.contrib.auth.models import User
-from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,8 +5,7 @@ from rest_framework.views import APIView
 from . import algorithms
 from .models import GreenhouseData, Measurements, Measures, Selections, \
     OptionGroups, Options, Greenhouses, Calculations, Results
-from .serializers import CO2Serializer, CreateGreenhouseDataSerializer, \
-    InputDataSerializer
+from .serializers import InputDataSerializer
 
 
 class GetGreenhouseData(APIView):
@@ -293,14 +290,6 @@ class CreateGreenhouseData(APIView):
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
-
-        # user = User.objects.create_user('john', 'lennon@thebeatles.com',
-        #                           'johnpassword')
-        ########################################################################
-        # create dummy user just for testing
-        # TODO: Delete this dummy version when a true user id of a user is passed
-        user = User.objects.get(username='john')
-        ########################################################################
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():

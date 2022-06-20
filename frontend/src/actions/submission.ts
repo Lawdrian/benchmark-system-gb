@@ -6,6 +6,7 @@ import {
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
+import validateGreenhouseData from "../helpers/dataValidation";
 
 export const submitGreenhouseData = (
     data: GreenhouseData,
@@ -14,6 +15,8 @@ export const submitGreenhouseData = (
     }
 ) =>
     (dispatch: AppDispatch, getState: ReduxStateHook) => {
+        validateGreenhouseData(data);
+
         dispatch({type: SUBMISSION_INPROGRESS})
 
         const user = getState().auth.user;
