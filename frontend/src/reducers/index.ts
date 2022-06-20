@@ -5,6 +5,7 @@ import water from "./waterfootprint";
 import benchmark from "./waterbenchmark";
 import weather from "./weather";
 import submission from "./submission";
+import lookup from "./lookup"
 
 export default combineReducers({
     auth: auth,
@@ -12,5 +13,6 @@ export default combineReducers({
     water: water,
     benchmark: benchmark,
     weather: weather,
-    submission: submission
+    submission: submission,
+    lookup: lookup
 })
