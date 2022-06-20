@@ -34,7 +34,7 @@ export type User = {
     profile: Profile | null
 }
 
-export type FootprintDataset = {
+type FootprintDataset = {
     label: string
     data: number[]
     backgroundColor: string
@@ -42,7 +42,7 @@ export type FootprintDataset = {
     climateData: string[]
 }
 
-export type BenchmarkDataset = {
+type BenchmarkDataset = {
     label: string,
     data: { x: number, y: number }[]
     backgroundColor: string
@@ -52,12 +52,22 @@ type Plot = {
     labels: string[]
 }
 
-export type FootprintPlot = Plot & {
+type FootprintPlot = Plot & {
     datasets: FootprintDataset[]
 }
 
-export type BenchmarkPlot = Plot & {
+export type GreenhouseFootprint = {
+    greenhouse: string
+    data: FootprintPlot
+}
+
+type BenchmarkPlot = Plot & {
     datasets: BenchmarkDataset[]
+}
+
+export type GreenhouseBenchmark = {
+    greenhouse: string
+    data: BenchmarkPlot
 }
 
 export type WeatherData = {

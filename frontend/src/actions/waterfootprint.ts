@@ -1,5 +1,5 @@
 import {
-    FootprintPlot,
+    GreenhouseFootprint,
     WATERFP_ERROR,
     WATERFP_LOADED,
     WATERFP_LOADING
@@ -15,7 +15,7 @@ export const loadWaterFootprint = () => (dispatch: AppDispatch, getState: ReduxS
     dispatch({type: WATERFP_LOADING});
 
     // Send request
-    axios.get('/backend/get-data?userId=' + userID + '&dataType=waterUsageData')
+    axios.get('/backend/get-calculated-data?userId=' + userID + '&dataType=waterUsageData')
         .then((response) => {
             console.log("Water Response", response)
             dispatch({
@@ -30,6 +30,6 @@ export const loadWaterFootprint = () => (dispatch: AppDispatch, getState: ReduxS
         })
 }
 
-export const toWaterFootprintPlot = (responseData: any): FootprintPlot => {
+export const toWaterFootprintPlot = (responseData: any): GreenhouseFootprint[] => {
     return responseData;
 }

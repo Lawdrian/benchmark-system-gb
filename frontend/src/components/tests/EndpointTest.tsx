@@ -136,8 +136,8 @@ const performTests = (props: EndpointTestProps) => {
     props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
     props.submitGreenhouseData(testData, () => {
         props.loadCO2Footprint();
-        props.loadWaterBenchmark();
-        props.loadWaterFootprint();
+        //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+        //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
     });
 }
 
@@ -145,8 +145,8 @@ const dataAvailable = (
     data: CO2FootprintState | WaterBenchmarkState | WaterFootprintState
 ): boolean => {
     return (
-        data.plotData.labels.length > 0 &&
-        data.plotData.datasets.length > 0
+        data.plotData.length > 0 &&
+        data.plotData.length > 0
     );
 }
 
