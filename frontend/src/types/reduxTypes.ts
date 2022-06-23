@@ -10,7 +10,7 @@ export const REGISTER_FAIL = "REGISTER_FAIL";
 export const CO2FP_LOADING = "CO2FP_LOADING";
 export const CO2FP_LOADED = "CO2FP_LOADED";
 export const CO2FP_ERROR = "CO2FP_ERROR";
-export const WATERFP_LOADING = "WATER_LOADING";
+export const WATERFP_LOADING = "WATERFP_LOADING";
 export const WATERFP_LOADED = "WATERFP_LOADED";
 export const WATERFP_ERROR = "WATERFP_ERROR";
 export const WATERBM_LOADING = "WATERBM_LOADING";
@@ -55,7 +55,7 @@ type Plot = {
     labels: string[]
 }
 
-type FootprintPlot = Plot & {
+export type FootprintPlot = Plot & {
     datasets: FootprintDataset[]
 }
 

@@ -123,9 +123,19 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
                     {greenhouses[curGreenHouseIndex]}
                 </TabPanel>
                 <TabPanel value={curTabIndex} index={1}>
+                    {/*TODO remove mock*/}
                     Plot Two
+                    <img
+                        src="https://www.researchgate.net/profile/Mark_Moll/publication/260691259/figure/download/fig4/AS:667639860953089@1536189155872/Figure-S1-A-sample-box-plot-generated-by-OMPLs-benchmark-script.png"
+                        alt="Plot 2">
+                    </img>
                 </TabPanel>
                 <TabPanel value={curTabIndex} index={2}>
+                    {/*TODO remove mock*/}
+                    <img
+                        src="https://mlr.mlr-org.com/articles/tutorial/benchmark_experiments_files/figure-html/unnamed-chunk-23-1.png"
+                        alt="Plot 3" width="666" height="518">
+                    </img>
                     Plot Three
                 </TabPanel>
             </Box>

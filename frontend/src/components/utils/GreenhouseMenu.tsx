@@ -19,7 +19,7 @@ export const GreenhouseMenu = ({greenhouses, setIndexCB, currentIndex}: Greenhou
     const handleClose = (event: any) => {
         setAnchorEl(null);
         let idx = event.target.value;
-        if (idx) { // checks if user clicked on valid menu entry
+        if (idx !== undefined) { // checks if user clicked on valid menu entry
             setIndexCB(idx);
         }
     }

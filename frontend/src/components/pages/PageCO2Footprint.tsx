@@ -13,21 +13,31 @@ type ReduxProps = ConnectedProps<typeof connector>
 type C02FootprintProps = ReduxProps & {}
 
 const PageC02Footprint = ({plotData, loadCO2Footprint}: C02FootprintProps) => {
-    let greenhouses = ["GWH 1", "Greenhouse 2", "Beschdes Ding"] // TODO remove mock
+    let greenhouses = plotData
+        .map(dataset => dataset.greenhouse)
 
     // Load CO2-Footprint data
     React.useEffect(() => {
-        loadCO2Footprint(true) // TODO remove mock
+        loadCO2Footprint()
     }, [])
 
     // Stuff for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
+    if (plotData.length == 0) {
+        return (<p> Bisher wurden noch keine Daten erfasst oder geladen. <br/>
+            Bitte warten Sie einen Moment oder geben Sie Daten zu Ihren Gewächshäusern <a
+                href="/input-data">hier</a> ein.</p>)
+    }
+
     return (
         <div id="co2-footprint" className="page">
             <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                             currentIndex={curGreenHouseIndex}/>
-            {footprintPlot(("CO2-Footprint für " + greenhouses[curGreenHouseIndex]), 'kg', plotData)}
+            {footprintPlot(
+                ("CO2-Footprint für " + greenhouses[curGreenHouseIndex]),
+                'kg',
+                plotData[curGreenHouseIndex].data)}
         </div>
     );
 }
