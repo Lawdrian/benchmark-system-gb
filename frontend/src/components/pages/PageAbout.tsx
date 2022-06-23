@@ -6,7 +6,7 @@ type AboutProps = {
 
 const PageAbout = (props: AboutProps) => {
     return (
-        <div id="login" className="page">
+        <div id="about" className="page">
           <p style={{textAlign: "center"}}> Login </p>
         </div>
     );

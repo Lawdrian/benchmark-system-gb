@@ -18,6 +18,7 @@ import PageAbout from "../components/pages/PageAbout";
 import {generatePage} from "../helpers/PageBuilder";
 import {Page, PageConfig, Section} from "../types/PageConfigTypes";
 import EndpointTest from "../components/tests/EndpointTest";
+import PageHome from "../components/pages/PageHome";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
@@ -27,6 +28,9 @@ export const pageConfig: PageConfig = {
 }
 
 const pageDefinitions: Array<Page> = [
+    generatePage(<PageHome/>, "/")
+        .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
+        .finalize(),
     generatePage(<PageWaterBenchmark/>, "water-benchmark")
         .withHeaderTitle("Water Benchmark - Vergleich mit anderen Gewächshausbetreibern")
         .includeInDrawer(<SpeedIcon/>, "Water Benchmark")
