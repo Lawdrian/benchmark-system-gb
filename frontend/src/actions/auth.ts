@@ -87,7 +87,11 @@ export const register = (
 };
 
 // LOGIN USER
-export const login = (username: string, password: string) => (dispatch: AppDispatch) => {
+export const login = (
+    username: string,
+    password: string,
+    onError: Function = () => { /*NOOP*/ }
+) => (dispatch: AppDispatch) => {
     // Headers
     const config = {
         headers: {
@@ -112,6 +116,7 @@ export const login = (username: string, password: string) => (dispatch: AppDispa
             dispatch({
                 type: LOGIN_FAIL,
             });
+            onError();
         });
 }
 

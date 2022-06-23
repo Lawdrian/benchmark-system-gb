@@ -9,6 +9,7 @@ import {Link, Navigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
 import {login} from "../../actions/auth";
 import {RootState} from "../../store";
+import {Alert, AlertTitle} from "@mui/material";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated
@@ -26,10 +27,23 @@ type LoginProps = ReduxProps & {
 const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
+    const [showAlert, setShowAlert] = useState<boolean>(false)
 
     const handleLogin = (event: any) => {
         event.preventDefault();
-        login(email, password);
+        login(email, password, () => setShowAlert(true));
+    }
+
+    const loginErrorAlert = () => {
+        return (
+            <Grid item xs={12}>
+                <Alert severity="error" onClose={() => setShowAlert(false)}>
+                    <AlertTitle>Login fehlgeschlagen</AlertTitle>
+                    Email und Passwort stimmen nicht überein.
+                    Versuchen Sie es erneut!
+                </Alert>
+            </Grid>
+        );
     }
 
     if (isAuthenticated) {
@@ -83,6 +97,7 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
                                 onChange={(event) => setPassword(event.target.value)}
                             />
                         </Grid>
+                        {showAlert ? loginErrorAlert() : null}
                         <Grid item xs={12}>
                             <Button
                                 onClick={(event) => handleLogin(event)}
