@@ -71,7 +71,7 @@ class CreateGreenhouseDataSerializer(serializers.ModelSerializer):
 
 class ListOfTuples(serializers.Field):
     """ This class inherits from serializer.Field and defines a custom
-    serializer field. This data structure of this field is a list of tuples
+    serializer field. The data structure of this field is a list of tuples
     whose first element is an integer and  whose second element, which is
     optional, contains a float. The first element is the option_id and the
     second element is the amount corresponding to this option. This field
@@ -115,8 +115,8 @@ class ListOfTuples(serializers.Field):
                     eventually a corresponding amount.
 
                 Returns:
-                    Simply returns value, because value is already a primitive
-                    (easy serializable) data type.
+                    Simply returns <value>, because <value> is already a
+                    primitive (easy serializable) data type.
         """
         return value
 
@@ -181,10 +181,24 @@ class ListOfTuples(serializers.Field):
 
 
 def _get_continuous_variables():
+    """This function returns the names of all continuous variables which
+    are stored in the database (in the table 'Measurements').
+
+            Returns:
+                A python list of the names of all continuous variables
+                stored in the database.
+    """
     return Measurements.objects.values_list('measurement_name', flat=True)
 
 
 def _get_categorical_variables():
+    """This function returns the names of all categorical variables which
+    are stored in the database (in the table 'OptionGroups').
+
+            Returns:
+                A python list of the names of all categorical variables
+                stored in the database.
+    """
     return OptionGroups.objects.values_list('option_group_name', flat=True)
 
 

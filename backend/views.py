@@ -251,23 +251,29 @@ class GetOptionGroupValues(APIView):
 
 
 class CreateGreenhouseData(APIView):
-    """API endpoint for storing greenhouse data into the database
+    """This API endpoint stores the greenhouse data into the database.
     """
     serializer_class = InputDataSerializer
 
     def get(self, request, format=None):
-        # path = os.getcwd()
-        # path_temp = path + "/backend/serializers.py"
-        # os.set
+        """This get request is only necessary for testing. It provides a
+        form for to submitting post requests.
+
+        Args:
+            request :
+
+        Returns:
+            html: A website with input fields for submitting a post-request
+                  (form).
+        """
+
+        # reload the serializer to update the form
         exec(open("./backend/serializers.py").read(), globals())
         CreateGreenhouseData.serializer_class = InputDataSerializer
         return Response(None, status=status.HTTP_200_OK)
 
     def post(self, request, fromat=None):
         """Post request that stores the given greenhouse data into the database
-            Either for:
-                - user
-                - anonymous user (user_id=1)
 
         Args:
             request : Contains the data that needs to be saved in the database
@@ -275,14 +281,14 @@ class CreateGreenhouseData(APIView):
         Returns:
             json: The saved data
         """
-        # trigger the serializer.py file in order to create the latest serializer
-        # corresponding to the current content in the 'measurements'- and
-        # 'optiongroups'-table:
+
+        # trigger the serializer.py file in order to create the latest
+        # serializer corresponding to the current content in the 'measurements'-
+        # and 'optiongroups'-table:
         exec(open("./backend/serializers.py").read(), globals())
         CreateGreenhouseData.serializer_class = InputDataSerializer
 
         # Read Url query parameters
-        # user_id needs to match a user id in the GreenhouseData table, or anonymous user will be assumed
         user_id = request.GET.get('userId', None)
         # Map anonymous user to user_id=1
         if user_id is None or user_id == '':

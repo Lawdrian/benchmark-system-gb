@@ -7,20 +7,62 @@ import csv
 
 
 def trim(name, axis=None):
+    """This function takes a string and trims it. In other words, it will
+    replace all whitespaces in the string.
+
+            Args:
+                name : The string which should be trimed.
+                axis : A parameter which you may want to
+                       use if you call this function in a
+                       map function.
+                       default : None
+
+            Returns:
+                The string <name> but without whitespaces.
+    """
     return name.replace(" ", "")
 
 
 def upper(name, axis=None):
+    """This function takes a string and transform all letters
+    to upper case letters.
+
+            Args:
+                name : The string which should be transformed.
+                axis : A parameter which you may want to
+                       use if you call this function in a
+                       map function.
+                       default : None
+
+            Returns:
+                The string <name> but with upper case letters.
+    """
     return name.upper()
 
 
 def replace_uncompatible_letters(text):
+    """This function takes a string and transforms all "umlauts"
+    into compatible letters.
+
+            Args:
+                text : A string which contains umlauts.
+
+            Returns:
+                The string <text> but without umlauts.
+    """
     tmp = text.replace("ä", 'ae').replace("ü", "ue").replace("ö", "oe"). \
         replace("ß", "ss")
     return tmp
 
 
 def remove_uncompatible_letters(filepath):
+    """This function removes umlauts from a given file by
+    transforming them into compatible letters.
+
+            Args:
+                filepath : The path to your file you want to
+                transform.
+    """
     file = open(filepath, "r")
     replaced_file = replace_uncompatible_letters(file.read())
     file.close()
@@ -30,10 +72,27 @@ def remove_uncompatible_letters(filepath):
 
 
 class NumberRowsError(Exception):
+    """ This class defines a exception. This exception will be raised
+    when the number of rows extracted from the excel sheet does not
+    match the number of the excel sheet.
+    """
     pass
 
 
 def fill_measurements(subtable):
+    """This function takes a pandas.DataFrame() and transforms it
+    to a csv-formated file (just a template!) which is used to fill
+    data into the model 'Measurements'.
+
+            Args:
+                subtable : A pandas.DataFrame() which holds the
+                           data of the excel sheet(sheet name:
+                           'Dropdown').
+
+            Returns:
+                The number of rows extracted from the excel sheet
+                (sheet name: 'Dropdown').
+    """
     measurement_variables = subtable[
         subtable["Art"].str.contains("^[Ww]ert")
     ]["Name"]
@@ -58,6 +117,19 @@ def fill_measurements(subtable):
 
 
 def fill_option_groups(subtable):
+    """This function takes a pandas.DataFrame() and transforms it
+    to a csv-formated file (just a template!) which is used to fill
+    data into the model 'OptionGroups'.
+
+            Args:
+                subtable : A pandas.DataFrame() which holds the
+                           data of the excel sheet(sheet name:
+                           'Dropdown').
+
+            Returns:
+                The number of rows extracted from the excel sheet
+                (sheet name: 'Dropdown').
+    """
     optiongroup_variables = subtable[
         subtable["Art"].str.contains(
             "([Ee]ntscheidung|[Aa]uswahl|[Kk]ategorie)")
@@ -83,6 +155,9 @@ def fill_option_groups(subtable):
 
 
 def fill_calculation_variables():
+    """This function generates a csv-formated file (just a template!) which
+    is used to fill data into the model 'Calculations'.
+    """
     calculation_variables = [
         "electric_power_co2",
         "heat_consumption_co2",
@@ -100,6 +175,11 @@ def fill_calculation_variables():
 
 
 def fill_options():
+    """This function generates a csv-formated file which is used to fill
+    data into the model 'Options'. In order to archieve this, this function
+    extracts the neccessary information from the excel sheet (sheet name:
+    'Dropdown').
+    """
     optiongroups = pd.read_csv("backend/data/optiongroups.csv")
     categories = pd.read_excel('backend/data/Datenarten_BP6_5.xlsx',
                                sheet_name='Dropdown')
@@ -147,6 +227,9 @@ def fill_options():
 
 
 def generate_csv():
+    """This function calls 'fill_options', 'fill_option_groups' and 'fill_measurements'
+    in order to generate the appropriate csv files which can be used to fill the database.
+    """
     df = pd.read_excel('backend/data/Datenarten_BP6_5.xlsx',
                        sheet_name='Basis')
     subtable = df.loc[:, ["Name", "Art"]]
@@ -164,29 +247,56 @@ def generate_csv():
 
 
 def fill_measurements_table(cur):
+    """This function fills the database-table "measurements" based on
+    the data in the csv-file "./backend/data/measurements.csv"
+
+            Args:
+                cur : cursor object.
+    """
     a_file = open("backend/data/measurements.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_measurements VALUES (?, ?);", rows)
 
 
 def fill_optiongroups_table(cur):
+    """This function fills the database-table "optiongroups" based on
+    the data in the csv-file "./backend/data/optiongroups.csv"
+
+            Args:
+                cur : cursor object.
+    """
     a_file = open("backend/data/optiongroups.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_optiongroups VALUES (?, ?);", rows)
 
 
 def fill_options_table(cur):
+    """This function fills the database-table "options" based on
+    the data in the csv-file "./backend/data/options.csv"
+
+            Args:
+                cur : cursor object.
+    """
     a_file = open("backend/data/options.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_options VALUES (?, ?, ?);", rows)
 
 def fill_calculation_variables_table(cur):
+    """This function fills the database-table "calculation-variables" based on
+    the data in the csv-file "./backend/data/calculation-variables.csv"
+
+            Args:
+                cur : cursor object.
+    """
     a_file = open("backend/data/calculation-variables.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_calculations VALUES (?, ?);", rows)
 
 
 def fill_database():
+    """This function creates a connection to the sqlite3 database and fills it
+    with the csv files in the directory ./backend.
+    """
     con = sqlite3.connect("db.sqlite3")
     cur = con.cursor()
 
