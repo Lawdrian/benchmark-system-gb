@@ -10,6 +10,7 @@ import {AppStore} from "../store";
 import {loadUser} from "../actions/auth";
 import {LayoutConfig} from "../types/LayoutConfigTypes";
 
+
 const connector = connect(null, {loadUser});
 
 type ReduxProps = ConnectedProps<typeof connector>
@@ -28,6 +29,8 @@ const App = ({store, layoutConfig, pageDefinitions, loginPageUrl, loadUser}: App
        loadUser()
     });
 
+    const homepage = getHomepage(pageDefinitions);
+
     return (
         <Provider store={store}>
             <Router>
@@ -37,8 +40,9 @@ const App = ({store, layoutConfig, pageDefinitions, loginPageUrl, loadUser}: App
                                                         drawerItems={generateDrawerItems(pageDefinitions)}/>}>
                         {<Route index
                                 element={<PageHelper
+                                    pageTitle={homepage?.headerTitle}
                                     loginUrl={loginPageUrl}
-                                    isPrivate={true}/>}/>}
+                                    isPrivate={true}>{homepage?.component}</PageHelper>}/>}
                         {generateLayoutedPageRoutes(pageDefinitions, loginPageUrl)}
                     </Route>
                 </Routes>
@@ -106,6 +110,15 @@ const generateDrawerItems = (pageConfig: Page[]): DrawerListItem[] => {
                 }
             })
     )
+}
+
+const getHomepage = (pageConfig: Page[]) => {
+    const homePage = pageConfig.filter(page => page.urlSnippet == "/")
+    if (homePage.length > 0)
+        return homePage[0]
+    else {
+        return null
+    }
 }
 
 export default connector(App);

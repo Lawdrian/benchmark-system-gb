@@ -1,11 +1,11 @@
-import React, { FunctionComponent } from "react";
-import { Outlet } from "react-router-dom";
-import { Box, Container } from "@mui/material";
+import React from "react";
+import {Outlet} from "react-router-dom";
+import {Box, Container} from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import AppHeader from "./AppHeader";
 import AppDrawer from "./AppDrawer";
-import { LayoutConfig } from "../../types/LayoutConfigTypes";
-import { DrawerListItem } from "../../types/SharedLayoutTypes";
+import {LayoutConfig} from "../../types/LayoutConfigTypes";
+import {DrawerListItem} from "../../types/SharedLayoutTypes";
 import AppBasicTheme from "./AppBasicTheme";
 
 type LayoutProps = {
@@ -19,7 +19,7 @@ const AppLayout = (
         drawerItems
     }: LayoutProps
 ) => {
-    const [title, setTitle] = React.useState("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
+    const [title, setTitle] = React.useState("Default Header Layouer")
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
