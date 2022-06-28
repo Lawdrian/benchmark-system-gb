@@ -5,6 +5,7 @@ import {loadWaterBenchmark} from "../../actions/waterbenchmark";
 import {GreenhouseMenu} from "../utils/GreenhouseMenu";
 import {Box, Tab, Tabs, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import {styled} from "@mui/material/styles";
+import {BenchmarkScatter, QuadrantPlot} from "../utils/BenchmarkPlots";
 
 const mapStateToProps = (state: RootState) => ({plotData: state.benchmark.plotData});
 const connector = connect(mapStateToProps, {loadWaterBenchmark});
@@ -15,14 +16,22 @@ type WaterBenchmarkProps = ReduxProps & {}
 const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps) => {
     // Load data
     React.useEffect(() => {
-        loadWaterBenchmark() // TODO remove mock
+        loadWaterBenchmark()
     }, [])
 
-    let greenhouses = ["GWH 1", "Greenhouse 2", "Beschdes Ding"] // TODO remove mock
-    //let greenhouses = ["GWH 1"] // TODO remove mock
+    let greenhouses = plotData
+        .map(dataset => dataset.greenhouse)
 
-    // for dropdown menu:
+    // Return info message if data isn't loaded or no data entered yet:
+    if (plotData.length == 0) {
+        return (<p> Bisher wurden noch keine Daten erfasst oder geladen. <br/>
+            Bitte warten Sie einen Moment oder geben Sie Daten zu Ihren Gewächshäusern <a
+                href="/input-data">hier</a> ein.</p>)
+    }
+
+    // Stuff for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
+
     // for Tabs:
     const [curTabIndex, setCurTabIndex] = React.useState<number>(0);
 
@@ -87,11 +96,11 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
                             <HtmlTooltip
                                 title={
                                     <React.Fragment>
-                                        {"Here's the explanation for the first Plot. "}<b>{'The normal one'}</b>
+                                        {"Here's the explanation for the first Plot. "}
                                     </React.Fragment>
                                 }
                             >
-                                <span>Plot one</span>
+                                <span>Benchmark-Plot</span>
                             </HtmlTooltip>}
                              {...a11yProps(0)} />
                         <Tab label={
@@ -102,41 +111,17 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
                                     </React.Fragment>
                                 }
                             >
-                                <span>Plot two</span>
+                                <span>Vierfelder-Plot</span>
                             </HtmlTooltip>}
                              {...a11yProps(1)} />
-                        <Tab label={
-                            <HtmlTooltip
-                                title={
-                                    <React.Fragment>
-                                        {"Here's the explanation for the third Plot."}
-                                    </React.Fragment>
-                                }
-                            >
-                                <span>Plot three</span>
-                            </HtmlTooltip>}
-                             {...a11yProps(2)} />
                     </Tabs>
                 </Box>
                 <TabPanel value={curTabIndex} index={0}>
-                    {/*BenchmarkPlot(("Benchmark für " + greenhouses[curGreenHouseIndex]), plotData)*/}
+                    {BenchmarkScatter(("Benchmark für " + greenhouses[curGreenHouseIndex]), plotData[curGreenHouseIndex].data)}
                     {greenhouses[curGreenHouseIndex]}
                 </TabPanel>
                 <TabPanel value={curTabIndex} index={1}>
-                    {/*TODO remove mock*/}
-                    Plot Two
-                    <img
-                        src="https://www.researchgate.net/profile/Mark_Moll/publication/260691259/figure/download/fig4/AS:667639860953089@1536189155872/Figure-S1-A-sample-box-plot-generated-by-OMPLs-benchmark-script.png"
-                        alt="Plot 2">
-                    </img>
-                </TabPanel>
-                <TabPanel value={curTabIndex} index={2}>
-                    {/*TODO remove mock*/}
-                    <img
-                        src="https://mlr.mlr-org.com/articles/tutorial/benchmark_experiments_files/figure-html/unnamed-chunk-23-1.png"
-                        alt="Plot 3" width="666" height="518">
-                    </img>
-                    Plot Three
+                    {QuadrantPlot(("Benchmark für " + greenhouses[curGreenHouseIndex]), plotData[curGreenHouseIndex].data)}
                 </TabPanel>
             </Box>
         </div>

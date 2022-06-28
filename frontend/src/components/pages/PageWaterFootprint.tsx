@@ -13,17 +13,18 @@ type ReduxProps = ConnectedProps<typeof connector>
 type WaterFootprintProps = ReduxProps & {}
 
 const PageWaterFootprint = ({plotData, loadWaterFootprint}: WaterFootprintProps) => {
-    let greenhouses = plotData
-        .map(dataset => dataset.greenhouse)
-
     // Load Water-Footprint data
     React.useEffect(() => {
         loadWaterFootprint()
     }, [])
 
+    let greenhouses = plotData
+        .map(dataset => dataset.greenhouse)
+
     // Stuff for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
+    // Return info message if data isn't loaded or no data entered yet:
     if (plotData.length == 0) {
         return (<p> Bisher wurden noch keine Daten erfasst oder geladen. <br/>
             Bitte warten Sie einen Moment oder geben Sie Daten zu Ihren Gewächshäusern <a
