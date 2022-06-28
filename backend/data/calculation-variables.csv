@@ -1,4 +1,10 @@
-1,electric_power_co2
-2,heat_consumption_co2
-3,psm_co2
-4,fertilizer_co2
+1,gwh_konstruktion
+2,energietraeger
+3,strom
+4,co2_zudosierung
+5,verbrauchsmaterialien
+6,psm_insgesamt
+7,duengemittel
+8,jungpflanzen
+9,verpackung
+10,transport

@@ -9,10 +9,16 @@ type RawGreenhouseCO2Dataset = {
 
 type RawCO2Dataset = {
     label: string
-    electric_power_co2: number
-    heat_consumption_co2: number
-    psm_co2: number
-    fertilizer_co2: number
+    gwh_konstruktion: number
+    energietraeger: number
+    strom: number
+    co2_zudosierung: number
+    duengemittel: number
+    psm_insgesamt: number
+    verbrauchsmaterialien: number
+    jungpflanzen: number
+    verpackung: number
+    transport: number
 }
 
 type RawCO2Data = RawGreenhouseCO2Dataset[];
@@ -49,27 +55,63 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                     .map(dataset => dataset.label.substring(0, 10))
                     .map(label => new Date(label).getFullYear() == 0 ? "Referenz" : label),
                 datasets: [{
-                    label: "Elektrische Energie",
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.electric_power_co2),
+                    label: "Gewächshaus Konstruktion",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.gwh_konstruktion),
                     backgroundColor: "rgba(53, 162, 235,0.7)",
                     optimization: [],
                     climateData: []
                 }, {
-                    label: "Wärmeenergie",
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.heat_consumption_co2),
+                    label: "Energieträger",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.energietraeger),
                     backgroundColor: "rgba(235,53,162,0.7)",
                     optimization: [],
                     climateData: []
                 }, {
-                    label: "Pflanzenschutzmittel",
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.psm_co2),
-                    backgroundColor: "rgba(191,246,24,0.7)",
+                    label: "Strom",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.strom),
+                    backgroundColor: "rgba(255,251,0,0.68)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "CO2 Zudosierung",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.co2_zudosierung),
+                    backgroundColor: "rgba(239,131,6,0.7)",
                     optimization: [],
                     climateData: []
                 }, {
                     label: "Düngemittel",
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.fertilizer_co2),
-                    backgroundColor: "rgba(239,131,6,0.7)",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.duengemittel),
+                    backgroundColor: "rgba(37,239,6,0.7)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Pflanzenschutzmittel",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.psm_insgesamt),
+                    backgroundColor: "rgba(6,239,220,0.7)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Verbrauchsmaterialien",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.verbrauchsmaterialien),
+                    backgroundColor: "rgba(91,6,239,0.7)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Jungpflanzen",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.jungpflanzen),
+                    backgroundColor: "rgba(239,6,6,0.7)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Verpackung",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.verpackung),
+                    backgroundColor: "rgba(148,140,140,0.7)",
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Transport",
+                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.transport),
+                    backgroundColor: "rgba(0,0,0,0.68)",
                     optimization: [],
                     climateData: []
                 }]

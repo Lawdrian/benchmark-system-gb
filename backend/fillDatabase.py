@@ -159,10 +159,16 @@ def fill_calculation_variables():
     is used to fill data into the model 'Calculations'.
     """
     calculation_variables = [
-        "electric_power_co2",
-        "heat_consumption_co2",
-        "psm_co2",
-        "fertilizer_co2"
+        "gwh_konstruktion",
+        "energietraeger",
+        "strom",
+        "co2_zudosierung",
+        "verbrauchsmaterialien",
+        "psm_insgesamt",
+        "duengemittel",
+        "jungpflanzen",
+        "verpackung",
+        "transport",
     ]
     calculation_variables_frame = pd.DataFrame(columns=["id","Name"])
     calculation_variables_frame["Name"] = calculation_variables

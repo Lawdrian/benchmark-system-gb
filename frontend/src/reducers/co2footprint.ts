@@ -24,6 +24,7 @@ export default function (state: CO2FootprintState = initialState, action: any): 
                 isLoading: true
             };
         case CO2FP_LOADED:
+            console.log("CO2-Plot Data:", action.payload)
             return {
                 ...state,
                 isLoading: false,
