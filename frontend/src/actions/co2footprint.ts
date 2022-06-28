@@ -1,9 +1,4 @@
-import {
-    CO2FP_ERROR,
-    CO2FP_LOADED,
-    CO2FP_LOADING,
-    GreenhouseFootprint
-} from "../types/reduxTypes";
+import {CO2FP_ERROR, CO2FP_LOADED, CO2FP_LOADING, GreenhouseFootprint} from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 

@@ -55,7 +55,7 @@ type Plot = {
     labels: string[]
 }
 
-type FootprintPlot = Plot & {
+export type FootprintPlot = Plot & {
     datasets: FootprintDataset[]
 }
 
@@ -64,7 +64,7 @@ export type GreenhouseFootprint = {
     data: FootprintPlot
 }
 
-type BenchmarkPlot = Plot & {
+export type BenchmarkPlot = Plot & {
     datasets: BenchmarkDataset[]
 }
 
