@@ -161,8 +161,7 @@ class GetCalculatedGreenhouseData(APIView):
         # map the requested datatype to the correct column names in the GreenhouseData table
         map_data_type = {
             'co2FootprintData': (
-                'electric_power_co2', 'heat_consumption_co2', 'psm_co2',
-                'fertilizer_co2'),
+                'gwh_konstruktion', 'energietraeger', 'strom', 'co2_zudosierung', 'duengemittel', 'psm_insgesamt', 'verbrauchsmaterialien', 'jungpflanzen', 'verpackung', 'transport'),
             'waterUsageData': 'water_usage',
             'benchmarkData': 'benchmark'
         }
