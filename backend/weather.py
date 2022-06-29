@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import pgeocode
-from wetterdienst.provider.dwd.observation import DwdObservationRequest
+from wetterdienst.provider.dwd.observation import DwdObservationRequest, DwdObservationResolution, \
+    DwdObservationDataset, DwdObservationPeriod
 from wetterdienst import Settings
 from datetime import datetime
 
@@ -62,44 +63,78 @@ class GetWeatherData(APIView):
         pd.set_option('display.max_columns', None)
 
         request = DwdObservationRequest(
-            parameter="climate_summary",
-            resolution="monthly",
+            parameter=[("precipitation_height", "precipitation"), ("temperature_air_mean_200", "temperature_air"), ("radiation_global", "solar")],
+            resolution=DwdObservationResolution.MINUTE_10,
+            period=DwdObservationPeriod.RECENT,
             start_date=start_date,  # if not given timezone defaulted to UTC
             end_date=end_date,  # if not given timezone defaulted to UTC
-        ).filter_by_rank(latitude, longitude, 10)
+        ).filter_by_rank(latitude, longitude, 20)
         results = request.values.query()
         for result in request.values.query():
-            current_result = result.df[
-                [
-                    'station_id',
-                    'date',
-                    'precipitation_height',
-                    'temperature_air_mean_200',
-                    'sunshine_duration'
-                ]
-            ].dropna()
-            # print(result.stations)
-            if current_result.empty:
+            weather_data = result.df
+            print("!!!!!!!!!!!!!!!!!!!")
+            precipitation_height = weather_data[weather_data['parameter'] == 'precipitation_height'].filter(
+                items=['value']).reset_index(drop=True)
+            temperature_air_mean_200 = weather_data[weather_data['parameter'] == 'temperature_air_mean_200'].filter(
+                items=['value']).reset_index(drop=True)
+            radiation_global = weather_data[weather_data['parameter'] == 'radiation_global'].filter(items=['value']).reset_index(drop=True)
+
+            date = weather_data['date'].drop_duplicates()
+
+            # Rename colums of dataframes containing weather data
+            radiation_global.columns = ['radiation_global']
+            temperature_air_mean_200.columns = ['temperature_air_mean_200']
+            precipitation_height.columns = ['precipitation_height']
+
+            print("date")
+            print(len(date))
+
+            print("precipitation")
+            print(len(precipitation_height))
+
+            print("temperature")
+            print(len(temperature_air_mean_200))
+
+            print("radiation")
+            print(len(radiation_global))
+
+            # Concat all dataframes into a single one
+            data = pd.concat([date, precipitation_height, temperature_air_mean_200, radiation_global], axis=1)
+            print("Raw data:")
+            print(data)
+            #print("Final data:")
+            #print(len(data))
+            #print(data.isna().sum())
+            data.dropna(axis=0, how="any", inplace=True)
+            print(data.isna().sum())
+            print("Final data without NaN:")
+            print(len(data))
+
+            if data.empty:
                 print("Empty dataset")
             else:
+                print("Station Name + Distance")
+                #print(result.stations.df.filter(items=[current_result['station_id'][0]]))
+                print(result.stations.df[result.stations.df['station_id'] == weather_data['station_id'][0]].filter(items=['name', 'distance']))
                 break
 
-        weather_data = current_result
-        if weather_data.empty:
+        best_weather_data = data
+        if best_weather_data.empty:
             return Response({'Bad Request': 'No weather data found!'}, status=status.HTTP_400_BAD_REQUEST)
 
-        print(weather_data)
+        print("Selected Dataset:")
+        print(best_weather_data)
 
-        precipitation_height = round(weather_data['precipitation_height'].mean(), 2)
-        temperature_air_mean_200 = round(weather_data['temperature_air_mean_200'].mean(), 2)
-        sunshine_duration = round(weather_data['sunshine_duration'].mean(), 2)
+
+
+
+        location = result.stations.df[result.stations.df['station_id'] == weather_data['station_id'][0]].filter(items=['name', 'distance'])
 
         data = {
-            'precipitation_height': precipitation_height,
-            'temperature_air_mean_200': temperature_air_mean_200,
-            'sunshine_duration': sunshine_duration
+            'location': location,
+            'weatherData': best_weather_data
+
         }
 
-        print(precipitation_height + temperature_air_mean_200 + sunshine_duration)
         return Response(data, status=status.HTTP_200_OK)
 
