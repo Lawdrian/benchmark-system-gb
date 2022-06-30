@@ -1,6 +1,7 @@
 import {CO2FP_ERROR, CO2FP_LOADED, CO2FP_LOADING, GreenhouseFootprint} from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
+import {tokenConfig} from "./auth";
 
 type RawGreenhouseCO2Dataset = {
     greenhouse_name: string,
@@ -23,26 +24,36 @@ type RawCO2Dataset = {
 
 type RawCO2Data = RawGreenhouseCO2Dataset[];
 
-export const loadCO2Footprint = () => (dispatch: AppDispatch, getState: ReduxStateHook) => {
+export const loadCO2Footprint = (
+    withAuth: boolean = true,
+    loadingCB: Function = () => { /* NOOP */ },
+    successCB: Function = () => { /* NOOP */ },
+    errorCB: Function = () => { /* NOOP */ }
+) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
     const user = getState().auth.user;
     const userID = user ? user.id : '1';
     console.log(user);
     // User Loading
     dispatch({type: CO2FP_LOADING});
+    loadingCB();
 
     // Send request
-    axios.get('/backend/get-calculated-data?userId=' + userID + '&dataType=co2FootprintData')
-        .then((response) => {
+    axios.get(
+        '/backend/get-calculated-data?userId=' + userID + '&dataType=co2FootprintData',
+        withAuth ? tokenConfig(getState) : undefined
+    ).then((response) => {
             console.log("CO2 Response", response)
             dispatch({
                 type: CO2FP_LOADED,
                 payload: toCO2FootprintPlot(response.data)
             })
+            successCB()
         })
         .catch((error) => {// TODO: Proper Error handling
             dispatch({
                 type: CO2FP_ERROR
             })
+            errorCB()
         })
 }
 

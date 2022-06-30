@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,14 +16,10 @@ import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
 import {GreenhouseData} from "../../types/reduxTypes";
-import {CO2FootprintState} from "../../reducers/co2footprint";
-import {WaterBenchmarkState} from "../../reducers/waterbenchmark";
-import {WaterFootprintState} from "../../reducers/waterfootprint";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues} from "../../actions/lookup";
-import {LookupState} from "../../reducers/lookup";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -52,8 +48,47 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type EndpointTestProps = ReduxProps & {}
 
-const performTests = (props: EndpointTestProps) => {
+type EPTest = {
+    loading: boolean,
+    successful: boolean
+}
+
+type AuthEPTest = {
+    withAuth: EPTest,
+    withoutAuth: EPTest
+}
+
+type TestResults = {
+    lookup: AuthEPTest
+    co2: AuthEPTest
+    submission: AuthEPTest
+}
+
+const initialTestResults: TestResults = {
+    co2: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    lookup: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    submission: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+}
+
+const resetTests = (props: EndpointTestProps, setTestResults: Function) => {
     props.resetData();
+    setTestResults(JSON.parse(JSON.stringify(initialTestResults)));
+}
+
+const performTests = (props: EndpointTestProps, setTestResults: Function) => {
+    resetTests(props, setTestResults)
+
+    // Deep copy so initalTestResults do not get modified
+    const testResults: TestResults = JSON.parse(JSON.stringify(initialTestResults))
 
     let weatherInput = {
         postalCode: 82439,
@@ -137,43 +172,127 @@ const performTests = (props: EndpointTestProps) => {
         "JungpflanzenZukauf": "[(145)]"
     }
 
-    props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
-    props.submitGreenhouseData(testData, () => {
-        props.loadCO2Footprint();
-        //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-        //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-    });
-    props.loadLookupValues();
-}
+    const testLoading = (test: EPTest) => { return {...test,  loading: true} }
+    const testSuccess = () => { return {successful: true, loading: false} }
+    const testFailed = () => { return {successful: false, loading: false} }
 
-const dataAvailable = (
-    data: CO2FootprintState | WaterBenchmarkState | WaterFootprintState
-): boolean => {
-    return (
-        data.plotData.length > 0 &&
-        data.plotData.length > 0
+    props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
+    props.submitGreenhouseData(testData,
+        () => {
+            props.loadCO2Footprint(
+                true,
+                () => {
+                    testResults.co2.withAuth = testLoading(testResults.co2.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.co2.withAuth = testSuccess()
+                    setTestResults(testResults)
+                    console.warn("Co2 with auth successful:", testResults)
+                },
+                () => {
+                    testResults.co2.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+        },
+        true,
+        () => {
+            testResults.submission.withAuth = testLoading(testResults.submission.withAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.submission.withAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.submission.withAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.submitGreenhouseData(testData,
+        () => {
+            props.loadCO2Footprint(
+                false,
+                () => {
+                    testResults.co2.withoutAuth = testLoading(testResults.co2.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.co2.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.co2.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+        },
+        false,
+        () => {
+            testResults.submission.withoutAuth = testLoading(testResults.submission.withoutAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.submission.withoutAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.submission.withoutAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.loadLookupValues(
+        true,
+        () => {
+            testResults.lookup.withAuth = testLoading(testResults.lookup.withAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.lookup.withAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.lookup.withAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.loadLookupValues(
+        false,
+        () => {
+            testResults.lookup.withoutAuth = testLoading(testResults.lookup.withoutAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.lookup.withoutAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.lookup.withoutAuth = testFailed()
+            setTestResults(testResults)
+        }
     );
 }
 
-const lookupAvailable = (
-    data: LookupState
-): boolean => {
-    return data.lookupValues.AnzahlTriebe.length > 0
-}
-
-const dataLoading = (
-    data: CO2FootprintState | WaterBenchmarkState | WaterFootprintState | LookupState
-): boolean => {
-    return data.isLoading
-}
-
 const EndpointTest = (props: EndpointTestProps) => {
-
+    // Deep copy so initalTestResults do not get modified
+    const [testResults, setTestResults] = useState<TestResults>(JSON.parse(JSON.stringify(initialTestResults)));
     const rows = [
         {
-            name: "Load CO2-Footprint Data",
-            loading: dataLoading(props.co2),
-            successful: dataAvailable(props.co2)
+            name: "Load CO2-Footprint Data (Authenticated)",
+            loading: testResults.co2.withAuth.loading,
+            successful: testResults.co2.withAuth.successful
+        }, {
+            name: "Load CO2-Footprint Data (Not Authenticated)",
+            loading: testResults.co2.withoutAuth.loading,
+            successful: testResults.co2.withoutAuth.successful
         },/* {
             name: "Water Footprint",
             loading: dataLoading(props.water),
@@ -183,28 +302,36 @@ const EndpointTest = (props: EndpointTestProps) => {
             loading: dataLoading(props.benchmark),
             successful: dataAvailable(props.benchmark)
         },*/ {
+            name: "Save Greenhouse Data (Authenticated)",
+            loading: testResults.submission.withAuth.loading,
+            successful: testResults.submission.withAuth.successful
+        }, {
+            name: "Save Greenhouse Data (Not Authenticated)",
+            loading: testResults.submission.withoutAuth.loading,
+            successful: testResults.submission.withoutAuth.successful
+        }, {
+            name: "Load Lookup Values (Authenticated)",
+            loading: testResults.lookup.withAuth.loading,
+            successful: testResults.lookup.withAuth.successful
+        }, {
+            name: "Load Lookup Values (Not Authenticated)",
+            loading: testResults.lookup.withoutAuth.loading,
+            successful: testResults.lookup.withoutAuth.successful
+        }, {
             name: "Load Weather Data",
             loading: props.weather.isLoading,
             successful: !!props.weather.weatherData
-        }, {
-            name: "Save Greenhouse Data",
-            loading: props.submission.inProgress,
-            successful: !!props.submission.successful
-        }, {
-            name: "Load Lookup Values",
-            loading: dataLoading(props.lookup),
-            successful: lookupAvailable(props.lookup)
-        }
+        },
     ]
 
     return (
         <Grid container spacing={2}>
             <Grid item xs={12}>
-                <Button onClick={() => performTests(props)}
+                <Button onClick={() => performTests(props, (testResults: TestResults) => setTestResults({...testResults}))} // Shallow copy so react notices changes
                         endIcon={<DoubleArrow/>}
                         variant="outlined"
                         sx={{mr: "10px"}}>Run Tests</Button>
-                <Button onClick={() => props.resetData()}
+                <Button onClick={() => resetTests(props, setTestResults)}
                         endIcon={<RefreshIcon/>}
                         variant="outlined">Reset</Button>
             </Grid>

@@ -7,42 +7,47 @@ import {
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import validateGreenhouseData from "../helpers/dataValidation";
+import {tokenConfig} from "./auth";
 
 export const submitGreenhouseData = (
     data: GreenhouseData,
-    callback: Function = () => {
-        //NOOP
-    }
-) =>
-    (dispatch: AppDispatch, getState: ReduxStateHook) => {
-        validateGreenhouseData(data);
+    callback: Function = () => { /* NOOP */ },
+    withAuth: boolean = true,
+    inProgressCB: Function = () => { /* NOOP */ },
+    successCB: Function = () => { /* NOOP */ },
+    errorCB: Function = () => { /* NOOP */ }
+) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
+    validateGreenhouseData(data);
 
-        dispatch({type: SUBMISSION_INPROGRESS})
+    dispatch({type: SUBMISSION_INPROGRESS})
+    inProgressCB();
 
-        const user = getState().auth.user;
-        const userID = user ? user.id : '1';
+    const user = getState().auth.user;
+    const userID = user ? user.id : '1';
 
-        // Headers
-        const config = {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
+    // Headers
+    const config = withAuth ? tokenConfig(getState) : {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
 
-        // Request Body
-        const body = JSON.stringify(data);
+    // Request Body
+    const body = JSON.stringify(data);
 
-        axios.post("/backend/create-greenhouse-data?userId=" + userID, body, config)
-            .then((response) => {
-                //console.log("CO2 Response", response)
-                dispatch({
-                    type: SUBMISSION_SUCCESS
-                })
+    axios.post("/backend/create-greenhouse-data?userId=" + userID, body, config)
+        .then((response) => {
+            //console.log("CO2 Response", response)
+            dispatch({
+                type: SUBMISSION_SUCCESS
             })
-            .catch((error) => {// TODO: Proper Error handling
-                dispatch({
-                    type: SUBMISSION_ERROR
-                })
+            successCB()
+        })
+        .catch((error) => {// TODO: Proper Error handling
+            dispatch({
+                type: SUBMISSION_ERROR
             })
-            .finally(() => callback())
-    }
+            errorCB()
+        })
+        .finally(() => callback())
+}

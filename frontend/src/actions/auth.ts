@@ -120,7 +120,7 @@ export const login = (
         });
 }
 
-const tokenConfig = (getState: ReduxStateHook): AxiosRequestConfig => {
+export const tokenConfig = (getState: ReduxStateHook): AxiosRequestConfig => {
     // Get token from state
     const token = getState().auth.token;
 

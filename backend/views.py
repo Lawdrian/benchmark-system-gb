@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -11,6 +11,9 @@ from .serializers import InputDataSerializer
 class GetGreenhouseData(APIView):
     """API endpoint for retrieving all greenhouse data for every greenhouse of a user.
     """
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
 
     def get(self, request, format=None):
         """
@@ -134,6 +137,10 @@ class GetCalculatedGreenhouseData(APIView):
     """API endpoint for retrieving the calculated GreenhouseData
     """
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
     def get(self, request, format=None):
         """Get request that returns the calculated data which got requested.
             Either
@@ -218,6 +225,10 @@ class GetOptionGroupValues(APIView):
        For example Bedachungsmaterial: ED | DG
     """
 
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
     def get(self, request, format=None):
         """Get request that returns the fixed attribute values for the dropdown selection inputs.
 
@@ -252,6 +263,11 @@ class GetOptionGroupValues(APIView):
 class CreateGreenhouseData(APIView):
     """This API endpoint stores the greenhouse data into the database.
     """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
     serializer_class = InputDataSerializer
 
     def get(self, request, format=None):
