@@ -11,10 +11,22 @@ const mapStateToProps = (state: RootState) => ({plotData: state.benchmark.plotDa
 const connector = connect(mapStateToProps, {loadWaterBenchmark});
 type ReduxProps = ConnectedProps<typeof connector>
 
+/**
+ * @type WaterBenchmarkProps
+ */
 type WaterBenchmarkProps = ReduxProps & {}
 
+/**
+ * Returns the page showing a Dropdown menu for selecting the greenhouse to
+ * show the plots for as well as the CO2-Footprint plots.
+ *
+ * @param {C02FootprintProps}
+ * Divided into plotData (data of multiple greenhouses to be shown in the plot) and
+ * loadWaterBenchmark (a function to fetch the necessary data from the backend)
+ * @return JSX.Element
+ */
 const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps) => {
-    // Load data
+    // Load Water-Benchmark data
     React.useEffect(() => {
         loadWaterBenchmark()
     }, [])
@@ -29,18 +41,34 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
                 href="/input-data">hier</a> ein.</p>)
     }
 
-    // Stuff for Dropdown Menu:
+    // Configurations for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
-    // for Tabs:
+    // Configurations for Tabs:
     const [curTabIndex, setCurTabIndex] = React.useState<number>(0);
 
+    /**
+     * @interface TabPanelProps
+     *
+     * @property {React.ReactNode} children the element to show inside the Tab
+     * @property {number} index the index of the Tab
+     * @property {number} value the value of the Tab (used for selecting and deselecting)
+     */
     interface TabPanelProps {
         children?: React.ReactNode;
         index: number;
         value: number;
     }
 
+    /**
+     * Returns a TabPanel (the area shown/hidden) for Tabbing.
+     *
+     * @see https://mui.com/material-ui/react-tabs/
+     *
+     * @param {TabPanelProps} props gets divided into children (the element to show inside the Tab), value and index
+     * (for showing/hiding the TabPanels) and other
+     * @return JSX.Element
+     */
     function TabPanel(props: TabPanelProps) {
         const {children, value, index, ...other} = props;
 
@@ -65,6 +93,14 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
         setCurTabIndex(newValue);
     };
 
+    /**
+     * Returns the (html) props for Tabs.
+     *
+     * @see https://mui.com/material-ui/react-tabs/
+     *
+     * @param {number} index index of the current Tab
+     * @return JSX.Element
+     */
     function a11yProps(index: number) {
         return {
             id: `simple-tab-${index}`,
@@ -72,7 +108,7 @@ const PageWaterBenchmark = ({plotData, loadWaterBenchmark}: WaterBenchmarkProps)
         };
     }
 
-    // for Tooltips:
+    // for Tooltips (hover info for plots)
     const HtmlTooltip = styled(({className, ...props}: TooltipProps) => (
         <Tooltip {...props} classes={{popper: className}}/>
     ))(({theme}) => ({

@@ -1,7 +1,6 @@
 import React from 'react';
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip, TooltipItem,} from 'chart.js'; // TODO clean up imports
 import {Bar} from 'react-chartjs-2';
-//import ChartDataLabels from 'chartjs-plugin-datalabels';
 import {FootprintPlot} from "../../types/reduxTypes";
 
 ChartJS.register(
@@ -13,6 +12,14 @@ ChartJS.register(
     Legend,
 );
 
+/**
+ * Returns a Footprint plot for the given data.
+ *
+ * @param {string} title The title of the plot
+ * @param {string} unit The unit shown in the plot
+ * @param {FootprintPlot} data Data to be shown in the plot. (see reduxTypes)
+ * @return JSX.Element
+ */
 export default function footprintPlot(title: string, unit: string, data: FootprintPlot) {
     let options = {
         responsive: true,
@@ -86,7 +93,7 @@ export default function footprintPlot(title: string, unit: string, data: Footpri
                 stacked: true,
                 title: {
                     display: true,
-                    text: 'CO2-Äquivalente [kg]',
+                    text: 'CO2-Äquivalente [' + unit + ']',
                     font: {
                         size: 16,
                     },

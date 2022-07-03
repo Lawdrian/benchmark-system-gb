@@ -1,3 +1,8 @@
+/**
+ * #############################################################################
+ * PageConfigTypes.ts: Defines types, that are used for page configuration
+ * #############################################################################
+ */
 import {ReactNode} from "react";
 
 export enum Section {

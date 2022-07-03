@@ -1,3 +1,14 @@
+/**
+ * #############################################################################
+ * waterbenchmark.ts: Redux action generators to handle waterbenchmark data
+ *
+ *     This file provides the utility to load waterbenchmark data from the server
+ *     into the redux store.
+ *
+ * For further information on action generators see:
+ * - https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#action-creators
+ * #############################################################################
+ */
 import {
     GreenhouseBenchmark,
     WATERBM_ERROR,
@@ -7,6 +18,9 @@ import {
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 
+/**
+ * Load the waterbenchmark data for the current user.
+ */
 export const loadWaterBenchmark = () => (dispatch: AppDispatch, getState: ReduxStateHook) => {
     const user = getState().auth.user;
     const userID = user ? user.id : '1';

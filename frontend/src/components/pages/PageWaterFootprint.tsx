@@ -10,8 +10,20 @@ const mapStateToProps = (state: RootState) => ({plotData: state.water.plotData})
 const connector = connect(mapStateToProps, {loadWaterFootprint});
 type ReduxProps = ConnectedProps<typeof connector>
 
+/**
+ * @type WaterFootprintProps
+ */
 type WaterFootprintProps = ReduxProps & {}
 
+/**
+ * Returns the page showing a Dropdown menu for selecting the greenhouse to
+ * show the plots for as well as the Water-Footprint plots.
+ *
+ * @param {WaterFootprintProps}
+ * Divided into plotData (data of multiple greenhouses to be shown in the plot) and
+ * loadWaterFootprint (a function to fetch the necessary data from the backend)
+ * @return JSX.Element
+ */
 const PageWaterFootprint = ({plotData, loadWaterFootprint}: WaterFootprintProps) => {
     // Load Water-Footprint data
     React.useEffect(() => {
@@ -21,7 +33,7 @@ const PageWaterFootprint = ({plotData, loadWaterFootprint}: WaterFootprintProps)
     let greenhouses = plotData
         .map(dataset => dataset.greenhouse)
 
-    // Stuff for Dropdown Menu:
+    // Configurations for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
     // Return info message if data isn't loaded or no data entered yet:

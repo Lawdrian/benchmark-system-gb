@@ -10,7 +10,6 @@ import {AppStore} from "../store";
 import {loadUser} from "../actions/auth";
 import {LayoutConfig} from "../types/LayoutConfigTypes";
 
-
 const connector = connect(null, {loadUser});
 
 type ReduxProps = ConnectedProps<typeof connector>

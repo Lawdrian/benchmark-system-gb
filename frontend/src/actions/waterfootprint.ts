@@ -1,3 +1,14 @@
+/**
+ * #############################################################################
+ * waterfootprint.ts: Redux action generators to handle waterfootprint data
+ *
+ *     This file provides the utility to load waterfootprint data from the server
+ *     into the redux store.
+ *
+ * For further information on action generators see:
+ * - https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#action-creators
+ * #############################################################################
+ */
 import {
     GreenhouseFootprint,
     WATERFP_ERROR,
@@ -7,7 +18,11 @@ import {
 import axios from "axios";
 import {AppDispatch, ReduxStateHook} from "../store";
 
+/**
+ * Loads the waterfootprint data for the current user.
+ */
 export const loadWaterFootprint = () => (dispatch: AppDispatch, getState: ReduxStateHook) => {
+    // Get the ID of the currently logged in user
     const user = getState().auth.user;
     const userID = user ? user.id : '1';
 

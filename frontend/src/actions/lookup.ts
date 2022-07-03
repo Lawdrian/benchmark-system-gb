@@ -1,3 +1,14 @@
+/**
+ * #############################################################################
+ * lookup.ts: Redux action generators to handle lookup values
+ *
+ *     This file provides the utility to load the avaliable lookup values from
+ *     the server into the redux store.
+ *
+ * For further information on action generators see:
+ * - https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#action-creators
+ * #############################################################################
+ */
 import {
     LOOKUP_FAILED,
     LOOKUP_LOADED,
@@ -7,7 +18,9 @@ import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
 
-//TODO Remove Mock
+/**
+ * Load the currently available lookup values.
+ */
 export const loadLookupValues = (
     withAuth: boolean = true,
     loadingCB: Function = () => { /* NOOP */ },
