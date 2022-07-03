@@ -1,9 +1,22 @@
 import {GreenhouseData} from "../types/reduxTypes";
 
+/**
+ * Checks, if a given GreenhouseData object is valid.
+ *
+ * The object is valid, if all necessary fields follow the pattern:
+ *
+ * [((<int>,<float>)|(<int>,)|(<int>)), ...]
+ *
+ * If the object is invalid an error is thrown, else this function is a noop.
+ *
+ * @param data The data to validate
+ */
 export default function validateGreenhouseData(data: GreenhouseData) {
+    // Define the regular expression to validate the necessary fields
     let tupleRegex = "\\(\\s*\\d+(((\\s*,\\s*\\d+(\\.\\d+)?)?)|(\\s*,\\s*))\\s*\\)";
     let fullRegex = "\\s*\\[\\s*(" + tupleRegex + "\\s*,\\s*)*" + tupleRegex + "\\s*\\]\\s*";
     let validationRegex = new RegExp(fullRegex);
+
     let fieldsToValidate = [
         "GWHArt",
         "GWHAlter",
@@ -37,6 +50,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
         "JungpflanzenZukauf"
     ]
 
+    // Check every necessary field for a valid value
     for (const field of fieldsToValidate) {
         if (!(field in data)) {
             console.warn("INTERNAL-ISSUE: GreenhouseData has no field'" + field + "'! Please update 'fieldsToValidate' ...");

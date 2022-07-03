@@ -10,7 +10,15 @@ ChartJS.register(
     Legend,
 );
 
-// TODO implement
+/**
+ * Returns a ("classical") Benchmark plot for the given data.
+ *
+ * @todo implement
+ *
+ * @param {string} title The title of the plot
+ * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
+ * @return JSX.Element
+ */
 export function BenchmarkScatter(title: string, data: BenchmarkPlot) {
     return (
         <div className="Plot">
@@ -20,6 +28,15 @@ export function BenchmarkScatter(title: string, data: BenchmarkPlot) {
     );
 }
 
+/**
+ * Returns a ("Vierfelder"-)Benchmark plot for the given data.
+ *
+ * @todo implement
+ *
+ * @param {string} title The title of the plot
+ * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
+ * @return JSX.Element
+ */
 export function QuadrantPlot(title: string, data: BenchmarkPlot) {
     return (
         <div className="Plot">

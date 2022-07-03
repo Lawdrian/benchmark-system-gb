@@ -1,3 +1,12 @@
+/**
+ * #############################################################################
+ * PageConfig.ts: Defines and configures pages for the complete application
+ *
+ *     This file mainly consists of two parts which get exported:
+ *       - pageConfig: Provides constants shared by {@link AppLayout} and pages
+ *       - pageDefinitions: Provides the necessary data to build every page of the app
+ * #############################################################################
+ */
 import React from 'react';
 import SpeedIcon from '@mui/icons-material/Speed';
 import InvertColorsIcon from '@mui/icons-material/InvertColors';

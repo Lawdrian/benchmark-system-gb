@@ -1,8 +1,8 @@
-import React, { FunctionComponent, ReactNode } from "react";
-import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@emotion/react";
+import React, {ReactNode} from "react";
+import {createTheme} from "@mui/material/styles";
+import {ThemeProvider} from "@emotion/react";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Box } from "@mui/material";
+import {Box} from "@mui/material";
 
 type BasicThemeProps = {
     children?: ReactNode
@@ -10,7 +10,7 @@ type BasicThemeProps = {
 
 const AppBasicTheme = ({ children }: BasicThemeProps) => {
     return (
-        <ThemeProvider theme={createTheme()}>
+        <ThemeProvider theme={createTheme({palette: {primary: {main: '#7ab800', contrastText: '#f3f3f3'}}})}>
             <Box id="app-layout" sx={{ display: 'flex' }}>
                 <CssBaseline />
                 { children }

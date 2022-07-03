@@ -10,8 +10,20 @@ const mapStateToProps = (state: RootState) => ({plotData: state.co2.plotData});
 const connector = connect(mapStateToProps, {loadCO2Footprint});
 type ReduxProps = ConnectedProps<typeof connector>
 
+/**
+ * @type C02FootprintProps
+ */
 type C02FootprintProps = ReduxProps & {}
 
+/**
+ * Returns the page showing a Dropdown menu for selecting the greenhouse to
+ * show the plots for as well as the CO2-Footprint plots.
+ *
+ * @param {C02FootprintProps}
+ * Divided into plotData (data of multiple greenhouses to be shown in the plot) and
+ * loadCO2Footprint (a function to fetch the necessary data from the backend)
+ * @return JSX.Element
+ */
 const PageC02Footprint = ({plotData, loadCO2Footprint}: C02FootprintProps) => {
     // Load CO2-Footprint data
     React.useEffect(() => {

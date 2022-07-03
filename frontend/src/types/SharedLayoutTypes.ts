@@ -1,5 +1,11 @@
-import { MouseEventHandler, ReactNode } from "react";
-import { Section } from "./PageConfigTypes";
+/**
+ * #############################################################################
+ * SharedLayoutTypes.ts: Defines types, which are shared across multiple
+ *                        layout components
+ * #############################################################################
+ */
+import {MouseEventHandler, ReactNode} from "react";
+import {Section} from "./PageConfigTypes";
 
 export type DrawerListItem = {
     text: string

@@ -2,27 +2,52 @@ import React, {ReactNode} from "react";
 import {Menu, MenuItem} from "@mui/material";
 import Button from "@mui/material/Button";
 
+/**
+ * @type GreenhouseMenuProps
+ *
+ * @property {string[]} greenhouses The greenhouses shown in the menu.
+ * @property {function} setIndexCB A function to set the index of the active menu entry.
+ * @property {number} currentIndex The index of the currently selected menu entry.
+ */
 type GreenhouseMenuProps = {
     greenhouses: string[]
     setIndexCB: (idx: number) => void
     currentIndex: number
 }
 
+/**
+ * Defines a React component representing a Drop-down menu for the given greenhouses.
+ *
+ * @param GreenhouseMenuProps
+ * @return JSX.Element
+ */
 export const GreenhouseMenu = ({greenhouses, setIndexCB, currentIndex}: GreenhouseMenuProps) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
 
+    /**
+     * handles the clicking onto the "menu button"
+     *
+     * @param {React.MouseEvent<HTMLButtonElement>} event event created by the click
+     */
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+        setAnchorEl(event.currentTarget); // show Dropdown
     };
 
+    /**
+     * handles the closing (clicking onto) a menu element
+     *
+     * @param event event created by the click
+     */
     const handleClose = (event: any) => {
-        setAnchorEl(null);
+        setAnchorEl(null); // hide Dropdown
         let idx = event.target.value;
-        if (idx !== undefined) { // checks if user clicked on valid menu entry
+        // check if user clicked on valid menu entry => if so, set currentIndex
+        if (idx !== undefined) {
             setIndexCB(idx);
         }
     }
+
     const menuItems = greenhouses
         .map<ReactNode>(greenhouse => {
             return (
@@ -31,6 +56,7 @@ export const GreenhouseMenu = ({greenhouses, setIndexCB, currentIndex}: Greenhou
                 </MenuItem>
             );
         })
+
     return (
         <div>Gewächshaus auswählen:
             <Button
