@@ -1,3 +1,25 @@
+"""
+    This module contains all models that define the structure of the database.
+
+  Every class represents a table inside the database structure. It has to
+  inherit from models.Model so the django framework can interpret and generate
+  the table. Inside each class are the columns that will be added to the table.
+  For detailed information about the databases structure have a look at the
+  documentation.
+  
+  Models:
+      Calculations
+      Results
+      Measurements
+      Measures
+      GreenhouseData
+      Greenhouses
+      OptionGroups
+      Options
+      Selections
+"""
+
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
@@ -64,7 +86,7 @@ class GreenhouseData(models.Model):
                                       on_delete=models.SET_NULL)
 
     date = models.DateField()
-    date_of_input = models.DateTimeField(default=timezone.now())
+    date_of_input = models.DateTimeField(auto_now_add=True)
 
 
 

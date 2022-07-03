@@ -1,3 +1,19 @@
+"""
+    This module defines all the backends' API-endpoints (views) that can be 
+    called from the website.
+    
+    A view receives requests from the frontend, handles the overall processing
+    like requesting more data or storing data in the database and sends 
+    responses towards the frontend which can contain requested data.
+    
+  API-Views:
+      GetGreenhouseData
+      GetCalculatedGreenhouseData
+      GetOptionGroupValues
+      CreateGreenhouseData
+"""
+
+
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -134,7 +150,7 @@ class GetGreenhouseData(APIView):
 
 
 class GetCalculatedGreenhouseData(APIView):
-    """API endpoint for retrieving the calculated GreenhouseData
+    """API endpoint for retrieving calculated GreenhouseData out of the results table
     """
 
     permission_classes = [
@@ -154,9 +170,9 @@ class GetCalculatedGreenhouseData(APIView):
         Returns:
             json: The calculated data requested
         """
+        response_data = []
 
         # read url query parameters
-        # user_id needs to match a user id in the GreenhouseData table, or anonymous user will be assumed
         user_id = request.GET.get('userId', None)
         # data_type is needed for selecting the correct data to return
         data_type = request.GET.get('dataType', None)
@@ -165,7 +181,7 @@ class GetCalculatedGreenhouseData(APIView):
             return Response({'Bad Request': 'Query Parameter missing'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        # map the requested datatype to the correct column names in the GreenhouseData table
+        # map the requested datatype to the correct calculation_names in the calculations table
         map_data_type = {
             'co2FootprintData': (
                 'gwh_konstruktion', 'energietraeger', 'strom', 'co2_zudosierung', 'duengemittel', 'psm_insgesamt', 'verbrauchsmaterialien', 'jungpflanzen', 'verpackung', 'transport'),
@@ -177,6 +193,7 @@ class GetCalculatedGreenhouseData(APIView):
             return Response({'Bad Request': 'Wrong dataType'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+        # Retrieve all calculations and the specific calculation_ids for the requested calculation_names
         calculations = Calculations.objects.in_bulk(
             field_name='calculation_name')
         calculation_ids = [calculations[name] for name in calculation_names]
@@ -186,18 +203,21 @@ class GetCalculatedGreenhouseData(APIView):
             return Response({'Bad Request': 'This user has no greenhouse'},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        response_data = []
+        # Iterate through every greenhouse of the user, retrieve the calculation results
+        # and store them in a defined dictionary/list structure
         for greenhouse in greenhouses:
 
             temp_greenhouse_dict = dict()
             temp_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
             temp_data_set_list = []
+
             greenhouse_data = GreenhouseData.objects.filter(
                 greenhouse_id=greenhouse.id)
 
             if not greenhouse_data.exists():
                 return Response({'Bad Request': 'A greenhouse has no greenhouse data'},
                                 status=status.HTTP_400_BAD_REQUEST)
+            # Retrieve the result_values for every data_set of a greenhouse and store them in the temp_data_set_list
             try:
                 for data_set in greenhouse_data:
                     temp_data_dict = dict()
@@ -221,8 +241,9 @@ class GetCalculatedGreenhouseData(APIView):
 
 
 class GetOptionGroupValues(APIView):
-    """API endpoint for retrieving the fixed attribute values that a user can select when entering his greenhoues data.
-       For example Bedachungsmaterial: ED | DG
+    """API endpoint for retrieving the dropdown values that a user can select
+    when entering his data for all categorical measurement variables.
+    For example: "Energietraeger": Erdgas | Heizoel | ...
     """
 
     permission_classes = [
@@ -230,13 +251,14 @@ class GetOptionGroupValues(APIView):
     ]
 
     def get(self, request, format=None):
-        """Get request that returns the fixed attribute values for the dropdown selection inputs.
+        """Get request that returns the dropdown values for all categorical
+        measurement variables.
 
         Args:
-            request : Request parameter
+            request : No query parameters needed
 
         Returns:
-            json: The names for the attributes
+            json: dropdown values for all categorical measurement variables
         """
         data = dict()
         option_groups = OptionGroups.objects.all()
