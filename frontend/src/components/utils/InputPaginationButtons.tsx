@@ -2,7 +2,6 @@ import React from 'react'
 import Button from "@mui/material/Button";
 import {NavigateBefore, NavigateNext} from "@mui/icons-material";
 import {Box} from "@mui/material";
-import { useNavigate } from "react-router-dom";
 
 export type InputPaginationButtonsProps = {
     hasPrevious: () => boolean
@@ -22,7 +21,6 @@ export type InputPaginationButtonsProps = {
  * @return {ReactNode} 2 Buttons to change the current tab. On the last page the next button changes to a submission button.
  */
 const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
-    let navigate = useNavigate();
 
     return (
             <Box sx={{display:"flex", justifyContent:"center"}} >
@@ -52,16 +50,10 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                         size="large"
                         disabled={false}
                         endIcon={<NavigateNext/>}
-                        onClick={() =>
-                            {
-                                navigate("../co2-footprint")
-                                props.submit()
-                            }
-                        }
+                        onClick={() => props.submit()}
                     >
                         Abschicken
                     </Button>
-
                     }
                 </>
             </Box>

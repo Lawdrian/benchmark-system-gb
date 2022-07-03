@@ -39,6 +39,7 @@ import CompanyInformationInput, {
 import {GreenhouseData} from "../../types/reduxTypes";
 import {SelectionValue} from "../utils/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
+import {useNavigate} from "react-router-dom";
 
 const mapStateToProps = (state: RootState) => ({
   submission: state.submission,
@@ -294,7 +295,11 @@ const PageInputData = (props: InputDataProps) => {
         hasPrevious: () => tab > 0,
         next: () => setTab(tab + 1),
         previous: () => setTab(tab - 1),
-        submit: () => props.submitGreenhouseData(processDataToSubmit(dataToSubmit))
+        submit: () => {
+            props.submitGreenhouseData(processDataToSubmit(dataToSubmit), () => {
+                useNavigate()("../co2-footprint")
+            })
+        }
     }
 
     //These functions are passed down to the subpages so that they can update the main state with their state
