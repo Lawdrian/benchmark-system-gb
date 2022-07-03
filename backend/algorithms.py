@@ -1,13 +1,20 @@
-"""This module provides algorithms for calculating footprints and benchmark.
+"""
+    This module provides algorithms for calculating footprints and benchmark.
 
-Leave one blank line.  The rest of this docstring should contain an
-overall description of the module or program.  Optionally, it may also
-contain a brief description of exported classes and functions and/or usage
-examples.
+  The main and only function right now is calc_co2_footprint(data) which 
+  calculates the co2-footprint for a greenhouse-dataset. Specifications of the 
+  structure for variable data can be found in views.py.
+  Other functions of this module should not be called directly.
+  
+  The general structure of this modules functions contains a main calculation
+  function that calls multiple other calculation functions which return their
+  respective value after evaluating the given data.
+  Then the main calculation function returns a dict of values.
+  Right now there is only dummy-data returned.
 
   Typical usage example:
 
-  co2_footprint = calc_co2_footprint()
+  co2_footprint = calc_co2_footprint(data)
 """
 
 import random

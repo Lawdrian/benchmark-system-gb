@@ -1,3 +1,17 @@
+"""
+    This module handles all requests and responses about getting weather-data
+    of a location.
+    
+    This module is currently not in use. It will be used at a later point
+    inside the calculation algorithms if an owner cannot provide weather-data.
+    
+    Exported functions:
+        postal_to_latlon(postal_code, country)
+        GetWeatherData(APIView)
+    
+"""
+
+
 from django.shortcuts import render
 import pandas as pd
 from rest_framework import status
