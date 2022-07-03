@@ -15,7 +15,7 @@ import {
  * @property {number} [id] - The option id from the database
  * @property {string} [values] - The option (display) value
  */
-type Option = {
+export type Option = {
     id: number
     values: string
 }
