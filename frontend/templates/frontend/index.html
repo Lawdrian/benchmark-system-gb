@@ -2,17 +2,24 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title> Projekt PROSIBUR </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Benchmark GB</title>
+        {% load static %}
+        {% csrf_token %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+        />
+        <link rel="stylesheet" type="text/css" href="{% static "css/default-styles.css" %}" />
+        <link rel="icon" type="image/x-icon" href="{% static "favicon.png" %}" />
     </head>
     <body>
         <div id="main">
             <div id="app">
-
+                <!-- react-application -->
             </div>
-            <div style="margin-left: auto; margin-right: auto; text-align: center">
-                <h1> Benchmark System GB </h1>
-                <p> Congratulations! You have set up the project successfully :) </p>
-            </div>
+            <script src="{% static "frontend/bundle.js" %}"> </script>
         </div>
     </body>
 </html>
