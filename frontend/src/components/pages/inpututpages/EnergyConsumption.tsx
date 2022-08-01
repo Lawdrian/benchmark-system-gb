@@ -39,10 +39,10 @@ export type EnergyConsumptionState = {
 }
 
 const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
-    const [energyConsumption, setEnergyConsumptionState] = useState<EnergyConsumptionState>(props.values)
+    const [energyConsumption, setEnergyConsumption] = useState<EnergyConsumptionState>(props.values)
 
-    const setEnergyConsumption = (energyConsumption: EnergyConsumptionState) => {
-        setEnergyConsumptionState(energyConsumption)
+    const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
+        setEnergyConsumption(energyConsumption)
         props.provideEnergyConsumption(energyConsumption)
     }
 
@@ -54,7 +54,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Energietraeger
         },
-        onValueChange: values => setEnergyConsumption({
+        onValueChange: values => setEnergyConsumptionState({
             ...energyConsumption,
             energietraeger: values.map(value => {
                 return {
@@ -70,7 +70,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Stromverbrauch für die Kulturfläch",
         textFieldProps: {
             value: energyConsumption.strom,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 strom: parseFloat(event.target.value)
             })
@@ -84,7 +84,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Stromherkunft
         },
-        onValueChange: values => setEnergyConsumption({
+        onValueChange: values => setEnergyConsumptionState({
             ...energyConsumption,
             stromherkunft: values.map(value => {
                 return {
@@ -100,7 +100,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Wird die Kultur belichtet?",
         radioGroupProps: {
             value: energyConsumption.zusatzbelichtung,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 zusatzbelichtung: parseFloat(event.target.value)
             })
@@ -117,7 +117,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Ist der Stromverbrauch der Belichtung im allgemeinen Stromverbrauch enthalten?",
         radioGroupProps: {
             value: energyConsumption.belichtungsstrom,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 belichtungsstrom: parseFloat(event.target.value)
             })
@@ -134,7 +134,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Anschlussleistung pro Lampe",
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnschlussleistung,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 belichtungsstromAnschlussleistung: parseFloat(event.target.value)
             })
@@ -146,7 +146,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Anzahl Lampen",
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnzLampen,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 belichtungsstromAnzLampen: parseFloat(event.target.value)
             })
@@ -158,7 +158,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Laufzeit pro Tag",
         textFieldProps: {
             value: energyConsumption.belichtungsstromLaufzeitTag,
-            onChange: event => setEnergyConsumption({
+            onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
                 belichtungsstromLaufzeitTag: parseFloat(event.target.value)
             })

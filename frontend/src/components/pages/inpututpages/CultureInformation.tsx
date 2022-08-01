@@ -43,10 +43,10 @@ export type CultureInformationState = {
 }
 
 const CultureInformationInput = (props: CultureInformationProps) => {
-    const [cultureInformation, setCultureInformationSate] = useState<CultureInformationState>(props.values)
+    const [cultureInformation, setCultureInformation] = useState<CultureInformationState>(props.values)
 
-    const setCultureInformation = (cultureInformation: CultureInformationState) => {
-        setCultureInformationSate(cultureInformation)
+    const setCultureInformationState = (cultureInformation: CultureInformationState) => {
+        setCultureInformation(cultureInformation)
         props.provideCultureInformation(cultureInformation)
     }
 
@@ -56,7 +56,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Welche Fruchtgrößen werden in dem betreffenden Gewächshaus erzielt?",
         selectProps: {
             value: cultureInformation.fruchtgewicht,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                 fruchtgewicht: parseFloat(event.target.value)
             }),
@@ -69,7 +69,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Auf welcher Fläche wird die genante Fruchtgröße in dem Gewächshaus kultiviert?",
         textFieldProps: {
             value: cultureInformation.kulturflaeche,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                 kulturflaeche: parseFloat(event.target.value)
             })
@@ -81,7 +81,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "In welcher Kalenderwoche ist der Kulturbeginn (aufstellen der Jungpflanzen)",
         textFieldProps: {
             value: cultureInformation.kulturBeginn,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                kulturBeginn: parseFloat(event.target.value)
             })
@@ -93,7 +93,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "In welcher Kalenderwoche wird zuletzt geerntet?",
         textFieldProps: {
             value: cultureInformation.kulturEnde,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                kulturEnde: parseFloat(event.target.value)
             })
@@ -105,7 +105,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Findet im selben Kulturjahr noch eine andere Nutzung des GWH außerhalb der gennanten Kulturdauer statt?",
         radioGroupProps: {
             value: cultureInformation.nebenkultur,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                 nebenkultur: parseFloat(event.target.value)
             })
@@ -122,7 +122,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Wie viele Kalenderwochen wird das GWH anderweitig verwendet?",
         textFieldProps: {
             value: cultureInformation.nebenkulturDauer,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                nebenkulturDauer: parseFloat(event.target.value)
             })
@@ -134,7 +134,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Wie viele Pflanzen pro Quadratmeter verwenden Sie?",
         textFieldProps: {
             value: cultureInformation.pflanzendichteAnzProm2,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                pflanzendichteAnzProm2: parseFloat(event.target.value)
             })
@@ -146,7 +146,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Wie groß ist der Abstand der Pflanzen in einer Reihe?",
         textFieldProps: {
             value: cultureInformation.pflanzendichteReihePflanzabstand,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                pflanzendichteReihePflanzabstand: parseFloat(event.target.value)
             })
@@ -158,7 +158,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Wie groß ist der Abstand zwischen den Pflanzenreihen?",
         textFieldProps: {
             value: cultureInformation.pflanzendichteReihenabstand,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                pflanzendichteReihenabstand: parseFloat(event.target.value)
             })
@@ -170,7 +170,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Geben Sie entweder die Anzahl der Pflanzen pro Quadratmeter ein, oder den Pflanzabstand in der Reihe, sowie den Reihenabstand:",
         radioGroupProps: {
             value: cultureInformation.pflanzendichte,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                 pflanzendichte: parseFloat(event.target.value)
             })
@@ -194,7 +194,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         label: "Wie groß ist der Ertrag pro Jahr?",
         textFieldProps: {
             value: cultureInformation.ertrag,
-            onChange: event => setCultureInformation({
+            onChange: event => setCultureInformationState({
                 ...cultureInformation,
                ertrag: parseFloat(event.target.value)
             })

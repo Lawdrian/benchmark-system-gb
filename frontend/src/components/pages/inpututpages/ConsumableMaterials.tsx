@@ -62,10 +62,10 @@ export type ConsumableMaterialsState = {
 }
 
 const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
-    const [consumableMaterials, setConsumableMaterialsState] = useState<ConsumableMaterialsState>(props.values)
+    const [consumableMaterials, setConsumableMaterials] = useState<ConsumableMaterialsState>(props.values)
 
-    const setConsumableMaterials = (consumableMaterials: ConsumableMaterialsState) => {
-        setConsumableMaterialsState(consumableMaterials)
+    const setConsumableMaterialsState = (consumableMaterials: ConsumableMaterialsState) => {
+        setConsumableMaterials(consumableMaterials)
         props.provideConsumables(consumableMaterials)
         console.log("Data: ", consumableMaterials)
     }
@@ -77,7 +77,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Verwenden Sie Growbags?",
         radioGroupProps: {
             value: consumableMaterials.growbags,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbags: parseFloat(event.target.value)
             })
@@ -94,7 +94,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Welches Volumen haben die verwendeten Bags? Sie können entweder direkt das Volumen angeben, die Länge oder die Pflanzen pro Bag?",
         textFieldProps: {
             value: consumableMaterials.growbagsVolumen,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsVolumen: parseFloat(event.target.value)
             })
@@ -106,7 +106,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie lang sind die Growbags, die Sie verwenden?",
         textFieldProps: {
             value: consumableMaterials.growbagsLaenge,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsLaenge: parseFloat(event.target.value)
             })
@@ -118,7 +118,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie viele Pflanzen verwenden Sie in einem Growbag?",
         textFieldProps: {
             value: consumableMaterials.growbagsPflanzenAnz,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsPflanzenAnz: parseFloat(event.target.value)
             })
@@ -132,7 +132,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Substrat
         },
-        onValueChange: values => setConsumableMaterials({
+        onValueChange: values => setConsumableMaterialsState({
             ...consumableMaterials,
             growbagsSubstrat: values.map(value => {
                 return {
@@ -148,7 +148,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Aus welchem Material sind die  Schnüre/Rankhilfen, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.schnurMaterial,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 schnurMaterial: parseFloat(event.target.value)
             }),
@@ -161,7 +161,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie lang sind die Schnüre/Rankhilfen je Trieb?",
         textFieldProps: {
             value: consumableMaterials.schnurLaenge,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 schnurLaenge: parseFloat(event.target.value)
             })
@@ -173,7 +173,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie lange werden diese wiederverwendet?",
         textFieldProps: {
             value: consumableMaterials.schnurWiederverwendung,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 schnurWiederverwendung: parseFloat(event.target.value)
             })
@@ -185,7 +185,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Aus welchem Material sind die Klipse, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.klipseMaterial,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 klipseMaterial: parseFloat(event.target.value)
             }),
@@ -198,7 +198,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Geben Sie entweder die Gesamtmenge pro Kulturdauer, oder die Anzahl pro Trieb und Kulturdauer an.",
         textFieldProps: {
             value: consumableMaterials.klipseGesamtmenge,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 klipseGesamtmenge: parseFloat(event.target.value)
             })
@@ -210,7 +210,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Geben Sie die Anzahl der Klipse pro Trieb an.",
         textFieldProps: {
             value: consumableMaterials.klipseAnzProTrieb,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 klipseAnzProTrieb: parseFloat(event.target.value)
             })
@@ -222,7 +222,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie lange werden diese wiederverwendet?",
         textFieldProps: {
             value: consumableMaterials.klipseWiederverwendung,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 klipseWiederverwendung: parseFloat(event.target.value)
             })
@@ -234,7 +234,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Aus welchem Material sind die Rispenbügel, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.rispenbuegelMaterial,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 rispenbuegelMaterial: parseFloat(event.target.value)
             }),
@@ -247,7 +247,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Geben Sie entweder die Gesamtmenge pro Kulturdauer, oder die Anzahl pro Trieb und Kulturdauer an.",
         textFieldProps: {
             value: consumableMaterials.rispenbuegelGesamtmenge,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 rispenbuegelGesamtmenge: parseFloat(event.target.value)
             })
@@ -259,7 +259,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Geben Sie die Anzahl der Rispenbügel pro Trieb an.",
         textFieldProps: {
             value: consumableMaterials.rispenbuegelAnzProTrieb,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 rispenbuegelAnzProTrieb: parseFloat(event.target.value)
             })
@@ -271,7 +271,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie lange werden diese wiederverwendet?",
         textFieldProps: {
             value: consumableMaterials.rispenbuegelWiederverwendung,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 rispenbuegelWiederverwendung: parseFloat(event.target.value)
             })
@@ -283,7 +283,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Welche Bewässerungsart verwenden Sie?",
         selectProps: {
             value: consumableMaterials.bewaesserArt,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 bewaesserArt: parseFloat(event.target.value)
             }),
@@ -296,7 +296,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Verwenden Sie Bodenfolien?",
         radioGroupProps: {
             value: consumableMaterials.bodenfolien,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 bodenfolien: parseFloat(event.target.value)
             })
@@ -313,7 +313,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wielange verbleiben die Bodenfolien im Gewächshaus?",
         textFieldProps: {
             value: consumableMaterials.bodenfolienVerwendungsdauer,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 bodenfolienVerwendungsdauer: parseFloat(event.target.value)
             })
@@ -327,7 +327,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         selectProps: {
             lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien
         },
-        onValueChange: values => setConsumableMaterials({
+        onValueChange: values => setConsumableMaterialsState({
             ...consumableMaterials,
             sonstVerbrauchsmaterialien: values.map(value => {
                 return {
@@ -344,7 +344,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Menge an verwendetem Plastik",
         textFieldProps: {
             value: consumableMaterials.plastikVerpackung,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 plastikVerpackung: parseFloat(event.target.value)
             })
@@ -356,7 +356,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Menge an verwendetem Karton",
         textFieldProps: {
             value: consumableMaterials.kartonVerpackung,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 kartonVerpackung: parseFloat(event.target.value)
             })
@@ -368,7 +368,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie häufig wird pro Woche Ware ausgeliefert?",
         textFieldProps: {
             value: consumableMaterials.transportFrequenz,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 transportFrequenz: parseFloat(event.target.value)
             })
@@ -380,7 +380,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Welche Strecke wird dabei durchschnittlich gefahren? (Hin- & Rückfahrt)?",
         textFieldProps: {
             value: consumableMaterials.transportDistanz,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 transportDistanz: parseFloat(event.target.value)
             })
@@ -392,7 +392,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Werden die Junpflanzen zugekauft?",
         radioGroupProps: {
             value: consumableMaterials.jungpflanzenEinkauf,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 jungpflanzenEinkauf: parseFloat(event.target.value)
             })
@@ -409,7 +409,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         label: "Wie weit werden die Jungpflanzen zu Ihnen transportiert?",
         textFieldProps: {
             value: consumableMaterials.jungpflanzenDistanz,
-            onChange: event => setConsumableMaterials({
+            onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 jungpflanzenDistanz: parseFloat(event.target.value)
             })
