@@ -39,10 +39,10 @@ export type ConsumableItemsState = {
 }
 
 const ConsumableItemsInput = (props: ConsumableItemsProps) => {
-    const [consumableItems, setConsumableItemsState] = useState<ConsumableItemsState>(props.values)
+    const [consumableItems, setConsumableItems] = useState<ConsumableItemsState>(props.values)
 
-    const setConsumableItems = (consumableItems: ConsumableItemsState) => {
-        setConsumableItemsState(consumableItems)
+    const setConsumableItemsState = (consumableItems: ConsumableItemsState) => {
+        setConsumableItems(consumableItems)
         props.provideItems(consumableItems)
     }
 
@@ -52,7 +52,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         label: "Wieviel CO2 wird in der Kulturdauer zudosiert?",
         textFieldProps: {
             value: consumableItems.co2Zudosierung,
-            onChange: event => setConsumableItems({
+            onChange: event => setConsumableItemsState({
                 ...consumableItems,
                 co2Zudosierung: parseFloat(event.target.value)
             })
@@ -64,7 +64,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         label: "Herkunft des CO2 auswählen.",
         selectProps: {
             value: consumableItems.co2Herkunft,
-            onChange: event => setConsumableItems({
+            onChange: event => setConsumableItemsState({
                 ...consumableItems,
                 co2Herkunft: parseFloat(event.target.value)
             }),
@@ -79,7 +79,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
         },
-        onValueChange: values => setConsumableItems({
+        onValueChange: values => setConsumableItemsState({
             ...consumableItems,
             duengemittelSimple: values.map(value => {
                 return {
@@ -98,7 +98,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         },
         textFieldProps: {
         },
-        onValueChange: values => setConsumableItems({
+        onValueChange: values => setConsumableItemsState({
             ...consumableItems,
             duengemittelDetail: values.map(value => {
                 return {
@@ -114,7 +114,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         label: "Wieviele Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Fungizide und geben Sie diese in Kilogramm an.",
         textFieldProps: {
             value: consumableItems.fungizide,
-            onChange: event => setConsumableItems({
+            onChange: event => setConsumableItemsState({
                 ...consumableItems,
                 fungizide: parseFloat(event.target.value)
             })
@@ -126,7 +126,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         label: "Wieviele Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Mittel und geben Sie diese in Kilogramm an.",
         textFieldProps: {
             value: consumableItems.insektizide,
-            onChange: event => setConsumableItems({
+            onChange: event => setConsumableItemsState({
                 ...consumableItems,
                 insektizide: parseFloat(event.target.value)
             })
@@ -142,7 +142,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Nuetzlinge
         },
-        onValueChange: values => setConsumableItems({
+        onValueChange: values => setConsumableItemsState({
             ...consumableItems,
             nuetzlinge: values.map(value => {
                 return {

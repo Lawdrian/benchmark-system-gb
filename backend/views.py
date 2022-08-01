@@ -221,7 +221,7 @@ class GetCalculatedGreenhouseData(APIView):
             try:
                 for data_set in greenhouse_data:
                     temp_data_dict = dict()
-                    temp_data_dict['label'] = data_set.date_of_input
+                    temp_data_dict['label'] = data_set.date
 
                     for i, calculation_id in enumerate(calculation_ids):
                         value = Results.objects \
