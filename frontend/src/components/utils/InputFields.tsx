@@ -15,6 +15,8 @@ import Typography from "@mui/material/Typography";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
 import React, {ReactNode, useState} from "react";
 import DynamicSelect, {DynamicSelectProps} from "./DynamicSelect";
+import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
+import {DesktopDatePicker, DesktopDatePickerProps, LocalizationProvider} from '@mui/x-date-pickers';
 import {
     FormControlLabel,
     InputLabel,
@@ -77,10 +79,10 @@ export const MeasureInputField = (props: MeasureInputProps) => {
         </BaseInputField>
     )
 }
-/*
+
     //Todo: Change input Field for date to DatePicker
 export type DateInputProps = InputFieldProps & {
-    dateProps: DatePickerProps<any, any>
+    datePickerProps: DesktopDatePickerProps<any, any>
 }
 
 export const DateInputField = (props: DateInputProps) => {
@@ -88,14 +90,17 @@ export const DateInputField = (props: DateInputProps) => {
     return(
         <BaseInputField title={props.title} label={props.label}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker inputFormat="yyyy-MM-dd" {...props.dateProps}/>
+                <DesktopDatePicker
+                    { ...props.datePickerProps }
+                    inputFormat="dd/MM/yyyy"
+                    renderInput={(params) => <TextField {...params} />}
+                />
             </LocalizationProvider>
         </BaseInputField>
     )
 
 }
 
-*/
 
 // SelectioBaseInput component
 type SelectionBaseInputProps = InputFieldProps & {

@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import {
+    DateInputField,
+    DateInputProps,
     MeasureInputField,
     MeasureInputProps,
     SelectionInputField,
@@ -10,10 +12,11 @@ import {
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {FormControlLabel, Radio} from "@mui/material";
+import {FormControlLabel, Radio, TextField} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import lookup from "../../../reducers/lookup";
+//import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
@@ -30,7 +33,7 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
 
 export type CompanyInformationState = {
     gewaechshausName: string | null
-    datum: string | null
+    datum: Date | null
     plz: number | null
     gwhArt: number | null
     gwhAlter: number | null
@@ -57,6 +60,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
+            //console.log("Datum: " + typeof(companyInformation.datum) + companyInformation.datum + format(companyInformation.datum?? new Date(), 'dd.MM.yyyy'))
     }
 
     // Properties of the input fields
@@ -74,18 +78,16 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const datumProps: MeasureInputProps = {
+    const datumProps: DateInputProps = {
         title: "Datum",
-        label: "Das heutige Datum",
-        textFieldProps: {
+        label: "Von wann sind diese Daten?",
+        datePickerProps: {
             value: companyInformation.datum,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                datum: event.target.value
+                datum: event
             }),
-            type:"text",
-            defaultValue: new Date().toISOString().substring(0,10),
-            placeholder:"Datum"
+            renderInput: () => <TextField/>
         }
     }
 
@@ -317,7 +319,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         <Grid container xs={12} spacing={8}>
             <Grid item container xs={12}  spacing={4}>
                 <MeasureInputField {...gewaechshausNameProps} />
-                <MeasureInputField {...datumProps} />
+                <DateInputField {...datumProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...gwhArtProps} />
