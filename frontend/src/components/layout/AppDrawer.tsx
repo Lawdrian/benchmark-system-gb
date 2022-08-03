@@ -17,7 +17,7 @@ type DrawerProps = SharedDrawerProps & {
 const generateNodes = (listItems: DrawerListItem[]): ReactNode => {
     return listItems.map<ReactNode>(listItem => {
        return (
-           <ListItemButton to={listItem.url} component={Link}>
+           <ListItemButton key={listItem.url} to={listItem.url} component={Link}>
                <ListItemIcon>
                    { listItem.icon }
                </ListItemIcon>

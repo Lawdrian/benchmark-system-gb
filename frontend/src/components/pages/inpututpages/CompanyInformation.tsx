@@ -16,7 +16,7 @@ import {FormControlLabel, Radio, TextField} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import lookup from "../../../reducers/lookup";
-//import {format} from "date-fns";
+import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
@@ -57,10 +57,9 @@ export type CompanyInformationState = {
 const CompanyInformationInput = (props: CompanyInformationProps) => {
     const [companyInformation, setCompanyInformation] = useState<CompanyInformationState>(props.values)
 
-        const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
+    const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
-            //console.log("Datum: " + typeof(companyInformation.datum) + companyInformation.datum + format(companyInformation.datum?? new Date(), 'dd.MM.yyyy'))
     }
 
     // Properties of the input fields
@@ -74,7 +73,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 gewaechshausName: event.target.value
             }),
             type:"text",
-            placeholder:"Name"
+            placeholder:"Name",
+            error: companyInformation.gewaechshausName==="1"
         }
     }
 
@@ -186,10 +186,10 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie alt ist der Energieschirm?",
         textFieldProps: {
             value: companyInformation.alterEnergieschirm,
-            onChange: event => setCompanyInformationState({
+            onChange: event => {setCompanyInformationState({
                 ...companyInformation,
                 alterEnergieschirm: parseFloat(event.target.value)
-            })
+            }),  console.log(companyInformation.alterEnergieschirm)}
         }
     }
 

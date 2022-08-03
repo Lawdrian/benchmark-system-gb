@@ -40,7 +40,7 @@ import {GreenhouseData} from "../../types/reduxTypes";
 import {SelectionValue} from "../utils/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
-//import {format} from "date-fns";
+import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
   submission: state.submission,
@@ -111,7 +111,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
     //submittionData maps the data from the dataToSubmit state so it can be used in the post request
     const submissionData: GreenhouseData = {
         greenhouse_name: companyInformation?.gewaechshausName ? companyInformation.gewaechshausName : "Standardhaus",
-        date: new Date().toISOString().substring(0, 10),
+        date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
         PLZ: companyInformation?.plz ? companyInformation.plz : 0,
         AlterEnergieschirm: companyInformation?.alterEnergieschirm ? companyInformation.alterEnergieschirm : 0,
         Stehwandhoehe: companyInformation?.stehwandhoehe ? companyInformation.stehwandhoehe : 0,
@@ -194,6 +194,8 @@ const PageInputData = (props: InputDataProps) => {
     useEffect(() => {
         props.loadLookupValues()
     }, [])
+
+    const navigate = useNavigate()
 
     const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>({
         companyInformation: {
@@ -298,7 +300,7 @@ const PageInputData = (props: InputDataProps) => {
         previous: () => setTab(tab - 1),
         submit: () => {
             props.submitGreenhouseData(processDataToSubmit(dataToSubmit), () => {
-                useNavigate()("../co2-footprint")
+                navigate("../co2-footprint")
             })
         }
     }

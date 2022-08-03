@@ -58,6 +58,7 @@ const generateIndependentPageRoutes = (pageDef: Page[]): ReactNode => {
             .map<ReactNode>(page => {
                 return (
                     <Route
+                        key={page.urlSnippet}
                         path={page.urlSnippet}
                         element={
                             <AppBasicTheme>
@@ -76,7 +77,7 @@ const generateLayoutedPageRoutes = (pageDef: Page[], loginPageUrl: string): Reac
             .filter(page => page.includeInLayout)
             .map<ReactNode>(page => {
                 return (
-                    <Route path={page.urlSnippet} element={
+                    <Route key={page.urlSnippet} path={page.urlSnippet} element={
                         <PageHelper
                             pageTitle={page.headerTitle ? page.headerTitle : 'header title undefined'}
                             isPrivate={true}
