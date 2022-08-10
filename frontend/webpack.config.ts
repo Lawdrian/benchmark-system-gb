@@ -36,7 +36,7 @@ const config: Configuration = {
     },
     plugins: [
         new DefinePlugin({
-            'process.env.NODE_ENV' : JSON.stringify('development')
+            'process.env.NODE_ENV' : JSON.stringify('production')
         }),
         new ForkTsCheckerWebpackPlugin({
           async: false

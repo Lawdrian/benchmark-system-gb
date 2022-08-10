@@ -186,10 +186,10 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie alt ist der Energieschirm?",
         textFieldProps: {
             value: companyInformation.alterEnergieschirm,
-            onChange: event => {setCompanyInformationState({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 alterEnergieschirm: parseFloat(event.target.value)
-            }),  console.log(companyInformation.alterEnergieschirm)}
+            })
         }
     }
 

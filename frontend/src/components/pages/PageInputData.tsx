@@ -107,53 +107,60 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         consumableMaterials
     } = dataToSubmit
 
+
+    const defaultValue = 0
+    const defaultOption = "[(0,)]"
+
     // TODO: Implement a proper default value concept. Maybe get default value object from server?
     //submittionData maps the data from the dataToSubmit state so it can be used in the post request
-    const submissionData: GreenhouseData = {
-        greenhouse_name: companyInformation?.gewaechshausName ? companyInformation.gewaechshausName : "Standardhaus",
+    let submissionData: GreenhouseData = {
+        greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
-        PLZ: companyInformation?.plz ? companyInformation.plz : 0,
-        AlterEnergieschirm: companyInformation?.alterEnergieschirm ? companyInformation.alterEnergieschirm : 0,
-        Stehwandhoehe: companyInformation?.stehwandhoehe ? companyInformation.stehwandhoehe : 0,
-        Laenge: companyInformation?.laenge ? companyInformation.laenge : 0,
-        Breite: companyInformation?.breite ? companyInformation.breite : 0,
-        Kappenbreite: companyInformation?.knappenbreite ? companyInformation.knappenbreite : 0,
-        "Scheibenlaenge(Bedachung)": companyInformation?.scheibenlaenge ? companyInformation.scheibenlaenge : 0,
-        AlterKultursystem: companyInformation?.alterKultursystem ? companyInformation.alterKultursystem : 0,
-        Reihenabstand: companyInformation?.reihenabstand ? companyInformation.reihenabstand : 0,
-        Kulturflaeche: cultureInformation?.kulturflaeche ? cultureInformation.kulturflaeche : 0,
-        KulturBeginn: cultureInformation?.kulturBeginn ? cultureInformation.kulturBeginn : 1,
-        KulturEnde: cultureInformation?.kulturEnde ? cultureInformation.kulturEnde : 1,
-        Ertrag: cultureInformation?.ertrag ? cultureInformation.ertrag : 0,
-        Pflanzdichte: cultureInformation?.pflanzendichte ? cultureInformation.pflanzendichte : 0,
-        MittlereSolltemperaturTag: cultureManagement?.mittlereSolltemperaturTag ? cultureManagement.mittlereSolltemperaturTag : 0,
-        MittlereSolltemperaturNacht: cultureManagement?.mittlereSolltemperaturNacht ? cultureManagement.mittlereSolltemperaturNacht : 0,
-        KulturmassnahmeAusgeizen: cultureManagement?.kulturmassnahmeAusgeizen ? cultureManagement.kulturmassnahmeAusgeizen : 0,
-        KulturmassnahmeAusblattenAnzahlMonat: cultureManagement?.kulturmassnahmeAusblattenAnzahlMonat ? cultureManagement.kulturmassnahmeAusblattenAnzahlMonat : 0,
-        KulturmassnahmeAblassen: cultureManagement?.kulturmassnahmeAblassen ? cultureManagement.kulturmassnahmeAblassen : 0,
-        Strom: energyConsumption?.strom ? energyConsumption.strom : 0,
-        StromverbrauchBelichtungAnschlussleistung: energyConsumption?.belichtungsstromAnschlussleistung ? energyConsumption.belichtungsstromAnschlussleistung : 0,
-        StromverbrauchBelichtungAnzahlLampen: energyConsumption?.belichtungsstromAnzLampen ? energyConsumption.belichtungsstromAnzLampen : 0,
-        StromverbrauchBelichtungLaufzeitTag: energyConsumption?.belichtungsstromLaufzeitTag ? energyConsumption.belichtungsstromLaufzeitTag : 0,
-        "CO2-Zudosierung": consumableItems?.co2Zudosierung ? consumableItems.co2Zudosierung : 0,
-        Fungizide: consumableItems?.fungizide ? consumableItems.fungizide : 0,
-        Insektizide: consumableItems?.insektizide ? consumableItems.insektizide : 0,
-        VolumenGrowbags: consumableMaterials?.growbagsVolumen ? consumableMaterials.growbagsVolumen : 0,
-        LaengeGrowbags: consumableMaterials?.growbagsLaenge ? consumableMaterials.growbagsLaenge : 0,
-        PflanzenproBag: consumableMaterials?.growbagsPflanzenAnz ? consumableMaterials.growbagsPflanzenAnz : 0,
-        "SchnuereRankhilfen:Laenge": consumableMaterials?.schnurLaenge ? consumableMaterials.schnurLaenge: 0,
-        "SchnuereRankhilfen:Wiederverwendung": consumableMaterials?.schnurWiederverwendung ? consumableMaterials.schnurWiederverwendung : 0,
-        "Klipse:Menge": consumableMaterials?.klipseGesamtmenge ? consumableMaterials.klipseGesamtmenge : 0,
-        "Klipse:Wiederverwendung": consumableMaterials?.klipseWiederverwendung ? consumableMaterials.klipseWiederverwendung : 0,
-        "Rispenbuegel:Menge": consumableMaterials?.rispenbuegelGesamtmenge ? consumableMaterials.rispenbuegelGesamtmenge : 0,
-        "Rispenbuegel:Wiederverwendung": consumableMaterials?.rispenbuegelWiederverwendung ? consumableMaterials.rispenbuegelWiederverwendung : 0,
+        PLZ: companyInformation?.plz ?? defaultValue,
+        AlterEnergieschirm: companyInformation?.alterEnergieschirm ?? defaultValue,
+        Stehwandhoehe: companyInformation?.stehwandhoehe ?? defaultValue,
+        Laenge: companyInformation?.laenge ?? defaultValue,
+        Breite: companyInformation?.breite ?? defaultValue,
+        Kappenbreite: companyInformation?.knappenbreite ?? defaultValue,
+        "Scheibenlaenge(Bedachung)": companyInformation?.scheibenlaenge ?? defaultValue,
+        AlterKultursystem: companyInformation?.alterKultursystem ?? defaultValue,
+        Reihenabstand: companyInformation?.reihenabstand ?? defaultValue,
+        Kulturflaeche: cultureInformation?.kulturflaeche ?? defaultValue,
+        KulturBeginn: cultureInformation?.kulturBeginn ?? defaultValue,
+        KulturEnde: cultureInformation?.kulturEnde ?? defaultValue,
+        Ertrag: cultureInformation?.ertrag ?? defaultValue,
+        Pflanzdichte: cultureInformation?.pflanzendichte ?? defaultValue,
+        Nebenkulturdauer: cultureInformation?.nebenkulturDauer ?? defaultValue,
+        MittlereSolltemperaturTag: cultureManagement?.mittlereSolltemperaturTag ?? defaultValue,
+        MittlereSolltemperaturNacht: cultureManagement?.mittlereSolltemperaturNacht ?? defaultValue,
+        KulturmassnahmeAusgeizen: cultureManagement?.kulturmassnahmeAusgeizen ?? defaultValue,
+        KulturmassnahmeAusblattenAnzahlMonat: cultureManagement?.kulturmassnahmeAusblattenAnzahlMonat ?? defaultValue,
+        KulturmassnahmeAblassen: cultureManagement?.kulturmassnahmeAblassen ?? defaultValue,
+        Strom: energyConsumption?.strom ?? defaultValue,
+        StromverbrauchBelichtungAnschlussleistung: energyConsumption?.belichtungsstromAnschlussleistung ?? defaultValue,
+        StromverbrauchBelichtungAnzahlLampen: energyConsumption?.belichtungsstromAnzLampen ?? defaultValue,
+        StromverbrauchBelichtungLaufzeitTag: energyConsumption?.belichtungsstromLaufzeitTag ?? defaultValue,
+        "CO2-Zudosierung": consumableItems?.co2Zudosierung ?? defaultValue,
+        Fungizide: consumableItems?.fungizide ?? defaultValue,
+        Insektizide: consumableItems?.insektizide ?? defaultValue,
+        VolumenGrowbags: consumableMaterials?.growbagsVolumen ?? defaultValue,
+        LaengeGrowbags: consumableMaterials?.growbagsLaenge ?? defaultValue,
+        PflanzenproBag: consumableMaterials?.growbagsPflanzenAnz ?? defaultValue,
+        "SchnuereRankhilfen:Laenge": consumableMaterials?.schnurLaenge ?? defaultValue,
+        "SchnuereRankhilfen:Wiederverwendung": consumableMaterials?.schnurWiederverwendung ?? 0,
+        "Klipse:Menge": consumableMaterials?.klipseGesamtmenge ?? defaultValue,
+        "Klipse:Wiederverwendung": consumableMaterials?.klipseWiederverwendung ?? defaultValue,
+        "Rispenbuegel:Menge": consumableMaterials?.rispenbuegelGesamtmenge ?? defaultValue,
+        "Rispenbuegel:Wiederverwendung": consumableMaterials?.rispenbuegelWiederverwendung ?? defaultValue,
         "SonstigeVerbrauchsmaterialien:Wiederverwendung":
             consumableMaterials?.sonstVerbrauchsmaterialien && consumableMaterials.sonstVerbrauchsmaterialien.length ?
-                (consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue ? consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue : 0) : 0,
-        "Verpackungsmaterial:Karton": consumableMaterials?.kartonVerpackung ? consumableMaterials.kartonVerpackung : 0,
-        "Verpackungsmaterial:Plastik": consumableMaterials?.plastikVerpackung ? consumableMaterials.plastikVerpackung : 0,
-        "TransportderWare:Auslieferungen": consumableMaterials?.transportFrequenz ? consumableMaterials.transportFrequenz : 0,
-        "TransportderWare:Distanz": consumableMaterials?.transportDistanz ? consumableMaterials.transportDistanz : 0,
+                (consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue ? consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue : defaultValue) : defaultValue,
+        BodenfolienVerwendungsdauer: consumableMaterials?.bodenfolienVerwendungsdauer ?? defaultValue,
+        "Verpackungsmaterial:Karton": consumableMaterials?.kartonVerpackung ?? defaultValue,
+        "Verpackungsmaterial:Plastik": consumableMaterials?.plastikVerpackung ?? defaultValue,
+        "TransportderWare:Auslieferungen": consumableMaterials?.transportFrequenz ?? defaultValue,
+        "TransportderWare:Distanz": consumableMaterials?.transportDistanz ?? defaultValue,
+        JungpflanzenDistanz: consumableMaterials?.jungpflanzenDistanz ?? defaultValue,
         GWHArt: companyInformation?.gwhArt ? formatOptionValues([{selectValue: companyInformation.gwhArt, textFieldValue: null}]) : "[]",
         GWHAlter: companyInformation?.gwhAlter ? formatOptionValues([{selectValue: companyInformation.gwhAlter,textFieldValue: null}]) : "[]",
         Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues([{selectValue: companyInformation.bedachungsmaterial,  textFieldValue: null}]) : "[]",
@@ -170,14 +177,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         KulturmassnahmeAusblattenMenge: cultureManagement?.kulturmassnahmeAusblattenMenge ? cultureManagement.kulturmassnahmeAusblattenMenge : 0,
         Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : "[]",
         Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : "[]",
-        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues([{selectValue: energyConsumption.zusatzbelichtung, textFieldValue: null}]) : "[]",
-        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues([{selectValue: energyConsumption.belichtungsstrom, textFieldValue: null}]) : "[]",
+        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues([{selectValue: energyConsumption.zusatzbelichtung, textFieldValue: null}]) : defaultOption,
         "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues([{selectValue: consumableItems.co2Herkunft, textFieldValue: null}]) : "[]",
         "Duengemittel:DetalierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
         "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple ? formatOptionValues(consumableItems.duengemittelSimple) : "[]",
         Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : "[]",
         Growbags: consumableMaterials?.growbags ? formatOptionValues([{selectValue: consumableMaterials.growbags,textFieldValue: null}]) : "[]",
-        Substrat: consumableMaterials?.growbagsSubstrat ? formatOptionValues(consumableMaterials.growbagsSubstrat) : "[]",
         "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues([{selectValue: consumableMaterials.schnurMaterial,textFieldValue: null}]) : "[]",
         "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues([{selectValue: consumableMaterials.klipseMaterial,textFieldValue: null}]) : "[]",
         "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues([{selectValue: consumableMaterials.rispenbuegelMaterial,textFieldValue: null}]) : "[]",
@@ -185,8 +190,13 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Bodenfolien: consumableMaterials?.bodenfolien ? formatOptionValues([{selectValue: consumableMaterials.bodenfolien,textFieldValue: null}]) : "[]",
         SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : "[]",
         JungpflanzenZukauf: consumableMaterials?.jungpflanzenEinkauf ? formatOptionValues([{selectValue: consumableMaterials.jungpflanzenEinkauf,textFieldValue: null}]) : "[]",
+        //Fields that might be optional due to dependency on conditional fields. Because of that only these fields get the defaultOption,
+        // so that the other fields will trigger an error in the frontend validation if they are not filled out:
+        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues([{selectValue: energyConsumption.belichtungsstrom, textFieldValue: null}]) : defaultOption,
+        Substrat: consumableMaterials?.growbagsSubstrat && consumableMaterials?.growbagsSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsSubstrat) : defaultOption
     }
-
+    console.log("SubmissionData:")
+    console.log(submissionData)
     return submissionData
 }
 
@@ -298,10 +308,16 @@ const PageInputData = (props: InputDataProps) => {
         hasPrevious: () => tab > 0,
         next: () => setTab(tab + 1),
         previous: () => setTab(tab - 1),
-        submit: () => {
-            props.submitGreenhouseData(processDataToSubmit(dataToSubmit), () => {
-                navigate("../co2-footprint")
-            })
+        submit: (setShowAlert: Function) => {
+            props.submitGreenhouseData(
+                processDataToSubmit(dataToSubmit),
+                () => {},
+                true,
+                () => {},
+                () => {navigate("../co2-footprint")},
+                () => {setShowAlert()}
+            )
+
         }
     }
 

@@ -77,12 +77,10 @@ export const MeasureInputField = (props: MeasureInputProps) => {
         <BaseInputField title={props.title} label={props.label}>
             <TextField
                 type="number"
-                placeholder="Menge"
                 onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
-                error={ String(props.textFieldProps.value)!=="null"
-                    && String(props.textFieldProps.value) !== "NaN"
-                    && /[a-zA-Z]/g.test(String(props.textFieldProps.value))}
-                {...props.textFieldProps} fullWidth/>
+                {...props.textFieldProps}
+                fullWidth
+            />
         </BaseInputField>
     )
 }
