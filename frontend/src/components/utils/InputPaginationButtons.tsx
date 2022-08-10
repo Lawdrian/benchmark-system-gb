@@ -1,7 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import Button from "@mui/material/Button";
 import {NavigateBefore, NavigateNext} from "@mui/icons-material";
-import {Box} from "@mui/material";
+import {Alert, AlertTitle, Box, Grid} from "@mui/material";
 
 export type InputPaginationButtonsProps = {
     hasPrevious: () => boolean
@@ -21,8 +21,24 @@ export type InputPaginationButtonsProps = {
  * @return {ReactNode} 2 Buttons to change the current tab. On the last page the next button changes to a submission button.
  */
 const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
+    const [showAlert, setShowAlert] = useState<boolean>(false)
+
+    const submitErrorAlert = () => {
+        return (
+            <Grid item xs={12}>
+                <Alert severity="error" onClose={() => setShowAlert(false)}>
+                    <AlertTitle>Abschicken fehlgeschlagen</AlertTitle>
+                    Nicht alle Eingabefelder korrekt ausgefüllt!
+                </Alert>
+            </Grid>
+        );
+    }
+
+
 
     return (
+        <>
+        {showAlert ? submitErrorAlert() : null}
             <Box sx={{display:"flex", justifyContent:"center"}} >
                 <>
                 <Button
@@ -50,13 +66,14 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                         size="large"
                         disabled={false}
                         endIcon={<NavigateNext/>}
-                        onClick={() => props.submit()}
+                        onClick={() => props.submit(() => setShowAlert(true))}
                     >
                         Abschicken
                     </Button>
                     }
                 </>
             </Box>
+            </>
        )
 }
 export default InputPaginationButtons

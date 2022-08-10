@@ -34,8 +34,13 @@ export const submitGreenhouseData = (
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
         // Check, if the submitted greenhouse data is valid
-        validateGreenhouseData(data);
-
+        try {
+            validateGreenhouseData(data);
+        }
+        catch (e ) {
+            errorCB()
+            throw e
+        }
         dispatch({type: SUBMISSION_INPROGRESS})
         inProgressCB();
 
@@ -66,7 +71,7 @@ export const submitGreenhouseData = (
                 dispatch({
                     type: SUBMISSION_ERROR
                 })
-            errorCB()
+                errorCB()
             })
             .finally(() => callback())
     }

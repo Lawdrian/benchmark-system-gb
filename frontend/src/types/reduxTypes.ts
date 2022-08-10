@@ -196,6 +196,7 @@ export type GreenhouseData = {
     KulturEnde: number
     Ertrag: number
     Pflanzdichte: number
+    Nebenkulturdauer:number
     MittlereSolltemperaturTag: number
     MittlereSolltemperaturNacht: number
     KulturmassnahmeAusgeizen: number
@@ -218,10 +219,12 @@ export type GreenhouseData = {
     "Rispenbuegel:Menge": number
     "Rispenbuegel:Wiederverwendung": number
     "SonstigeVerbrauchsmaterialien:Wiederverwendung": number
+    BodenfolienVerwendungsdauer: number
     "Verpackungsmaterial:Karton": number
     "Verpackungsmaterial:Plastik": number
     "TransportderWare:Auslieferungen": number
     "TransportderWare:Distanz": number
+    JungpflanzenDistanz: number
     GWHArt: string
     GWHAlter: string
     Bedachungsmaterial: string
