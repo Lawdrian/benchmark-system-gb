@@ -183,7 +183,7 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: number
-    AlterEnergieschirm: number
+    AlterEnergieschirm: string
     Stehwandhoehe: number
     Laenge: number
     Breite: number

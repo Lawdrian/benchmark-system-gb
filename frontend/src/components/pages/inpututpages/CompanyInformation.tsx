@@ -41,7 +41,7 @@ export type CompanyInformationState = {
     alterdesBedachungsmaterials: number | null
     artdesStehwandmaterials: number | null
     energieschirm: number | null
-    alterEnergieschirm: number| null
+    alterEnergieschirm: Date| null
     stehwandhoehe: number | null
     laenge: number | null
     breite: number | null
@@ -83,6 +83,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Von wann sind diese Daten?",
         datePickerProps: {
             value: companyInformation.datum,
+            inputFormat: "dd/MM/yyyy",
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 datum: event
@@ -181,15 +182,17 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const alterEnergieschirmProps: MeasureInputProps = {
+    const alterEnergieschirmProps: DateInputProps = {
         title: "Alter Energieschirm",
         label: "Wie alt ist der Energieschirm?",
-        textFieldProps: {
+        datePickerProps: {
+            views: ['year', 'month'],
             value: companyInformation.alterEnergieschirm,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterEnergieschirm: parseFloat(event.target.value)
-            })
+                alterEnergieschirm: event
+            }),
+            renderInput: () => <TextField/>
         }
     }
 
@@ -339,7 +342,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...energieschirmProps} />
-                <MeasureInputField {...alterEnergieschirmProps} />
+                <DateInputField {...alterEnergieschirmProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...laengeProps} />
