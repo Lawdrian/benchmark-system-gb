@@ -18,6 +18,7 @@ import {
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
+import {format} from "date-fns";
 
 /**
  * @type RawCO2Dataset
@@ -107,7 +108,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
             data: {
                 labels: greenhouse.greenhouseDatasets
                     .map(dataset => dataset.label.substring(0, 10))
-                    .map(label => new Date(label).getFullYear() == 0 ? "Referenz" : label),
+                    .map(label => new Date(label).getFullYear() == 0 ? "Referenz" : format(new Date(label), 'dd/MM/yyyy')),
                 datasets: [{
                     label: "Gewächshaus Konstruktion",
                     data: greenhouse.greenhouseDatasets.map(dataset => dataset.gwh_konstruktion),

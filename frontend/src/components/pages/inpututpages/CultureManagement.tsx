@@ -41,11 +41,10 @@ export type CultureManagementState = {
 }
 
 const CultureManagementInput = (props: CultureManagementProps) => {
-    const [cultureManagement, setCultureManagementState] = useState<CultureManagementState>(props.values)
+    const [cultureManagement, setCultureManagement] = useState<CultureManagementState>(props.values)
 
-
-    const setCultureManagement = (cultureManagement: CultureManagementState) => {
-        setCultureManagementState(cultureManagement)
+    const setCultureManagementState = (cultureManagement: CultureManagementState) => {
+        setCultureManagement(cultureManagement)
         props.provideCultureManagement(cultureManagement)
     }
 
@@ -57,7 +56,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         selectProps: {
             lookupValues: props.lookupValues.AnzahlTriebe
         },
-        onValueChange: values => setCultureManagement({
+        onValueChange: values => setCultureManagementState({
             ...cultureManagement,
             anzahlTriebe: values.map(value => {
                 return {
@@ -73,7 +72,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Mittlere Luftsolltemperatur Tag (Innen; über den Kulturverlauf)",
         textFieldProps: {
             value: cultureManagement.mittlereSolltemperaturTag,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 mittlereSolltemperaturTag: parseFloat(event.target.value)
             })
@@ -85,7 +84,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Mittlere Luftsolltemperatur Nacht (Innen; über den Kulturverlauf)",
         textFieldProps: {
             value: cultureManagement.mittlereSolltemperaturNacht,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 mittlereSolltemperaturNacht: parseFloat(event.target.value)
             })
@@ -97,7 +96,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Ist eine aktive Entfeuchtung aktiviert?",
         radioProps: {
             value: cultureManagement.entfeuchtung,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 entfeuchtung: parseFloat(event.target.value)
             })
@@ -109,7 +108,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Wie hoch ist die relative Luftfeuchte im Gewächshaus? Stellt bei aktivierter Entfeuchtung den Sollwert für die Regelung dar.",
         textFieldProps: {
             value: cultureManagement.relativeFeuchte,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 relativeFeuchte: parseFloat(event.target.value)
             })
@@ -121,7 +120,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Wie häufig wird ausgegeizt?",
         textFieldProps: {
             value: cultureManagement.kulturmassnahmeAusgeizen,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 kulturmassnahmeAusgeizen: parseFloat(event.target.value)
             })
@@ -133,7 +132,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Wie häufig wird innerhalb eines Monats ausgeblattet?",
         textFieldProps: {
             value: cultureManagement.kulturmassnahmeAusblattenAnzahlMonat,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 kulturmassnahmeAusblattenAnzahlMonat: parseFloat(event.target.value)
             })
@@ -145,7 +144,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Wieviele Blätter pro Pflanze werden je Durchgang entfernt?",
         textFieldProps: {
             value: cultureManagement.kulturmassnahmeAusblattenMenge,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 kulturmassnahmeAusblattenMenge: parseFloat(event.target.value)
             })
@@ -157,7 +156,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         label: "Wie häufig lassen Sie die Pflanzen ab?",
         textFieldProps: {
             value: cultureManagement.kulturmassnahmeAblassen,
-            onChange: event => setCultureManagement({
+            onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 kulturmassnahmeAblassen: parseFloat(event.target.value)
             })

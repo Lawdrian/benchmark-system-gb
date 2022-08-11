@@ -82,11 +82,10 @@ class GetWeatherData(APIView):
             period=DwdObservationPeriod.RECENT,
             start_date=start_date,  # if not given timezone defaulted to UTC
             end_date=end_date,  # if not given timezone defaulted to UTC
-        ).filter_by_rank(latitude, longitude, 20)
+        ).filter_by_rank(latitude, longitude, 2)
         results = request.values.query()
         for result in request.values.query():
             weather_data = result.df
-            print("!!!!!!!!!!!!!!!!!!!")
             precipitation_height = weather_data[weather_data['parameter'] == 'precipitation_height'].filter(
                 items=['value']).reset_index(drop=True)
             temperature_air_mean_200 = weather_data[weather_data['parameter'] == 'temperature_air_mean_200'].filter(
@@ -100,44 +99,29 @@ class GetWeatherData(APIView):
             temperature_air_mean_200.columns = ['temperature_air_mean_200']
             precipitation_height.columns = ['precipitation_height']
 
-            print("date")
-            print(len(date))
-
-            print("precipitation")
-            print(len(precipitation_height))
-
-            print("temperature")
-            print(len(temperature_air_mean_200))
-
-            print("radiation")
-            print(len(radiation_global))
 
             # Concat all dataframes into a single one
             data = pd.concat([date, precipitation_height, temperature_air_mean_200, radiation_global], axis=1)
-            print("Raw data:")
-            print(data)
-            #print("Final data:")
-            #print(len(data))
-            #print(data.isna().sum())
+
             data.dropna(axis=0, how="any", inplace=True)
-            print(data.isna().sum())
-            print("Final data without NaN:")
-            print(len(data))
+            #print(data.isna().sum())
+            #print("Final data without NaN:")
+            #print(len(data))
 
             if data.empty:
                 print("Empty dataset")
             else:
-                print("Station Name + Distance")
+                #print("Station Name + Distance")
                 #print(result.stations.df.filter(items=[current_result['station_id'][0]]))
-                print(result.stations.df[result.stations.df['station_id'] == weather_data['station_id'][0]].filter(items=['name', 'distance']))
+                #print(result.stations.df[result.stations.df['station_id'] == weather_data['station_id'][0]].filter(items=['name', 'distance']))
                 break
 
         best_weather_data = data
         if best_weather_data.empty:
             return Response({'Bad Request': 'No weather data found!'}, status=status.HTTP_400_BAD_REQUEST)
 
-        print("Selected Dataset:")
-        print(best_weather_data)
+        #print("Selected Dataset:")
+        #print(best_weather_data)
 
 
 

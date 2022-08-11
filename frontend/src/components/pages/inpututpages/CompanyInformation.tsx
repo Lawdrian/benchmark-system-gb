@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import {
+    DateInputField,
+    DateInputProps,
     MeasureInputField,
     MeasureInputProps,
     SelectionInputField,
@@ -10,10 +12,11 @@ import {
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {FormControlLabel, Radio} from "@mui/material";
+import {FormControlLabel, Radio, TextField} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import lookup from "../../../reducers/lookup";
+import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
@@ -30,7 +33,7 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
 
 export type CompanyInformationState = {
     gewaechshausName: string | null
-    datum: string | null
+    datum: Date | null
     plz: number | null
     gwhArt: number | null
     gwhAlter: number | null
@@ -52,10 +55,10 @@ export type CompanyInformationState = {
 }
 
 const CompanyInformationInput = (props: CompanyInformationProps) => {
-    const [companyInformation, setCompanyInformationState] = useState<CompanyInformationState>(props.values)
+    const [companyInformation, setCompanyInformation] = useState<CompanyInformationState>(props.values)
 
-        const setCompanyInformation = (companyInformation: CompanyInformationState) => {
-        setCompanyInformationState(companyInformation)
+    const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
+        setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
     }
 
@@ -65,27 +68,26 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie lautet der Name Ihres Gewächshauses?",
         textFieldProps: {
             value: companyInformation.gewaechshausName,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 gewaechshausName: event.target.value
             }),
             type:"text",
-            placeholder:"Name"
+            placeholder:"Name",
+            error: companyInformation.gewaechshausName==="1"
         }
     }
 
-    const datumProps: MeasureInputProps = {
+    const datumProps: DateInputProps = {
         title: "Datum",
-        label: "Das heutige Datum",
-        textFieldProps: {
+        label: "Von wann sind diese Daten?",
+        datePickerProps: {
             value: companyInformation.datum,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                datum: event.target.value
+                datum: event
             }),
-            type:"text",
-            defaultValue: new Date().toISOString().substring(0,10),
-            placeholder:"Datum"
+            renderInput: () => <TextField/>
         }
     }
 
@@ -94,7 +96,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Postleitzahl (zur Wetterdatenbestimmung)",
         textFieldProps: {
             value: companyInformation.plz,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 plz: parseFloat(event.target.value)
             })
@@ -107,7 +109,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.GWHArt,
             value: companyInformation.gwhArt,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 gwhArt: parseFloat(event.target.value)
             })
@@ -120,7 +122,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.GWHAlter,
             value: companyInformation.gwhAlter,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 gwhAlter: parseFloat(event.target.value)
             })
@@ -133,7 +135,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Bedachungsmaterial,
             value: companyInformation.bedachungsmaterial,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 bedachungsmaterial: parseFloat(event.target.value)
             })
@@ -146,7 +148,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.AlterdesBedachungsmaterials,
             value: companyInformation.alterdesBedachungsmaterials,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 alterdesBedachungsmaterials: parseFloat(event.target.value)
             })
@@ -159,7 +161,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.ArtdesStehwandmaterial,
             value: companyInformation.artdesStehwandmaterials,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 artdesStehwandmaterials: parseFloat(event.target.value)
             })
@@ -172,7 +174,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Energieschirm,
             value: companyInformation.energieschirm,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 energieschirm: parseFloat(event.target.value)
             })
@@ -184,7 +186,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie alt ist der Energieschirm?",
         textFieldProps: {
             value: companyInformation.alterEnergieschirm,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 alterEnergieschirm: parseFloat(event.target.value)
             })
@@ -196,7 +198,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Höhe der Stehwände",
         textFieldProps: {
             value: companyInformation.stehwandhoehe,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 stehwandhoehe: parseFloat(event.target.value)
             })
@@ -208,7 +210,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie lang ist das Gewächshaus?",
         textFieldProps: {
             value: companyInformation.laenge,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 laenge: parseFloat(event.target.value)
             })
@@ -220,7 +222,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie breit ist das Gewächshaus?",
         textFieldProps: {
             value: companyInformation.breite,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 breite: parseFloat(event.target.value)
             })
@@ -232,7 +234,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie viele Meter beträgt die Knappenbreite?",
         textFieldProps: {
             value: companyInformation.knappenbreite,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 knappenbreite: parseFloat(event.target.value)
             })
@@ -244,7 +246,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie lang sind die Scheiben der Bedachung?",
         textFieldProps: {
             value: companyInformation.scheibenlaenge,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 scheibenlaenge: parseFloat(event.target.value)
             })
@@ -256,7 +258,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Auf welche Weise produzieren Sie?",
         selectProps: {
             value: companyInformation.produktion,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 produktion: parseFloat(event.target.value)
             }),
@@ -269,7 +271,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Welches Kultursystem wird verwendet?",
         selectProps: {
             value: companyInformation.kultursystem,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 kultursystem: parseFloat(event.target.value)
             }),
@@ -282,7 +284,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie alt ist das Hydroponiksystem?",
         textFieldProps: {
             value: companyInformation.alterKultursystem,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 alterKultursystem: parseFloat(event.target.value)
             })
@@ -294,7 +296,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie groß ist der Abstand zwischen den Reihen (Reihenmitte zu Reihenmitte)",
         textFieldProps: {
             value: companyInformation.reihenabstand,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 reihenabstand: parseFloat(event.target.value)
             })
@@ -306,7 +308,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Verwenden Sie ein Transportsystem? (Buisrail oder vergleichbares)",
         radioProps: {
             value: companyInformation.transportsystem,
-            onChange: event => setCompanyInformation({
+            onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 transportsystem: parseFloat(event.target.value)
             })
@@ -317,7 +319,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         <Grid container xs={12} spacing={8}>
             <Grid item container xs={12}  spacing={4}>
                 <MeasureInputField {...gewaechshausNameProps} />
-                <MeasureInputField {...datumProps} />
+                <DateInputField {...datumProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...gwhArtProps} />

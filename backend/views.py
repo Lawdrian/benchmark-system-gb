@@ -19,6 +19,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from . import algorithms
+from .dataValidation import validate_greenhouse_data
 from .models import GreenhouseData, Measurements, Measures, Selections, \
     OptionGroups, Options, Greenhouses, Calculations, Results
 from .serializers import InputDataSerializer
@@ -221,7 +222,7 @@ class GetCalculatedGreenhouseData(APIView):
             try:
                 for data_set in greenhouse_data:
                     temp_data_dict = dict()
-                    temp_data_dict['label'] = data_set.date_of_input
+                    temp_data_dict['label'] = data_set.date
 
                     for i, calculation_id in enumerate(calculation_ids):
                         value = Results.objects \
@@ -267,7 +268,6 @@ class GetOptionGroupValues(APIView):
                 option_group_values = Options.objects.filter(
                     option_group_id=option_group.id
                 )
-                print(option_group_values)
                 options = list()  # storing all options for one option_group
                 for option_group_value in option_group_values:
                     option = dict()
@@ -336,6 +336,14 @@ class CreateGreenhouseData(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+
+            # Validate that every required field has been filled out with not a default value
+            if validate_greenhouse_data(data=serializer.data) is False:
+                return Response({'Bad Request': 'Not all fields have been filled out!'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+
+
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
