@@ -183,12 +183,14 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: number
+    GWHAlter: number
     AlterEnergieschirm: number
     Stehwandhoehe: number
     Laenge: number
     Breite: number
     Kappenbreite: number
     "Scheibenlaenge(Bedachung)": number
+    AlterdesBedachungsmaterials: number
     AlterKultursystem: number
     Reihenabstand: number
     Kulturflaeche: number
@@ -226,9 +228,7 @@ export type GreenhouseData = {
     "TransportderWare:Distanz": number
     JungpflanzenDistanz: number
     GWHArt: string
-    GWHAlter: string
     Bedachungsmaterial: string
-    AlterdesBedachungsmaterials: string
     ArtdesStehwandmaterial: string
     Energieschirm: string
     Produktion: string

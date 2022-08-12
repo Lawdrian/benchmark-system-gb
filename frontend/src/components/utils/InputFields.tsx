@@ -95,8 +95,8 @@ export const DateInputField = (props: DateInputProps) => {
         <BaseInputField title={props.title} label={props.label}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
+                    maxDate={new Date()}
                     { ...props.datePickerProps }
-                    inputFormat="dd/MM/yyyy"
                     renderInput={(params) => <TextField {...params} />}
                 />
             </LocalizationProvider>
