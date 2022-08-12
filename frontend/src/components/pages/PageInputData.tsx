@@ -107,6 +107,10 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         consumableMaterials
     } = dataToSubmit
 
+    const calcAge = (year: Date) => {
+        const today = new Date()
+        return today.getFullYear() - year.getFullYear()
+    }
 
     const defaultValue = 0
     const defaultOption = "[(0,)]"
@@ -117,13 +121,15 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
         PLZ: companyInformation?.plz ?? defaultValue,
-        AlterEnergieschirm: companyInformation?.alterEnergieschirm ? format(companyInformation.alterEnergieschirm, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
+        GWHAlter: companyInformation?.gwhAlter ? calcAge(companyInformation?.gwhAlter) : defaultValue,
+        AlterEnergieschirm: companyInformation?.alterEnergieschirm ? calcAge(companyInformation?.alterEnergieschirm) : defaultValue,
         Stehwandhoehe: companyInformation?.stehwandhoehe ?? defaultValue,
         Laenge: companyInformation?.laenge ?? defaultValue,
         Breite: companyInformation?.breite ?? defaultValue,
         Kappenbreite: companyInformation?.knappenbreite ?? defaultValue,
         "Scheibenlaenge(Bedachung)": companyInformation?.scheibenlaenge ?? defaultValue,
-        AlterKultursystem: companyInformation?.alterKultursystem ?? defaultValue,
+        AlterdesBedachungsmaterials: companyInformation?.alterdesBedachungsmaterials ? calcAge(companyInformation?.alterdesBedachungsmaterials): defaultValue,
+        AlterKultursystem: companyInformation?.alterKultursystem ? calcAge(companyInformation?.alterKultursystem) : defaultValue,
         Reihenabstand: companyInformation?.reihenabstand ?? defaultValue,
         Kulturflaeche: cultureInformation?.kulturflaeche ?? defaultValue,
         KulturBeginn: cultureInformation?.kulturBeginn ?? defaultValue,
@@ -162,9 +168,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "TransportderWare:Distanz": consumableMaterials?.transportDistanz ?? defaultValue,
         JungpflanzenDistanz: consumableMaterials?.jungpflanzenDistanz ?? defaultValue,
         GWHArt: companyInformation?.gwhArt ? formatOptionValues([{selectValue: companyInformation.gwhArt, textFieldValue: null}]) : "[]",
-        GWHAlter: companyInformation?.gwhAlter ? formatOptionValues([{selectValue: companyInformation.gwhAlter,textFieldValue: null}]) : "[]",
         Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues([{selectValue: companyInformation.bedachungsmaterial,  textFieldValue: null}]) : "[]",
-        AlterdesBedachungsmaterials: companyInformation?.alterdesBedachungsmaterials ? formatOptionValues([{selectValue: companyInformation.alterdesBedachungsmaterials, textFieldValue: null}]) : "[]",
         ArtdesStehwandmaterial: companyInformation?.artdesStehwandmaterials ? formatOptionValues([{selectValue: companyInformation.artdesStehwandmaterials, textFieldValue: null}]) : "[]",
         Energieschirm: companyInformation?.energieschirm ? formatOptionValues([{selectValue: companyInformation.energieschirm, textFieldValue: null}]) : "[]",
         Produktion: companyInformation?.produktion ? formatOptionValues([{selectValue: companyInformation.produktion, textFieldValue: null}]) : "[]",
@@ -213,9 +217,9 @@ const PageInputData = (props: InputDataProps) => {
             datum: new Date(Date.now()),
             plz: null,
             gwhArt: null,
-            gwhAlter: null,
+            gwhAlter: new Date(Date.now()),
             bedachungsmaterial: null,
-            alterdesBedachungsmaterials: null,
+            alterdesBedachungsmaterials: new Date(Date.now()),
             artdesStehwandmaterials: null,
             energieschirm: null,
             alterEnergieschirm: new Date(Date.now()),
@@ -226,7 +230,7 @@ const PageInputData = (props: InputDataProps) => {
             scheibenlaenge: null,
             produktion: null,
             kultursystem: null,
-            alterKultursystem: null,
+            alterKultursystem: new Date(Date.now()),
             reihenabstand: null,
             transportsystem: null
         },

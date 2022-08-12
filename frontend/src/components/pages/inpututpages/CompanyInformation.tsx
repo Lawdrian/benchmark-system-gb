@@ -36,9 +36,9 @@ export type CompanyInformationState = {
     datum: Date | null
     plz: number | null
     gwhArt: number | null
-    gwhAlter: number | null
+    gwhAlter: Date | null
     bedachungsmaterial: number | null
-    alterdesBedachungsmaterials: number | null
+    alterdesBedachungsmaterials: Date | null
     artdesStehwandmaterials: number | null
     energieschirm: number | null
     alterEnergieschirm: Date| null
@@ -49,7 +49,7 @@ export type CompanyInformationState = {
     scheibenlaenge: number | null
     produktion: number | null
     kultursystem: number | null
-    alterKultursystem: number | null
+    alterKultursystem: Date | null
     reihenabstand: number| null
     transportsystem: number | null
 }
@@ -117,16 +117,17 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         },
     }
 
-    const gwhAlterProps: SelectionInputProps = {
+    const gwhAlterProps: DateInputProps = {
         title: "Gewächshaus Alter",
         label: "Alter des Gewächshauses",
-        selectProps: {
-            lookupValues: props.lookupValues.GWHAlter,
+        datePickerProps: {
+            views: ['year'],
             value: companyInformation.gwhAlter,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhAlter: parseFloat(event.target.value)
-            })
+                gwhAlter: event
+            }),
+            renderInput: () => <TextField/>
         }
     }
 
@@ -143,16 +144,17 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const alterdesBedachungsmaterialsProps: SelectionInputProps = {
+    const alterdesBedachungsmaterialsProps: DateInputProps = {
         title: "Bedachungsmaterial Alter",
         label: "Wie alt ist das Bedachungsmaterial?",
-        selectProps: {
-            lookupValues: props.lookupValues.AlterdesBedachungsmaterials,
+        datePickerProps: {
+            views: ['year'],
             value: companyInformation.alterdesBedachungsmaterials,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterdesBedachungsmaterials: parseFloat(event.target.value)
-            })
+                alterdesBedachungsmaterials: event
+            }),
+            renderInput: () => <TextField/>
         }
     }
 
@@ -186,7 +188,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Alter Energieschirm",
         label: "Wie alt ist der Energieschirm?",
         datePickerProps: {
-            views: ['year', 'month'],
+            views: ['year'],
             value: companyInformation.alterEnergieschirm,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
@@ -281,16 +283,18 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             lookupValues: props.lookupValues.Kultursystem
         }
     }
-    
-    const alterKultursystemProps: MeasureInputProps = {
+
+    const alterKultursystemProps: DateInputProps = {
         title: "Kultursystem Alter",
         label: "Wie alt ist das Hydroponiksystem?",
-        textFieldProps: {
+        datePickerProps: {
+            views: ['year'],
             value: companyInformation.alterKultursystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterKultursystem: parseFloat(event.target.value)
-            })
+                alterKultursystem: event
+            }),
+            renderInput: () => <TextField/>
         }
     }
     
@@ -326,11 +330,11 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...gwhArtProps} />
-                <SelectionInputField {...gwhAlterProps} />
+                <DateInputField {...gwhAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...bedachungsmaterialProps} />
-                <SelectionInputField {...alterdesBedachungsmaterialsProps} />
+                <DateInputField {...alterdesBedachungsmaterialsProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...artdesStehwandmaterialsProps} />
@@ -354,7 +358,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...kultursystemProps} />
-                <MeasureInputField {...alterKultursystemProps} />
+                <DateInputField {...alterKultursystemProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...reihenabstandProps} />
