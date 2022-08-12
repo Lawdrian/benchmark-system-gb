@@ -75,7 +75,12 @@ const formatOptionValues = (values: SelectionValue[]): string => {
 
     for (let i = 0; i < values.length; i++) {
         let value = values[i]
-        let tupleString = "(" + value.selectValue + (value.textFieldValue ? "," + value.textFieldValue : "") + ")"
+        let tupleString =
+            "(" +
+            value.selectValue +
+            (value.textFieldValue ?
+                ("," + value.textFieldValue + (value.textField2Value ? "," + value.textField2Value : "")) : "") +
+            ")"
         formattedString = formattedString + tupleString
         if (i < values.length - 1) {
             formattedString = formattedString + ","
@@ -297,7 +302,7 @@ const PageInputData = (props: InputDataProps) => {
             bewaesserArt: null,
             bodenfolien: null,
             bodenfolienVerwendungsdauer: null,
-            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: null}],
+            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: null, textField2Value: null}],
             jungpflanzenEinkauf: null,
             jungpflanzenDistanz: null,
             plastikVerpackung: null,

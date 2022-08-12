@@ -37,7 +37,7 @@ class ListOfTuples(serializers.Field):
                     True: input_string matches the format.
                     False: input_string does not match the format.
         """
-        tupel_regex = "\(\s*\d+(((\s*,\s*\d+(\.\d+)?)?)|(\s*,\s*))\s*\)"
+        tupel_regex = "\(\s*\d+(((\s*,\s*\d+(\.\d+)?){0,2})|(\s*,\s*))\s*\)"
         pattern = re.compile(
             "\s*\[\s*(" + tupel_regex + "\s*,\s*)*" + tupel_regex + "\s*\]\s*"
         )
@@ -88,7 +88,7 @@ class ListOfTuples(serializers.Field):
         if not ListOfTuples._check_format(data):
             raise serializers.ValidationError({
                 'Passed string does not match format ' +
-                '[((<int>,<float>)|(<int>,)|(<int)), ...]'
+                '[((<int>,<float>,<float>)|(<int>,<float>)|(<int>,)|(<int)), ...]'
             })
         # Transform data from single string to a list of tuples
         data = re.sub('\)\s*,\s*\(', ');(', data)
@@ -97,23 +97,26 @@ class ListOfTuples(serializers.Field):
         # convert list of string-tuples in a list of tuples
         for i, elem in enumerate(data):
             values = elem.strip('()').split(',')
-            if len(values) > 2:
+            if len(values) > 3:
                 raise serializers.ValidationError({
-                    'The maximal tuple size is 2! option_id and perhaps amount'
+                    'The maximal tuple size is 3! option_id, perhaps amount and perhaps value2'
                 })
             try:
                 values[0] = int(values[0])  # first element is option_id
                 # check if an amount is declared for this option:
-                if len(values) == 2:
+                if len(values) >= 2:
                     # if the tuple has the form (int,), the second element in
                     # values is ''
                     if values[1].strip() == '':
                         del values[1]
                     else:
                         values[1] = float(values[1])  # second element is amount
+                    # if the tuple has the form (int,float,float)
+                    if len(values) == 3:
+                        values[2] = float(values[2])  # the third element is value2
             except (ValueError, TypeError):
                 raise serializers.ValidationError({
-                    'A list of tuples with the form (<int>,<float>)' +
+                    'A list of tuples with the form ((<int>,<float>,<float>) or (<int>,<float>)' +
                     'or (<int>,) or (<int>) is required!'
                 })
             except IndexError:

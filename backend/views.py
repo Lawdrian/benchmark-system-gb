@@ -386,12 +386,17 @@ class CreateGreenhouseData(APIView):
                     for elem in value:
                         # check if an amount is declared
                         amount = None
+                        value2 = None
                         if len(elem) == 2:
                             amount = elem[1]
+                        if len(elem) == 3:
+                            amount = elem[1]
+                            value2 = elem[2]
                         Selections(
                             greenhouse_data=greenhouse_data,
                             option_id=elem[0],
-                            amount=amount
+                            amount=amount,
+                            value2=value2
                         ).save()
 
             calculation_result = algorithms.calc_co2_footprint(serializer.data)

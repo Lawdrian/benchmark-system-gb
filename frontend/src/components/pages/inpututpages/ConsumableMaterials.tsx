@@ -323,7 +323,8 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const sonstVerbrauchsmaterialienProps: DynamicInputProps = {
         title: "Sonstige Verbrauchsmaterialien",
         label: "Geben Sie sonstige Verbrauchsmaterialien und die Gebrauchslänge an.",
-        textFieldProps: {},
+        textFieldProps: {placeholder: "kg", label: "Menge"},
+        textField2Props: {placeholder:"Jahre", label:"Wiederverwendung"},
         selectProps: {
             lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien
         },
@@ -331,7 +332,9 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             ...consumableMaterials,
             sonstVerbrauchsmaterialien: values.map(value => {
                 return {
-                    selectValue: value.selectValue, textFieldValue:value.textFieldValue
+                    selectValue: value.selectValue,
+                    textFieldValue:value.textFieldValue,
+                    textField2Value:value.textField2Value
                 }
             })
         }),
