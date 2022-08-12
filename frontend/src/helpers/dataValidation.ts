@@ -5,7 +5,7 @@ import {GreenhouseData} from "../types/reduxTypes";
  *
  * The object is valid, if all necessary fields follow the pattern:
  *
- * [((<int>,<float>)|(<int>,)|(<int>)), ...]
+ * [((<int>,<float>,<float>)|(<int>,<float>)|(<int>,)|(<int>)), ...]
  *
  * If the object is invalid an error is thrown, else this function is a noop.
  *
@@ -13,7 +13,7 @@ import {GreenhouseData} from "../types/reduxTypes";
  */
 export default function validateGreenhouseData(data: GreenhouseData) {
     // Define the regular expression to validate the necessary fields
-    let tupleRegex = "\\(\\s*\\d+(((\\s*,\\s*\\d+(\\.\\d+)?)?)|(\\s*,\\s*))\\s*\\)";
+    let tupleRegex = "\\(\\s*\\d+(((\\s*,\\s*\\d+(\\.\\d+)?){0,2})|(\\s*,\\s*))\\s*\\)";
     let fullRegex = "\\s*\\[\\s*(" + tupleRegex + "\\s*,\\s*)*" + tupleRegex + "\\s*\\]\\s*";
     let validationRegex = new RegExp(fullRegex);
 
@@ -58,7 +58,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
             if (!isValid) {
                 throw new Error(
                     "Field '" + field + "' did not match the required string pattern: " +
-                    "[((<int>,<float>)|(<int>,)|(<int>)), ...]"
+                    "[((<int>,<float>,<float>)|(<int>,<float>)|(<int>,)|(<int>)), ...]"
                 );
             }
         }

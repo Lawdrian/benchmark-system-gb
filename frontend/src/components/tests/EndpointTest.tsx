@@ -171,7 +171,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Rispenbuegel:Material": "[(112),(114)]",
         "Bewaesserungsart": "[(120),(122)]",
         "Bodenfolien": "[(143)]",
-        "SonstigeVerbrauchsmaterialien": "[(116)]",
+        "SonstigeVerbrauchsmaterialien": "[(116,20.5,17), (118,11.2,2)]",
         "JungpflanzenZukauf": "[(145)]"
     }
 
