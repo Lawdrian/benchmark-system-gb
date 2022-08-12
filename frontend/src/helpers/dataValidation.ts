@@ -19,9 +19,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
 
     let fieldsToValidate = [
         "GWHArt",
-        "GWHAlter",
         "Bedachungsmaterial",
-        "AlterdesBedachungsmaterials",
         "ArtdesStehwandmaterial",
         "Energieschirm",
         "Produktion",
