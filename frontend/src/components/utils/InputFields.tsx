@@ -428,6 +428,7 @@ export const SingleShowConditionalRadioInputField = (props: SingleShowConditiona
 // ConditionalRadio component
 export type SelectShowConditionalRadioInputProps = ConditionalRadioBaseInputProps & {
     showFirstChildren: (value: any) => boolean
+    showSecondChildren: (value: any) => boolean
     firstChildren:  ReactNode
     secondChildren: ReactNode
 }
@@ -446,7 +447,11 @@ export const SelectShowConditionalRadioInputField = (props: SelectShowConditiona
     const {firstChildren, secondChildren, ...conditionalRadioBaseInputProps} = props
     return(
         <ConditionalRadioBaseInputField {...conditionalRadioBaseInputProps}>
-            { props.showFirstChildren(props.radioGroupProps.value) ? props.firstChildren : props.secondChildren }
+            {
+                props.showFirstChildren(props.radioGroupProps.value) ?
+                props.firstChildren :
+                (props.showSecondChildren(props.radioGroupProps.value) ? props.secondChildren: undefined)
+            }
         </ConditionalRadioBaseInputField>
     )
 }

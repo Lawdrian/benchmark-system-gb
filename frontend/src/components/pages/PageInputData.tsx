@@ -114,7 +114,9 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
 
     const calcAge = (year: Date) => {
         const today = new Date()
-        return today.getFullYear() - year.getFullYear()
+        const age = today.getFullYear() - year.getFullYear()
+        if(age > 0) return age
+        else return 1
     }
 
     const defaultValue = 0
