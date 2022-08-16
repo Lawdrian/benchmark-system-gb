@@ -177,6 +177,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
         },
         radioButtonValues: [{id: 1, values:"Pflanzen pro Quadratmeter"},{id:2, values:"Pflanzenabstand in der Reihe +  Reihenabstand"}],
         showFirstChildren: value => value==1,
+        showSecondChildren: value => value==2,
         firstChildren:
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...pflanzendichteAnzProm2Props}/>

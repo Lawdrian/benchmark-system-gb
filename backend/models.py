@@ -140,5 +140,7 @@ class Selections(models.Model):
     
     amount = models.DecimalField(max_digits=10, decimal_places=3, null=True)
 
+    value2 = models.DecimalField(max_digits=10, decimal_places=3, null=True)
+
 
 

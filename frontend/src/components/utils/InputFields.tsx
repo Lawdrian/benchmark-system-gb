@@ -61,6 +61,7 @@ export const BaseInputField = (props: BaseInputFieldProps) => {
 export type SelectionValue = {
     selectValue: number | null
     textFieldValue: number | null
+    textField2Value?: number | null
     unitFieldValue?: number | null
 }
 
@@ -206,6 +207,7 @@ type DynamicInputValue = {
     id: number
     selectValue: number | null
     textFieldValue: number | null
+    textField2Value?: number | null
     unitFieldValue?: number | null
 }
 
@@ -215,6 +217,7 @@ export type DynamicInputProps = InputFieldProps & {
     selectProps: DynamicSelectProps<any>
     textFieldProps: TextFieldProps
     onValueChange: (values: DynamicInputState) => void
+    textField2Props?: TextFieldProps
     unitSelectProps?: DynamicSelectProps<any>
     initValues: SelectionValue[]
 }
@@ -300,7 +303,6 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                         value={value.textFieldValue}
                                         fullWidth
                                         type="number"
-                                        placeholder="Menge"
                                     />
                                 </Paper>
                             </Grid>
@@ -324,6 +326,23 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                     </FormControl>
                                 </Paper>
                             </Grid> : undefined}
+                            {props.textField2Props ?
+                                <Grid item xs>
+                                    <Paper>
+                                        <TextField {...props.textField2Props}
+                                            onChange={(event) => {
+                                                let idx = values.indexOf(value)
+                                                values[idx] = {...value, textField2Value: parseInt(event.target.value)}
+                                                setValues(values.slice())
+                                                props.onValueChange(values.slice())
+                                            }}
+                                            value={value.textField2Value}
+                                            fullWidth
+                                            type="number"
+                                        />
+                                    </Paper>
+                                </Grid>
+                            : undefined}
                         </Grid>
                     </>
                 )
@@ -409,6 +428,7 @@ export const SingleShowConditionalRadioInputField = (props: SingleShowConditiona
 // ConditionalRadio component
 export type SelectShowConditionalRadioInputProps = ConditionalRadioBaseInputProps & {
     showFirstChildren: (value: any) => boolean
+    showSecondChildren: (value: any) => boolean
     firstChildren:  ReactNode
     secondChildren: ReactNode
 }
@@ -427,7 +447,11 @@ export const SelectShowConditionalRadioInputField = (props: SelectShowConditiona
     const {firstChildren, secondChildren, ...conditionalRadioBaseInputProps} = props
     return(
         <ConditionalRadioBaseInputField {...conditionalRadioBaseInputProps}>
-            { props.showFirstChildren(props.radioGroupProps.value) ? props.firstChildren : props.secondChildren }
+            {
+                props.showFirstChildren(props.radioGroupProps.value) ?
+                props.firstChildren :
+                (props.showSecondChildren(props.radioGroupProps.value) ? props.secondChildren: undefined)
+            }
         </ConditionalRadioBaseInputField>
     )
 }
