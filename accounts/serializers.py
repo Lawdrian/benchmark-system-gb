@@ -36,9 +36,10 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
-
+        print("Im Serializer")
         profile_data = validated_data.pop('profile')
         user.profile.company_name = profile_data['company_name']
+        user.is_active = False
         user.save()
 
         return user

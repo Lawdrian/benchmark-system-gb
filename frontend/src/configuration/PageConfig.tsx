@@ -28,10 +28,12 @@ import {generatePage} from "../helpers/PageBuilder";
 import {Page, PageConfig, Section} from "../types/PageConfigTypes";
 import EndpointTest from "../components/tests/EndpointTest";
 import PageHome from "../components/pages/PageHome";
+import PageUserActivation from "../components/pages/PageUserActivation";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
     registerUrl: "/register",
+    userActivationUrl: "/activate",
     homeUrl: "/",
     proceedUrl: "", // TODO: Still necessary?!
 }
@@ -81,6 +83,11 @@ const pageDefinitions: Array<Page> = [
             loginUrl={pageConfig.loginUrl}
         />, pageConfig.registerUrl, false)
         .finalize(),
+    generatePage(
+        <PageUserActivation
+            loginUrl={pageConfig.loginUrl}
+        />, pageConfig.userActivationUrl, false)
+    .finalize(),
     generatePage(<EndpointTest/>, "ep-test")
         .withHeaderTitle("Endpoint Test für Backend-API")
         .finalize()

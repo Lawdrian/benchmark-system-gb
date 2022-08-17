@@ -27,6 +27,16 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Email sending
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.ionos.de'
+EMAIL_HOST_USER = 'adrian@wild.network'
+EMAIL_HOST_PASSWORD = 'kinderWild2015'
+EMAIL_PORT = 465
+DEFAULT_FROM_EMAIL = 'adrian@wild.network'
+
 
 # Application definition
 

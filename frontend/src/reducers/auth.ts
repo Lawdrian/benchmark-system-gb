@@ -4,6 +4,8 @@
  * #############################################################################
  */
 import {
+    ACTIVATE_FAIL,
+    ACTIVATE_SUCCESS,
     AUTH_ERROR,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
@@ -31,6 +33,7 @@ export type AuthenticationState = {
     isAuthenticated: boolean
     isLoading: boolean
     user: User | null
+    isActivated: boolean
 }
 
 // Initialize the authentication state
@@ -38,7 +41,8 @@ const initialState: AuthenticationState = {
     token: localStorage.getItem('token'),
     isAuthenticated: false,
     isLoading: false,
-    user: null
+    user: null,
+    isActivated: false
 }
 
 /**
@@ -64,7 +68,6 @@ export default function (state = initialState, action: any): AuthenticationState
                 user: action.payload
             };
         case LOGIN_SUCCESS:
-        case REGISTER_SUCCESS:
             localStorage.setItem('token', action.payload.token)
             return {
                 ...state,
@@ -72,6 +75,7 @@ export default function (state = initialState, action: any): AuthenticationState
                 isAuthenticated: true,
                 isLoading: false
             }
+        case REGISTER_SUCCESS:
         case AUTH_ERROR:
         case LOGIN_FAIL:
         case LOGOUT_SUCCESS:
@@ -82,8 +86,14 @@ export default function (state = initialState, action: any): AuthenticationState
                 token: null,
                 user: null,
                 isAuthenticated: false,
-                isLoading: false
+                isLoading: false,
             };
+        case ACTIVATE_SUCCESS:
+            return {
+                ...state,
+                isActivated: true
+            }
+        case ACTIVATE_FAIL:
         default:
             return state;
     }
