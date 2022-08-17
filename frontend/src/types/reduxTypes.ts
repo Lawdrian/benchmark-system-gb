@@ -30,6 +30,10 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 // Registration of a new user failed
 export const REGISTER_FAIL = "REGISTER_FAIL";
+// Activation of a new user was successful
+export const ACTIVATE_SUCCESS = "ACTIVATE_SUCCESS";
+// Activation of a new user failed
+export const ACTIVATE_FAIL = "ACTIVATE_FAIL";
 // Set the co2-footprint-loading flag
 export const CO2FP_LOADING = "CO2FP_LOADING";
 // Loading of co2-footprint was successful

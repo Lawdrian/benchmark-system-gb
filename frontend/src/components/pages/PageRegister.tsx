@@ -8,9 +8,9 @@ import Typography from "@mui/material/Typography";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
-import {Link, Navigate} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import {register} from "../../actions/auth";
-import {InputAdornment} from "@mui/material";
+import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
 import {RootState} from "../../store";
 
 const mapStateToProps = (state: RootState) => ({
@@ -32,23 +32,29 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
     const [cPassword, setCPassword] = useState<string>("")
     const [company, setCompany] = useState<string>("")
     const [tries, setTries] = useState<number>(0)
+    const [openDialog, setOpenDialog] = useState<boolean>(false)
+
+    const navigate = useNavigate()
 
     const handleRegistration = (event: any) => {
         event.preventDefault();
         if (inputValid(company, email, password, cPassword)) {
             register(email, email, password, company)
+            setOpenDialog(true)
         } else {
             setTries(tries + 1)
         }
+    }
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false)
+        navigate('/login')
     }
 
     const hasTried = () => {
         return tries > 0
     }
 
-    if (isAuthenticated) {
-        return <Navigate to={registeredUrl}/>
-    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -71,6 +77,18 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
                         <Typography component="h1" variant="h5">
                             Registrieren
                         </Typography>
+                    </Grid>
+                    <Grid item>
+                            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                                <>
+                                    <DialogTitle>Aktivieren Sie Ihren Account</DialogTitle>
+                                     <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            Eine Bestätigungsemail wurde an Ihre Emailadresse gesendet.
+                                        </DialogContentText>
+                                    </DialogContent>
+                                </>
+                            </Dialog>
                     </Grid>
                     <Grid item container spacing={2} sx={{mt: 1}}>
                         <Grid item xs={12}>

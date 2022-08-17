@@ -12,6 +12,8 @@
  * #############################################################################
  */
 import {
+    ACTIVATE_FAIL,
+    ACTIVATE_SUCCESS,
     AUTH_ERROR,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
@@ -110,6 +112,37 @@ export const register = (
             });
         });
 };
+
+export const activate = (
+    uidb64: string,
+    token: string
+) => (dispatch: any) => {
+    console.log("activate uidb64: " + uidb64)
+    console.log("activate: " + "bla: " + uidb64 + token)
+
+    // Create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const url = `/accounts/auth/activate?uid=${uidb64}&token=${token}`
+
+    axios.patch(url, {}, config)
+        .then((response) => {
+            dispatch({
+                type: ACTIVATE_SUCCESS,
+            });
+        })
+        .catch((error) => {
+            dispatch({
+                type: ACTIVATE_FAIL,
+            });
+        });
+
+
+}
 
 /**
  * Login a user using the provided credentials.

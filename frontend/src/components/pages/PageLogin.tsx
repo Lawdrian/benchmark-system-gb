@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import {Link, Navigate} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
 import {login} from "../../actions/auth";
 import {RootState} from "../../store";
@@ -29,6 +29,9 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
     const [password, setPassword] = useState<string>("")
     const [showAlert, setShowAlert] = useState<boolean>(false)
 
+    const navigate = useNavigate()
+
+    console.log("Login Page!")
     const handleLogin = (event: any) => {
         event.preventDefault();
         login(email, password, () => setShowAlert(true));
@@ -47,7 +50,8 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
     }
 
     if (isAuthenticated) {
-        return <Navigate to={loggedInUrl}/>
+        console.log("PETEEERRR!!!!")
+        navigate(loggedInUrl)
     }
 
     return (
