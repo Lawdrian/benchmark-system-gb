@@ -79,7 +79,6 @@ const pageDefinitions: Array<Page> = [
         .finalize(),
     generatePage(
         <PageRegister
-            registeredUrl={pageConfig.homeUrl}
             loginUrl={pageConfig.loginUrl}
         />, pageConfig.registerUrl, false)
         .finalize(),
