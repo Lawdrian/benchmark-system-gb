@@ -19,7 +19,7 @@ import {
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
     REGISTER_FAIL,
-    REGISTER_SUCCESS,
+    REGISTER_SUCCESS, RESETPW_FAIL, RESETPW_PENDING, RESETPW_SUCCESS,
     USER_LOADED,
     USER_LOADING
 } from "../types/reduxTypes";
@@ -74,6 +74,8 @@ export const logout = () => (dispatch: AppDispatch, getState: ReduxStateHook) =>
  * @param email - The users' email
  * @param password - The password to use
  * @param companyName - The company, the user works at
+ * @param callbackSucc - Function that should be executed, when the registration was a success
+ * @param callbackErr - Function that should be executed, when an error occurred during registration
  */
 export const register = (
     username: string,
@@ -117,6 +119,13 @@ export const register = (
         });
 };
 
+
+/**
+ * Activate a newly created account.
+ *
+ * @param uidb64 - Encoded user id
+ * @param token - User-specific activation token
+ */
 export const activate = (
     uidb64: string,
     token: string
@@ -144,8 +153,91 @@ export const activate = (
                 type: ACTIVATE_FAIL,
             });
         });
+}
 
 
+/**
+ * Send password change link to user email.
+ *
+ * @param email - The users' email
+ */
+export const forgotPW = (
+    email: string
+) => (dispatch: any) => {
+
+
+    // Create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const body = {
+        email: email
+    }
+
+    const url = `/accounts/auth/forgotpw`
+
+    axios.post(url, body, config)
+        .then((response) => {
+            dispatch({
+                type: RESETPW_PENDING,
+            });
+        })
+        .catch((error) => {
+            dispatch({
+                type: RESETPW_FAIL,
+            });
+        });
+}
+
+
+/**
+ * Reset a users password.
+ *
+ * @param uidb64 - Encoded user id
+ * @param token - User-specific activation token
+ * @param password - The new password to use
+ * @param callbackSucc - Function that should be executed, when the password change was a success
+ * @param callbackErr - Function that should be executed, when an error occurred during password change
+ */
+export const resetPW = (
+    uidb64: string,
+    token: string,
+    password: string,
+    callbackSucc: Function = () => {},
+    callbackErr: Function = () => {}
+) => (dispatch: any) => {
+    console.log("resetPW uidb64: " + uidb64)
+    console.log("resetPW: " + "bla: " + uidb64 + token)
+
+    // Create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const body = {
+        password: password
+    }
+
+    const url = `/accounts/auth/resetpw?uid=${uidb64}&token=${token}`
+
+    axios.patch(url, body, config)
+        .then((response) => {
+            dispatch({
+                type: RESETPW_SUCCESS,
+            });
+            callbackSucc()
+        })
+        .catch((error) => {
+            dispatch({
+                type: RESETPW_FAIL,
+            });
+            callbackErr()
+        });
 }
 
 /**

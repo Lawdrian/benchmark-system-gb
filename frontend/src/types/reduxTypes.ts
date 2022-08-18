@@ -34,6 +34,12 @@ export const REGISTER_FAIL = "REGISTER_FAIL";
 export const ACTIVATE_SUCCESS = "ACTIVATE_SUCCESS";
 // Activation of a new user failed
 export const ACTIVATE_FAIL = "ACTIVATE_FAIL";
+// Reset of a user password was successful
+export const RESETPW_SUCCESS = "RESETPW_SUCCESS";
+// Reset password email has been successfully send to the user email, but password hasn't been changed yet
+export const RESETPW_PENDING = "RESETPW_PENDING";
+// Reset of a user password failed
+export const RESETPW_FAIL = "RESETPW_FAIL";
 // Set the co2-footprint-loading flag
 export const CO2FP_LOADING = "CO2FP_LOADING";
 // Loading of co2-footprint was successful

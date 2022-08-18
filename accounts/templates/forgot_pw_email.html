@@ -1,0 +1,5 @@
+    {% autoescape off %}
+    Hallo {{ user.profile.company_name }},
+    Bitte klicken Sie auf den Link um Ihr Passwort zurückzusetzen,
+    http://{{ domain }}/resetpw?uid={{ uid }}&token={{ token }}
+    {% endautoescape %}
