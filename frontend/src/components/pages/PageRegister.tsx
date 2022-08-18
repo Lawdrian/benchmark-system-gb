@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -8,13 +8,12 @@ import Typography from "@mui/material/Typography";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
-import {Link, Navigate, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {register} from "../../actions/auth";
 import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
 import {RootState} from "../../store";
 
 const mapStateToProps = (state: RootState) => ({
-    isAuthenticated: state.auth.isAuthenticated
 })
 
 const connector = connect(mapStateToProps, {register});
@@ -22,28 +21,26 @@ const connector = connect(mapStateToProps, {register});
 type ReduxProps = ConnectedProps<typeof connector>
 
 type RegisterProps = ReduxProps & {
-    registeredUrl: string
     loginUrl: string
 }
 
-const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: RegisterProps) => {
+const PageRegister = ({register, loginUrl}: RegisterProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [cPassword, setCPassword] = useState<string>("")
     const [company, setCompany] = useState<string>("")
     const [tries, setTries] = useState<number>(0)
     const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [emailIsUnique, setEmailIsUnique] = useState<boolean>(true)
 
     const navigate = useNavigate()
 
     const handleRegistration = (event: any) => {
         event.preventDefault();
         if (inputValid(company, email, password, cPassword)) {
-            register(email, email, password, company)
-            setOpenDialog(true)
-        } else {
-            setTries(tries + 1)
+            register(email, email, password, company, () => setOpenDialog(true), () => setEmailIsUnique(false))
         }
+        setTries(tries + 1)
     }
 
     const handleCloseDialog = () => {
@@ -54,7 +51,6 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
     const hasTried = () => {
         return tries > 0
     }
-
 
     return (
         <Container component="main" maxWidth="xs">
@@ -113,8 +109,8 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
                                 id="email"
                                 autoComplete="email"
                                 onChange={(event) => setEmail(event.target.value)}
-                                helperText={hasTried() ? getMailHelperText(email) : undefined}
-                                error={hasTried() && !emailValid(email)}
+                                helperText={hasTried() ? getMailHelperText(email, emailIsUnique) : undefined}
+                                error={hasTried() && (!emailValid(email) || !emailIsUnique)}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -235,12 +231,15 @@ const getCompanyHelperText = (company: string) => {
     }
 }
 
-const getMailHelperText = (email: string) => {
+const getMailHelperText = (email: string, emailUnique: boolean) => {
     if (isEmpty(email)) {
         return getRequiredHelperText()
     } else if (!emailValid(email)) {
         return "Bitte geben Sie eine gültige Email-Adresse an!"
-    } else {
+    } else if (!emailUnique) {
+        return "Diese Email wird bereits verwendet!"
+    }
+    else {
         return
     }
 }

@@ -79,7 +79,9 @@ export const register = (
     username: string,
     email: string,
     password: string,
-    companyName: string
+    companyName: string,
+    callbackSucc: Function = () => {},
+    callbackErr: Function = () => {}
 ) => (dispatch: any) => {
     // Create request headers
     const config = {
@@ -105,11 +107,13 @@ export const register = (
                 type: REGISTER_SUCCESS,
                 payload: response.data,
             });
+            callbackSucc()
         })
         .catch((error) => {
-            dispatch({// TODO: Proper Error handling
+            dispatch({
                 type: REGISTER_FAIL,
             });
+            callbackErr()
         });
 };
 
