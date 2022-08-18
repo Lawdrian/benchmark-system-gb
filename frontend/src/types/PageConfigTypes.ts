@@ -45,6 +45,8 @@ export type PageConfig = {
     readonly loginUrl: string
     readonly registerUrl: string
     readonly userActivationUrl: string
+    readonly forgotPWUrl: string
+    readonly resetPWUrl: string
     readonly homeUrl: string
     readonly proceedUrl: string
 }

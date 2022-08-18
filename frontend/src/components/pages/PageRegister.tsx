@@ -12,6 +12,15 @@ import {Link, useNavigate} from "react-router-dom";
 import {register} from "../../actions/auth";
 import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
 import {RootState} from "../../store";
+import {
+    companyValid,
+    emailValid, getCompanyHelperText,
+    getMailHelperText,
+    getPasswordHelperText,
+    getPasswordInputProps,
+    inputValid,
+    passwordsValid
+} from "../../helpers/UserManagement";
 
 const mapStateToProps = (state: RootState) => ({
 })
@@ -45,7 +54,7 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
 
     const handleCloseDialog = () => {
         setOpenDialog(false)
-        navigate('/login')
+        navigate(loginUrl)
     }
 
     const hasTried = () => {
@@ -167,93 +176,6 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
     );
 }
 
-const isEmpty = (value: string) => {
-    return value.length <= 0;
-}
 
-const passwordsPresent = (password: string, cPassword: string): boolean => {
-    return !isEmpty(password) && !isEmpty(cPassword);
-}
-
-const passwordsEqual = (password: string, cPassword: string): boolean => {
-    return password == cPassword
-}
-
-const passwordsValid = (password: string, cPassword: string): boolean => {
-    return passwordsPresent(password, cPassword) && passwordsEqual(password, cPassword)
-}
-
-const companyValid = (company: string): boolean => {
-    return company.length > 0 && company.length <= 100
-}
-
-const emailValid = (email: string): boolean => {
-    return email.length > 0 && email.includes("@")
-}
-
-const inputValid = (company: string, email: string, password: string, cPassword: string): boolean => {
-    return passwordsValid(password, cPassword) && companyValid(company) && emailValid(email)
-}
-
-const getPasswordInputProps = (password: string, cPassword: string) => {
-    if (passwordsValid(password, cPassword)) {
-        return {
-            endAdornment: (
-                <InputAdornment position="end">
-                    <CheckIcon color="success"/>
-                </InputAdornment>
-            )
-        }
-    } else if (!passwordsPresent(password, cPassword)) {
-        return
-    } else {
-        return {
-            endAdornment: (
-                <InputAdornment position="end">
-                    <CloseIcon color="error"/>
-                </InputAdornment>
-            )
-        }
-    }
-}
-
-const getRequiredHelperText = () => {
-    return "Bitte füllen sie dieses Feld aus!"
-}
-
-const getCompanyHelperText = (company: string) => {
-    if (isEmpty(company)) {
-        return getRequiredHelperText()
-    } else if (!companyValid(company)) {
-        return "Bitte geben sie einen kürzeren Betriebsnamen an!"
-    } else {
-        return
-    }
-}
-
-const getMailHelperText = (email: string, emailUnique: boolean) => {
-    if (isEmpty(email)) {
-        return getRequiredHelperText()
-    } else if (!emailValid(email)) {
-        return "Bitte geben Sie eine gültige Email-Adresse an!"
-    } else if (!emailUnique) {
-        return "Diese Email wird bereits verwendet!"
-    }
-    else {
-        return
-    }
-}
-
-const getPasswordHelperText = (password: string, cPassword: string, confirm: boolean) => {
-    if ((isEmpty(password) && !confirm) || (isEmpty(cPassword) && confirm)) {
-        return getRequiredHelperText()
-    } else if (!passwordsPresent(password, cPassword)) {
-        return
-    } else if (!passwordsValid(password, cPassword)) {
-        return "Passwörter stimmen nicht überein!"
-    } else {
-        return
-    }
-}
 
 export default connector(PageRegister);

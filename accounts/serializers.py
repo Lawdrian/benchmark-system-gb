@@ -55,3 +55,11 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+class ForgotPWSerializer(serializers.Serializer):
+    email = serializers.CharField()
+
+
+class ResetPWSerializer(serializers.Serializer):
+    password = serializers.CharField()

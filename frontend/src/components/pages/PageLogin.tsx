@@ -7,7 +7,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import {Link, Navigate, useNavigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
-import {login} from "../../actions/auth";
+import {login, forgotPW} from "../../actions/auth";
 import {RootState} from "../../store";
 import {Alert, AlertTitle} from "@mui/material";
 
@@ -15,16 +15,17 @@ const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-const connector = connect(mapStateToProps, {login});
+const connector = connect(mapStateToProps, {login, forgotpw: forgotPW});
 
 type ReduxProps = ConnectedProps<typeof connector>
 
 type LoginProps = ReduxProps & {
     loggedInUrl: string
     registerUrl: string
+    forgotPWUrl: string
 }
 
-const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProps) => {
+const PageLogin = ({login, forgotpw, isAuthenticated, loggedInUrl, registerUrl, forgotPWUrl}: LoginProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [showAlert, setShowAlert] = useState<boolean>(false)
@@ -115,10 +116,12 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <p>
+                            Passwort vergessen? <Link
+                            to={forgotPWUrl}> Passwort zurücksetzen </Link>
+                    </Grid>
+                    <Grid item>
                             Noch kein Konto? <Link
                             to={registerUrl}> Registrieren </Link>
-                        </p>
                     </Grid>
                 </Grid>
             </Box>

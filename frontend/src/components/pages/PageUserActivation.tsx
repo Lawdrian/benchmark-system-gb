@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -10,6 +10,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {activate, login} from "../../actions/auth";
 import {RootState} from "../../store";
 import {Alert, AlertTitle} from "@mui/material";
+import {UserManagementLayout, UserManagementLayoutProps} from "../utils/UserManagement";
 
 const mapStateToProps = (state: RootState) => ({
     isActivated: state.auth.isActivated
@@ -38,78 +39,30 @@ const PageUserActivation = ({isActivated, activate, loginUrl}: userActivationPro
         activate(uidb64, token)
     }
 
-    if(isActivated) {
-        return userActivationLayout(
-            "Email wurde erfolgreich bestätigt!",
-            "Sie können sich jetzt anmelden.",
-            "Zur Anmeldung",
-            loginUrl
-        )
+    const successProps: UserManagementLayoutProps = {
+        title: "Email wurde erfolgreich bestätigt!",
+        subtitle: "Sie können sich jetzt anmelden.",
+        buttonText: "Zur Anmeldung",
+        navigateTo: loginUrl
+    }
 
+    const errorProps: UserManagementLayoutProps = {
+        title: "Der Aktivierungslink ist ungültig!",
+        subtitle: "Versuchen Sie es erneut.",
+        buttonText: "Zur Anmeldung",
+        navigateTo: loginUrl
+    }
+
+    if(isActivated) {
+        return <UserManagementLayout {...successProps}/>
     }
     else {
-        return userActivationLayout(
-            "Der Aktivierungslink ist ungültig!",
-            "Versuchen Sie es erneut.",
-            "Zur Anmeldung",
-            loginUrl
-        )
+        return <UserManagementLayout {...errorProps}/>
     }
 }
 
 export default connector(PageUserActivation);
 
 
-
-const userActivationLayout = (title:string,subtitle:string, buttonText:string, navigateTo: string) => {
-
-    const navigate = useNavigate()
-
-
-    const navigateToPage = () => {
-        navigate(navigateTo)
-    }
-
-    return(
-            <Container component="main" maxWidth="xs">
-                <Box
-                    sx={{
-                        height: '100vh',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center'
-                    }}
-                >
-                    <Grid
-                        container
-                        justifyContent="center"
-                        alignItems="center"
-                        spacing={1}
-                    >
-                        <Grid item>
-                            <Typography component="h1" variant="h5">
-                                {title}
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <p>{subtitle}</p>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Button
-                                fullWidth
-                                variant="contained"
-                                sx={{mt: 3, mb: 2}}
-                                color="primary"
-                                onClick={navigateToPage}
-                            >
-                                {buttonText}
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Container>
-    )
-}
 
 
