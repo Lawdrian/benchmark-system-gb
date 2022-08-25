@@ -6,7 +6,7 @@
 import {
     ACTIVATE_FAIL,
     ACTIVATE_SUCCESS,
-    AUTH_ERROR,
+    AUTH_ERROR, DELETE_SUCCESS,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
@@ -80,6 +80,7 @@ export default function (state = initialState, action: any): AuthenticationState
         case LOGIN_FAIL:
         case LOGOUT_SUCCESS:
         case REGISTER_FAIL:
+        case DELETE_SUCCESS:
             localStorage.removeItem('token')
             return {
                 ...state,

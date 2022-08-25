@@ -206,8 +206,8 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues([{selectValue: energyConsumption.belichtungsstrom, textFieldValue: null}]) : defaultOption,
         Substrat: consumableMaterials?.growbagsSubstrat && consumableMaterials?.growbagsSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsSubstrat) : defaultOption
     }
-    console.log("SubmissionData:")
-    console.log(submissionData)
+    //console.log("SubmissionData:")
+    //console.log(submissionData)
     return submissionData
 }
 

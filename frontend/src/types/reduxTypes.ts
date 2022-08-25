@@ -40,6 +40,10 @@ export const RESETPW_SUCCESS = "RESETPW_SUCCESS";
 export const RESETPW_PENDING = "RESETPW_PENDING";
 // Reset of a user password failed
 export const RESETPW_FAIL = "RESETPW_FAIL";
+// Deletion of user account was successful
+export const DELETE_SUCCESS = "DELETE_SUCCESS";
+// Deletion of user account has failed
+export const DELETE_FAIL = "DELETE_FAIL";
 // Set the co2-footprint-loading flag
 export const CO2FP_LOADING = "CO2FP_LOADING";
 // Loading of co2-footprint was successful

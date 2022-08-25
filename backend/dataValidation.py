@@ -45,9 +45,8 @@ def validate_greenhouse_data(data):
         "Zusatzbelichtung": ["Belichtungsstrom"]
     }
 
-
-
-    # optiongroup fields that other fields depend on and as value the condition that needs to be met for the dependend fields to be mandatory
+    # optiongroup fields that other fields depend on and as value the condition that needs to be met
+    # for the dependend fields to be mandatory
     conditional_optiongroups = {
         "Nebenkultur": "JA",
         "Zusatzbelichtung": "JA",
@@ -66,7 +65,7 @@ def validate_greenhouse_data(data):
         optiongroup_required = selected_option_value.upper() == conditional_optiongroups.get(optiongroup)
 
         if(optiongroup_required == False):
-            #if a measurement is not mandatory delete it out of the mandatory measurements list
+            # if a measurement is not mandatory delete it out of the mandatory measurements list
             if eventually_optional_measurements.get(optiongroup) is not None:
                 for not_required_measurement in eventually_optional_measurements.get(optiongroup):
                     del mandatory_measurements[not_required_measurement]
@@ -76,22 +75,20 @@ def validate_greenhouse_data(data):
                 for not_required_optiongroup in eventually_optional_optiongroups.get(optiongroup):
                     del mandatory_optiongroups[not_required_optiongroup]
 
-
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():
         print(data[value.measurement_name])
         print(data[value.measurement_name] == default_value)
         if data[value.measurement_name] == default_value:
-            print("MMMMMMMMMMMMMMMMMMM")
+            print("Error: Mandatory measurement field has default value!")
             return False
-
 
     # check if any element in the mandatory_optiongroups list has a default value
     for name, value in mandatory_optiongroups.items():
         print(str(data[value.option_group_name]))
         print(type(data[value.option_group_name]))
         if str(data[value.option_group_name]) == default_option:
-            print("OOOOOOOOOOOOOOOOOOO")
+            print("Error: Mandatory option group has default value!")
             return False
 
     return True

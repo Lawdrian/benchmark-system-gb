@@ -67,7 +67,6 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const setConsumableMaterialsState = (consumableMaterials: ConsumableMaterialsState) => {
         setConsumableMaterials(consumableMaterials)
         props.provideConsumables(consumableMaterials)
-        console.log("Data: ", consumableMaterials)
     }
 
     // Properties of the input fields

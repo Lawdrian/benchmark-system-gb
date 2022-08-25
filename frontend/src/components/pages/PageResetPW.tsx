@@ -47,12 +47,10 @@ const PageResetPW = ({isActivated, resetPW, loginUrl}: userActivationProps) => {
 
 
     const handleResetPW  = () => {
-        if (uidb64 != null && token != null) {
+        if (uidb64 != null && token != null && passwordsValid(password, cPassword)) {
             resetPW(uidb64, token, password, () => setOpenDialog(true), () => setIsError(true))
         }
-        else return {
-
-        }
+        else setTries(tries+1)
     }
 
     const handleCloseDialog = () => {
