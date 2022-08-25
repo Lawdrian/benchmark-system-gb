@@ -36,9 +36,9 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
-
         profile_data = validated_data.pop('profile')
         user.profile.company_name = profile_data['company_name']
+        user.is_active = False
         user.save()
 
         return user
@@ -54,3 +54,11 @@ class LoginSerializer(serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Incorrect Credentials")
+
+
+class ForgotPWSerializer(serializers.Serializer):
+    email = serializers.CharField()
+
+
+class ResetPWSerializer(serializers.Serializer):
+    password = serializers.CharField()

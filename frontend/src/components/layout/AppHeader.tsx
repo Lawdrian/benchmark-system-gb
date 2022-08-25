@@ -13,7 +13,7 @@ import { logout } from "../../actions/auth";
 const mapStateToProps = (state: { auth: AuthenticationState }) => ({
     auth: state.auth
 })
-const connector = connect(mapStateToProps, { logout });
+const connector = connect(mapStateToProps, {logout});
 
 type ReduxProps = ConnectedProps<typeof connector>
 

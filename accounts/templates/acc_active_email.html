@@ -1,0 +1,5 @@
+    {% autoescape off %}
+    Hallo {{ user.profile.company_name }},
+    Bitte klicken Sie auf den Link um Ihre Registrierung abzuschließen,
+    http://{{ domain }}/activate?uid={{ uid }}&token={{ token }}
+    {% endautoescape %}

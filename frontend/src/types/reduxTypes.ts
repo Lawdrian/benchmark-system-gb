@@ -30,6 +30,20 @@ export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 // Registration of a new user failed
 export const REGISTER_FAIL = "REGISTER_FAIL";
+// Activation of a new user was successful
+export const ACTIVATE_SUCCESS = "ACTIVATE_SUCCESS";
+// Activation of a new user failed
+export const ACTIVATE_FAIL = "ACTIVATE_FAIL";
+// Reset of a user password was successful
+export const RESETPW_SUCCESS = "RESETPW_SUCCESS";
+// Reset password email has been successfully send to the user email, but password hasn't been changed yet
+export const RESETPW_PENDING = "RESETPW_PENDING";
+// Reset of a user password failed
+export const RESETPW_FAIL = "RESETPW_FAIL";
+// Deletion of user account was successful
+export const DELETE_SUCCESS = "DELETE_SUCCESS";
+// Deletion of user account has failed
+export const DELETE_FAIL = "DELETE_FAIL";
 // Set the co2-footprint-loading flag
 export const CO2FP_LOADING = "CO2FP_LOADING";
 // Loading of co2-footprint was successful

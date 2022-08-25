@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
@@ -8,13 +8,21 @@ import Typography from "@mui/material/Typography";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {register} from "../../actions/auth";
-import {InputAdornment} from "@mui/material";
+import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
 import {RootState} from "../../store";
+import {
+    companyValid,
+    emailValid, getCompanyHelperText,
+    getMailHelperText,
+    getPasswordHelperText,
+    getPasswordInputProps,
+    inputValid,
+    passwordsValid
+} from "../../helpers/UserManagement";
 
 const mapStateToProps = (state: RootState) => ({
-    isAuthenticated: state.auth.isAuthenticated
 })
 
 const connector = connect(mapStateToProps, {register});
@@ -22,32 +30,40 @@ const connector = connect(mapStateToProps, {register});
 type ReduxProps = ConnectedProps<typeof connector>
 
 type RegisterProps = ReduxProps & {
-    registeredUrl: string
     loginUrl: string
 }
 
-const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: RegisterProps) => {
+const PageRegister = ({register, loginUrl}: RegisterProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [cPassword, setCPassword] = useState<string>("")
     const [company, setCompany] = useState<string>("")
     const [tries, setTries] = useState<number>(0)
+    const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [emailIsUnique, setEmailIsUnique] = useState<boolean>(true)
+
+    const navigate = useNavigate()
 
     const handleRegistration = (event: any) => {
         event.preventDefault();
         if (inputValid(company, email, password, cPassword)) {
-            register(email, email, password, company)
-        } else {
-            setTries(tries + 1)
+            register(email, email, password, company, () => setOpenDialog(true), () => setEmailIsUnique(false))
         }
+        setTries(tries + 1)
+    }
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false)
+        navigate(loginUrl)
+    }
+
+    const handleEmailChange = (value:string) => {
+        setEmail(value)
+        setEmailIsUnique(true)
     }
 
     const hasTried = () => {
         return tries > 0
-    }
-
-    if (isAuthenticated) {
-        return <Navigate to={registeredUrl}/>
     }
 
     return (
@@ -72,6 +88,18 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
                             Registrieren
                         </Typography>
                     </Grid>
+                    <Grid item>
+                            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                                <>
+                                    <DialogTitle>Aktivieren Sie Ihren Account</DialogTitle>
+                                     <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+                                            Eine Bestätigungsemail wurde an Ihre Emailadresse gesendet.
+                                        </DialogContentText>
+                                    </DialogContent>
+                                </>
+                            </Dialog>
+                    </Grid>
                     <Grid item container spacing={2} sx={{mt: 1}}>
                         <Grid item xs={12}>
                             <TextField
@@ -94,9 +122,9 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
                                 name="email"
                                 id="email"
                                 autoComplete="email"
-                                onChange={(event) => setEmail(event.target.value)}
-                                helperText={hasTried() ? getMailHelperText(email) : undefined}
-                                error={hasTried() && !emailValid(email)}
+                                onChange={(event) => handleEmailChange(event.target.value)}
+                                helperText={hasTried() ? getMailHelperText(email, emailIsUnique) : undefined}
+                                error={hasTried() && (!emailValid(email) || !emailIsUnique)}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -136,7 +164,7 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
                             variant="contained"
                             sx={{mt: 3, mb: 2}}
                             color="primary"
-                            disabled={hasTried() && !inputValid(company, email, password, cPassword)}
+                            disabled={hasTried() && (!inputValid(company, email, password, cPassword) || !emailIsUnique)}
                         >
                             Registrieren
                         </Button>
@@ -153,90 +181,6 @@ const PageRegister = ({isAuthenticated, register, loginUrl, registeredUrl}: Regi
     );
 }
 
-const isEmpty = (value: string) => {
-    return value.length <= 0;
-}
 
-const passwordsPresent = (password: string, cPassword: string): boolean => {
-    return !isEmpty(password) && !isEmpty(cPassword);
-}
-
-const passwordsEqual = (password: string, cPassword: string): boolean => {
-    return password == cPassword
-}
-
-const passwordsValid = (password: string, cPassword: string): boolean => {
-    return passwordsPresent(password, cPassword) && passwordsEqual(password, cPassword)
-}
-
-const companyValid = (company: string): boolean => {
-    return company.length > 0 && company.length <= 100
-}
-
-const emailValid = (email: string): boolean => {
-    return email.length > 0 && email.includes("@")
-}
-
-const inputValid = (company: string, email: string, password: string, cPassword: string): boolean => {
-    return passwordsValid(password, cPassword) && companyValid(company) && emailValid(email)
-}
-
-const getPasswordInputProps = (password: string, cPassword: string) => {
-    if (passwordsValid(password, cPassword)) {
-        return {
-            endAdornment: (
-                <InputAdornment position="end">
-                    <CheckIcon color="success"/>
-                </InputAdornment>
-            )
-        }
-    } else if (!passwordsPresent(password, cPassword)) {
-        return
-    } else {
-        return {
-            endAdornment: (
-                <InputAdornment position="end">
-                    <CloseIcon color="error"/>
-                </InputAdornment>
-            )
-        }
-    }
-}
-
-const getRequiredHelperText = () => {
-    return "Bitte füllen sie dieses Feld aus!"
-}
-
-const getCompanyHelperText = (company: string) => {
-    if (isEmpty(company)) {
-        return getRequiredHelperText()
-    } else if (!companyValid(company)) {
-        return "Bitte geben sie einen kürzeren Betriebsnamen an!"
-    } else {
-        return
-    }
-}
-
-const getMailHelperText = (email: string) => {
-    if (isEmpty(email)) {
-        return getRequiredHelperText()
-    } else if (!emailValid(email)) {
-        return "Bitte geben Sie eine gültige Email-Adresse an!"
-    } else {
-        return
-    }
-}
-
-const getPasswordHelperText = (password: string, cPassword: string, confirm: boolean) => {
-    if ((isEmpty(password) && !confirm) || (isEmpty(cPassword) && confirm)) {
-        return getRequiredHelperText()
-    } else if (!passwordsPresent(password, cPassword)) {
-        return
-    } else if (!passwordsValid(password, cPassword)) {
-        return "Passwörter stimmen nicht überein!"
-    } else {
-        return
-    }
-}
 
 export default connector(PageRegister);

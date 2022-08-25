@@ -5,7 +5,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import {Link, Navigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
 import {login} from "../../actions/auth";
 import {RootState} from "../../store";
@@ -22,13 +22,17 @@ type ReduxProps = ConnectedProps<typeof connector>
 type LoginProps = ReduxProps & {
     loggedInUrl: string
     registerUrl: string
+    forgotPWUrl: string
 }
 
-const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProps) => {
+const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUrl}: LoginProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [showAlert, setShowAlert] = useState<boolean>(false)
 
+    const navigate = useNavigate()
+
+    console.log("Login Page!")
     const handleLogin = (event: any) => {
         event.preventDefault();
         login(email, password, () => setShowAlert(true));
@@ -47,7 +51,7 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
     }
 
     if (isAuthenticated) {
-        return <Navigate to={loggedInUrl}/>
+        navigate(loggedInUrl)
     }
 
     return (
@@ -111,10 +115,12 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl}: LoginProp
                         </Grid>
                     </Grid>
                     <Grid item>
-                        <p>
+                            Passwort vergessen? <Link
+                            to={forgotPWUrl}> Passwort zurücksetzen </Link>
+                    </Grid>
+                    <Grid item>
                             Noch kein Konto? <Link
                             to={registerUrl}> Registrieren </Link>
-                        </p>
                     </Grid>
                 </Grid>
             </Box>

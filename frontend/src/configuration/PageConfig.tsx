@@ -28,10 +28,16 @@ import {generatePage} from "../helpers/PageBuilder";
 import {Page, PageConfig, Section} from "../types/PageConfigTypes";
 import EndpointTest from "../components/tests/EndpointTest";
 import PageHome from "../components/pages/PageHome";
+import PageUserActivation from "../components/pages/PageUserActivation";
+import PageForgotPW from "../components/pages/PageForgotPW";
+import PageResetPW from "../components/pages/PageResetPW";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
     registerUrl: "/register",
+    userActivationUrl: "/activate",
+    forgotPWUrl: "/forgotpw",
+    resetPWUrl: "resetpw",
     homeUrl: "/",
     proceedUrl: "", // TODO: Still necessary?!
 }
@@ -56,7 +62,7 @@ const pageDefinitions: Array<Page> = [
         .withHeaderTitle("Eingabe der Gewächshausdaten")
         .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Profile)
         .finalize(),
-    generatePage(<PageProfile/>, "profile")
+    generatePage(<PageProfile loginUrl={pageConfig.loginUrl}/>, "profile")
         .withHeaderTitle("Dein Profil")
         .includeInDrawer(<AccountCircle/>, "Profil", Section.Profile)
         .includeInAccountMenu("Profil")
@@ -73,14 +79,29 @@ const pageDefinitions: Array<Page> = [
         <PageLogin
             loggedInUrl={pageConfig.homeUrl}
             registerUrl={pageConfig.registerUrl}
+            forgotPWUrl={pageConfig.forgotPWUrl}
         />, pageConfig.loginUrl, false)
         .finalize(),
     generatePage(
         <PageRegister
-            registeredUrl={pageConfig.homeUrl}
             loginUrl={pageConfig.loginUrl}
         />, pageConfig.registerUrl, false)
         .finalize(),
+    generatePage(
+        <PageUserActivation
+            loginUrl={pageConfig.loginUrl}
+        />, pageConfig.userActivationUrl, false)
+    .finalize(),
+    generatePage(
+        <PageForgotPW
+            loginUrl={pageConfig.loginUrl}
+        />, pageConfig.forgotPWUrl, false)
+    .finalize(),
+        generatePage(
+        <PageResetPW
+            loginUrl={pageConfig.loginUrl}
+        />, pageConfig.resetPWUrl, false)
+    .finalize(),
     generatePage(<EndpointTest/>, "ep-test")
         .withHeaderTitle("Endpoint Test für Backend-API")
         .finalize()
