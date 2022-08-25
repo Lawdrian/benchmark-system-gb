@@ -14,12 +14,12 @@
 import {
     ACTIVATE_FAIL,
     ACTIVATE_SUCCESS,
-    AUTH_ERROR,
+    AUTH_ERROR, DELETE_FAIL, DELETE_SUCCESS,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
     REGISTER_FAIL,
-    REGISTER_SUCCESS, RESETPW_FAIL, RESETPW_PENDING, RESETPW_SUCCESS,
+    REGISTER_SUCCESS, RESETPW_FAIL, RESETPW_PENDING, RESETPW_SUCCESS, User,
     USER_LOADED,
     USER_LOADING
 } from "../types/reduxTypes";
@@ -130,8 +130,6 @@ export const activate = (
     uidb64: string,
     token: string
 ) => (dispatch: any) => {
-    console.log("activate uidb64: " + uidb64)
-    console.log("activate: " + "bla: " + uidb64 + token)
 
     // Create request headers
     const config = {
@@ -209,8 +207,6 @@ export const resetPW = (
     callbackSucc: Function = () => {},
     callbackErr: Function = () => {}
 ) => (dispatch: any) => {
-    console.log("resetPW uidb64: " + uidb64)
-    console.log("resetPW: " + "bla: " + uidb64 + token)
 
     // Create request headers
     const config = {
@@ -239,6 +235,46 @@ export const resetPW = (
             callbackErr()
         });
 }
+
+
+/**
+ * Delete a users account.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param callbackSucc - Function that should be executed, when the account deletion was a success
+ * @param callbackErr - Function that should be executed, when an error occurred during account deletion
+ */
+export const deleteUser = (
+    withAuth: boolean = true,
+    callbackSucc: Function = () => {},
+    callbackErr: Function = () => {}
+) => (dispatch: any, getState: ReduxStateHook) => {
+
+    // Create request headers
+    const config = withAuth ? tokenConfig(getState) : {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+
+    const url = `/accounts/auth/delete`
+
+    axios.delete(url, config)
+        .then((response) => {
+            dispatch({
+                type: DELETE_SUCCESS,
+            });
+            callbackSucc()
+        })
+        .catch((error) => {
+            dispatch({
+                type: DELETE_FAIL,
+            });
+            callbackErr()
+        });
+}
+
 
 /**
  * Login a user using the provided credentials.

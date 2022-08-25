@@ -5,9 +5,9 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-import {Link, Navigate, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
-import {login, forgotPW} from "../../actions/auth";
+import {login} from "../../actions/auth";
 import {RootState} from "../../store";
 import {Alert, AlertTitle} from "@mui/material";
 
@@ -15,7 +15,7 @@ const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated
 });
 
-const connector = connect(mapStateToProps, {login, forgotpw: forgotPW});
+const connector = connect(mapStateToProps, {login});
 
 type ReduxProps = ConnectedProps<typeof connector>
 
@@ -25,7 +25,7 @@ type LoginProps = ReduxProps & {
     forgotPWUrl: string
 }
 
-const PageLogin = ({login, forgotpw, isAuthenticated, loggedInUrl, registerUrl, forgotPWUrl}: LoginProps) => {
+const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUrl}: LoginProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [showAlert, setShowAlert] = useState<boolean>(false)
@@ -51,7 +51,6 @@ const PageLogin = ({login, forgotpw, isAuthenticated, loggedInUrl, registerUrl, 
     }
 
     if (isAuthenticated) {
-        console.log("PETEEERRR!!!!")
         navigate(loggedInUrl)
     }
 

@@ -57,6 +57,11 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
         navigate(loginUrl)
     }
 
+    const handleEmailChange = (value:string) => {
+        setEmail(value)
+        setEmailIsUnique(true)
+    }
+
     const hasTried = () => {
         return tries > 0
     }
@@ -117,7 +122,7 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
                                 name="email"
                                 id="email"
                                 autoComplete="email"
-                                onChange={(event) => setEmail(event.target.value)}
+                                onChange={(event) => handleEmailChange(event.target.value)}
                                 helperText={hasTried() ? getMailHelperText(email, emailIsUnique) : undefined}
                                 error={hasTried() && (!emailValid(email) || !emailIsUnique)}
                             />
@@ -159,7 +164,7 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
                             variant="contained"
                             sx={{mt: 3, mb: 2}}
                             color="primary"
-                            disabled={hasTried() && !inputValid(company, email, password, cPassword)}
+                            disabled={hasTried() && (!inputValid(company, email, password, cPassword) || !emailIsUnique)}
                         >
                             Registrieren
                         </Button>

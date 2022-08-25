@@ -42,7 +42,7 @@ class Results(models.Model):
     It is part of the structure for direct user input.
     """
 
-    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=True,
+    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=False,
                                         on_delete=models.CASCADE)
     calculation = models.ForeignKey("backend.Calculations", null=True,
                                     on_delete=models.SET_NULL)
@@ -67,10 +67,10 @@ class Measures(models.Model):
     It is part of the structure for direct user input.
     """
     
-    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=True,
+    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=False,
                                       on_delete=models.CASCADE)
-    measurement = models.ForeignKey("backend.Measurements", null=True,
-                                      on_delete=models.SET_NULL)
+    measurement = models.ForeignKey("backend.Measurements", null=False,
+                                      on_delete=models.CASCADE)
     
     measure_value = models.DecimalField(max_digits=10, decimal_places=3)
 
@@ -82,8 +82,8 @@ class GreenhouseData(models.Model):
     It represents the actual data set.
     """
     
-    greenhouse = models.ForeignKey("backend.Greenhouses", null=True,
-                                      on_delete=models.SET_NULL)
+    greenhouse = models.ForeignKey("backend.Greenhouses", null=False,
+                                      on_delete=models.CASCADE)
 
     date = models.DateField()
     date_of_input = models.DateTimeField(auto_now_add=True)
@@ -97,8 +97,8 @@ class Greenhouses(models.Model):
     It represents the actual data set.
     """
 
-    user = models.ForeignKey(User, null=True,
-                             on_delete=models.SET_NULL)
+    user = models.ForeignKey(User, null=False,
+                             on_delete=models.CASCADE)
 
     greenhouse_name = models.CharField(max_length=50, unique=False, null=False)
 
@@ -121,7 +121,7 @@ class Options(models.Model):
     """
     
     option_group = models.ForeignKey("backend.OptionGroups", null=True,
-                                     on_delete=models.SET_NULL)
+                                     on_delete=models.CASCADE)
     
     option_value = models.CharField(max_length=50, null=False)
 
@@ -133,10 +133,10 @@ class Selections(models.Model):
     It is part of the structure for predefined values (e.g. dropdowns)
     """
     
-    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=True,
+    greenhouse_data = models.ForeignKey("backend.GreenhouseData", null=False,
                                      on_delete=models.CASCADE)
-    option = models.ForeignKey("backend.Options", null=True,
-                                     on_delete=models.SET_NULL)
+    option = models.ForeignKey("backend.Options", null=False,
+                                     on_delete=models.CASCADE)
     
     amount = models.DecimalField(max_digits=10, decimal_places=3, null=True)
 
