@@ -16,9 +16,9 @@
 ###############################################################################
 
 # run deployment preparations:
-python3.9 manage.py check --deploy
+python manage.py check --deploy
 cd ./frontend && npm run build
-cd .. && python3.9 manage.py collectstatic
+cd .. && python manage.py collectstatic
 
 # renew the build folder
 if [ -d "./build" ]; then
