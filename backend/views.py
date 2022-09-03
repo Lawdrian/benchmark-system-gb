@@ -342,8 +342,6 @@ class CreateGreenhouseData(APIView):
                 return Response({'Bad Request': 'Not all fields have been filled out!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-
-
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
@@ -379,7 +377,8 @@ class CreateGreenhouseData(APIView):
                     Measures(
                         greenhouse_data=greenhouse_data,
                         measurement_id=measurements[name].id,
-                        measure_value=value
+                        measure_value=value[0],
+                        measure_unit=value[1]
                     ).save()
                 elif name in options:
                     # categorical data (e.g. through dropdowns)
@@ -406,7 +405,7 @@ class CreateGreenhouseData(APIView):
                 Results(
                     greenhouse_data=greenhouse_data,
                     result_value=value,
-                    calculation_id=calculation_variables[variable].id
+                    calculation_id=calculation_variables[variable].id,
                 ).save()
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors,

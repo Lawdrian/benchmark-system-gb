@@ -263,6 +263,11 @@ def fill_measurements_table(cur):
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_measurements VALUES (?, ?);", rows)
 
+def fill_measuremntunits_table(cur):
+    a_file = open("backend/data/optionunits.csv")
+    rows = csv.reader(a_file)
+    cur.executemany("INSERT INTO backend_measurementunits VALUES (?, ?, ?);", rows)
+
 
 def fill_optiongroups_table(cur):
     """This function fills the database-table "optiongroups" based on
@@ -287,6 +292,11 @@ def fill_options_table(cur):
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_options VALUES (?, ?, ?);", rows)
 
+def fill_optionunits_table(cur):
+    a_file = open("backend/data/optionunits.csv")
+    rows = csv.reader(a_file)
+    cur.executemany("INSERT INTO backend_optionunits VALUES (?, ?, ?);", rows)
+
 def fill_calculation_variables_table(cur):
     """This function fills the database-table "calculation-variables" based on
     the data in the csv-file "./backend/data/calculation-variables.csv"
@@ -296,7 +306,7 @@ def fill_calculation_variables_table(cur):
     """
     a_file = open("backend/data/calculation-variables.csv")
     rows = csv.reader(a_file)
-    cur.executemany("INSERT INTO backend_calculations VALUES (?, ?);", rows)
+    cur.executemany("INSERT INTO backend_calculations VALUES (?, ?, ?);", rows)
 
 
 def fill_database():
@@ -310,6 +320,8 @@ def fill_database():
     fill_optiongroups_table(cur)
     fill_options_table(cur)
     fill_calculation_variables_table(cur)
+    fill_optionunits_table(cur)
+    fill_measuremntunits_table(cur)
 
     con.commit()
     con.close()
