@@ -69,6 +69,11 @@ export type SelectionValue = {
     unitFieldValue?: number | null
 }
 
+export type DateValue = {
+    value: Date | null
+    unit: number | null
+}
+
 export type MeasureValue = {
     value: number | null
     unit: number | null

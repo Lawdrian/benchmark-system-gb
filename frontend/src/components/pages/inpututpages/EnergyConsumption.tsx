@@ -30,12 +30,17 @@ type EnergyConsumptionProps = ReduxProps & SubpageProps & {
 
 export type EnergyConsumptionState = {
     energietraeger: SelectionValue[]
-    strom: MeasureValue | null
+    bhkw: number | null
+    bhkwMenge: MeasureValue | null
+    bhkwAnteilErdgas: MeasureValue | null
+    bhkwAnteilBiomethan: MeasureValue | null
+    gwhStromverbrauch: MeasureValue | null
+    betriebStromverbrauch: MeasureValue | null
     stromherkunft: SelectionValue[]
     zusatzbelichtung: number | null
     belichtungsstrom: number | null
-    belichtungsstromAnschlussleistung: MeasureValue | null
     belichtungsstromAnzLampen: MeasureValue | null
+    belichtungsstromAnschlussleistung: MeasureValue | null
     belichtungsstromLaufzeitTag: MeasureValue | null
 }
 

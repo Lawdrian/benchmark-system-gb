@@ -2,6 +2,7 @@
 import React, {useState} from "react";
 import Grid from "@mui/material/Grid";
 import {
+    DateValue,
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
@@ -36,27 +37,30 @@ export type ConsumableMaterialsState = {
     growbagsLaenge: MeasureValue | null
     growbagsPflanzenAnz: MeasureValue | null
     growbagsSubstrat: SelectionValue[]
+    kuebel: number | null
+    kuebelVolumenProTopf: MeasureValue | null
+    kuebelJungpflanzenProTopf: MeasureValue | null
+    kuebelAlter: DateValue | null
     schnurMaterial: number | null
-    schnurLaenge: MeasureValue | null
+    schnurLaengeProTrieb: MeasureValue | null
     schnurWiederverwendung: MeasureValue | null
     klipseMaterial: number | null
     klipseGesamtmenge: MeasureValue | null
     klipseAnzProTrieb: MeasureValue | null
     klipseWiederverwendung: MeasureValue | null
     rispenbuegelMaterial: number | null
-    rispenbuegelGesamtmenge: MeasureValue | null
-    rispenbuegelAnzProTrieb: number | null
+    rispenbuegelAnzProTrieb: MeasureValue | null
     rispenbuegelWiederverwendung: MeasureValue | null
     bewaesserArt: number | null
     bodenfolien: number | null
     bodenfolienVerwendungsdauer: MeasureValue | null
-    sonstVerbrauchsmaterialien: SelectionValue[]
-    jungpflanzenEinkauf: number | null
+    jungpflanzenZukauf: number | null
     jungpflanzenDistanz: MeasureValue | null
-    plastikVerpackung: MeasureValue | null
-    kartonVerpackung: MeasureValue | null
-    transportFrequenz: MeasureValue | null
+    jungpflanzenSubstrat: number | null
+    verpackungsmaterial: SelectionValue[]
+    sonstVerbrauchsmaterialien: SelectionValue[]
     transportDistanz: MeasureValue | null
+    zusaetzlicherMaschineneinsatz: SelectionValue[]
 
 
 }

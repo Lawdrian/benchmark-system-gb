@@ -30,10 +30,9 @@ type ConsumableItemsProps = ReduxProps & SubpageProps & {
 }
 
 export type ConsumableItemsState = {
-    co2Zudosierung: MeasureValue | null
-    co2Herkunft: number | null
-    duengemittelDetail: SelectionValue[]
+    co2Herkunft: SelectionValue[]
     duengemittelSimple: SelectionValue[]
+    duengemittelDetail: SelectionValue[]
     fungizide: MeasureValue | null
     insektizide: MeasureValue | null
     nuetzlinge: SelectionValue[]

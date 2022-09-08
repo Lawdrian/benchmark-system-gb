@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {
     DateInputField,
-    DateInputProps,
+    DateInputProps, DateValue,
     MeasureInputField,
     MeasureInputProps, MeasureValue,
     SelectionInputField,
@@ -35,23 +35,31 @@ export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
     plz: MeasureValue | null
+    gwhGesamtFlaeche: MeasureValue | null
+    einheitlicheWaermeversorgung: number | null
+    gwhFlaeche: MeasureValue | null
+    waermeteilungFlaeche: MeasureValue | null
     gwhArt: number | null
-    gwhAlter: Date | null
+    gwhAlter: DateValue | null
     bedachungsmaterial: number | null
-    alterdesBedachungsmaterials: Date | null
-    artdesStehwandmaterials: number | null
+    bedachungsmaterialAlter: DateValue | null
+    stehwandmaterial: number | null
     energieschirm: number | null
-    alterEnergieschirm: Date| null
+    energieschirmAlter: DateValue | null
     stehwandhoehe: MeasureValue
     laenge: MeasureValue | null
     breite: MeasureValue | null
     knappenbreite: MeasureValue | null
     scheibenlaenge: MeasureValue | null
+    reihenabstand: MeasureValue | null
+    vorwegbreite: MeasureValue | null
     produktion: number | null
     kultursystem: number | null
-    alterKultursystem: Date | null
-    reihenabstand: MeasureValue| null
+    kultursystemAlter: DateValue | null
     transportsystem: number | null
+    transportsystemAlter: DateValue | null
+    zusaetzlichesHeizsystem: number | null
+    zusaetzlichesHeizsystemAlter: DateValue | null
 }
 
 const CompanyInformationInput = (props: CompanyInformationProps) => {

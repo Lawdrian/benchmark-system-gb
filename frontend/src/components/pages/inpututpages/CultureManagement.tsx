@@ -29,15 +29,10 @@ type CultureManagementProps = ReduxProps & SubpageProps & {
 }
 
 export type CultureManagementState = {
-    anzahlTriebe: SelectionValue[]
     mittlereSolltemperaturTag: MeasureValue | null
     mittlereSolltemperaturNacht: MeasureValue | null
     entfeuchtung: number | null
-    relativeFeuchte: number | null
-    kulturmassnahmeAusgeizen: MeasureValue | null
-    kulturmassnahmeAusblattenAnzahlMonat: MeasureValue | null
-    kulturmassnahmeAusblattenMenge: MeasureValue| null
-    kulturmassnahmeAblassen: MeasureValue | null
+    luftfeuchte: MeasureValue | null
 }
 
 const CultureManagementInput = (props: CultureManagementProps) => {

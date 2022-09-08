@@ -29,17 +29,32 @@ type CultureInformationProps = ReduxProps & SubpageProps & {
 }
 
 export type CultureInformationState = {
-    fruchtgewicht: number | null
+    snack: number | null
+    snackReihenanzahl: MeasureValue | null
+    snackPflanzenabstand: MeasureValue | null
+    snackTriebzahl: MeasureValue | null
+    snackErtragJahr: MeasureValue | null
+    cocktail: number | null
+    cocktailReihenanzahl: MeasureValue | null
+    cocktailPflanzenabstand: MeasureValue | null
+    cocktailTriebzahl: MeasureValue | null
+    cocktailErtragJahr: MeasureValue | null
+    rispen: number | null
+    rispenReihenanzahl: MeasureValue | null
+    rispenPflanzenabstand: MeasureValue | null
+    rispenTriebzahl: MeasureValue | null
+    rispenErtragJahr: MeasureValue | null
+    fleisch: number | null
+    fleischReihenanzahl: MeasureValue | null
+    fleischPflanzenabstand: MeasureValue | null
+    fleischTriebzahl: MeasureValue | null
+    fleischErtragJahr: MeasureValue | null
     kulturflaeche: MeasureValue | null
     kulturBeginn: MeasureValue | null
     kulturEnde: MeasureValue | null
     nebenkultur: number | null
-    nebenkulturDauer: MeasureValue | null
-    pflanzendichte: MeasureValue | null
-    pflanzendichteAnzProm2: number | null
-    pflanzendichteReihePflanzabstand: number| null
-    pflanzendichteReihenabstand: number| null
-    ertrag: MeasureValue | null
+    nebenkulturBeginn: MeasureValue | null
+    nebenkulturEnde: MeasureValue | null
 }
 
 const CultureInformationInput = (props: CultureInformationProps) => {
