@@ -5,7 +5,7 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue
@@ -17,6 +17,7 @@ import InputPaginationButtons from "../../utils/InputPaginationButtons";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -29,12 +30,12 @@ type ConsumableItemsProps = ReduxProps & SubpageProps & {
 }
 
 export type ConsumableItemsState = {
-    co2Zudosierung: number | null
+    co2Zudosierung: MeasureValue | null
     co2Herkunft: number | null
     duengemittelDetail: SelectionValue[]
     duengemittelSimple: SelectionValue[]
-    fungizide: number | null
-    insektizide: number| null
+    fungizide: MeasureValue | null
+    insektizide: MeasureValue | null
     nuetzlinge: SelectionValue[]
 }
 
@@ -54,7 +55,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             value: consumableItems.co2Zudosierung,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                co2Zudosierung: parseFloat(event.target.value)
+                co2Zudosierung: {value:parseFloat(event.target.value),unit:consumableItems.co2Zudosierung?.unit??null}
             })
         }
     }
@@ -109,15 +110,23 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         initValues: props.values.duengemittelDetail
     }
 
-    const fungizideProps: MeasureInputProps = {
+    const fungizideProps: MeasureUnitInputProps = {
         title: "Fungizide",
         label: "Wieviele Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Fungizide und geben Sie diese in Kilogramm an.",
         textFieldProps: {
-            value: consumableItems.fungizide,
+            value: consumableItems.fungizide?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                fungizide: parseFloat(event.target.value)
+                fungizide: {value:parseFloat(event.target.value),unit:consumableItems.fungizide?.unit??null}
             })
+        },
+        selectProps: {
+            value: consumableItems.fungizide?.unit,
+            onChange: event => setConsumableItemsState({
+                ...consumableItems,
+                fungizide: {value:consumableItems.fungizide?.value?? null ,unit:parseFloat(event.target.value)}
+            }),
+            lookupValues: props.unitValues.measures.Fungizide
         }
     }
 
@@ -128,7 +137,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             value: consumableItems.insektizide,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                insektizide: parseFloat(event.target.value)
+                insektizide: {value:parseFloat(event.target.value),unit:consumableItems.insektizide?.unit??null}
             })
         }
     }
@@ -151,7 +160,9 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             })
         }),
         unitSelectProps: {
-            lookupValues: [{id: 5, values: "kg"}]
+            lookupValues: props.lookupValues.Nuetzlinge,
+            unitValues: props.unitValues,
+            optionGroup: 'Nuetzlinge'
         },
         initValues: props.values.nuetzlinge
     }
@@ -171,7 +182,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
                 <DynamicInputField {...duengemittelDetailProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...fungizideProps} />
+                <MeasureUnitInputField {...fungizideProps} />
                 <MeasureInputField {...insektizideProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>

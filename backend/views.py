@@ -21,7 +21,7 @@ from rest_framework.views import APIView
 from . import algorithms
 from .dataValidation import validate_greenhouse_data
 from .models import GreenhouseData, Measurements, Measures, Selections, \
-    OptionGroups, Options, Greenhouses, Calculations, Results
+    OptionGroups, Options, Greenhouses, Calculations, Results, MeasurementUnits, OptionUnits
 from .serializers import InputDataSerializer
 
 
@@ -282,6 +282,76 @@ class GetOptionGroupValues(APIView):
         return Response(data, status=status.HTTP_200_OK)
 
 
+class GetUnitValues(APIView):
+    """API endpoint for retrieving the unit values that a user can select
+    when entering his data for into a field. This counts for both measures and selections
+    For example: "alterGWH": kwh | kg | ...
+    """
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+
+    def get(self, request, format=None):
+        """Get request that returns the unit values for all input fields.
+
+        Args:
+            request : No query parameters needed
+
+        Returns:
+            json: unit values (id and name)
+        """
+        data = dict()
+        all_measurement_units = MeasurementUnits.objects.all()
+        measurements = Measurements.objects.all()
+        all_options = Options.objects.all()
+        all_option_units = OptionUnits.objects.all()
+        all_option_groups = OptionGroups.objects.all()
+
+        # Add all measurement units to the json object
+        if len(measurements) > 0:
+            measures = dict()
+            for measurement in measurements:
+
+                measurement_units = all_measurement_units.filter(measurement_id=measurement.id)
+                units = list()  # storing all units for one measurement
+                for measurent_unit in measurement_units:
+                    unit = dict()
+                    print(measurent_unit)
+                    unit["id"] = measurent_unit.id
+                    unit["values"] = measurent_unit.unit_name
+                    units.append(unit)
+                measures[measurement.measurement_name.replace(" ", "")] = units
+            data["measures"] = measures
+        else:
+            return Response({"Bad Request": "No data in database"},
+                            status=status.HTTP_204_NO_CONTENT)
+
+        # Add all option units to the json object
+        if len(all_option_groups) > 0:
+            selections = dict()
+            for option_group in all_option_groups:
+                option_group_dict = dict()
+                options = all_options.filter(option_group_id=option_group.id)
+                if len(options) > 0:
+                    for option in options:
+                        option_list = list()
+                        option_units = all_option_units.filter(option_id=option.id)
+                        for option_unit in option_units:
+                            option_unit_dict = dict()
+                            option_unit_dict["id"] = option_unit.id
+                            option_unit_dict["values"] = option_unit.unit_name
+                            option_list.append(option_unit_dict)
+                        option_group_dict[option.option_value.replace(" ", "")] = option_list
+                        selections[option_group.option_group_name.replace(" ", "")] = option_group_dict
+            data["selections"] = selections
+        else:
+            return Response({"Bad Request": "No data in database"},
+                            status=status.HTTP_204_NO_CONTENT)
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
 class CreateGreenhouseData(APIView):
     """This API endpoint stores the greenhouse data into the database.
     """
@@ -336,7 +406,6 @@ class CreateGreenhouseData(APIView):
 
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-
             # Validate that every required field has been filled out with not a default value
             if validate_greenhouse_data(data=serializer.data) is False:
                 return Response({'Bad Request': 'Not all fields have been filled out!'},
@@ -378,7 +447,7 @@ class CreateGreenhouseData(APIView):
                         greenhouse_data=greenhouse_data,
                         measurement_id=measurements[name].id,
                         measure_value=value[0],
-                        measure_unit=value[1]
+                        measure_unit=MeasurementUnits.objects.get(id=value[1])
                     ).save()
                 elif name in options:
                     # categorical data (e.g. through dropdowns)

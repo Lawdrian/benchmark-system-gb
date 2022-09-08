@@ -3,7 +3,7 @@ import {
     DateInputField,
     DateInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionRadioInputField,
@@ -34,7 +34,7 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
 export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
-    plz: number | null
+    plz: MeasureValue | null
     gwhArt: number | null
     gwhAlter: Date | null
     bedachungsmaterial: number | null
@@ -42,15 +42,15 @@ export type CompanyInformationState = {
     artdesStehwandmaterials: number | null
     energieschirm: number | null
     alterEnergieschirm: Date| null
-    stehwandhoehe: number | null
-    laenge: number | null
-    breite: number | null
-    knappenbreite: number | null
-    scheibenlaenge: number | null
+    stehwandhoehe: MeasureValue
+    laenge: MeasureValue | null
+    breite: MeasureValue | null
+    knappenbreite: MeasureValue | null
+    scheibenlaenge: MeasureValue | null
     produktion: number | null
     kultursystem: number | null
     alterKultursystem: Date | null
-    reihenabstand: number| null
+    reihenabstand: MeasureValue| null
     transportsystem: number | null
 }
 
@@ -99,7 +99,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.plz,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                plz: parseFloat(event.target.value)
+                plz: {value: parseFloat(event.target.value),unit:companyInformation.plz?.unit??null}
             })
         }
     }
@@ -202,10 +202,10 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Stehwandhöhe",
         label: "Höhe der Stehwände",
         textFieldProps: {
-            value: companyInformation.stehwandhoehe,
+            value: companyInformation.stehwandhoehe?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandhoehe: parseFloat(event.target.value)
+                stehwandhoehe: {...companyInformation.stehwandhoehe, value:parseFloat(event.target.value)}
             })
         }
     }
@@ -217,7 +217,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.laenge,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                laenge: parseFloat(event.target.value)
+                laenge: {value:parseFloat(event.target.value),unit:companyInformation.laenge?.unit??null}
             })
         }
     }
@@ -229,7 +229,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.breite,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                breite: parseFloat(event.target.value)
+                breite: {value:parseFloat(event.target.value),unit:companyInformation.breite?.unit??null}
             })
         }
     }
@@ -241,7 +241,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.knappenbreite,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                knappenbreite: parseFloat(event.target.value)
+                knappenbreite: {value:parseFloat(event.target.value),unit:companyInformation.knappenbreite?.unit??null}
             })
         }
     }
@@ -253,7 +253,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.scheibenlaenge,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                scheibenlaenge: parseFloat(event.target.value)
+                scheibenlaenge: {value:parseFloat(event.target.value),unit:companyInformation.scheibenlaenge?.unit??null}
             })
         }
     }
@@ -305,7 +305,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.reihenabstand,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                reihenabstand: parseFloat(event.target.value)
+                reihenabstand: {value:parseFloat(event.target.value),unit:companyInformation.reihenabstand?.unit??null}
             })
         }
     }

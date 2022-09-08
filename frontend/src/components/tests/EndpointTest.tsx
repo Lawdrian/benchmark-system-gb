@@ -19,7 +19,7 @@ import {GreenhouseData} from "../../types/reduxTypes";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
-import {loadLookupValues} from "../../actions/lookup";
+import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -39,7 +39,8 @@ const mapDispatchToProps = {
     loadWeatherData,
     submitGreenhouseData,
     resetData,
-    loadLookupValues
+    loadLookupValues,
+    loadUnitValues
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -59,6 +60,7 @@ type AuthEPTest = {
 }
 
 type TestResults = {
+    units: AuthEPTest
     lookup: AuthEPTest
     co2: AuthEPTest
     submission: AuthEPTest
@@ -74,6 +76,10 @@ const initialTestResults: TestResults = {
         withoutAuth: {loading: false, successful: false}
     },
     submission: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    units: {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
@@ -99,51 +105,52 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     let testData: GreenhouseData = {
         greenhouse_name: "Testhaus",
         date: "2022-06-17",
-        PLZ: 82362,
-        GWHAlter: 20,
-        AlterEnergieschirm: 8,
-        Stehwandhoehe: 2,
-        Laenge: 3,
-        Breite: 4,
-        Kappenbreite: 5,
-        "Scheibenlaenge(Bedachung)": 6,
-        AlterdesBedachungsmaterials: 8,
-        AlterKultursystem: 7,
-        Reihenabstand: 8,
-        Kulturflaeche: 9,
-        KulturBeginn: 10,
-        KulturEnde: 11,
-        Nebenkulturdauer: 7,
-        BodenfolienVerwendungsdauer: 2,
-        JungpflanzenDistanz: 80,
-        Ertrag: 20,
-        Pflanzdichte: 4,
-        MittlereSolltemperaturTag: 12,
-        MittlereSolltemperaturNacht: 13,
-        KulturmassnahmeAusgeizen: 14,
-        KulturmassnahmeAusblattenAnzahlMonat: 15,
-        KulturmassnahmeAblassen: 16,
-        Strom: 200,
-        StromverbrauchBelichtungAnschlussleistung: 180,
-        StromverbrauchBelichtungAnzahlLampen: 50,
-        StromverbrauchBelichtungLaufzeitTag: 8,
-        "CO2-Zudosierung": 300,
-        Fungizide: 20,
-        Insektizide: 12,
-        VolumenGrowbags: 20,
-        LaengeGrowbags: 1,
-        PflanzenproBag: 3,
-        "SchnuereRankhilfen:Laenge": 0.3,
-        "SchnuereRankhilfen:Wiederverwendung": 2,
-        "Klipse:Menge": 200,
-        "Klipse:Wiederverwendung": 12,
-        "Rispenbuegel:Menge": 200,
-        "Rispenbuegel:Wiederverwendung": 12,
-        "SonstigeVerbrauchsmaterialien:Wiederverwendung": 20,
-        "Verpackungsmaterial:Karton": 12,
-        "Verpackungsmaterial:Plastik": 22,
-        "TransportderWare:Auslieferungen": 5,
-        "TransportderWare:Distanz": 50,
+        PLZ: "(82362,1)",
+        GWHAlter: "(20,1)",
+        AlterEnergieschirm: "(8,1)",
+        Stehwandhoehe: "(2,1)",
+        Laenge: "(3,1)",
+        Breite: "(4,1)",
+        Kappenbreite: "(5,1)",
+        "Scheibenlaenge(Bedachung)": "(6,1)",
+        AlterdesBedachungsmaterials: "(8,1)",
+        AlterKultursystem: "(7,1)",
+        Reihenabstand: "(8,1)",
+        Kulturflaeche: "(9,1)",
+        KulturBeginn: "(10,1)",
+        KulturEnde: "(11,1)",
+        Nebenkulturdauer: "(7,1)",
+        BodenfolienVerwendungsdauer: "(2,1)",
+        JungpflanzenDistanz: "(80,1)",
+        Ertrag: "(20,1)",
+        Pflanzdichte: "(4,1)",
+        MittlereSolltemperaturTag: "(12,1)",
+        MittlereSolltemperaturNacht: "(13,1)",
+        KulturmassnahmeAusgeizen: "(14,1)",
+        KulturmassnahmeAusblattenAnzahlMonat: "(15,1)",
+        KulturmassnahmeAblassen: "(16,1)",
+        Strom: "(200,1)",
+        StromverbrauchBelichtungAnschlussleistung: "(180,1)",
+        StromverbrauchBelichtungAnzahlLampen: "(50,1)",
+        StromverbrauchBelichtungLaufzeitTag: "(8,1)",
+        "CO2-Zudosierung": "(300,1)",
+        Fungizide: "(20,1)",
+        Insektizide: "(12,1)",
+        VolumenGrowbags: "(20,1)",
+        LaengeGrowbags: "(1,1)",
+        PflanzenproBag: "(3,1)",
+        "SchnuereRankhilfen:Laenge": "(0.3,1)",
+        "SchnuereRankhilfen:Wiederverwendung": "(2,1)",
+        "Klipse:Menge": "(200,1)",
+        "Klipse:Wiederverwendung": "(12,1)",
+        "Rispenbuegel:Menge": "(200,1)",
+        "Rispenbuegel:Wiederverwendung": "(12,1)",
+        "SonstigeVerbrauchsmaterialien:Wiederverwendung": "(20,1)",
+        "Verpackungsmaterial:Karton": "(12,1)",
+        "Verpackungsmaterial:Plastik": "(22,1)",
+        "TransportderWare:Auslieferungen": "(5,1)",
+        "TransportderWare:Distanz": "(50,1)",
+        "KulturmassnahmeAusblattenMenge": "(50,1)",
         "GWHArt": "[(1)]",
         "Bedachungsmaterial": "[(9)]",
         "ArtdesStehwandmaterial": "[(20)]",
@@ -154,24 +161,23 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Fruchtgewicht": "[(34)]",
         "Nebenkultur": "[(134)]",
         "AnzahlTriebe": "[(40)]",
-        "Entfeuchtung": "[(135, 20.3)]",
-        "KulturmassnahmeAusblattenMenge": 50,
-        "Energietraeger": "[(42,22.5),(44,50)]",
-        "Stromherkunft": "[(50,40),(51,60)]",
+        "Entfeuchtung": "[(135,20.3,1)]",
+        "Energietraeger": "[(42,22.5,1),(44,50,1)]",
+        "Stromherkunft": "[(50,40,1),(51,60,1)]",
         "Zusatzbelichtung": "[(137)]",
         "Belichtungsstrom": "[(140)]",
         "CO2-Herkunft": "[(59)]",
-        "Duengemittel:DetalierteAngabe": "[(62,22.5),(64,10.5),(67,20)]",
-        "Duengemittel:VereinfachteAngabe": "[(72,22.5),(78,10.5),(97,20)]",
+        "Duengemittel:DetalierteAngabe": "[(62,22.5,1),(64,10.5,1),(67,20,1)]",
+        "Duengemittel:VereinfachteAngabe": "[(72,22.5,1),(78,10.5,1),(97,20,1)]",
         "Nuetzlinge": "[(123),(125)]",
         "Growbags": "[(141)]",
-        "Substrat": "[(98,22.5),(99,10.5)]",
+        "Substrat": "[(98,22.5,1),(99,10.5,1)]",
         "SchnuereRankhilfen:Material": "[(105),(106)]",
         "Klipse:Material": "[(110),(111)]",
         "Rispenbuegel:Material": "[(112),(114)]",
         "Bewaesserungsart": "[(120),(122)]",
         "Bodenfolien": "[(143)]",
-        "SonstigeVerbrauchsmaterialien": "[(116,20.5,17), (118,11.2,2)]",
+        "SonstigeVerbrauchsmaterialien": "[(116,20.5,1,17), (118,11.2,1,7.5)]",
         "JungpflanzenZukauf": "[(145)]"
     }
 
@@ -282,6 +288,38 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
             setTestResults(testResults)
         }
     );
+
+    props.loadUnitValues(
+        true,
+        () => {
+            testResults.units.withAuth = testLoading(testResults.units.withAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.loadUnitValues(
+        false,
+        () => {
+            testResults.units.withoutAuth = testLoading(testResults.units.withoutAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
 }
 
 const EndpointTest = (props: EndpointTestProps) => {
@@ -321,6 +359,14 @@ const EndpointTest = (props: EndpointTestProps) => {
             loading: testResults.lookup.withoutAuth.loading,
             successful: testResults.lookup.withoutAuth.successful
         }, {
+            name: "Load Unit Values (Authenticated)",
+            loading: testResults.units.withAuth.loading,
+            successful: testResults.units.withAuth.successful
+        }, {
+            name: "Load Unit Values (Not Authenticated)",
+            loading: testResults.units.withoutAuth.loading,
+            successful: testResults.units.withoutAuth.successful
+        },{
             name: "Load Weather Data",
             loading: props.weather.isLoading,
             successful: !!props.weather.weatherData

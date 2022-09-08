@@ -3,7 +3,7 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionRadioInputField,
     SelectionRadioInputProps,
     SelectionValue
@@ -30,14 +30,14 @@ type CultureManagementProps = ReduxProps & SubpageProps & {
 
 export type CultureManagementState = {
     anzahlTriebe: SelectionValue[]
-    mittlereSolltemperaturTag: number | null
-    mittlereSolltemperaturNacht: number | null
+    mittlereSolltemperaturTag: MeasureValue | null
+    mittlereSolltemperaturNacht: MeasureValue | null
     entfeuchtung: number | null
     relativeFeuchte: number | null
-    kulturmassnahmeAusgeizen: number | null
-    kulturmassnahmeAusblattenAnzahlMonat: number | null
-    kulturmassnahmeAusblattenMenge: number| null
-    kulturmassnahmeAblassen: number | null
+    kulturmassnahmeAusgeizen: MeasureValue | null
+    kulturmassnahmeAusblattenAnzahlMonat: MeasureValue | null
+    kulturmassnahmeAusblattenMenge: MeasureValue| null
+    kulturmassnahmeAblassen: MeasureValue | null
 }
 
 const CultureManagementInput = (props: CultureManagementProps) => {
@@ -74,7 +74,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.mittlereSolltemperaturTag,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                mittlereSolltemperaturTag: parseFloat(event.target.value)
+                mittlereSolltemperaturTag: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturTag?.unit??null}
             })
         }
     }
@@ -86,7 +86,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.mittlereSolltemperaturNacht,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                mittlereSolltemperaturNacht: parseFloat(event.target.value)
+                mittlereSolltemperaturNacht: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturTag?.unit??null}
             })
         }
     }
@@ -122,7 +122,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.kulturmassnahmeAusgeizen,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                kulturmassnahmeAusgeizen: parseFloat(event.target.value)
+                kulturmassnahmeAusgeizen: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusgeizen?.unit??null}
             })
         }
     }
@@ -134,7 +134,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.kulturmassnahmeAusblattenAnzahlMonat,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                kulturmassnahmeAusblattenAnzahlMonat: parseFloat(event.target.value)
+                kulturmassnahmeAusblattenAnzahlMonat: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusblattenAnzahlMonat?.unit??null}
             })
         }
     }
@@ -146,7 +146,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.kulturmassnahmeAusblattenMenge,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                kulturmassnahmeAusblattenMenge: parseFloat(event.target.value)
+                kulturmassnahmeAusblattenMenge: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusblattenMenge?.unit??null}
             })
         }
     }
@@ -158,7 +158,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.kulturmassnahmeAblassen,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                kulturmassnahmeAblassen: parseFloat(event.target.value)
+                kulturmassnahmeAblassen: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAblassen?.unit??null}
             })
         }
     }

@@ -14,7 +14,8 @@ import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {connect, ConnectedProps} from "react-redux";
-import {loadLookupValues} from "../../actions/lookup";
+import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
+import {Option} from "../../reducers/lookup";
 import {submitGreenhouseData} from "../../actions/submission";
 import {RootState} from "../../store";
 import ConsumableMaterialsInput, {
@@ -37,7 +38,7 @@ import CompanyInformationInput, {
     CompanyInformationState
 } from "./inpututpages/CompanyInformation";
 import {GreenhouseData} from "../../types/reduxTypes";
-import {SelectionValue} from "../utils/InputFields";
+import {MeasureValue, SelectionValue} from "../utils/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
@@ -48,7 +49,8 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   submitGreenhouseData,
-  loadLookupValues
+  loadLookupValues,
+  loadUnitValues
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -70,27 +72,44 @@ type DataToSubmit = {
     consumableMaterials: ConsumableMaterialsState
 }
 
-const formatOptionValues = (values: SelectionValue[]): string => {
+const formatOptionValues = (values: SelectionValue[]|number): string => {
     let formattedString = "["
 
-    for (let i = 0; i < values.length; i++) {
-        let value = values[i]
-        let tupleString =
-            "(" +
-            value.selectValue +
-            (value.textFieldValue ?
-                ("," + value.textFieldValue + (value.textField2Value ? "," + value.textField2Value : "")) : "") +
-            ")"
-        formattedString = formattedString + tupleString
-        if (i < values.length - 1) {
-            formattedString = formattedString + ","
+    if(typeof(values)!='number') {
+        for (let i = 0; i < values.length; i++) {
+            let value = values[i]
+            let tupleString =
+                "(" +
+                value.selectValue +
+                (value.textFieldValue ?
+                    ("," + value.textFieldValue + (value.textField2Value ? "," + value.textField2Value : "")) : "") +
+                ")"
+            formattedString = formattedString + tupleString
+            if (i < values.length - 1) {
+                formattedString = formattedString + ","
+            }
         }
+    }
+    else {
+        formattedString = formattedString + "(" + values + ")"
     }
 
     formattedString = formattedString + "]"
 
     return formattedString
 }
+
+const formatMeasureValue = (value: MeasureValue | null): string | null => {
+    if (value==null) return null
+    let formattedString=""
+    if (value.value != null && value.unit != null) {
+        formattedString = `(${value.value},${value.unit})`
+    }
+    else return null
+
+    return formattedString
+}
+
 
 /**
  * This function processes the data from the state of the input page component and maps it to the correct
@@ -115,11 +134,11 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
     const calcAge = (year: Date) => {
         const today = new Date()
         const age = today.getFullYear() - year.getFullYear()
-        if(age > 0) return age
-        else return 1
+        if(age > 0) return `(${age},1)`
+        else return "(1,1)"
     }
 
-    const defaultValue = 0
+    const defaultValue = "(0,0)"
     const defaultOption = "[(0,)]"
 
     // TODO: Implement a proper default value concept. Maybe get default value object from server?
@@ -127,83 +146,83 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
     let submissionData: GreenhouseData = {
         greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
-        PLZ: companyInformation?.plz ?? defaultValue,
+        PLZ: formatMeasureValue(companyInformation?.plz) ?? defaultValue,
         GWHAlter: companyInformation?.gwhAlter ? calcAge(companyInformation?.gwhAlter) : defaultValue,
         AlterEnergieschirm: companyInformation?.alterEnergieschirm ? calcAge(companyInformation?.alterEnergieschirm) : defaultValue,
-        Stehwandhoehe: companyInformation?.stehwandhoehe ?? defaultValue,
-        Laenge: companyInformation?.laenge ?? defaultValue,
-        Breite: companyInformation?.breite ?? defaultValue,
-        Kappenbreite: companyInformation?.knappenbreite ?? defaultValue,
-        "Scheibenlaenge(Bedachung)": companyInformation?.scheibenlaenge ?? defaultValue,
+        Stehwandhoehe: formatMeasureValue(companyInformation?.stehwandhoehe) ?? defaultValue,
+        Laenge: formatMeasureValue(companyInformation?.laenge) ?? defaultValue,
+        Breite: formatMeasureValue(companyInformation?.breite) ?? defaultValue,
+        Kappenbreite: formatMeasureValue(companyInformation?.knappenbreite) ?? defaultValue,
+        "Scheibenlaenge(Bedachung)": formatMeasureValue(companyInformation?.scheibenlaenge) ?? defaultValue,
         AlterdesBedachungsmaterials: companyInformation?.alterdesBedachungsmaterials ? calcAge(companyInformation?.alterdesBedachungsmaterials): defaultValue,
         AlterKultursystem: companyInformation?.alterKultursystem ? calcAge(companyInformation?.alterKultursystem) : defaultValue,
-        Reihenabstand: companyInformation?.reihenabstand ?? defaultValue,
-        Kulturflaeche: cultureInformation?.kulturflaeche ?? defaultValue,
-        KulturBeginn: cultureInformation?.kulturBeginn ?? defaultValue,
-        KulturEnde: cultureInformation?.kulturEnde ?? defaultValue,
-        Ertrag: cultureInformation?.ertrag ?? defaultValue,
-        Pflanzdichte: cultureInformation?.pflanzendichte ?? defaultValue,
-        Nebenkulturdauer: cultureInformation?.nebenkulturDauer ?? defaultValue,
-        MittlereSolltemperaturTag: cultureManagement?.mittlereSolltemperaturTag ?? defaultValue,
-        MittlereSolltemperaturNacht: cultureManagement?.mittlereSolltemperaturNacht ?? defaultValue,
-        KulturmassnahmeAusgeizen: cultureManagement?.kulturmassnahmeAusgeizen ?? defaultValue,
-        KulturmassnahmeAusblattenAnzahlMonat: cultureManagement?.kulturmassnahmeAusblattenAnzahlMonat ?? defaultValue,
-        KulturmassnahmeAblassen: cultureManagement?.kulturmassnahmeAblassen ?? defaultValue,
-        Strom: energyConsumption?.strom ?? defaultValue,
-        StromverbrauchBelichtungAnschlussleistung: energyConsumption?.belichtungsstromAnschlussleistung ?? defaultValue,
-        StromverbrauchBelichtungAnzahlLampen: energyConsumption?.belichtungsstromAnzLampen ?? defaultValue,
-        StromverbrauchBelichtungLaufzeitTag: energyConsumption?.belichtungsstromLaufzeitTag ?? defaultValue,
-        "CO2-Zudosierung": consumableItems?.co2Zudosierung ?? defaultValue,
-        Fungizide: consumableItems?.fungizide ?? defaultValue,
-        Insektizide: consumableItems?.insektizide ?? defaultValue,
-        VolumenGrowbags: consumableMaterials?.growbagsVolumen ?? defaultValue,
-        LaengeGrowbags: consumableMaterials?.growbagsLaenge ?? defaultValue,
-        PflanzenproBag: consumableMaterials?.growbagsPflanzenAnz ?? defaultValue,
-        "SchnuereRankhilfen:Laenge": consumableMaterials?.schnurLaenge ?? defaultValue,
-        "SchnuereRankhilfen:Wiederverwendung": consumableMaterials?.schnurWiederverwendung ?? 0,
-        "Klipse:Menge": consumableMaterials?.klipseGesamtmenge ?? defaultValue,
-        "Klipse:Wiederverwendung": consumableMaterials?.klipseWiederverwendung ?? defaultValue,
-        "Rispenbuegel:Menge": consumableMaterials?.rispenbuegelGesamtmenge ?? defaultValue,
-        "Rispenbuegel:Wiederverwendung": consumableMaterials?.rispenbuegelWiederverwendung ?? defaultValue,
+        Reihenabstand: formatMeasureValue(companyInformation?.reihenabstand) ?? defaultValue,
+        Kulturflaeche: formatMeasureValue(cultureInformation?.kulturflaeche) ?? defaultValue,
+        KulturBeginn: formatMeasureValue(cultureInformation?.kulturBeginn) ?? defaultValue,
+        KulturEnde: formatMeasureValue(cultureInformation?.kulturEnde) ?? defaultValue,
+        Ertrag: formatMeasureValue(cultureInformation?.ertrag) ?? defaultValue,
+        Pflanzdichte: formatMeasureValue(cultureInformation?.pflanzendichte) ?? defaultValue,
+        Nebenkulturdauer: formatMeasureValue(cultureInformation?.nebenkulturDauer) ?? defaultValue,
+        MittlereSolltemperaturTag: formatMeasureValue(cultureManagement?.mittlereSolltemperaturTag) ?? defaultValue,
+        MittlereSolltemperaturNacht: formatMeasureValue(cultureManagement?.mittlereSolltemperaturNacht) ?? defaultValue,
+        KulturmassnahmeAusgeizen: formatMeasureValue(cultureManagement?.kulturmassnahmeAusgeizen) ?? defaultValue,
+        KulturmassnahmeAusblattenAnzahlMonat: formatMeasureValue(cultureManagement?.kulturmassnahmeAusblattenAnzahlMonat) ?? defaultValue,
+        KulturmassnahmeAblassen: formatMeasureValue(cultureManagement?.kulturmassnahmeAblassen) ?? defaultValue,
+        Strom: formatMeasureValue(energyConsumption?.strom) ?? defaultValue,
+        StromverbrauchBelichtungAnschlussleistung: formatMeasureValue(energyConsumption?.belichtungsstromAnschlussleistung) ?? defaultValue,
+        StromverbrauchBelichtungAnzahlLampen: formatMeasureValue(energyConsumption?.belichtungsstromAnzLampen) ?? defaultValue,
+        StromverbrauchBelichtungLaufzeitTag: formatMeasureValue(energyConsumption?.belichtungsstromLaufzeitTag) ?? defaultValue,
+        "CO2-Zudosierung": formatMeasureValue(consumableItems?.co2Zudosierung) ?? defaultValue,
+        Fungizide: formatMeasureValue(consumableItems?.fungizide) ?? defaultValue,
+        Insektizide: formatMeasureValue(consumableItems?.insektizide) ?? defaultValue,
+        VolumenGrowbags: formatMeasureValue(consumableMaterials?.growbagsVolumen) ?? defaultValue,
+        LaengeGrowbags: formatMeasureValue(consumableMaterials?.growbagsLaenge) ?? defaultValue,
+        PflanzenproBag: formatMeasureValue(consumableMaterials?.growbagsPflanzenAnz) ?? defaultValue,
+        "SchnuereRankhilfen:Laenge": formatMeasureValue(consumableMaterials?.schnurLaenge) ?? defaultValue,
+        "SchnuereRankhilfen:Wiederverwendung": formatMeasureValue(consumableMaterials?.schnurWiederverwendung) ?? defaultValue,
+        "Klipse:Menge": formatMeasureValue(consumableMaterials?.klipseGesamtmenge) ?? defaultValue,
+        "Klipse:Wiederverwendung": formatMeasureValue(consumableMaterials?.klipseWiederverwendung) ?? defaultValue,
+        "Rispenbuegel:Menge": formatMeasureValue(consumableMaterials?.rispenbuegelGesamtmenge) ?? defaultValue,
+        "Rispenbuegel:Wiederverwendung": formatMeasureValue(consumableMaterials?.rispenbuegelWiederverwendung) ?? defaultValue,
         "SonstigeVerbrauchsmaterialien:Wiederverwendung":
             consumableMaterials?.sonstVerbrauchsmaterialien && consumableMaterials.sonstVerbrauchsmaterialien.length ?
-                (consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue ? consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue : defaultValue) : defaultValue,
-        BodenfolienVerwendungsdauer: consumableMaterials?.bodenfolienVerwendungsdauer ?? defaultValue,
-        "Verpackungsmaterial:Karton": consumableMaterials?.kartonVerpackung ?? defaultValue,
-        "Verpackungsmaterial:Plastik": consumableMaterials?.plastikVerpackung ?? defaultValue,
-        "TransportderWare:Auslieferungen": consumableMaterials?.transportFrequenz ?? defaultValue,
-        "TransportderWare:Distanz": consumableMaterials?.transportDistanz ?? defaultValue,
-        JungpflanzenDistanz: consumableMaterials?.jungpflanzenDistanz ?? defaultValue,
-        GWHArt: companyInformation?.gwhArt ? formatOptionValues([{selectValue: companyInformation.gwhArt, textFieldValue: null}]) : "[]",
-        Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues([{selectValue: companyInformation.bedachungsmaterial,  textFieldValue: null}]) : "[]",
-        ArtdesStehwandmaterial: companyInformation?.artdesStehwandmaterials ? formatOptionValues([{selectValue: companyInformation.artdesStehwandmaterials, textFieldValue: null}]) : "[]",
-        Energieschirm: companyInformation?.energieschirm ? formatOptionValues([{selectValue: companyInformation.energieschirm, textFieldValue: null}]) : "[]",
-        Produktion: companyInformation?.produktion ? formatOptionValues([{selectValue: companyInformation.produktion, textFieldValue: null}]) : "[]",
-        Kultursystem: companyInformation?.kultursystem ? formatOptionValues([{selectValue: companyInformation.kultursystem, textFieldValue: null}]) : "[]",
-        Transportsystem: companyInformation?.transportsystem ? formatOptionValues([{selectValue: companyInformation.transportsystem, textFieldValue: null}]) : "[]",
-        Fruchtgewicht: cultureInformation?.fruchtgewicht ? formatOptionValues([{selectValue: cultureInformation.fruchtgewicht, textFieldValue: null}]) : "[]",
-        Nebenkultur: cultureInformation?.nebenkultur ? formatOptionValues([{selectValue: cultureInformation.nebenkultur, textFieldValue: null}]) : "[]",
+                (formatMeasureValue(consumableMaterials.sonstVerbrauchsmaterialien[0].textFieldValue) ?? defaultValue) : defaultValue,
+        BodenfolienVerwendungsdauer: formatMeasureValue(consumableMaterials?.bodenfolienVerwendungsdauer) ?? defaultValue,
+        "Verpackungsmaterial:Karton": formatMeasureValue(consumableMaterials?.kartonVerpackung) ?? defaultValue,
+        "Verpackungsmaterial:Plastik": formatMeasureValue(consumableMaterials?.plastikVerpackung) ?? defaultValue,
+        "TransportderWare:Auslieferungen": formatMeasureValue(consumableMaterials?.transportFrequenz) ?? defaultValue,
+        "TransportderWare:Distanz": formatMeasureValue(consumableMaterials?.transportDistanz) ?? defaultValue,
+        JungpflanzenDistanz: formatMeasureValue(consumableMaterials?.jungpflanzenDistanz) ?? defaultValue,
+        GWHArt: companyInformation?.gwhArt ? formatOptionValues(companyInformation.gwhArt) : "[]",
+        Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues(companyInformation.bedachungsmaterial) : "[]",
+        ArtdesStehwandmaterial: companyInformation?.artdesStehwandmaterials ? formatOptionValues(companyInformation.artdesStehwandmaterials) : "[]",
+        Energieschirm: companyInformation?.energieschirm ? formatOptionValues(companyInformation.energieschirm) : "[]",
+        Produktion: companyInformation?.produktion ? formatOptionValues(companyInformation.produktion) : "[]",
+        Kultursystem: companyInformation?.kultursystem ? formatOptionValues(companyInformation.kultursystem) : "[]",
+        Transportsystem: companyInformation?.transportsystem ? formatOptionValues(companyInformation.transportsystem) : "[]",
+        Fruchtgewicht: cultureInformation?.fruchtgewicht ? formatOptionValues(cultureInformation.fruchtgewicht) : "[]",
+        Nebenkultur: cultureInformation?.nebenkultur ? formatOptionValues(cultureInformation.nebenkultur) : "[]",
         AnzahlTriebe: cultureManagement?.anzahlTriebe ? formatOptionValues(cultureManagement.anzahlTriebe) : "[]",
-        Entfeuchtung: cultureManagement?.entfeuchtung ? formatOptionValues([{selectValue: cultureManagement.entfeuchtung, textFieldValue: null}]) : "[]",
-        KulturmassnahmeAusblattenMenge: cultureManagement?.kulturmassnahmeAusblattenMenge ? cultureManagement.kulturmassnahmeAusblattenMenge : 0,
+        Entfeuchtung: cultureManagement?.entfeuchtung ? formatOptionValues(cultureManagement.entfeuchtung) : "[]",
+        KulturmassnahmeAusblattenMenge: formatMeasureValue(cultureManagement.kulturmassnahmeAusblattenMenge) ?? defaultValue,
         Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : "[]",
         Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : "[]",
-        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues([{selectValue: energyConsumption.zusatzbelichtung, textFieldValue: null}]) : defaultOption,
-        "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues([{selectValue: consumableItems.co2Herkunft, textFieldValue: null}]) : "[]",
+        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues(energyConsumption.zusatzbelichtung) : defaultOption,
+        "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues(consumableItems.co2Herkunft) : "[]",
         "Duengemittel:DetalierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
         "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple ? formatOptionValues(consumableItems.duengemittelSimple) : "[]",
         Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : "[]",
-        Growbags: consumableMaterials?.growbags ? formatOptionValues([{selectValue: consumableMaterials.growbags,textFieldValue: null}]) : "[]",
-        "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues([{selectValue: consumableMaterials.schnurMaterial,textFieldValue: null}]) : "[]",
-        "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues([{selectValue: consumableMaterials.klipseMaterial,textFieldValue: null}]) : "[]",
-        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues([{selectValue: consumableMaterials.rispenbuegelMaterial,textFieldValue: null}]) : "[]",
-        Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues([{selectValue: consumableMaterials.bewaesserArt,textFieldValue: null}]) : "[]",
-        Bodenfolien: consumableMaterials?.bodenfolien ? formatOptionValues([{selectValue: consumableMaterials.bodenfolien,textFieldValue: null}]) : "[]",
+        Growbags: consumableMaterials?.growbags ? formatOptionValues(consumableMaterials.growbags) : "[]",
+        "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : "[]",
+        "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : "[]",
+        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : "[]",
+        Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues(consumableMaterials.bewaesserArt) : "[]",
+        Bodenfolien: consumableMaterials?.bodenfolien ? formatOptionValues(consumableMaterials.bodenfolien) : "[]",
         SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : "[]",
-        JungpflanzenZukauf: consumableMaterials?.jungpflanzenEinkauf ? formatOptionValues([{selectValue: consumableMaterials.jungpflanzenEinkauf,textFieldValue: null}]) : "[]",
+        JungpflanzenZukauf: consumableMaterials?.jungpflanzenEinkauf ? formatOptionValues(consumableMaterials.jungpflanzenEinkauf) : "[]",
         //Fields that might be optional due to dependency on conditional fields. Because of that only these fields get the defaultOption,
         // so that the other fields will trigger an error in the frontend validation if they are not filled out:
-        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues([{selectValue: energyConsumption.belichtungsstrom, textFieldValue: null}]) : defaultOption,
+        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
         Substrat: consumableMaterials?.growbagsSubstrat && consumableMaterials?.growbagsSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsSubstrat) : defaultOption
     }
     //console.log("SubmissionData:")
@@ -214,6 +233,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
 const PageInputData = (props: InputDataProps) => {
     useEffect(() => {
         props.loadLookupValues()
+        props.loadUnitValues()
     }, [])
 
     const navigate = useNavigate()
@@ -230,7 +250,7 @@ const PageInputData = (props: InputDataProps) => {
             artdesStehwandmaterials: null,
             energieschirm: null,
             alterEnergieschirm: new Date(Date.now()),
-            stehwandhoehe: null,
+            stehwandhoehe: { value: null, unit: 0},
             laenge: null,
             breite: null,
             knappenbreite: null,
@@ -255,7 +275,7 @@ const PageInputData = (props: InputDataProps) => {
             ertrag: null
         },
         cultureManagement: {
-            anzahlTriebe: [{selectValue: null, textFieldValue: null}],
+            anzahlTriebe: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
             mittlereSolltemperaturTag:  null,
             mittlereSolltemperaturNacht: null,
             entfeuchtung: null,
@@ -266,9 +286,9 @@ const PageInputData = (props: InputDataProps) => {
             kulturmassnahmeAblassen: null
         },
         energyConsumption: {
-            energietraeger: [{selectValue: null, textFieldValue: null}],
+            energietraeger: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
             strom:  null,
-            stromherkunft: [{selectValue: null, textFieldValue: null}],
+            stromherkunft: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
             zusatzbelichtung: null,
             belichtungsstrom: null,
             belichtungsstromAnschlussleistung: null,
@@ -278,18 +298,18 @@ const PageInputData = (props: InputDataProps) => {
         consumableItems: {
             co2Zudosierung: null,
             co2Herkunft: null,
-            duengemittelDetail: [{selectValue: null, textFieldValue: null}],
-            duengemittelSimple: [{selectValue: null, textFieldValue: null}],
+            duengemittelDetail: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
+            duengemittelSimple: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
             fungizide: null,
             insektizide: null,
-            nuetzlinge: [{selectValue: null, textFieldValue: null}]
+            nuetzlinge: [{selectValue: null, textFieldValue: { value: null, unit: null}}]
         },
         consumableMaterials: {
             growbags: null,
             growbagsVolumen: null,
             growbagsLaenge: null,
             growbagsPflanzenAnz: null,
-            growbagsSubstrat: [{selectValue: null, textFieldValue: null}],
+            growbagsSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: 0}}],
             schnurMaterial: null,
             schnurLaenge: null,
             schnurWiederverwendung: null,
@@ -304,7 +324,7 @@ const PageInputData = (props: InputDataProps) => {
             bewaesserArt: null,
             bodenfolien: null,
             bodenfolienVerwendungsdauer: null,
-            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: null, textField2Value: null}],
+            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: 0}, textField2Value: null}],
             jungpflanzenEinkauf: null,
             jungpflanzenDistanz: null,
             plastikVerpackung: null,

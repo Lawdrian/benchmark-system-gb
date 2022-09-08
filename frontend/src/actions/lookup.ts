@@ -12,7 +12,7 @@
 import {
     LOOKUP_FAILED,
     LOOKUP_LOADED,
-    LOOKUP_LOADING
+    LOOKUP_LOADING, UNITS_FAILED, UNITS_LOADED, UNITS_LOADING
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
@@ -44,6 +44,38 @@ export const loadLookupValues = (
         .catch((error) => {// TODO: Proper Error handling
             dispatch({
                 type: LOOKUP_FAILED
+            })
+            errorCB()
+        })
+}
+
+/**
+ * Load the currently available unit values.
+ */
+export const loadUnitValues = (
+    withAuth: boolean = true,
+    loadingCB: Function = () => { /* NOOP */ },
+    successCB: Function = () => { /* NOOP */ },
+    errorCB: Function = () => { /* NOOP */ }
+) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
+
+    // User Loading
+    dispatch({type: UNITS_LOADING});
+    loadingCB();
+
+    // Send request
+    axios.get('/backend/get-unit-values', withAuth ? tokenConfig(getState) : undefined)
+        .then((response) => {
+            console.log("Unit Response", response)
+            dispatch({
+                type: UNITS_LOADED,
+                payload: response.data
+            })
+            successCB()
+        })
+        .catch((error) => {
+            dispatch({
+                type: UNITS_FAILED
             })
             errorCB()
         })

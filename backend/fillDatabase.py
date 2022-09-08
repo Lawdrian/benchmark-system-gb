@@ -263,8 +263,15 @@ def fill_measurements_table(cur):
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_measurements VALUES (?, ?);", rows)
 
-def fill_measuremntunits_table(cur):
-    a_file = open("backend/data/optionunits.csv")
+
+def fill_measurementunits_table(cur):
+    """This function fills the database-table "measurementunits" based on
+    the data in the csv-file "./backend/data/measurementunits.csv"
+
+            Args:
+                cur : cursor object.
+    """
+    a_file = open("backend/data/measurementunits.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_measurementunits VALUES (?, ?, ?);", rows)
 
@@ -293,6 +300,12 @@ def fill_options_table(cur):
     cur.executemany("INSERT INTO backend_options VALUES (?, ?, ?);", rows)
 
 def fill_optionunits_table(cur):
+    """This function fills the database-table "optionunits" based on
+       the data in the csv-file "./backend/data/optionunits.csv"
+
+               Args:
+                   cur : cursor object.
+       """
     a_file = open("backend/data/optionunits.csv")
     rows = csv.reader(a_file)
     cur.executemany("INSERT INTO backend_optionunits VALUES (?, ?, ?);", rows)
@@ -321,7 +334,7 @@ def fill_database():
     fill_options_table(cur)
     fill_calculation_variables_table(cur)
     fill_optionunits_table(cur)
-    fill_measuremntunits_table(cur)
+    fill_measurementunits_table(cur)
 
     con.commit()
     con.close()

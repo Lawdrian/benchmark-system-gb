@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectShowConditionalRadioInputField,
@@ -30,16 +30,16 @@ type CultureInformationProps = ReduxProps & SubpageProps & {
 
 export type CultureInformationState = {
     fruchtgewicht: number | null
-    kulturflaeche: number | null
-    kulturBeginn: number | null
-    kulturEnde: number | null
+    kulturflaeche: MeasureValue | null
+    kulturBeginn: MeasureValue | null
+    kulturEnde: MeasureValue | null
     nebenkultur: number | null
-    nebenkulturDauer: number | null
-    pflanzendichte: number | null
+    nebenkulturDauer: MeasureValue | null
+    pflanzendichte: MeasureValue | null
     pflanzendichteAnzProm2: number | null
     pflanzendichteReihePflanzabstand: number| null
     pflanzendichteReihenabstand: number| null
-    ertrag: number| null
+    ertrag: MeasureValue | null
 }
 
 const CultureInformationInput = (props: CultureInformationProps) => {
@@ -71,7 +71,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturflaeche,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                kulturflaeche: parseFloat(event.target.value)
+                kulturflaeche: {value:parseFloat(event.target.value),unit:cultureInformation.kulturflaeche?.unit??null}
             })
         }
     }
@@ -83,7 +83,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturBeginn,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturBeginn: parseFloat(event.target.value)
+               kulturBeginn: {value:parseFloat(event.target.value),unit:cultureInformation.kulturBeginn?.unit??null}
             })
         }
     }
@@ -95,7 +95,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturEnde,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturEnde: parseFloat(event.target.value)
+               kulturEnde: {value:parseFloat(event.target.value),unit:cultureInformation.kulturEnde?.unit??null}
             })
         }
     }
@@ -124,7 +124,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.nebenkulturDauer,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               nebenkulturDauer: parseFloat(event.target.value)
+               nebenkulturDauer: {value:parseFloat(event.target.value),unit:cultureInformation.nebenkulturDauer?.unit??null}
             })
         }
     }
@@ -172,7 +172,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.pflanzendichte,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                pflanzendichte: parseFloat(event.target.value)
+                pflanzendichte: {value:parseFloat(event.target.value),unit:cultureInformation.pflanzendichte?.unit??null}
             })
         },
         radioButtonValues: [{id: 1, values:"Pflanzen pro Quadratmeter"},{id:2, values:"Pflanzenabstand in der Reihe +  Reihenabstand"}],
@@ -197,7 +197,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.ertrag,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               ertrag: parseFloat(event.target.value)
+               ertrag: {value:parseFloat(event.target.value),unit:cultureInformation.ertrag?.unit??null}
             })
         }
     }

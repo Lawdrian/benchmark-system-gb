@@ -144,7 +144,7 @@ class Tuple(serializers.Field):
                     True: input_string matches the format.
                     False: input_string does not match the format.
         """
-        tupel_regex = "(\s*\d+(\.\d*)?\s*,\s*\d+\s*\)"
+        tupel_regex = "\(\s*\d+(\.\d*)?\s*,\s*\d+\s*\)"
         return bool(re.compile(tupel_regex).match(input_string))
 
     def to_representation(self, value):
@@ -170,11 +170,11 @@ class Tuple(serializers.Field):
 
         # Check the format [(),(),(),...] with a regex
         if not Tuple._check_format(data):
+            print("!")
             raise serializers.ValidationError({
                 'Passed string does not match format ' +
                 '(<float>,<int>)'
             })
-
         # convert list of string-tuples in a list of tuples
         values = data.strip('()').split(',')
         if len(values) != 2:
@@ -193,6 +193,7 @@ class Tuple(serializers.Field):
                 'Index Error: Be aware that the separators in the tuple should be ","'
             })
         data = tuple(values)
+        print(data)
         return data  # returning a tuple
 
 

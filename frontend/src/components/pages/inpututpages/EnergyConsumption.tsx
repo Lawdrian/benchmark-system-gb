@@ -3,7 +3,7 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionValue,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
@@ -16,6 +16,7 @@ import InputPaginationButtons from "../../utils/InputPaginationButtons";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -29,13 +30,13 @@ type EnergyConsumptionProps = ReduxProps & SubpageProps & {
 
 export type EnergyConsumptionState = {
     energietraeger: SelectionValue[]
-    strom: number | null
+    strom: MeasureValue | null
     stromherkunft: SelectionValue[]
     zusatzbelichtung: number | null
     belichtungsstrom: number | null
-    belichtungsstromAnschlussleistung: number | null
-    belichtungsstromAnzLampen: number | null
-    belichtungsstromLaufzeitTag: number| null
+    belichtungsstromAnschlussleistung: MeasureValue | null
+    belichtungsstromAnzLampen: MeasureValue | null
+    belichtungsstromLaufzeitTag: MeasureValue | null
 }
 
 const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
@@ -70,9 +71,10 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         label: "Stromverbrauch für die Kulturfläch",
         textFieldProps: {
             value: energyConsumption.strom,
+            placeholder: props.unitValues.measures.Strom[0].values,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                strom: parseFloat(event.target.value)
+                strom: {value:parseFloat(event.target.value),unit:energyConsumption.strom?.unit??null}
             })
         }
     }
@@ -136,7 +138,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromAnschlussleistung,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnschlussleistung: parseFloat(event.target.value)
+                belichtungsstromAnschlussleistung: {value:parseFloat(event.target.value),unit:energyConsumption.belichtungsstromAnschlussleistung?.unit??null}
             })
         }
     }
@@ -148,7 +150,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromAnzLampen,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnzLampen: parseFloat(event.target.value)
+                belichtungsstromAnzLampen: {value:parseFloat(event.target.value),unit:energyConsumption.belichtungsstromAnzLampen?.unit??null}
             })
         }
     }
@@ -157,10 +159,10 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         title: "Stromverbrauch Belichtung Laufzeit Tag",
         label: "Laufzeit pro Tag",
         textFieldProps: {
-            value: energyConsumption.belichtungsstromLaufzeitTag,
+            value: energyConsumption.belichtungsstromLaufzeitTag?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromLaufzeitTag: parseFloat(event.target.value)
+                belichtungsstromLaufzeitTag: {value: parseFloat(event.target.value), unit:energyConsumption.belichtungsstromLaufzeitTag?.unit??null}
             })
         }
     }

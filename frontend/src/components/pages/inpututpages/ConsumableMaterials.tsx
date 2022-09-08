@@ -5,7 +5,7 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue,
@@ -32,31 +32,31 @@ type ConsumableMaterialsProps = ReduxProps & SubpageProps & {
 
 export type ConsumableMaterialsState = {
     growbags: number | null
-    growbagsVolumen: number | null
-    growbagsLaenge: number | null
-    growbagsPflanzenAnz: number | null
+    growbagsVolumen: MeasureValue | null
+    growbagsLaenge: MeasureValue | null
+    growbagsPflanzenAnz: MeasureValue | null
     growbagsSubstrat: SelectionValue[]
     schnurMaterial: number | null
-    schnurLaenge: number | null
-    schnurWiederverwendung: number | null
+    schnurLaenge: MeasureValue | null
+    schnurWiederverwendung: MeasureValue | null
     klipseMaterial: number | null
-    klipseGesamtmenge: number | null
-    klipseAnzProTrieb: number | null
-    klipseWiederverwendung: number | null
+    klipseGesamtmenge: MeasureValue | null
+    klipseAnzProTrieb: MeasureValue | null
+    klipseWiederverwendung: MeasureValue | null
     rispenbuegelMaterial: number | null
-    rispenbuegelGesamtmenge: number | null
+    rispenbuegelGesamtmenge: MeasureValue | null
     rispenbuegelAnzProTrieb: number | null
-    rispenbuegelWiederverwendung: number | null
+    rispenbuegelWiederverwendung: MeasureValue | null
     bewaesserArt: number | null
     bodenfolien: number | null
-    bodenfolienVerwendungsdauer: number | null
+    bodenfolienVerwendungsdauer: MeasureValue | null
     sonstVerbrauchsmaterialien: SelectionValue[]
     jungpflanzenEinkauf: number | null
-    jungpflanzenDistanz: number | null
-    plastikVerpackung: number | null
-    kartonVerpackung: number | null
-    transportFrequenz: number | null
-    transportDistanz: number | null
+    jungpflanzenDistanz: MeasureValue | null
+    plastikVerpackung: MeasureValue | null
+    kartonVerpackung: MeasureValue | null
+    transportFrequenz: MeasureValue | null
+    transportDistanz: MeasureValue | null
 
 
 }
@@ -95,7 +95,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.growbagsVolumen,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                growbagsVolumen: parseFloat(event.target.value)
+                growbagsVolumen: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsVolumen?.unit??null}
             })
         }
     }
@@ -107,7 +107,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.growbagsLaenge,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                growbagsLaenge: parseFloat(event.target.value)
+                growbagsLaenge: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsLaenge?.unit??null}
             })
         }
     }
@@ -119,7 +119,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.growbagsPflanzenAnz,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                growbagsPflanzenAnz: parseFloat(event.target.value)
+                growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsPflanzenAnz?.unit??null}
             })
         }
     }
@@ -162,7 +162,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.schnurLaenge,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                schnurLaenge: parseFloat(event.target.value)
+                schnurLaenge: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurLaenge?.unit??null}
             })
         }
     }
@@ -174,7 +174,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.schnurWiederverwendung,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                schnurWiederverwendung: parseFloat(event.target.value)
+                schnurWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurWiederverwendung?.unit??null}
             })
         }
     }
@@ -199,7 +199,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.klipseGesamtmenge,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                klipseGesamtmenge: parseFloat(event.target.value)
+                klipseGesamtmenge: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseGesamtmenge?.unit??null}
             })
         }
     }
@@ -211,7 +211,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.klipseAnzProTrieb,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                klipseAnzProTrieb: parseFloat(event.target.value)
+                klipseAnzProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseAnzProTrieb?.unit??null}
             })
         }
     }
@@ -223,7 +223,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.klipseWiederverwendung,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                klipseWiederverwendung: parseFloat(event.target.value)
+                klipseWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseWiederverwendung?.unit??null}
             })
         }
     }
@@ -248,7 +248,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.rispenbuegelGesamtmenge,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                rispenbuegelGesamtmenge: parseFloat(event.target.value)
+                rispenbuegelGesamtmenge: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelGesamtmenge?.unit??null}
             })
         }
     }
@@ -272,7 +272,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.rispenbuegelWiederverwendung,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                rispenbuegelWiederverwendung: parseFloat(event.target.value)
+                rispenbuegelWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelWiederverwendung?.unit??null}
             })
         }
     }
@@ -314,7 +314,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.bodenfolienVerwendungsdauer,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                bodenfolienVerwendungsdauer: parseFloat(event.target.value)
+                bodenfolienVerwendungsdauer: {value:parseFloat(event.target.value),unit:consumableMaterials.bodenfolienVerwendungsdauer?.unit??null}
             })
         }
     }
@@ -348,7 +348,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.plastikVerpackung,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                plastikVerpackung: parseFloat(event.target.value)
+                plastikVerpackung:{value:parseFloat(event.target.value),unit:consumableMaterials.plastikVerpackung?.unit??null}
             })
         }
     }
@@ -360,7 +360,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.kartonVerpackung,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                kartonVerpackung: parseFloat(event.target.value)
+                kartonVerpackung: {value:parseFloat(event.target.value),unit:consumableMaterials.kartonVerpackung?.unit??null}
             })
         }
     }
@@ -372,7 +372,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.transportFrequenz,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                transportFrequenz: parseFloat(event.target.value)
+                transportFrequenz: {value:parseFloat(event.target.value),unit:consumableMaterials.transportFrequenz?.unit??null}
             })
         }
     }
@@ -384,7 +384,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.transportDistanz,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                transportDistanz: parseFloat(event.target.value)
+                transportDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.transportDistanz?.unit??null}
             })
         }
     }
@@ -413,7 +413,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.jungpflanzenDistanz,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                jungpflanzenDistanz: parseFloat(event.target.value)
+                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.jungpflanzenDistanz?.unit??null}
             })
         }
     }
