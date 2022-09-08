@@ -77,16 +77,16 @@ def validate_greenhouse_data(data):
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():
-        print(data[value.measurement_name])
-        print(data[value.measurement_name] == default_value)
+        #print(data[value.measurement_name])
+        #print(data[value.measurement_name] == default_value)
         if data[value.measurement_name] == default_value:
             print("Error: Mandatory measurement field has default value!")
             return False
 
     # check if any element in the mandatory_optiongroups list has a default value
     for name, value in mandatory_optiongroups.items():
-        print(str(data[value.option_group_name]))
-        print(type(data[value.option_group_name]))
+        #print(str(data[value.option_group_name]))
+        #print(type(data[value.option_group_name]))
         if str(data[value.option_group_name]) == default_option:
             print("Error: Mandatory option group has default value!")
             return False

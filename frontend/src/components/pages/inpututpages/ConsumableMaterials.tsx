@@ -2,11 +2,13 @@
 import React, {useState} from "react";
 import Grid from "@mui/material/Grid";
 import {
+    DateInputField,
+    DateInputProps,
     DateValue,
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps, MeasureValue,
+    MeasureInputProps, MeasureUnitInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue,
@@ -17,9 +19,11 @@ import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import {TextField} from "@mui/material";
 
 const mapStateToProps = (state: RootState) => ({
-  lookupValues: state.lookup.lookupValues,
+    lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -58,6 +62,7 @@ export type ConsumableMaterialsState = {
     jungpflanzenDistanz: MeasureValue | null
     jungpflanzenSubstrat: number | null
     verpackungsmaterial: SelectionValue[]
+    anzahlNutzungenMehrwegsteigen: MeasureValue | null
     sonstVerbrauchsmaterialien: SelectionValue[]
     transportDistanz: MeasureValue | null
     zusaetzlicherMaschineneinsatz: SelectionValue[]
@@ -92,23 +97,32 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
-    const growbagsVolumenProps: MeasureInputProps = {
+    const growbagsVolumenProps: MeasureUnitInputProps = {
         title: "Growbags Volumen",
         label: "Welches Volumen haben die verwendeten Bags? Sie können entweder direkt das Volumen angeben, die Länge oder die Pflanzen pro Bag?",
         textFieldProps: {
-            value: consumableMaterials.growbagsVolumen,
+            value: consumableMaterials.growbagsVolumen?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsVolumen: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsVolumen?.unit??null}
             })
+        },
+        selectProps: {
+            value: consumableMaterials.growbagsVolumen?.unit,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                growbagsVolumen: {value:consumableMaterials.growbagsVolumen?.value?? null ,unit:parseFloat(event.target.value)}
+            }),
+            lookupValues: props.unitValues.measures["Growbags:Volumen"]
         }
     }
 
     const growbagsLaengeProps: MeasureInputProps = {
         title: "Growbags Länge",
         label: "Wie lang sind die Growbags, die Sie verwenden?",
+        unitName: props.unitValues.measures["Growbags:Laenge"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.growbagsLaenge,
+            value: consumableMaterials.growbagsLaenge?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsLaenge: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsLaenge?.unit??null}
@@ -119,8 +133,9 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const growbagsPflanzenAnzProps: MeasureInputProps = {
         title: "Pflanzen pro Growbag",
         label: "Wie viele Pflanzen verwenden Sie in einem Growbag?",
+        unitName: props.unitValues.measures["Growbags:PflanzenproBag"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.growbagsPflanzenAnz,
+            value: consumableMaterials.growbagsPflanzenAnz?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsPflanzenAnz?.unit??null}
@@ -132,6 +147,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         title: "Substrat",
         label: "Welches Substrat und zu welchem Anteil wird verwendet?",
         textFieldProps: {},
+        textField2Props: {},
         selectProps: {
             lookupValues: props.lookupValues.Substrat
         },
@@ -146,8 +162,67 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         initValues: props.values.growbagsSubstrat
     }
 
+    const kuebelProps: SingleShowConditionalRadioInputProps = {
+        title: "Kübel",
+        label: "Verwenden Sie Kübel/Töpfe?",
+        radioGroupProps: {
+            value: consumableMaterials.kuebel,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                kuebel: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Kuebel,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Kuebel.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const kuebelVolumenProps: MeasureInputProps = {
+        title: "Volumen pro Topf",
+        label: "Wie viel Liter fasst ein Kübel/Topf?",
+        unitName: props.unitValues.measures["Kuebel:VolumenProTopf"][0]?.values,
+        textFieldProps: {
+            value: consumableMaterials.kuebelVolumenProTopf?.value,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                kuebelVolumenProTopf: {value:parseFloat(event.target.value),unit:consumableMaterials.kuebelVolumenProTopf?.unit??null}
+            })
+        }
+    }
+
+    const kuebelJungpflanzenProps: MeasureInputProps = {
+        title: "Jungpflanzen pro Topf",
+        label: "Wie viele Jungpflanzen fasst ein Kübel/Topf?",
+        unitName: props.unitValues.measures["Kuebel:JungpflanzenProTopf"][0]?.values,
+        textFieldProps: {
+            value: consumableMaterials.kuebelJungpflanzenProTopf?.value,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                kuebelJungpflanzenProTopf: {value:parseFloat(event.target.value),unit:consumableMaterials.kuebelJungpflanzenProTopf?.unit??null}
+            })
+        }
+    }
+
+    const kuebelAnschaffungsjahrProps: DateInputProps = {
+        title: "Alter Kübel",
+        label: "Seit wann nutzen Sie die Kübel?",
+        datePickerProps: {
+            views: ['year'],
+            value: consumableMaterials.kuebelAlter?.value,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                kuebelAlter: {value:event,unit:consumableMaterials.kuebelAlter?.unit??null}
+            }),
+            renderInput: () => <TextField/>
+        }
+    }
+
+
+
      const schnurMaterialProps: SelectionInputProps = {
-        title: "Schnurmaterial",
+        title: "Material",
         label: "Aus welchem Material sind die  Schnüre/Rankhilfen, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.schnurMaterial,
@@ -160,22 +235,24 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const schnurLaengeProps: MeasureInputProps = {
-        title: "Schnurlänge",
+        title: "Länge",
         label: "Wie lang sind die Schnüre/Rankhilfen je Trieb?",
+        unitName: props.unitValues.measures["SchnuereRankhilfen:Laenge"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.schnurLaenge,
+            value: consumableMaterials.schnurLaengeProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                schnurLaenge: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurLaenge?.unit??null}
+                schnurLaengeProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurLaengeProTrieb?.unit??null}
             })
         }
     }
 
     const schnurWiederverwendungProps: MeasureInputProps = {
-        title: "Schnur Wiederverwendung",
+        title: "Wiederverwendung",
         label: "Wie lange werden diese wiederverwendet?",
+        unitName: props.unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.schnurWiederverwendung,
+            value: consumableMaterials.schnurWiederverwendung?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 schnurWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurWiederverwendung?.unit??null}
@@ -184,7 +261,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const klipseMaterialProps: SelectionInputProps = {
-        title: "Klipse Material",
+        title: "Material",
         label: "Aus welchem Material sind die Klipse, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.klipseMaterial,
@@ -196,23 +273,12 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         },
     }
 
-    const klipseGesamtmengeProps: MeasureInputProps = {
-        title: "Klipse Gesamtmenge",
-        label: "Geben Sie entweder die Gesamtmenge pro Kulturdauer, oder die Anzahl pro Trieb und Kulturdauer an.",
-        textFieldProps: {
-            value: consumableMaterials.klipseGesamtmenge,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                klipseGesamtmenge: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseGesamtmenge?.unit??null}
-            })
-        }
-    }
-
     const klipseAnzProTriebProps: MeasureInputProps = {
-        title: "Klipse Anzahl pro Trieb",
+        title: "Anzahl pro Trieb",
         label: "Geben Sie die Anzahl der Klipse pro Trieb an.",
+        unitName: props.unitValues.measures["Klipse:AnzahlProTrieb"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.klipseAnzProTrieb,
+            value: consumableMaterials.klipseAnzProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 klipseAnzProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseAnzProTrieb?.unit??null}
@@ -221,7 +287,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const klipseWiederverwendungProps: MeasureInputProps = {
-        title: "Klipse Wiederverwendung",
+        title: "Wiederverwendung",
         label: "Wie lange werden diese wiederverwendet?",
         textFieldProps: {
             value: consumableMaterials.klipseWiederverwendung,
@@ -233,7 +299,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const rispenbuegelMaterialProps: SelectionInputProps = {
-        title: "Rispenbügel Material",
+        title: "Material",
         label: "Aus welchem Material sind die Rispenbügel, falls welche verwendet werden?",
         selectProps: {
             value: consumableMaterials.rispenbuegelMaterial,
@@ -245,35 +311,25 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         },
     }
 
-    const rispenbuegelGesamtmengeProps: MeasureInputProps = {
-        title: "Rispenbügel Gesamtmenge",
-        label: "Geben Sie entweder die Gesamtmenge pro Kulturdauer, oder die Anzahl pro Trieb und Kulturdauer an.",
-        textFieldProps: {
-            value: consumableMaterials.rispenbuegelGesamtmenge,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                rispenbuegelGesamtmenge: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelGesamtmenge?.unit??null}
-            })
-        }
-    }
-
     const rispenbuegelAnzProTriebProps: MeasureInputProps = {
-        title: "Rispenbügel Anzahl pro Trieb",
+        title: "Anzahl pro Trieb",
         label: "Geben Sie die Anzahl der Rispenbügel pro Trieb an.",
+        unitName: props.unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.rispenbuegelAnzProTrieb,
+            value: consumableMaterials.rispenbuegelAnzProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                rispenbuegelAnzProTrieb: parseFloat(event.target.value)
+                rispenbuegelAnzProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelAnzProTrieb?.unit??null}
             })
         }
     }
 
     const rispenbuegelWiederverwendungProps: MeasureInputProps = {
-        title: "Rispenbügel Wiederverwendung",
+        title: "Wiederverwendung",
         label: "Wie lange werden diese wiederverwendet?",
+        unitName: props.unitValues.measures["Rispenbuegel:Wiederverwendung"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.rispenbuegelWiederverwendung,
+            value: consumableMaterials.rispenbuegelWiederverwendung?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 rispenbuegelWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelWiederverwendung?.unit??null}
@@ -295,7 +351,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const bodenfolienProps: SingleShowConditionalRadioInputProps = {
-        title: "Bodenfolie",
+        title: "Bodenabdeckung",
         label: "Verwenden Sie Bodenfolien?",
         radioGroupProps: {
             value: consumableMaterials.bodenfolien,
@@ -312,10 +368,11 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const bodenfolienVerwendungsdauerProps: MeasureInputProps = {
-        title: "Bodenfolie Verwendungsdauer",
-        label: "Wielange verbleiben die Bodenfolien im Gewächshaus?",
+        title: "Wiederverwendung",
+        label: "Wie lange verbleiben die Bodenfolien im Gewächshaus?",
+        unitName: props.unitValues.measures["Bodenabdeckung:Wiederverwendung"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.bodenfolienVerwendungsdauer,
+            value: consumableMaterials.bodenfolienVerwendungsdauer?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 bodenfolienVerwendungsdauer: {value:parseFloat(event.target.value),unit:consumableMaterials.bodenfolienVerwendungsdauer?.unit??null}
@@ -323,13 +380,101 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
+    const jungpflanzenZukaufProps: SingleShowConditionalRadioInputProps = {
+        title: "Jungpflanzen",
+        label: "Werden die Junpflanzen zugekauft?",
+        radioGroupProps: {
+            value: consumableMaterials.jungpflanzenZukauf,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                jungpflanzenZukauf: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues["Jungpflanzen:Zukauf"],
+        showChildren: value => {
+            let trueOptions = props.lookupValues["Jungpflanzen:Zukauf"].filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const jungpflanzenDistanzProps: MeasureInputProps = {
+        title: "Entfernung",
+        label: "Wie weit werden die Jungpflanzen zu Ihnen transportiert?",
+        unitName: props.unitValues.measures["Jungpflanzen:Distanz"][0]?.values,
+        textFieldProps: {
+            value: consumableMaterials.jungpflanzenDistanz?.value,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.jungpflanzenDistanz?.unit??null}
+            })
+        }
+    }
+
+    const jungpflanzenSubstratProps: SelectionInputProps = {
+        title: "Substrat",
+        label: "Welches Substrat wird bei den zugekauften Jungpflanzen verwendet?",
+        selectProps: {
+            value: consumableMaterials.jungpflanzenSubstrat,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                jungpflanzenSubstrat: parseFloat(event.target.value)
+            }),
+            lookupValues: props.lookupValues["Jungpflanzen:Substrat"]
+        }
+    }
+
+
+
+    const verpackungsmaterialProps: DynamicInputProps = {
+        title: "Verpackungsmaterial",
+        label: "Welches Material benutzen Sie für die Verpackung Ihrer Ware?",
+        textFieldProps: {},
+        selectProps: {
+            lookupValues: props.lookupValues.Verpackungsmaterial
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues.Verpackungsmaterial,
+            unitValues:  props.unitValues,
+            optionGroup: "Verpackungsmaterial"
+        },
+        onValueChange: values => setConsumableMaterialsState({
+            ...consumableMaterials,
+            verpackungsmaterial: values.map(value => {
+                return {
+                    selectValue: value.selectValue,
+                    textFieldValue:value.textFieldValue,
+                    textField2Value:value.textField2Value
+                }
+            })
+        }),
+        initValues: props.values.verpackungsmaterial
+    }
+
+    const verpackungAnzahlNutzungenMehrwegsteigen: MeasureInputProps = {
+        title: "Mehrwegsteigen",
+        label: "Anzahl Nutzungen von Mehrwegsteigen (IFCO, EPS)",
+        unitName: props.unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0]?.values,
+        textFieldProps: {
+            value: consumableMaterials.anzahlNutzungenMehrwegsteigen?.value,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                anzahlNutzungenMehrwegsteigen: {value:parseFloat(event.target.value),unit:consumableMaterials.anzahlNutzungenMehrwegsteigen?.unit??null}
+            })
+        }
+    }
+
     const sonstVerbrauchsmaterialienProps: DynamicInputProps = {
         title: "Sonstige Verbrauchsmaterialien",
         label: "Geben Sie sonstige Verbrauchsmaterialien und die Gebrauchslänge an.",
-        textFieldProps: {placeholder: "kg", label: "Menge"},
+        textFieldProps: {},
         textField2Props: {placeholder:"Jahre", label:"Wiederverwendung"},
         selectProps: {
             lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien,
+            unitValues:  props.unitValues,
+            optionGroup: "SonstigeVerbrauchsmaterialien"
         },
         onValueChange: values => setConsumableMaterialsState({
             ...consumableMaterials,
@@ -344,48 +489,12 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         initValues: props.values.sonstVerbrauchsmaterialien
     }
 
-
-    const plastikVerpackungProps: MeasureInputProps = {
-        title: "Plastik",
-        label: "Menge an verwendetem Plastik",
-        textFieldProps: {
-            value: consumableMaterials.plastikVerpackung,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                plastikVerpackung:{value:parseFloat(event.target.value),unit:consumableMaterials.plastikVerpackung?.unit??null}
-            })
-        }
-    }
-
-    const kartonVerpackungProps: MeasureInputProps = {
-        title: "Karton",
-        label: "Menge an verwendetem Karton",
-        textFieldProps: {
-            value: consumableMaterials.kartonVerpackung,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                kartonVerpackung: {value:parseFloat(event.target.value),unit:consumableMaterials.kartonVerpackung?.unit??null}
-            })
-        }
-    }
-
-    const transportFrequenzProps: MeasureInputProps = {
-        title: "Warentransport Häufigkeit",
-        label: "Wie häufig wird pro Woche Ware ausgeliefert?",
-        textFieldProps: {
-            value: consumableMaterials.transportFrequenz,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                transportFrequenz: {value:parseFloat(event.target.value),unit:consumableMaterials.transportFrequenz?.unit??null}
-            })
-        }
-    }
-
     const transportDistanzProps: MeasureInputProps = {
         title: "Warentransport Distanz",
         label: "Welche Strecke wird dabei durchschnittlich gefahren? (Hin- & Rückfahrt)?",
+        unitName: props.unitValues.measures["Transport:Distanz"][0]?.values,
         textFieldProps: {
-            value: consumableMaterials.transportDistanz,
+            value: consumableMaterials.transportDistanz?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
                 transportDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.transportDistanz?.unit??null}
@@ -393,33 +502,30 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
-    const jungpflanzenEinkaufProps: SingleShowConditionalRadioInputProps = {
-        title: "Jungpflanzen",
-        label: "Werden die Junpflanzen zugekauft?",
-        radioGroupProps: {
-            value: consumableMaterials.jungpflanzenEinkauf,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                jungpflanzenEinkauf: parseFloat(event.target.value)
-            })
+    const zusaetzlicherMaschineneinsatzProps: DynamicInputProps = {
+        title: "Zusätzlicher Maschineneinsatz",
+        label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an.",
+        textFieldProps: {},
+        textField2Props: {placeholder:"h/a", label:"Nutzungsdauer"},
+        selectProps: {
+            lookupValues: props.lookupValues.ZusaetzlicherMaschineneinsatz
         },
-        radioButtonValues: props.lookupValues.JungpflanzenZukauf,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.JungpflanzenZukauf.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const jungpflanzenDistanzProps: MeasureInputProps = {
-        title: "Jungpflanzen Entfernung",
-        label: "Wie weit werden die Jungpflanzen zu Ihnen transportiert?",
-        textFieldProps: {
-            value: consumableMaterials.jungpflanzenDistanz,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.jungpflanzenDistanz?.unit??null}
+        unitSelectProps: {
+            lookupValues: props.lookupValues.ZusaetzlicherMaschineneinsatz,
+            unitValues:  props.unitValues,
+            optionGroup: "ZusaetzlicherMaschineneinsatz"
+        },
+        onValueChange: values => setConsumableMaterialsState({
+            ...consumableMaterials,
+            zusaetzlicherMaschineneinsatz: values.map(value => {
+                return {
+                    selectValue: value.selectValue,
+                    textFieldValue:value.textFieldValue,
+                    textField2Value:value.textField2Value
+                }
             })
-        }
+        }),
+        initValues: props.values.zusaetzlicherMaschineneinsatz
     }
 
 
@@ -440,6 +546,17 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
                 </SingleShowConditionalRadioInputField>
             </Grid>
             <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...kuebelProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...kuebelVolumenProps} />
+                        <MeasureInputField {...kuebelJungpflanzenProps}/>
+                    </Grid>
+                    <Grid item container xs={12} spacing={4}>
+                        <DateInputField {...kuebelAnschaffungsjahrProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...schnurMaterialProps} />
                 <MeasureInputField {...schnurLaengeProps}/>
             </Grid>
@@ -448,15 +565,11 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...klipseMaterialProps}/>
-                <MeasureInputField {...klipseGesamtmengeProps} />
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...klipseAnzProTriebProps}/>
-                <MeasureInputField {...klipseWiederverwendungProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
+                <MeasureInputField {...klipseWiederverwendungProps} />
                 <SelectionInputField {...rispenbuegelMaterialProps}/>
-                <MeasureInputField {...rispenbuegelGesamtmengeProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...rispenbuegelAnzProTriebProps}/>
@@ -473,20 +586,22 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
                 </SingleShowConditionalRadioInputField>
             </Grid>
             <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...jungpflanzenZukaufProps} >
+                    <MeasureInputField {...jungpflanzenDistanzProps} />
+                    <SelectionInputField {...jungpflanzenSubstratProps}/>
+                </SingleShowConditionalRadioInputField>
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
+                <DynamicInputField {...verpackungsmaterialProps}/>
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...sonstVerbrauchsmaterialienProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...plastikVerpackungProps}/>
-                <MeasureInputField {...kartonVerpackungProps} />
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...transportFrequenzProps} />
                 <MeasureInputField {...transportDistanzProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...jungpflanzenEinkaufProps} >
-                    <MeasureInputField {...jungpflanzenDistanzProps} />
-                </SingleShowConditionalRadioInputField>
+                <DynamicInputField {...zusaetzlicherMaschineneinsatzProps} />
             </Grid>
             <Grid item container xs={12}>
                 <Grid item xs={12}>

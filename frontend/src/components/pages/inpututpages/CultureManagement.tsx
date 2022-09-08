@@ -16,7 +16,8 @@ import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 
 const mapStateToProps = (state: RootState) => ({
-  lookupValues: state.lookup.lookupValues,
+    lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -43,30 +44,12 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         props.provideCultureManagement(cultureManagement)
     }
 
-    // Properties of the input fields
-    const anzahlTriebeProps: DynamicInputProps = {
-        title: "Anzahl Triebe",
-        label: "Wieviele Triebe werden pro Pflanze im Durchschnitt erzielt?",
-        textFieldProps: {},
-        selectProps: {
-            lookupValues: props.lookupValues.AnzahlTriebe
-        },
-        onValueChange: values => setCultureManagementState({
-            ...cultureManagement,
-            anzahlTriebe: values.map(value => {
-                return {
-                    selectValue: value.selectValue, textFieldValue:value.textFieldValue
-                }
-            })
-        }),
-        initValues: props.values.anzahlTriebe
-    }
-
     const mittlereSolltemperaturTagProps: MeasureInputProps = {
         title: "Mittlere Solltemperatur Tag",
         label: "Mittlere Luftsolltemperatur Tag (Innen; über den Kulturverlauf)",
+        unitName: props.unitValues.measures.MittlereSolltemperaturTag[0]?.values,
         textFieldProps: {
-            value: cultureManagement.mittlereSolltemperaturTag,
+            value: cultureManagement.mittlereSolltemperaturTag?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
                 mittlereSolltemperaturTag: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturTag?.unit??null}
@@ -77,11 +60,12 @@ const CultureManagementInput = (props: CultureManagementProps) => {
     const mittlereSolltemperaturNachtProps: MeasureInputProps = {
         title: "Mittlere Solltemperatur Nacht",
         label: "Mittlere Luftsolltemperatur Nacht (Innen; über den Kulturverlauf)",
+        unitName: props.unitValues.measures.MittlereSolltemperaturNacht[0]?.values,
         textFieldProps: {
-            value: cultureManagement.mittlereSolltemperaturNacht,
+            value: cultureManagement.mittlereSolltemperaturNacht?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                mittlereSolltemperaturNacht: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturTag?.unit??null}
+                mittlereSolltemperaturNacht: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturNacht?.unit??null}
             })
         }
     }
@@ -98,72 +82,21 @@ const CultureManagementInput = (props: CultureManagementProps) => {
         },
     }
 
-    const relativeFeuchteProps: MeasureInputProps = {
-        title: "Relative Feuchte",
+    const luftfeuchteProps: MeasureInputProps = {
+        title: "Luftfeuchte",
         label: "Wie hoch ist die relative Luftfeuchte im Gewächshaus? Stellt bei aktivierter Entfeuchtung den Sollwert für die Regelung dar.",
+        unitName: props.unitValues.measures.Luftfeuchte[0]?.values,
         textFieldProps: {
-            value: cultureManagement.relativeFeuchte,
+            value: cultureManagement.luftfeuchte?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                relativeFeuchte: parseFloat(event.target.value)
+                luftfeuchte: {value:parseFloat(event.target.value),unit:cultureManagement.luftfeuchte?.unit??null}
             })
         }
     }
-
-    const kulturmassnahmeAusgeizenProps: MeasureInputProps = {
-        title: "Kulturmaßnahme Ausgeizen",
-        label: "Wie häufig wird ausgegeizt?",
-        textFieldProps: {
-            value: cultureManagement.kulturmassnahmeAusgeizen,
-            onChange: event => setCultureManagementState({
-                ...cultureManagement,
-                kulturmassnahmeAusgeizen: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusgeizen?.unit??null}
-            })
-        }
-    }
-
-    const kulturmassnahmeAusblattenAnzahlMonatProps: MeasureInputProps = {
-        title: "Kulturmaßnahme Ausblatten",
-        label: "Wie häufig wird innerhalb eines Monats ausgeblattet?",
-        textFieldProps: {
-            value: cultureManagement.kulturmassnahmeAusblattenAnzahlMonat,
-            onChange: event => setCultureManagementState({
-                ...cultureManagement,
-                kulturmassnahmeAusblattenAnzahlMonat: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusblattenAnzahlMonat?.unit??null}
-            })
-        }
-    }
-
-    const kulturmassnahmeAusblattenMengeProps: MeasureInputProps = {
-        title: "Kulturmaßnahme Ausblatten",
-        label: "Wieviele Blätter pro Pflanze werden je Durchgang entfernt?",
-        textFieldProps: {
-            value: cultureManagement.kulturmassnahmeAusblattenMenge,
-            onChange: event => setCultureManagementState({
-                ...cultureManagement,
-                kulturmassnahmeAusblattenMenge: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAusblattenMenge?.unit??null}
-            })
-        }
-    }
-
-    const kulturmassnahmeAblassenProps: MeasureInputProps = {
-        title: "Kulturmaßnahme Ablassen",
-        label: "Wie häufig lassen Sie die Pflanzen ab?",
-        textFieldProps: {
-            value: cultureManagement.kulturmassnahmeAblassen,
-            onChange: event => setCultureManagementState({
-                ...cultureManagement,
-                kulturmassnahmeAblassen: {value:parseFloat(event.target.value),unit:cultureManagement.kulturmassnahmeAblassen?.unit??null}
-            })
-        }
-    }
-
 
     return (
         <Grid container xs={12} spacing={8}>
-            <Grid item container xs={12} spacing={4}>
-                <DynamicInputField {...anzahlTriebeProps}/>
-            </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...mittlereSolltemperaturTagProps}/>
                 <MeasureInputField {...mittlereSolltemperaturNachtProps}/>
@@ -178,15 +111,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
                         />
                     })}
                 </SelectionRadioInputField>
-                <MeasureInputField {...relativeFeuchteProps}/>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...kulturmassnahmeAusgeizenProps} />
-                <MeasureInputField {...kulturmassnahmeAblassenProps} />
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...kulturmassnahmeAusblattenAnzahlMonatProps} />
-                <MeasureInputField {...kulturmassnahmeAusblattenMengeProps} />
+                <MeasureInputField {...luftfeuchteProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>

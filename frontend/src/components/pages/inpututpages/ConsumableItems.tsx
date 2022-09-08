@@ -46,30 +46,27 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         props.provideItems(consumableItems)
     }
 
-    // Properties of the input fields
-    const co2ZudosierungProps: MeasureInputProps = {
+    const co2HerkunftProps: DynamicInputProps = {
         title: "CO2 Zudosierung",
-        label: "Wieviel CO2 wird in der Kulturdauer zudosiert?",
-        textFieldProps: {
-            value: consumableItems.co2Zudosierung,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
-                co2Zudosierung: {value:parseFloat(event.target.value),unit:consumableItems.co2Zudosierung?.unit??null}
-            })
-        }
-    }
-
-    const co2HerkunftProps: SelectionInputProps = {
-        title: "CO2 Herkunft",
-        label: "Herkunft des CO2 auswählen.",
+        label: "Wie und wieviel CO2 führen Sie der Kultur hinzu?.",
+        textFieldProps:{},
         selectProps: {
-            value: consumableItems.co2Herkunft,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
-                co2Herkunft: parseFloat(event.target.value)
-            }),
             lookupValues: props.lookupValues["CO2-Herkunft"]
         },
+        unitSelectProps: {
+            lookupValues: props.lookupValues["CO2-Herkunft"],
+            unitValues: props.unitValues,
+            optionGroup: "CO2-Herkunft"
+        },
+        onValueChange: values => setConsumableItemsState({
+            ...consumableItems,
+            co2Herkunft: values.map(value => {
+                return {
+                    selectValue: value.selectValue, textFieldValue:value.textFieldValue
+                }
+            })
+        }),
+        initValues: props.values.co2Herkunft
     }
 
     const duengemittelSimpleProps: DynamicInputProps = {
@@ -129,15 +126,23 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         }
     }
 
-    const insektizideProps: MeasureInputProps = {
+    const insektizideProps: MeasureUnitInputProps = {
         title: "Insektizide",
         label: "Wieviele Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Mittel und geben Sie diese in Kilogramm an.",
         textFieldProps: {
-            value: consumableItems.insektizide,
+            value: consumableItems.insektizide?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
                 insektizide: {value:parseFloat(event.target.value),unit:consumableItems.insektizide?.unit??null}
             })
+        },
+        selectProps: {
+            value: consumableItems.insektizide?.unit,
+            onChange: event => setConsumableItemsState({
+                ...consumableItems,
+                insektizide: {value:consumableItems.insektizide?.value?? null ,unit:parseFloat(event.target.value)}
+            }),
+            lookupValues: props.unitValues.measures.Insektizide
         }
     }
 
@@ -166,13 +171,10 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         initValues: props.values.nuetzlinge
     }
 
-
-
     return (
         <Grid container xs={12} spacing={8}>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...co2ZudosierungProps}/>
-                <SelectionInputField {...co2HerkunftProps} />
+                <DynamicInputField {...co2HerkunftProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelSimpleProps}/>
@@ -182,7 +184,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureUnitInputField {...fungizideProps} />
-                <MeasureInputField {...insektizideProps} />
+                <MeasureUnitInputField {...insektizideProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...nuetzlingeProps} />

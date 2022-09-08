@@ -22,7 +22,7 @@ import DynamicSelect, {
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {DesktopDatePicker, DesktopDatePickerProps, LocalizationProvider} from '@mui/x-date-pickers';
 import {
-    FormControlLabel,
+    FormControlLabel, InputAdornment,
     InputLabel,
     Radio,
     RadioGroup,
@@ -82,7 +82,8 @@ export type MeasureValue = {
 
 // MeasureInput component
 export type MeasureInputProps = InputFieldProps & {
-    textFieldProps: TextFieldProps
+    textFieldProps: TextFieldProps,
+    unitName?: string | null
 }
 
 
@@ -93,6 +94,9 @@ export const MeasureInputField = (props: MeasureInputProps) => {
             <TextField
                 type="number"
                 placeholder='Menge'
+                InputProps={{
+                    endAdornment: <InputAdornment position="end">{props.unitName??""}</InputAdornment>,
+                }}
                 onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
                 {...props.textFieldProps}
                 fullWidth
@@ -103,7 +107,7 @@ export const MeasureInputField = (props: MeasureInputProps) => {
 
 
 // MeasureUnitInput component
-export type MeasureUnitInputProps = InputFieldProps & {
+export type MeasureUnitInputProps = MeasureInputProps & {
     textFieldProps: TextFieldProps,
     selectProps: DynamicSelectProps<any>
 }
@@ -115,10 +119,13 @@ export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
         <BaseInputField title={props.title} label={props.label}>
             <TextField
                 type="number"
-                placeholder='Menge'
+                label='Menge'
                 onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
                 {...props.textFieldProps}
                 fullWidth
+                InputProps={{
+                    endAdornment: <InputAdornment position="end">{props.unitName}</InputAdornment>,
+                }}
             />
             <FormControl fullWidth sx={{marginTop:3}}>
                 <InputLabel id="unit-select-label">Einheit</InputLabel>

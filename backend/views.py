@@ -317,7 +317,6 @@ class GetUnitValues(APIView):
                 units = list()  # storing all units for one measurement
                 for measurent_unit in measurement_units:
                     unit = dict()
-                    print(measurent_unit)
                     unit["id"] = measurent_unit.id
                     unit["values"] = measurent_unit.unit_name
                     units.append(unit)
@@ -404,8 +403,11 @@ class CreateGreenhouseData(APIView):
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
+        print("Post Begin!!!")
+
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            print("IsVALID!!!")
             # Validate that every required field has been filled out with not a default value
             if validate_greenhouse_data(data=serializer.data) is False:
                 return Response({'Bad Request': 'Not all fields have been filled out!'},

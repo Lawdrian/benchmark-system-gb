@@ -202,77 +202,109 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: string
+    GWHGesamtflaeche: string
+    GWHFlaeche: string
+    WaermeteilungFlaeche: string
     GWHAlter: string
+    AlterBedachungsmaterial: string
+    AlterStehwandmaterial: string
     AlterEnergieschirm: string
     Stehwandhoehe: string
     Laenge: string
     Breite: string
     Kappenbreite: string
-    "Scheibenlaenge(Bedachung)": string
-    AlterdesBedachungsmaterials: string
+    Scheibenlaenge: string
+    "Reihenabstand(Rinnenabstand)": string
+    Vorwegbreite: string
+    AlterTransportsystem: string
     AlterKultursystem: string
-    Reihenabstand: string
+    AlterZusaetzlichesHeizsystem: string
+    SnackReihenanzahl: string
+    SnackPflanzenabstandInDerReihe: string
+    SnackTriebzahl: string
+    SnackErtragJahr: string
+    CocktailReihenanzahl: string
+    CocktailPflanzenabstandInDerReihe: string
+    CocktailTriebzahl: string
+    CocktailErtragJahr: string
+    RispenReihenanzahl: string
+    RispenPflanzenabstandInDerReihe: string
+    RispenTriebzahl: string
+    RispenErtragJahr: string
+    FleischReihenanzahl: string
+    FleischPflanzenabstandInDerReihe: string
+    FleischTriebzahl: string
+    FleischErtragJahr: string
     Kulturflaeche: string
     KulturBeginn: string
     KulturEnde: string
-    Ertrag: string
-    Pflanzdichte: string
-    Nebenkulturdauer:string
+    NebenkulturBeginn: string
+    NebenkulturEnde: string
     MittlereSolltemperaturTag: string
     MittlereSolltemperaturNacht: string
-    KulturmassnahmeAusgeizen: string
-    KulturmassnahmeAusblattenAnzahlMonat: string
-    KulturmassnahmeAblassen: string
-    Strom: string
-    StromverbrauchBelichtungAnschlussleistung: string
-    StromverbrauchBelichtungAnzahlLampen: string
-    StromverbrauchBelichtungLaufzeitTag: string
-    "CO2-Zudosierung": string
+    Luftfeuchte: string
+    "BHKW:Menge": string
+    "BHKW:AnteilErdgas": string
+    "BHKW:AnteilBiomethan": string
+    GWHStromverbrauch: string
+    BetriebStromverbrauch: string
+    "Belichtung:Stromverbrauch": string
+    "Belichtung:AnzahlLampen": string
+    "Belichtung:AnschlussleistungProLampe": string
+    "Belichtung:LaufzeitProTag": string
     Fungizide: string
     Insektizide: string
-    VolumenGrowbags: string
-    LaengeGrowbags: string
-    PflanzenproBag: string
+    "Growbags:Volumen": string
+    "Growbags:Laenge": string
+    "Growbags:PflanzenproBag": string
+    "Kuebel:VolumenProTopf": string
+    "Kuebel:JungpflanzenProTopf": string
+    "Kuebel:Alter": string
     "SchnuereRankhilfen:Laenge": string
     "SchnuereRankhilfen:Wiederverwendung": string
-    "Klipse:Menge": string
+    "Klipse:AnzahlProTrieb": string
     "Klipse:Wiederverwendung": string
-    "Rispenbuegel:Menge": string
+    "Rispenbuegel:AnzahlProTrieb": string
     "Rispenbuegel:Wiederverwendung": string
-    "SonstigeVerbrauchsmaterialien:Wiederverwendung": string
-    BodenfolienVerwendungsdauer: string
-    "Verpackungsmaterial:Karton": string
-    "Verpackungsmaterial:Plastik": string
-    "TransportderWare:Auslieferungen": string
-    "TransportderWare:Distanz": string
-    JungpflanzenDistanz: string
-    KulturmassnahmeAusblattenMenge: string
+    "Bodenabdeckung:Wiederverwendung": string
+    "Jungpflanzen:Distanz": string
+    "Verpackungsmaterial:AnzahlMehrwegsteigen": string
+    "Transport:Distanz": string
+    EinheitlicheWaermeversorgung: string
     GWHArt: string
     Bedachungsmaterial: string
-    ArtdesStehwandmaterial: string
+    Stehwandmaterial: string
     Energieschirm: string
-    Produktion: string
-    Kultursystem: string
     Transportsystem: string
-    Fruchtgewicht: string
+    Produktionstyp: string
+    Kultursystem: string
+    ZusaetzlichesHeizsystem: string
+    "10-30Gramm(Snack)": string
+    "30-100Gramm(Cocktail)": string
+    "100-150Gramm(Rispen)": string
+    ">150Gramm(Fleisch)": string
     Nebenkultur: string
-    AnzahlTriebe: string
     Entfeuchtung: string
     Energietraeger: string
+    BHKW: string
     Stromherkunft: string
     Zusatzbelichtung: string
     Belichtungsstrom: string
     "CO2-Herkunft": string
-    "Duengemittel:DetalierteAngabe": string
     "Duengemittel:VereinfachteAngabe": string
+    "Duengemittel:DetailierteAngabe": string
     Nuetzlinge: string
     Growbags: string
+    Kuebel: string
     Substrat: string
     "SchnuereRankhilfen:Material": string
     "Klipse:Material": string
     "Rispenbuegel:Material": string
     Bewaesserungsart: string
     Bodenfolien: string
+    "Jungpflanzen:Zukauf": string
+    "Jungpflanzen:Substrat": string
+    Verpackungsmaterial: string
     SonstigeVerbrauchsmaterialien: string
-    JungpflanzenZukauf: string
+    ZusaetzlicherMaschineneinsatz: string
 }
