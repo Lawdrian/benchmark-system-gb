@@ -5,18 +5,20 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue
-} from "../../utils/InputFields"
+} from "../../utils/inputPage/InputFields"
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -29,12 +31,11 @@ type ConsumableItemsProps = ReduxProps & SubpageProps & {
 }
 
 export type ConsumableItemsState = {
-    co2Zudosierung: number | null
-    co2Herkunft: number | null
-    duengemittelDetail: SelectionValue[]
+    co2Herkunft: SelectionValue[]
     duengemittelSimple: SelectionValue[]
-    fungizide: number | null
-    insektizide: number| null
+    duengemittelDetail: SelectionValue[]
+    fungizide: MeasureValue | null
+    insektizide: MeasureValue | null
     nuetzlinge: SelectionValue[]
 }
 
@@ -44,40 +45,43 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const setConsumableItemsState = (consumableItems: ConsumableItemsState) => {
         setConsumableItems(consumableItems)
         props.provideItems(consumableItems)
+        console.log(consumableItems.duengemittelDetail)
     }
 
-    // Properties of the input fields
-    const co2ZudosierungProps: MeasureInputProps = {
+    const co2HerkunftProps: DynamicInputProps = {
         title: "CO2 Zudosierung",
-        label: "Wieviel CO2 wird in der Kulturdauer zudosiert?",
-        textFieldProps: {
-            value: consumableItems.co2Zudosierung,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
-                co2Zudosierung: parseFloat(event.target.value)
-            })
-        }
-    }
-
-    const co2HerkunftProps: SelectionInputProps = {
-        title: "CO2 Herkunft",
-        label: "Herkunft des CO2 auswählen.",
+        label: "Wie und wieviel CO2 führen Sie der Kultur hinzu?.",
+        textFieldProps:{},
         selectProps: {
-            value: consumableItems.co2Herkunft,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
-                co2Herkunft: parseFloat(event.target.value)
-            }),
             lookupValues: props.lookupValues["CO2-Herkunft"]
         },
+        unitSelectProps: {
+            lookupValues: props.lookupValues["CO2-Herkunft"],
+            unitValues: props.unitValues,
+            optionGroup: "CO2-Herkunft"
+        },
+        onValueChange: values => setConsumableItemsState({
+            ...consumableItems,
+            co2Herkunft: values.map(value => {
+                return {
+                    selectValue: value.selectValue, textFieldValue:value.textFieldValue
+                }
+            })
+        }),
+        initValues: props.values.co2Herkunft
     }
 
     const duengemittelSimpleProps: DynamicInputProps = {
-        title: "Düngemittel Einfach",
+        title: "Einfach",
         label: "Verwendetes Düngemittel und Menge eintragen.",
         textFieldProps:{},
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"],
+            unitValues:  props.unitValues,
+            optionGroup: "Duengemittel:VereinfachteAngabe"
         },
         onValueChange: values => setConsumableItemsState({
             ...consumableItems,
@@ -91,13 +95,17 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const duengemittelDetailProps: DynamicInputProps = {
-        title: "Düngemittel Detail",
+        title: "Detailliert",
         label: "Verwendetes Düngemittel und Menge eintragen.",
         selectProps: {
-            lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
+            lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"]
         },
-        textFieldProps: {
+        unitSelectProps: {
+            lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"],
+            unitValues:  props.unitValues,
+            optionGroup: "Duengemittel:DetaillierteAngabe"
         },
+        textFieldProps: {},
         onValueChange: values => setConsumableItemsState({
             ...consumableItems,
             duengemittelDetail: values.map(value => {
@@ -109,27 +117,43 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         initValues: props.values.duengemittelDetail
     }
 
-    const fungizideProps: MeasureInputProps = {
+    const fungizideProps: MeasureUnitInputProps = {
         title: "Fungizide",
         label: "Wieviele Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Fungizide und geben Sie diese in Kilogramm an.",
         textFieldProps: {
-            value: consumableItems.fungizide,
+            value: consumableItems.fungizide?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                fungizide: parseFloat(event.target.value)
+                fungizide: {value:parseFloat(event.target.value),unit:consumableItems.fungizide?.unit??null}
             })
+        },
+        selectProps: {
+            value: consumableItems.fungizide?.unit,
+            onChange: event => setConsumableItemsState({
+                ...consumableItems,
+                fungizide: {value:consumableItems.fungizide?.value?? null ,unit:parseFloat(event.target.value)}
+            }),
+            lookupValues: props.unitValues.measures.Fungizide
         }
     }
 
-    const insektizideProps: MeasureInputProps = {
+    const insektizideProps: MeasureUnitInputProps = {
         title: "Insektizide",
         label: "Wieviele Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Mittel und geben Sie diese in Kilogramm an.",
         textFieldProps: {
-            value: consumableItems.insektizide,
+            value: consumableItems.insektizide?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                insektizide: parseFloat(event.target.value)
+                insektizide: {value:parseFloat(event.target.value),unit:consumableItems.insektizide?.unit??null}
             })
+        },
+        selectProps: {
+            value: consumableItems.insektizide?.unit,
+            onChange: event => setConsumableItemsState({
+                ...consumableItems,
+                insektizide: {value:consumableItems.insektizide?.value?? null ,unit:parseFloat(event.target.value)}
+            }),
+            lookupValues: props.unitValues.measures.Insektizide
         }
     }
 
@@ -151,29 +175,31 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             })
         }),
         unitSelectProps: {
-            lookupValues: [{id: 5, values: "kg"}]
+            lookupValues: props.lookupValues.Nuetzlinge,
+            unitValues: props.unitValues,
+            optionGroup: 'Nuetzlinge'
         },
         initValues: props.values.nuetzlinge
     }
 
-
-
     return (
         <Grid container xs={12} spacing={8}>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...co2ZudosierungProps}/>
-                <SelectionInputField {...co2HerkunftProps} />
+                <DynamicInputField {...co2HerkunftProps} />
             </Grid>
+            <SectionDivider title="Düngemittel"/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelSimpleProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelDetailProps} />
             </Grid>
+            <SectionDivider title="Pflanzenschutzmittel"/>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...fungizideProps} />
-                <MeasureInputField {...insektizideProps} />
+                <MeasureUnitInputField {...fungizideProps} />
+                <MeasureUnitInputField {...insektizideProps} />
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...nuetzlingeProps} />
             </Grid>

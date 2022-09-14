@@ -32,6 +32,7 @@ class Calculations(models.Model):
     It is part of the structure for direct user input.
     """
     calculation_name = models.CharField(max_length=50, unique=True, null=False)
+    unit_name = models.CharField(max_length=10, unique=False, null=False)
 
 
 class Results(models.Model):
@@ -59,6 +60,16 @@ class Measurements(models.Model):
     measurement_name = models.CharField(max_length=50, unique=True, null=False)
 
 
+class MeasurementUnits(models.Model):
+    """This class defines a django model to store all possible units for a measurement field.
+
+    It is part of the structure for direct user input.
+    """
+    measurement = models.ForeignKey("backend.Measurements", null=False,
+                                    on_delete=models.CASCADE)
+    unit_name = models.CharField(max_length=10, unique=False, null=False)
+
+
 class Measures(models.Model):
     """This class defines a django model to store the values of all 
     measurements linked with their respective names and the greenhouse-data
@@ -71,7 +82,8 @@ class Measures(models.Model):
                                       on_delete=models.CASCADE)
     measurement = models.ForeignKey("backend.Measurements", null=False,
                                       on_delete=models.CASCADE)
-    
+    measure_unit = models.ForeignKey("backend.MeasurementUnits", null=True, on_delete=models.SET_NULL)
+
     measure_value = models.DecimalField(max_digits=10, decimal_places=3)
 
 
@@ -126,6 +138,17 @@ class Options(models.Model):
     option_value = models.CharField(max_length=50, null=False)
 
 
+class OptionUnits(models.Model):
+    """This class defines a django model to store all possible units for an option.
+
+    It is part of the structure for predefined values (e.g. dropdowns)
+    """
+
+    option = models.ForeignKey("backend.Options", null=True, on_delete=models.SET_NULL)
+
+    unit_name = models.CharField(max_length=10, unique=False, null=False)
+
+
 class Selections(models.Model):
     """This class defines a django model to store the connection between an
     option, the amount for this option and the data set it beongs to.
@@ -139,6 +162,8 @@ class Selections(models.Model):
                                      on_delete=models.CASCADE)
     
     amount = models.DecimalField(max_digits=10, decimal_places=3, null=True)
+
+    selection_unit = models.ForeignKey("backend.OptionUnits", null=True, on_delete=models.SET_NULL)
 
     value2 = models.DecimalField(max_digits=10, decimal_places=3, null=True)
 

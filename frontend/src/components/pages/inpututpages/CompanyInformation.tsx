@@ -1,14 +1,14 @@
 import React, {useState} from "react";
 import {
     DateInputField,
-    DateInputProps,
+    DateInputProps, DateValue,
     MeasureInputField,
-    MeasureInputProps,
+    MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionRadioInputField,
-    SelectionRadioInputProps
-} from "../../utils/InputFields";
+    SelectionRadioInputProps, SingleShowConditionalRadioInputField, SingleShowConditionalRadioInputProps
+} from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
@@ -17,9 +17,11 @@ import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import lookup from "../../../reducers/lookup";
 import {format} from "date-fns";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
+  unitValues: state.lookup.unitValues
 });
 
 const connector = connect(mapStateToProps);
@@ -34,24 +36,33 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
 export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
-    plz: number | null
+    plz: MeasureValue | null
+    gwhGesamtFlaeche: MeasureValue | null
+    einheitlicheWaermeversorgung: number | null
+    gwhFlaeche: MeasureValue | null
+    waermeteilungFlaeche: MeasureValue | null
     gwhArt: number | null
-    gwhAlter: Date | null
+    gwhAlter: DateValue | null
     bedachungsmaterial: number | null
-    alterdesBedachungsmaterials: Date | null
-    artdesStehwandmaterials: number | null
+    bedachungsmaterialAlter: DateValue | null
+    stehwandmaterial: number | null
+    stehwandmaterialAlter: DateValue | null
     energieschirm: number | null
-    alterEnergieschirm: Date| null
-    stehwandhoehe: number | null
-    laenge: number | null
-    breite: number | null
-    knappenbreite: number | null
-    scheibenlaenge: number | null
-    produktion: number | null
+    energieschirmAlter: DateValue | null
+    stehwandhoehe: MeasureValue
+    laenge: MeasureValue | null
+    breite: MeasureValue | null
+    knappenbreite: MeasureValue | null
+    scheibenlaenge: MeasureValue | null
+    reihenabstand: MeasureValue | null
+    vorwegbreite: MeasureValue | null
+    produktionstyp: number | null
     kultursystem: number | null
-    alterKultursystem: Date | null
-    reihenabstand: number| null
+    kultursystemAlter: DateValue | null
     transportsystem: number | null
+    transportsystemAlter: DateValue | null
+    zusaetzlichesHeizsystem: number | null
+    zusaetzlichesHeizsystemAlter: DateValue | null
 }
 
 const CompanyInformationInput = (props: CompanyInformationProps) => {
@@ -65,7 +76,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     // Properties of the input fields
     const gewaechshausNameProps: MeasureInputProps = {
         title: "Gewächshaus Name",
-        label: "Wie lautet der Name Ihres Gewächshauses?",
+        label: "Wie lautet der Name Ihres Gewächshauses? Wenn Sie einen neuen Datensatz für ein bestehendes Gewächshaus eingeben möchten, dann geben Sie dessen Namen in dieses Feld ein.",
+        unitName:"",
         textFieldProps: {
             value: companyInformation.gewaechshausName,
             onChange: event => setCompanyInformationState({
@@ -74,7 +86,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             }),
             type:"text",
             placeholder:"Name",
-            error: companyInformation.gewaechshausName==="1"
         }
     }
 
@@ -95,11 +106,68 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const plzProps: MeasureInputProps = {
         title: "Postleitzahl",
         label: "Postleitzahl (zur Wetterdatenbestimmung)",
+        unitName: props.unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
-            value: companyInformation.plz,
+            value: companyInformation.plz?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                plz: parseFloat(event.target.value)
+                plz: {value: parseFloat(event.target.value),unit: props.unitValues.measures.PLZ[0].id}
+            })
+        }
+    }
+
+    const gwhGesamtFlaecheProps: MeasureInputProps = {
+        title: "Gewächshaus Gesamtfläche",
+        label: "Die gesamte Fläche des Gewächshauses",
+        unitName: props.unitValues.measures.GWHGesamtflaeche[0]?.values,
+        textFieldProps: {
+            value: companyInformation.gwhGesamtFlaeche?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                gwhGesamtFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHGesamtflaeche[0].id}
+            })
+        }
+    }
+
+    const einheitlicheWaermeversorgungProps: SingleShowConditionalRadioInputProps = {
+        title: "Einheitliche Wärmeversorgung",
+        label: "Ist die Wärmeversorgung Einheitlich?",
+        radioGroupProps: {
+            value: companyInformation.einheitlicheWaermeversorgung,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                einheitlicheWaermeversorgung: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.EinheitlicheWaermeversorgung,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.EinheitlicheWaermeversorgung.filter(option => option.values.toUpperCase() == "NEIN");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const waermeteilungFlaecheProps: MeasureInputProps = {
+        title: "Wärmeverteilung Fläche",
+        label: "Wie viel Fläche ist Wärmeverteilt?",
+        unitName: "m2",
+        textFieldProps: {
+            value: companyInformation.waermeteilungFlaeche?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.WaermeteilungFlaeche[0].id}
+            })
+        }
+    }
+
+    const gwhFlaecheProps: MeasureInputProps = {
+        title: "Gewächshaus Fläche",
+        label: "Wie groß ist die Fläche eines Hauses?",
+        unitName: "m2",
+        textFieldProps: {
+            value: companyInformation.gwhFlaeche?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                gwhFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHFlaeche[0].id}
             })
         }
     }
@@ -119,13 +187,13 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     const gwhAlterProps: DateInputProps = {
         title: "Gewächshaus Alter",
-        label: "Alter des Gewächshauses",
+        label: "Wann wurde das Gewächshaus gebaut?",
         datePickerProps: {
             views: ['year'],
-            value: companyInformation.gwhAlter,
+            value: companyInformation.gwhAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhAlter: event
+                gwhAlter: {value:event,unit:props.unitValues.measures.GWHAlter[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -144,30 +212,44 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const alterdesBedachungsmaterialsProps: DateInputProps = {
-        title: "Bedachungsmaterial Alter",
-        label: "Wie alt ist das Bedachungsmaterial?",
+    const bedachungsmaterialAlterProps: DateInputProps = {
+        title: "Alter Bedachungsmaterial",
+        label: "Seit wann nutzen Sie das Bedachungsmaterial?",
         datePickerProps: {
             views: ['year'],
-            value: companyInformation.alterdesBedachungsmaterials,
+            value: companyInformation.bedachungsmaterialAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterdesBedachungsmaterials: event
+                bedachungsmaterialAlter: {value:event,unit:companyInformation.bedachungsmaterialAlter?.unit??null}
             }),
             renderInput: () => <TextField/>
         }
     }
 
-    const artdesStehwandmaterialsProps: SelectionInputProps = {
+    const stehwandmaterialProps: SelectionInputProps = {
         title: "Stehwandmaterial",
         label: "Aus welchem Material bestehen die Stehwände?",
         selectProps: {
-            lookupValues: props.lookupValues.ArtdesStehwandmaterial,
-            value: companyInformation.artdesStehwandmaterials,
+            lookupValues: props.lookupValues.Stehwandmaterial,
+            value: companyInformation.stehwandmaterial,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                artdesStehwandmaterials: parseFloat(event.target.value)
+                stehwandmaterial: parseFloat(event.target.value)
             })
+        }
+    }
+
+    const stehwandmaterialAlterProps: DateInputProps = {
+        title: "Alter Stehwandmaterial",
+        label: "Seit wann nutzen Sie das Stehwandmaterial?",
+        datePickerProps: {
+            views: ['year'],
+            value: companyInformation.stehwandmaterialAlter?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                stehwandmaterialAlter: {value:event,unit:props.unitValues.measures.AlterStehwandmaterial[0].id}
+            }),
+            renderInput: () => <TextField/>
         }
     }
 
@@ -184,15 +266,15 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const alterEnergieschirmProps: DateInputProps = {
+    const energieschirmAlterProps: DateInputProps = {
         title: "Alter Energieschirm",
-        label: "Wie alt ist der Energieschirm?",
+        label: "Seit wann nutzen Sie den Energieschirm?",
         datePickerProps: {
             views: ['year'],
-            value: companyInformation.alterEnergieschirm,
+            value: companyInformation.energieschirmAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterEnergieschirm: event
+                energieschirmAlter: {value:event,unit:props.unitValues.measures.AlterEnergieschirm[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -201,11 +283,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const stehwandhoeheProps: MeasureInputProps = {
         title: "Stehwandhöhe",
         label: "Höhe der Stehwände",
+        unitName: "Meter",
         textFieldProps: {
-            value: companyInformation.stehwandhoehe,
+            value: companyInformation.stehwandhoehe?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandhoehe: parseFloat(event.target.value)
+                stehwandhoehe: {value:parseFloat(event.target.value), unit: props.unitValues.measures.Stehwandhoehe[0].id}
             })
         }
     }
@@ -213,11 +296,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const laengeProps: MeasureInputProps = {
         title: "Länge",
         label: "Wie lang ist das Gewächshaus?",
+        unitName: props.unitValues.measures.Laenge[0]?.values,
         textFieldProps: {
-            value: companyInformation.laenge,
+            value: companyInformation.laenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                laenge: parseFloat(event.target.value)
+                laenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Laenge[0].id}
             })
         }
     }
@@ -225,23 +309,25 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const breiteProps: MeasureInputProps = {
         title: "Breite",
         label: "Wie breit ist das Gewächshaus?",
+        unitName: props.unitValues.measures.Breite[0]?.values,
         textFieldProps: {
-            value: companyInformation.breite,
+            value: companyInformation.breite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                breite: parseFloat(event.target.value)
+                breite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Breite[0].id}
             })
         }
     }
 
-    const knappenbreiteProps: MeasureInputProps = {
-        title: "Knappenbreite",
+    const kappenbreiteProps: MeasureInputProps = {
+        title: "Kappenbreite",
         label: "Wie viele Meter beträgt die Knappenbreite?",
+        unitName: props.unitValues.measures.Kappenbreite[0]?.values,
         textFieldProps: {
-            value: companyInformation.knappenbreite,
+            value: companyInformation.knappenbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                knappenbreite: parseFloat(event.target.value)
+                knappenbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kappenbreite[0].id}
             })
         }
     }
@@ -249,25 +335,84 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const scheibenlaengeProps: MeasureInputProps = {
         title: "Scheibenlänge",
         label: "Wie lang sind die Scheiben der Bedachung?",
+        unitName: props.unitValues.measures.Scheibenlaenge[0]?.values,
         textFieldProps: {
-            value: companyInformation.scheibenlaenge,
+            value: companyInformation.scheibenlaenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                scheibenlaenge: parseFloat(event.target.value)
+                scheibenlaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Scheibenlaenge[0].id}
             })
         }
     }
 
-    const produktionProps: SelectionInputProps = {
-        title: "Produktion",
-        label: "Auf welche Weise produzieren Sie?",
-        selectProps: {
-            value: companyInformation.produktion,
+    const reihenabstandProps: MeasureInputProps = {
+        title: "Reihenabstand (Rinnenabstand)",
+        label: "Wie groß ist der Abstand zwischen den Reihen (Reihenmitte zu Reihenmitte)",
+         unitName: props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0]?.values,
+        textFieldProps: {
+            value: companyInformation.reihenabstand?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                produktion: parseFloat(event.target.value)
+                reihenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0].id}
+            })
+        }
+    }
+
+    const vorwegbreiteProps: MeasureInputProps = {
+        title: "Vorwegbreite",
+        label: "Wie breit ist der Vorweg?",
+        unitName: props.unitValues.measures.Vorwegbreite[0]?.values,
+        textFieldProps: {
+            value: companyInformation.vorwegbreite?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                vorwegbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Vorwegbreite[0].id}
+            })
+        }
+    }
+
+    const transportsystemProps: SingleShowConditionalRadioInputProps = {
+        title: "Transportsystem",
+        label: "Verwenden Sie ein Transportsystem? (Buisrail oder vergleichbares)",
+        radioGroupProps: {
+            value: companyInformation.transportsystem,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                transportsystem: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Transportsystem,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Transportsystem.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const transportsystemAlterProps: DateInputProps = {
+        title: "Alter Transportsystem",
+        label: "Seit wann nutzen Sie das Transportsystem?",
+        datePickerProps: {
+            views: ['year'],
+            value: companyInformation.transportsystemAlter?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                transportsystemAlter: {value:event,unit:props.unitValues.measures.AlterTransportsystem[0].id}
             }),
-            lookupValues: props.lookupValues.Produktion
+            renderInput: () => <TextField/>
+        }
+    }
+
+
+    const produktionstypProps: SelectionInputProps = {
+        title: "Produktionstyp",
+        label: "Auf welche Weise produzieren Sie?",
+        selectProps: {
+            value: companyInformation.produktionstyp,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                produktionstyp: parseFloat(event.target.value)
+            }),
+            lookupValues: props.lookupValues.Produktionstyp
         }
     }
 
@@ -284,49 +429,66 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const alterKultursystemProps: DateInputProps = {
-        title: "Kultursystem Alter",
+    const kultursystemAlterProps: DateInputProps = {
+        title: "Alter Kultursystem",
         label: "Wie alt ist das Hydroponiksystem?",
         datePickerProps: {
             views: ['year'],
-            value: companyInformation.alterKultursystem,
+            value: companyInformation.kultursystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                alterKultursystem: event
+                kultursystemAlter: {value:event,unit:props.unitValues.measures.AlterKultursystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
     }
-    
-    const reihenabstandProps: MeasureInputProps = {
-        title: "Reihenabstand",
-        label: "Wie groß ist der Abstand zwischen den Reihen (Reihenmitte zu Reihenmitte)",
-        textFieldProps: {
-            value: companyInformation.reihenabstand,
+
+    const zusaetzlichesHeizsystemProps: SelectionInputProps = {
+        title: "Zusätzliches Heizsystem",
+        label: "Welches zusätzliche Heizsystem wird verwendet?",
+        selectProps: {
+            value: companyInformation.zusaetzlichesHeizsystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                reihenabstand: parseFloat(event.target.value)
-            })
+                zusaetzlichesHeizsystem: parseFloat(event.target.value)
+            }),
+            lookupValues: props.lookupValues.ZusaetzlichesHeizsystem
         }
     }
-    
-    const transportsystemProps: SelectionRadioInputProps = {
-        title: "Transportsystem",
-        label: "Verwenden Sie ein Transportsystem? (Buisrail oder vergleichbares)",
-        radioProps: {
-            value: companyInformation.transportsystem,
+
+    const zusaetzlichesHeizsystemAlterProps: DateInputProps = {
+        title: "Alter zusätzliches Heizsystem",
+        label: "Wie alt ist das zusätzliche Heizsystem?",
+        datePickerProps: {
+            views: ['year'],
+            value: companyInformation.zusaetzlichesHeizsystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                transportsystem: parseFloat(event.target.value)
-            })
+                zusaetzlichesHeizsystemAlter: {value:event,unit:props.unitValues.measures.AlterZusaetzlichesHeizsystem[0].id}
+            }),
+            renderInput: () => <TextField/>
         }
     }
 
     return (
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title="Allgemeine Daten"/>
             <Grid item container xs={12}  spacing={4}>
                 <MeasureInputField {...gewaechshausNameProps} />
                 <DateInputField {...datumProps} />
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
+                <MeasureInputField {...plzProps} />
+            </Grid>
+            <SectionDivider title=""/>
+            <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...einheitlicheWaermeversorgungProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...waermeteilungFlaecheProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
+                <MeasureInputField {...gwhGesamtFlaecheProps} />
+                <MeasureInputField {...gwhFlaecheProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...gwhArtProps} />
@@ -334,43 +496,50 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...bedachungsmaterialProps} />
-                <DateInputField {...alterdesBedachungsmaterialsProps} />
+                <DateInputField {...bedachungsmaterialAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...artdesStehwandmaterialsProps} />
-                <MeasureInputField {...stehwandhoeheProps} />
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...plzProps} />
-                <SelectionInputField {...produktionProps} />
+                <SelectionInputField {...stehwandmaterialProps} />
+                <DateInputField {...stehwandmaterialAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...energieschirmProps} />
-                <DateInputField {...alterEnergieschirmProps} />
+                <DateInputField {...energieschirmAlterProps} />
             </Grid>
+            <SectionDivider title="Gewächshaus Konstruktion"/>
             <Grid item container xs={12} spacing={4}>
+                <MeasureInputField {...stehwandhoeheProps} />
                 <MeasureInputField {...laengeProps} />
-                <MeasureInputField {...breiteProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...knappenbreiteProps} />
+                <MeasureInputField {...breiteProps} />
+                <MeasureInputField {...kappenbreiteProps} />
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...scheibenlaengeProps} />
+                <MeasureInputField {...reihenabstandProps} />
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
+                <MeasureInputField {...vorwegbreiteProps} />
+            </Grid>
+            <SectionDivider title=""/>
+            <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...transportsystemProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <DateInputField {...transportsystemAlterProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
+                <SelectionInputField {...produktionstypProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...kultursystemProps} />
-                <DateInputField {...alterKultursystemProps} />
+                <DateInputField {...kultursystemAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...reihenabstandProps} />
-                <SelectionRadioInputField {...transportsystemProps}>
-                    {props.lookupValues.Transportsystem.map(option => {
-                        return <FormControlLabel
-                            value={option.id}
-                            control={<Radio/>}
-                            label={option.values}
-                        />
-                    })}
-                </SelectionRadioInputField>
+                <SelectionInputField {...zusaetzlichesHeizsystemProps} />
+                <DateInputField {...zusaetzlichesHeizsystemAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>

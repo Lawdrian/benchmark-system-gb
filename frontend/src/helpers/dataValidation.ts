@@ -13,7 +13,7 @@ import {GreenhouseData} from "../types/reduxTypes";
  */
 export default function validateGreenhouseData(data: GreenhouseData) {
     // Define the regular expression to validate the necessary fields
-    let tupleRegex = "\\(\\s*\\d+(((\\s*,\\s*\\d+(\\.\\d+)?){0,2})|(\\s*,\\s*))\\s*\\)";
+    let tupleRegex = "\\(\\s*\\d+((((\\s*,\\s*\\d+(\\.\\d+)?){2,3})?)|(\\s*,\\s*))\\s*\\)"
     let fullRegex = "\\s*\\[\\s*(" + tupleRegex + "\\s*,\\s*)*" + tupleRegex + "\\s*\\]\\s*";
     let validationRegex = new RegExp(fullRegex);
 
@@ -34,7 +34,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
         "Zusatzbelichtung",
         "Belichtungsstrom",
         "CO2-Herkunft",
-        "Duengemittel:DetalierteAngabe",
+        "Duengemittel:DetaillierteAngabe",
         "Duengemittel:VereinfachteAngabe",
         "Nuetzlinge",
         "Growbags",

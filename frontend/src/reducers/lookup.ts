@@ -7,7 +7,7 @@ import {
     LOOKUP_FAILED,
     LOOKUP_LOADED,
     LOOKUP_LOADING,
-    RESET_DATA
+    RESET_DATA, UNITS_FAILED, UNITS_LOADED, UNITS_LOADING
 } from "../types/reduxTypes";
 
 /**
@@ -26,37 +26,369 @@ export type Option = {
  * A type to store the options for every option-group in the database
  */
 export type LookupValues = {
-    AlterdesBedachungsmaterials: Option[]
-    AnzahlTriebe: Option[]
-    ArtdesStehwandmaterial: Option[]
+    EinheitlicheWaermeversorgung: Option[]
+    GWHArt: Option[]
     Bedachungsmaterial: Option[]
+    Stehwandmaterial: Option[]
+    AlterdesBedachungsmaterials: Option[]
+    Energieschirm: Option[]
+    Transportsystem: Option[]
+    Produktionstyp: Option[]
+    Kultursystem: Option[]
+    AnzahlTriebe: Option[]
+    ZusaetzlichesHeizsystem: Option[]
+    "10-30Gramm(Snack)": Option[]
+    "30-100Gramm(Cocktail)": Option[]
+    "100-150Gramm(Rispen)": Option[]
+    ">150Gramm(Fleisch)": Option[]
+    Nebenkultur: Option[]
+    Entfeuchtung: Option[]
+    Energietraeger: Option[]
+    BHKW: Option[]
+    Stromherkunft: Option[]
+    Zusatzbelichtung: Option[]
     Belichtungsstrom: Option[]
+    "CO2-Herkunft": Option[]
+    "Duengemittel:VereinfachteAngabe": Option[]
+    "Duengemittel:DetaillierteAngabe": Option[]
+    Nuetzlinge: Option[]
+    Growbags: Option[]
+    Kuebel: Option[]
+    Substrat: Option[]
+    "SchnuereRankhilfen:Material": Option[]
+    "Klipse:Material": Option[]
+    "Rispenbuegel:Material": Option[]
     Bewaesserungsart: Option[]
     Bodenfolien: Option[]
-    "CO2-Herkunft": Option[]
-    "Duengemittel:DetalierteAngabe": Option[]
-    "Duengemittel:VereinfachteAngabe": Option[]
-    Energieschirm: Option[]
-    Energietraeger: Option[]
-    Entfeuchtung: Option[]
-    Fruchtgewicht: Option[]
-    GWHAlter: Option[]
-    GWHArt: Option[]
-    Growbags: Option[]
-    JungpflanzenZukauf: Option[]
-    "Klipse:Material": Option[]
-    Kultursystem: Option[]
-    Nebenkultur: Option[]
-    Nuetzlinge: Option[]
-    Produktion: Option[]
-    "Rispenbuegel:Material": Option[]
-    "SchnuereRankhilfen:Material": Option[]
+    "Jungpflanzen:Zukauf": Option[]
+    "Jungpflanzen:Substrat": Option[]
+    Verpackungsmaterial: Option[]
     SonstigeVerbrauchsmaterialien: Option[]
-    Stromherkunft: Option[]
-    Substrat: Option[]
-    Transportsystem: Option[]
-    Zusatzbelichtung: Option[]
+    ZusaetzlicherMaschineneinsatz: Option[]
+    BelichtungsstromEinheit: Option[]
 }
+
+/**
+ * @type UnitValues
+ *
+ * A type to store the units for every input field in the database
+ */
+export type UnitValues = {
+    measures: {
+        PLZ: Option[]
+        GWHGesamtflaeche: Option[]
+        GWHFlaeche: Option[]
+        WaermeteilungFlaeche: Option[]
+        GWHAlter: Option[]
+        AlterBedachungsmaterial: Option[]
+        AlterStehwandmaterial: Option[]
+        AlterEnergieschirm: Option[]
+        Stehwandhoehe: Option[]
+        Laenge: Option[]
+        Breite: Option[]
+        Kappenbreite: Option[]
+        Scheibenlaenge: Option[]
+        "Reihenabstand(Rinnenabstand)": Option[]
+        Vorwegbreite: Option[]
+        AlterTransportsystem: Option[]
+        AlterKultursystem: Option[]
+        AlterZusaetzlichesHeizsystem: Option[]
+        "SnackReihenanzahl": Option[]
+        "SnackPflanzenabstandInDerReihe": Option[]
+        "SnackTriebzahl": Option[]
+        "SnackErtragJahr": Option[]
+        "CocktailReihenanzahl": Option[]
+        "CocktailPflanzenabstandInDerReihe": Option[]
+        "CocktailTriebzahl": Option[]
+        "CocktailErtragJahr": Option[]
+        "RispenReihenanzahl": Option[]
+        "RispenPflanzenabstandInDerReihe": Option[]
+        "RispenTriebzahl": Option[]
+        "RispenErtragJahr": Option[]
+        "FleischReihenanzahl": Option[]
+        "FleischPflanzenabstandInDerReihe": Option[]
+        "FleischTriebzahl": Option[]
+        "FleischErtragJahr": Option[]
+        Kulturflaeche: Option[]
+        KulturBeginn: Option[]
+        KulturEnde: Option[]
+        NebenkulturBeginn: Option[]
+        NebenkulturEnde: Option[]
+        MittlereSolltemperaturTag: Option[]
+        MittlereSolltemperaturNacht: Option[]
+        Luftfeuchte: Option[]
+        "BHKW:Menge": Option[]
+        "BHKW:AnteilErdgas": Option[]
+        "BHKW:AnteilBiomethan": Option[]
+        GWHStromverbrauch: Option[]
+        BetriebStromverbrauch: Option[]
+        "Belichtung:Stromverbrauch": Option[]
+        "Belichtung:AnzahlLampen": Option[]
+        "Belichtung:AnschlussleistungProLampe": Option[]
+        "Belichtung:LaufzeitProTag": Option[]
+        Fungizide: Option[]
+        Insektizide: Option[]
+        "Growbags:Volumen": Option[]
+        "Growbags:Laenge": Option[]
+        "Growbags:PflanzenproBag": Option[]
+        "Kuebel:VolumenProTopf": Option[]
+        "Kuebel:JungpflanzenProTopf": Option[]
+        "Kuebel:Alter": Option[]
+        "SchnuereRankhilfen:Laenge": Option[]
+        "SchnuereRankhilfen:Wiederverwendung": Option[]
+        "Klipse:AnzahlProTrieb": Option[]
+        "Klipse:Wiederverwendung": Option[]
+        "Rispenbuegel:AnzahlProTrieb": Option[]
+        "Rispenbuegel:Wiederverwendung": Option[]
+        "Bodenabdeckung:Wiederverwendung": Option[]
+        "Jungpflanzen:Distanz": Option[]
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": Option[]
+        "Transport:Distanz": Option[]
+    }
+    selections: {
+        EinheitlicheWaermeversorgung: {
+            ja: Option[]
+            nein: Option[]
+        }
+        GWHArt: {
+            "Venlo": Option[]
+            "DeutscheNorm": Option[]
+            "Folientunnel": Option[]
+        }
+        Bedachungsmaterial: {
+            "Einfachglas": Option[]
+            "Doppelglas": Option[]
+            "Doppelstegplatte": Option[]
+            "Dreifachstegplatte": Option[]
+            "Einfachfolie": Option[]
+            "Doppelfolie": Option[]
+        }
+        Stehwandmaterial: {
+            "Einfachglas": Option[]
+            "Doppelglas": Option[]
+            "Doppelstegplatte": Option[]
+            "Dreifachstegplatte": Option[]
+            "Einfachfolie": Option[]
+            "Doppelfolie": Option[]
+        }
+        Energieschirm: {
+            "kein": Option[]
+            "einfach": Option[]
+            "doppelt": Option[]
+            "einfach,aluminisiert": Option[]
+            "doppelt,aluminisiert": Option[]
+        }
+        Transportsystem: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Produktionstyp: {
+            "Konventionell": Option[]
+            "Biologisch": Option[]
+        }
+        Kultursystem: {
+            "Boden": Option[]
+            "Hydroponikoffen": Option[]
+            "Hydroponikgeschlossen": Option[]
+        }
+        ZusaetzlichesHeizsystem: {
+            Vegetationsheizung: Option[]
+            Konvektionsheizung: Option[]
+        }
+        "10-30Gramm(Snack)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        "30-100Gramm(Cocktail)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        "100-150Gramm(Rispen)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        ">150Gramm(Fleisch)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        Nebenkultur: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+         Entfeuchtung: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Energietraeger: {
+            "Erdgas": Option[]
+            "Heizoel": Option[]
+            "Steinkohle": Option[]
+            "Braunkohle": Option[]
+            "Hackschnitzel": Option[]
+            "Biogas": Option[]
+            "Geothermie(oberflaechennah)": Option[]
+            Tiefengheothermie: Option[]
+        }
+        BHKW: {
+            ja: Option[]
+            nein: Option[]
+        }
+        Stromherkunft: {
+            "DeutscherStrommix": Option[]
+            "Oekostrom(DurschnittDeutschland)": Option[]
+            "Photovoltaik": Option[]
+            "Windenergie(Land)": Option[]
+            "Windenergie(See)": Option[]
+            "Wasserkraft": Option[]
+            "Tiefengeothermie": Option[]
+            "Biomethan": Option[]
+            "BHKW Biomethan": Option[]
+            "BHKW Erdgas": Option[]
+            Diesel: Option[]
+        }
+        Zusatzbelichtung: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Belichtungsstrom: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "CO2-Herkunft": {
+            "technisches CO2": Option[]
+            "direkte Gasverbrennung": Option[]
+            "eigenes BHKW": Option[]
+        }
+        "Duengemittel:VereinfachteAngabe": {
+            "A/B Bag: Standardduengung": Option[]
+            "Vinasse": Option[]
+            "Pferdemist": Option[]
+            "Kompost": Option[]
+            "Hornmehl, -griess, -spaene": Option[]
+            "Blutmehl": Option[]
+            "Mist": Option[]
+            "Gruenduengung": Option[]
+            "Knochenmehl": Option[]
+            "Pflanzkali": Option[]
+            "org. Vollduenger": Option[]
+        }
+        "Duengemittel:DetaillierteAngabe": {
+            "Ammoniumnitrat": Option[]
+            "Kaliumnitrat (Kalisalpeter)": Option[]
+            "Calciumnitrat fluessig (Kalksalpeter)": Option[]
+            "Calciumnitrat fest": Option[]
+            "Kaliumcholird, KCL, muriate of potash": Option[]
+            "Kaliumsulfat": Option[]
+            "Monokaliumphosphat (Flory6)": Option[]
+            "Borax": Option[]
+            "Eisen DDTPA 3%": Option[]
+            "Eisen EDDHA 6 %": Option[]
+            "25 % Cu Kupfersulfat": Option[]
+            "32 % Mn Mangansulfat": Option[]
+            "Natriummolybdat": Option[]
+            "Zinksulfat": Option[]
+            "Chlorbleichlauge": Option[]
+            "Bittersalz": Option[]
+            "Phosphorsaeure 75%": Option[]
+            "Salpetersaeure 65%": Option[]
+            "Salpetersaeure 38%": Option[]
+            "Kalksalpeter": Option[]
+            "Magnesiumnitrat": Option[]
+            "Magnesiumsulfat": Option[]
+            "Kalisilikat": Option[]
+            "Mangansulfat": Option[]
+            "Cupfersulfat": Option[]
+            "Ammoniummolybdat": Option[]
+        }
+        Nuetzlinge: {
+            "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)": Option[]
+            "Macrolophus (oder vergleichbares)": Option[]
+            "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)": Option[]
+            "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)": Option[]
+            "Gallmuecken (Aphidoletes, oder vergleichbares)": Option[]
+            "Florfliegen (Chrysoperla, oder vergleichbares)": Option[]
+            "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)": Option[]
+            "Hummeln": Option[]
+            "Andere": Option[]
+        }
+        Growbags: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Kuebel: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Substrat: {
+            "Standardsubstrat": Option[]
+            "Kokos": Option[]
+            "Kompost": Option[]
+            "Steinwolle": Option[]
+            "Perlite": Option[]
+            "Nachhaltiges Substrat": Option[]
+        }
+        "SchnuereRankhilfen:Material": {
+            "Kunststoff": Option[]
+            "Jute": Option[]
+            "Sisal": Option[]
+            "Zellulose": Option[]
+            "andere Nachhaltige/abbaubare Option": Option[]
+            "Bambusstab": Option[]
+            "Edelstahl": Option[]
+        }
+        "Klipse:Material": {
+            "Kunststoff": Option[]
+            "Metall": Option[]
+            "Nachhaltige / kompostierbare Option": Option[]
+        }
+        "Rispenbuegel:Material": {
+            "Kunststoff": Option[]
+            "Metall": Option[]
+            "Nachhaltige / kompostierbare Option": Option[]
+        }
+        Bewaesserungsart: {
+            "Tropfschlaeuche": Option[]
+            "Bodensprenkler": Option[]
+            "Handschlauch": Option[]
+        }
+        Bodenfolien: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "Jungpflanzen:Zukauf": {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "Jungpflanzen:Substrat": {
+            Standardsubstrat: Option[]
+            Kokos: Option[]
+            Steinwolle: Option[]
+            Perlite: Option[]
+            "Nachhaltiges Substrat": Option[]
+        }
+        Verpackungsmaterial: {
+            Karton: Option[]
+            Plastik: Option[]
+        }
+        SonstigeVerbrauchsmaterialien: {
+            "Folie": Option[]
+            "Eisen": Option[]
+            "Alluminium": Option[]
+            "Kunststoff": Option[]
+            "Holz": Option[]
+            "Pappe": Option[]
+        }
+        ZusaetzlicherMaschineneinsatz: {
+            Gabelstapler: Option[]
+        }
+        BelichtungsstromEinheit: {
+            kWh: Option[]
+            Angaben: Option[]
+        }
+    }
+}
+
+
 
 /**
  * @type LookupState
@@ -69,42 +401,367 @@ export type LookupValues = {
 export type LookupState = {
     isLoading: boolean,
     lookupValues: LookupValues
+    unitValues: UnitValues
 }
 
 // Initialize lookup state
 const initialState: LookupState = {
     isLoading: false,
     lookupValues: {
-        AlterdesBedachungsmaterials: [],
-        AnzahlTriebe: [],
-        ArtdesStehwandmaterial: [],
+        EinheitlicheWaermeversorgung: [],
+        GWHArt: [],
         Bedachungsmaterial: [],
+        Stehwandmaterial: [],
+        AlterdesBedachungsmaterials: [],
+        Energieschirm: [],
+        Transportsystem: [],
+        Produktionstyp: [],
+        Kultursystem: [],
+        AnzahlTriebe: [],
+        ZusaetzlichesHeizsystem: [],
+        "10-30Gramm(Snack)": [],
+        "30-100Gramm(Cocktail)": [],
+        "100-150Gramm(Rispen)": [],
+        ">150Gramm(Fleisch)": [],
+        Nebenkultur: [],
+        Entfeuchtung: [],
+        Energietraeger: [],
+        BHKW: [],
+        Stromherkunft: [],
+        Zusatzbelichtung: [],
         Belichtungsstrom: [],
+        "CO2-Herkunft": [],
+        "Duengemittel:VereinfachteAngabe": [],
+        "Duengemittel:DetaillierteAngabe": [],
+        Nuetzlinge: [],
+        Growbags: [],
+        Kuebel: [],
+        Substrat: [],
+        "SchnuereRankhilfen:Material": [],
+        "Klipse:Material": [],
+        "Rispenbuegel:Material": [],
         Bewaesserungsart: [],
         Bodenfolien: [],
-        "CO2-Herkunft": [],
-        "Duengemittel:DetalierteAngabe": [],
-        "Duengemittel:VereinfachteAngabe": [],
-        Energieschirm: [],
-        Energietraeger: [],
-        Entfeuchtung: [],
-        Fruchtgewicht: [],
-        GWHAlter: [],
-        GWHArt: [],
-        Growbags: [],
-        JungpflanzenZukauf: [],
-        "Klipse:Material": [],
-        Kultursystem: [],
-        Nebenkultur: [],
-        Nuetzlinge: [],
-        Produktion: [],
-        "Rispenbuegel:Material": [],
-        "SchnuereRankhilfen:Material": [],
+        "Jungpflanzen:Zukauf": [],
+        "Jungpflanzen:Substrat": [],
+        Verpackungsmaterial: [],
         SonstigeVerbrauchsmaterialien: [],
-        Stromherkunft: [],
-        Substrat: [],
-        Transportsystem: [],
-        Zusatzbelichtung: []
+        ZusaetzlicherMaschineneinsatz: [],
+        BelichtungsstromEinheit: []
+    },
+    unitValues: {
+        measures: {
+            PLZ: [],
+            GWHGesamtflaeche: [],
+            GWHFlaeche: [],
+            WaermeteilungFlaeche: [],
+            GWHAlter: [],
+            AlterBedachungsmaterial: [],
+            AlterStehwandmaterial: [],
+            AlterEnergieschirm: [],
+            Stehwandhoehe: [],
+            Laenge: [],
+            Breite: [],
+            Kappenbreite: [],
+            Scheibenlaenge: [],
+            "Reihenabstand(Rinnenabstand)": [],
+            Vorwegbreite: [],
+            AlterTransportsystem: [],
+            AlterKultursystem: [],
+            AlterZusaetzlichesHeizsystem: [],
+            SnackReihenanzahl: [],
+            SnackPflanzenabstandInDerReihe: [],
+            SnackTriebzahl: [],
+            SnackErtragJahr: [],
+            CocktailReihenanzahl: [],
+            CocktailPflanzenabstandInDerReihe: [],
+            CocktailTriebzahl: [],
+            CocktailErtragJahr: [],
+            RispenReihenanzahl: [],
+            RispenPflanzenabstandInDerReihe: [],
+            RispenTriebzahl: [],
+            RispenErtragJahr: [],
+            FleischReihenanzahl: [],
+            FleischPflanzenabstandInDerReihe: [],
+            FleischTriebzahl: [],
+            FleischErtragJahr: [],
+            Kulturflaeche: [],
+            KulturBeginn: [],
+            KulturEnde: [],
+            NebenkulturBeginn: [],
+            NebenkulturEnde: [],
+            MittlereSolltemperaturTag: [],
+            MittlereSolltemperaturNacht: [],
+            Luftfeuchte: [],
+            "BHKW:Menge": [],
+            "BHKW:AnteilErdgas": [],
+            "BHKW:AnteilBiomethan": [],
+            GWHStromverbrauch: [],
+            BetriebStromverbrauch: [],
+            "Belichtung:Stromverbrauch": [],
+            "Belichtung:AnzahlLampen": [],
+            "Belichtung:AnschlussleistungProLampe": [],
+            "Belichtung:LaufzeitProTag": [],
+            Fungizide: [],
+            Insektizide: [],
+            "Growbags:Volumen": [],
+            "Growbags:Laenge": [],
+            "Growbags:PflanzenproBag": [],
+            "Kuebel:VolumenProTopf": [],
+            "Kuebel:JungpflanzenProTopf": [],
+            "Kuebel:Alter": [],
+            "SchnuereRankhilfen:Laenge": [],
+            "SchnuereRankhilfen:Wiederverwendung": [],
+            "Klipse:AnzahlProTrieb": [],
+            "Klipse:Wiederverwendung": [],
+            "Rispenbuegel:AnzahlProTrieb": [],
+            "Rispenbuegel:Wiederverwendung": [],
+            "Bodenabdeckung:Wiederverwendung": [],
+            "Jungpflanzen:Distanz": [],
+            "Verpackungsmaterial:AnzahlMehrwegsteigen": [],
+            "Transport:Distanz": [],
+        },
+        selections: {
+            EinheitlicheWaermeversorgung: {
+                ja: [],
+                nein: [],
+            },
+            GWHArt: {
+                "Venlo": [],
+                "DeutscheNorm": [],
+                "Folientunnel": [],
+            },
+            Bedachungsmaterial: {
+                "Einfachglas": [],
+                "Doppelglas": [],
+                "Doppelstegplatte": [],
+                "Dreifachstegplatte": [],
+                "Einfachfolie": [],
+                "Doppelfolie": [],
+            },
+            Stehwandmaterial: {
+                "Einfachglas": [],
+                "Doppelglas": [],
+                "Doppelstegplatte": [],
+                "Dreifachstegplatte": [],
+                "Einfachfolie": [],
+                "Doppelfolie": [],
+            },
+            Energieschirm: {
+                "kein": [],
+                "einfach": [],
+                "doppelt": [],
+                "einfach,aluminisiert": [],
+                "doppelt,aluminisiert": [],
+            },
+            Transportsystem: {
+                "ja": [],
+                "nein": [],
+            },
+            Produktionstyp: {
+                "Konventionell": [],
+                "Biologisch": [],
+            },
+            Kultursystem: {
+                "Boden": [],
+                "Hydroponikoffen": [],
+                "Hydroponikgeschlossen": [],
+            },
+            ZusaetzlichesHeizsystem: {
+                Vegetationsheizung: [],
+                Konvektionsheizung: [],
+            },
+            "10-30Gramm(Snack)": {
+                ja: [],
+                nein: [],
+            },
+            "30-100Gramm(Cocktail)": {
+                ja: [],
+                nein: [],
+            },
+            "100-150Gramm(Rispen)": {
+                ja: [],
+                nein: [],
+            },
+            ">150Gramm(Fleisch)": {
+                ja: [],
+                nein: [],
+            },
+            Nebenkultur: {
+                "ja": [],
+                "nein": [],
+            },
+             Entfeuchtung: {
+                "ja": [],
+                "nein": [],
+            },
+            Energietraeger: {
+                "Erdgas": [],
+                "Heizoel": [],
+                "Steinkohle": [],
+                "Braunkohle": [],
+                "Hackschnitzel": [],
+                "Biogas": [],
+                "Geothermie(oberflaechennah)": [],
+                Tiefengheothermie: [],
+            },
+            BHKW: {
+                ja: [],
+                nein: [],
+            },
+            Stromherkunft: {
+                "DeutscherStrommix": [],
+                "Oekostrom(DurschnittDeutschland)": [],
+                "Photovoltaik": [],
+                "Windenergie(Land)": [],
+                "Windenergie(See)": [],
+                "Wasserkraft": [],
+                "Tiefengeothermie": [],
+                "Biomethan": [],
+                "BHKW Biomethan": [],
+                "BHKW Erdgas": [],
+                Diesel: [],
+            },
+            Zusatzbelichtung: {
+                "ja": [],
+                "nein": [],
+            },
+            Belichtungsstrom: {
+                "ja": [],
+                "nein": [],
+            },
+            "CO2-Herkunft": {
+                "technisches CO2": [],
+                "direkte Gasverbrennung": [],
+                "eigenes BHKW": [],
+            },
+            "Duengemittel:VereinfachteAngabe": {
+                "A/B Bag: Standardduengung": [],
+                "Vinasse": [],
+                "Pferdemist": [],
+                "Kompost": [],
+                "Hornmehl, -griess, -spaene": [],
+                "Blutmehl": [],
+                "Mist": [],
+                "Gruenduengung": [],
+                "Knochenmehl": [],
+                "Pflanzkali": [],
+                "org. Vollduenger": [],
+            },
+            "Duengemittel:DetaillierteAngabe": {
+                "Ammoniumnitrat": [],
+                "Kaliumnitrat (Kalisalpeter)": [],
+                "Calciumnitrat fluessig (Kalksalpeter)": [],
+                "Calciumnitrat fest": [],
+                "Kaliumcholird, KCL, muriate of potash": [],
+                "Kaliumsulfat": [],
+                "Monokaliumphosphat (Flory6)": [],
+                "Borax": [],
+                "Eisen DDTPA 3%": [],
+                "Eisen EDDHA 6 %": [],
+                "25 % Cu Kupfersulfat": [],
+                "32 % Mn Mangansulfat": [],
+                "Natriummolybdat": [],
+                "Zinksulfat": [],
+                "Chlorbleichlauge": [],
+                "Bittersalz": [],
+                "Phosphorsaeure 75%": [],
+                "Salpetersaeure 65%": [],
+                "Salpetersaeure 38%": [],
+                "Kalksalpeter": [],
+                "Magnesiumnitrat": [],
+                "Magnesiumsulfat": [],
+                "Kalisilikat": [],
+                "Mangansulfat": [],
+                "Cupfersulfat": [],
+                "Ammoniummolybdat": [],
+            },
+            Nuetzlinge: {
+                "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)": [],
+                "Macrolophus (oder vergleichbares)": [],
+                "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)": [],
+                "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)": [],
+                "Gallmuecken (Aphidoletes, oder vergleichbares)": [],
+                "Florfliegen (Chrysoperla, oder vergleichbares)": [],
+                "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)": [],
+                "Hummeln": [],
+                "Andere": [],
+            },
+            Growbags: {
+                "ja": [],
+                "nein": [],
+            },
+            Kuebel: {
+                "ja": [],
+                "nein": [],
+            },
+            Substrat: {
+                "Standardsubstrat": [],
+                "Kokos": [],
+                "Kompost": [],
+                "Steinwolle": [],
+                "Perlite": [],
+                "Nachhaltiges Substrat": [],
+            },
+            "SchnuereRankhilfen:Material": {
+                "Kunststoff": [],
+                "Jute": [],
+                "Sisal": [],
+                "Zellulose": [],
+                "andere Nachhaltige/abbaubare Option": [],
+                "Bambusstab": [],
+                "Edelstahl": [],
+            },
+            "Klipse:Material": {
+                "Kunststoff": [],
+                "Metall": [],
+                "Nachhaltige / kompostierbare Option": [],
+            },
+            "Rispenbuegel:Material": {
+                "Kunststoff": [],
+                "Metall": [],
+                "Nachhaltige / kompostierbare Option": [],
+            },
+            Bewaesserungsart: {
+                "Tropfschlaeuche": [],
+                "Bodensprenkler": [],
+                "Handschlauch": [],
+            },
+            Bodenfolien: {
+                "ja": [],
+                "nein": [],
+            },
+            "Jungpflanzen:Zukauf": {
+                "ja": [],
+                "nein": [],
+            },
+            "Jungpflanzen:Substrat": {
+                Standardsubstrat: [],
+                Kokos: [],
+                Steinwolle: [],
+                Perlite: [],
+                "Nachhaltiges Substrat": [],
+            },
+            Verpackungsmaterial: {
+                Karton: [],
+                Plastik: [],
+            },
+            SonstigeVerbrauchsmaterialien: {
+                "Folie": [],
+                "Eisen": [],
+                "Alluminium": [],
+                "Kunststoff": [],
+                "Holz": [],
+                "Pappe": [],
+            },
+            ZusaetzlicherMaschineneinsatz: {
+                Gabelstapler: [],
+            },
+            BelichtungsstromEinheit: {
+                kWh: [],
+                Angaben: [],
+            }
+        }
     }
 }
 
@@ -119,6 +776,7 @@ const initialState: LookupState = {
 export default function (state: LookupState = initialState, action: any): LookupState {
     switch (action.type) {
         case LOOKUP_LOADING:
+        case UNITS_LOADING:
             return {
                 ...state,
                 isLoading: true
@@ -129,43 +787,60 @@ export default function (state: LookupState = initialState, action: any): Lookup
                 isLoading: false,
                 lookupValues: action.payload
             }
+        case UNITS_LOADED:
+            return {
+                ...state,
+                isLoading: false,
+                unitValues: action.payload
+            }
         case LOOKUP_FAILED:
             return {
                 ...state,
                 isLoading: false,
                 lookupValues: {
-                    AlterdesBedachungsmaterials: [],
-                    AnzahlTriebe: [],
-                    ArtdesStehwandmaterial: [],
+                    EinheitlicheWaermeversorgung: [],
+                    GWHArt: [],
                     Bedachungsmaterial: [],
+                    Stehwandmaterial: [],
+                    AlterdesBedachungsmaterials: [],
+                    Energieschirm: [],
+                    Transportsystem: [],
+                    Produktionstyp: [],
+                    Kultursystem: [],
+                    AnzahlTriebe: [],
+                    ZusaetzlichesHeizsystem: [],
+                    "10-30Gramm(Snack)": [],
+                    "30-100Gramm(Cocktail)": [],
+                    "100-150Gramm(Rispen)": [],
+                    ">150Gramm(Fleisch)": [],
+                    Nebenkultur: [],
+                    Entfeuchtung: [],
+                    Energietraeger: [],
+                    BHKW: [],
+                    Stromherkunft: [],
+                    Zusatzbelichtung: [],
                     Belichtungsstrom: [],
+                    "CO2-Herkunft": [],
+                    "Duengemittel:VereinfachteAngabe": [],
+                    "Duengemittel:DetaillierteAngabe": [],
+                    Nuetzlinge: [],
+                    Growbags: [],
+                    Kuebel: [],
+                    Substrat: [],
+                    "SchnuereRankhilfen:Material": [],
+                    "Klipse:Material": [],
+                    "Rispenbuegel:Material": [],
                     Bewaesserungsart: [],
                     Bodenfolien: [],
-                    "CO2-Herkunft": [],
-                    "Duengemittel:DetalierteAngabe": [],
-                    "Duengemittel:VereinfachteAngabe": [],
-                    Energieschirm: [],
-                    Energietraeger: [],
-                    Entfeuchtung: [],
-                    Fruchtgewicht: [],
-                    GWHAlter: [],
-                    GWHArt: [],
-                    Growbags: [],
-                    JungpflanzenZukauf: [],
-                    "Klipse:Material": [],
-                    Kultursystem: [],
-                    Nebenkultur: [],
-                    Nuetzlinge: [],
-                    Produktion: [],
-                    "Rispenbuegel:Material": [],
-                    "SchnuereRankhilfen:Material": [],
+                    "Jungpflanzen:Zukauf": [],
+                    "Jungpflanzen:Substrat": [],
+                    Verpackungsmaterial: [],
                     SonstigeVerbrauchsmaterialien: [],
-                    Stromherkunft: [],
-                    Substrat: [],
-                    Transportsystem: [],
-                    Zusatzbelichtung: []
+                    ZusaetzlicherMaschineneinsatz: [],
+                    BelichtungsstromEinheit: [],
                 }
             }
+        case UNITS_FAILED:
         case RESET_DATA:
             return initialState
         default:

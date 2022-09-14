@@ -19,7 +19,7 @@ import {GreenhouseData} from "../../types/reduxTypes";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
-import {loadLookupValues} from "../../actions/lookup";
+import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -39,7 +39,8 @@ const mapDispatchToProps = {
     loadWeatherData,
     submitGreenhouseData,
     resetData,
-    loadLookupValues
+    loadLookupValues,
+    loadUnitValues
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -59,6 +60,7 @@ type AuthEPTest = {
 }
 
 type TestResults = {
+    units: AuthEPTest
     lookup: AuthEPTest
     co2: AuthEPTest
     submission: AuthEPTest
@@ -74,6 +76,10 @@ const initialTestResults: TestResults = {
         withoutAuth: {loading: false, successful: false}
     },
     submission: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    units: {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
@@ -95,84 +101,116 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         startDate: new Date("2020-05-20"),
         endDate: new Date("2022-06-20")
     }
-
     let testData: GreenhouseData = {
         greenhouse_name: "Testhaus",
         date: "2022-06-17",
-        PLZ: 82362,
-        GWHAlter: 20,
-        AlterEnergieschirm: 8,
-        Stehwandhoehe: 2,
-        Laenge: 3,
-        Breite: 4,
-        Kappenbreite: 5,
-        "Scheibenlaenge(Bedachung)": 6,
-        AlterdesBedachungsmaterials: 8,
-        AlterKultursystem: 7,
-        Reihenabstand: 8,
-        Kulturflaeche: 9,
-        KulturBeginn: 10,
-        KulturEnde: 11,
-        Nebenkulturdauer: 7,
-        BodenfolienVerwendungsdauer: 2,
-        JungpflanzenDistanz: 80,
-        Ertrag: 20,
-        Pflanzdichte: 4,
-        MittlereSolltemperaturTag: 12,
-        MittlereSolltemperaturNacht: 13,
-        KulturmassnahmeAusgeizen: 14,
-        KulturmassnahmeAusblattenAnzahlMonat: 15,
-        KulturmassnahmeAblassen: 16,
-        Strom: 200,
-        StromverbrauchBelichtungAnschlussleistung: 180,
-        StromverbrauchBelichtungAnzahlLampen: 50,
-        StromverbrauchBelichtungLaufzeitTag: 8,
-        "CO2-Zudosierung": 300,
-        Fungizide: 20,
-        Insektizide: 12,
-        VolumenGrowbags: 20,
-        LaengeGrowbags: 1,
-        PflanzenproBag: 3,
-        "SchnuereRankhilfen:Laenge": 0.3,
-        "SchnuereRankhilfen:Wiederverwendung": 2,
-        "Klipse:Menge": 200,
-        "Klipse:Wiederverwendung": 12,
-        "Rispenbuegel:Menge": 200,
-        "Rispenbuegel:Wiederverwendung": 12,
-        "SonstigeVerbrauchsmaterialien:Wiederverwendung": 20,
-        "Verpackungsmaterial:Karton": 12,
-        "Verpackungsmaterial:Plastik": 22,
-        "TransportderWare:Auslieferungen": 5,
-        "TransportderWare:Distanz": 50,
-        "GWHArt": "[(1)]",
-        "Bedachungsmaterial": "[(9)]",
-        "ArtdesStehwandmaterial": "[(20)]",
-        "Energieschirm": "[(25)]",
-        "Produktion": "[(30)]",
-        "Kultursystem": "[(32)]",
-        "Transportsystem": "[(131)]",
-        "Fruchtgewicht": "[(34)]",
-        "Nebenkultur": "[(134)]",
-        "AnzahlTriebe": "[(40)]",
-        "Entfeuchtung": "[(135, 20.3)]",
-        "KulturmassnahmeAusblattenMenge": 50,
-        "Energietraeger": "[(42,22.5),(44,50)]",
-        "Stromherkunft": "[(50,40),(51,60)]",
-        "Zusatzbelichtung": "[(137)]",
-        "Belichtungsstrom": "[(140)]",
-        "CO2-Herkunft": "[(59)]",
-        "Duengemittel:DetalierteAngabe": "[(62,22.5),(64,10.5),(67,20)]",
-        "Duengemittel:VereinfachteAngabe": "[(72,22.5),(78,10.5),(97,20)]",
-        "Nuetzlinge": "[(123),(125)]",
-        "Growbags": "[(141)]",
-        "Substrat": "[(98,22.5),(99,10.5)]",
-        "SchnuereRankhilfen:Material": "[(105),(106)]",
-        "Klipse:Material": "[(110),(111)]",
-        "Rispenbuegel:Material": "[(112),(114)]",
-        "Bewaesserungsart": "[(120),(122)]",
-        "Bodenfolien": "[(143)]",
-        "SonstigeVerbrauchsmaterialien": "[(116,20.5,17), (118,11.2,2)]",
-        "JungpflanzenZukauf": "[(145)]"
+        PLZ: "(82362,1)",
+        GWHGesamtflaeche: "(30,1)",
+        GWHFlaeche: "(30,1)",
+        WaermeteilungFlaeche: "(30,1)",
+        GWHAlter: "(30,1)",
+        AlterBedachungsmaterial: "(30,1)",
+        AlterStehwandmaterial: "(30,1)",
+        AlterEnergieschirm: "(30,1)",
+        Stehwandhoehe: "(30,1)",
+        Laenge: "(30,1)",
+        Breite: "(30,1)",
+        Kappenbreite: "(30,1)",
+        Scheibenlaenge: "(30,1)",
+        "Reihenabstand(Rinnenabstand)": "(30,1)",
+        Vorwegbreite: "(30,1)",
+        AlterTransportsystem: "(30,1)",
+        AlterKultursystem: "(30,1)",
+        AlterZusaetzlichesHeizsystem: "(30,1)",
+        SnackReihenanzahl: "(30,1)",
+        SnackPflanzenabstandInDerReihe: "(30,1)",
+        SnackTriebzahl: "(30,1)",
+        SnackErtragJahr: "(30,1)",
+        CocktailReihenanzahl: "(30,1)",
+        CocktailPflanzenabstandInDerReihe: "(30,1)",
+        CocktailTriebzahl: "(30,1)",
+        CocktailErtragJahr: "(30,1)",
+        RispenReihenanzahl: "(30,1)",
+        RispenPflanzenabstandInDerReihe: "(30,1)",
+        RispenTriebzahl: "(30,1)",
+        RispenErtragJahr: "(30,1)",
+        FleischReihenanzahl: "(30,1)",
+        FleischPflanzenabstandInDerReihe: "(30,1)",
+        FleischTriebzahl: "(30,1)",
+        FleischErtragJahr: "(30,1)",
+        Kulturflaeche: "(30,1)",
+        KulturBeginn: "(30,1)",
+        KulturEnde: "(30,1)",
+        NebenkulturBeginn: "(30,1)",
+        NebenkulturEnde: "(30,1)",
+        MittlereSolltemperaturTag: "(30,1)",
+        MittlereSolltemperaturNacht: "(30,1)",
+        Luftfeuchte: "(30,1)",
+        "BHKW:Menge": "(30,1)",
+        "BHKW:AnteilErdgas": "(30,1)",
+        "BHKW:AnteilBiomethan": "(30,1)",
+        GWHStromverbrauch: "(30,1)",
+        BetriebStromverbrauch: "(30,1)",
+        "Belichtung:Stromverbrauch": "(30,1)",
+        "Belichtung:AnzahlLampen": "(30,1)",
+        "Belichtung:AnschlussleistungProLampe": "(30,1)",
+        "Belichtung:LaufzeitProTag": "(30,1)",
+        Fungizide: "(30,1)",
+        Insektizide: "(30,1)",
+        "Growbags:Volumen": "(30,1)",
+        "Growbags:Laenge": "(30,1)",
+        "Growbags:PflanzenproBag": "(30,1)",
+        "Kuebel:VolumenProTopf": "(30,1)",
+        "Kuebel:JungpflanzenProTopf": "(30,1)",
+        "Kuebel:Alter": "(30,1)",
+        "SchnuereRankhilfen:Laenge": "(30,1)",
+        "SchnuereRankhilfen:Wiederverwendung": "(30,1)",
+        "Klipse:AnzahlProTrieb": "(30,1)",
+        "Klipse:Wiederverwendung": "(30,1)",
+        "Rispenbuegel:AnzahlProTrieb": "(30,1)",
+        "Rispenbuegel:Wiederverwendung": "(30,1)",
+        "Bodenabdeckung:Wiederverwendung": "(0,0)",
+        "Jungpflanzen:Distanz": "(30,1)",
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": "(30,1)",
+        "Transport:Distanz": "(30,1)",
+        EinheitlicheWaermeversorgung: "[(2)]",
+        GWHArt: "[(4)]",
+        Bedachungsmaterial: "[(5)]",
+        Stehwandmaterial: "[(13)]",
+        Energieschirm: "[(19)]",
+        Transportsystem: "[(24)]",
+        Produktionstyp: "[(25)]",
+        Kultursystem: "[(27)]",
+        ZusaetzlichesHeizsystem: "[(30)]",
+        "10-30Gramm(Snack)": "[(32)]",
+        "30-100Gramm(Cocktail)": "[(34)]",
+        "100-150Gramm(Rispen)": "[(37)]",
+        ">150Gramm(Fleisch)": "[(39)]",
+        Nebenkultur: "[(42)]",
+        Entfeuchtung: "[(43)]",
+        Energietraeger: "[(44,22.5,44),(47,10.5,53),(48,20,56)]",
+        BHKW: "[(53)]",
+        Stromherkunft: "[(54,100,64)]",
+        Zusatzbelichtung: "[(64)]",
+        Belichtungsstrom: "[(66)]",
+        "CO2-Herkunft": "[(69,100,91)]",
+        "Duengemittel:VereinfachteAngabe": "[(74,22.5,99),(75,10.5,100),(77,20,102)]",
+        "Duengemittel:DetaillierteAngabe": "[(85,7,110),(83,1.5,108)]",
+        Nuetzlinge: "[(113,700,138)]",
+        Growbags: "[(117)]",
+        Kuebel: "[(120)]",
+        Substrat: "[(123,10,148)]",
+        "SchnuereRankhilfen:Material": "[(127)]",
+        "Klipse:Material": "[(134)]",
+        "Rispenbuegel:Material": "[(136)]",
+        Bewaesserungsart: "[(141)]",
+        Bodenfolien: "[(143)]",
+        "Jungpflanzen:Zukauf": "[(144)]",
+        "Jungpflanzen:Substrat": "[(147)]",
+        Verpackungsmaterial: "[(152)]",
+        SonstigeVerbrauchsmaterialien: "[(157,290.5,182,5), (153,11.2,178,7.5)]",
+        ZusaetzlicherMaschineneinsatz: "[(159,20.5,184,17)]",
+        BelichtungsstromEinheit: "[(160)]"
     }
 
     const testLoading = (test: EPTest) => { return {...test,  loading: true} }
@@ -282,6 +320,38 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
             setTestResults(testResults)
         }
     );
+
+    props.loadUnitValues(
+        true,
+        () => {
+            testResults.units.withAuth = testLoading(testResults.units.withAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.loadUnitValues(
+        false,
+        () => {
+            testResults.units.withoutAuth = testLoading(testResults.units.withoutAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
 }
 
 const EndpointTest = (props: EndpointTestProps) => {
@@ -321,6 +391,14 @@ const EndpointTest = (props: EndpointTestProps) => {
             loading: testResults.lookup.withoutAuth.loading,
             successful: testResults.lookup.withoutAuth.successful
         }, {
+            name: "Load Unit Values (Authenticated)",
+            loading: testResults.units.withAuth.loading,
+            successful: testResults.units.withAuth.successful
+        }, {
+            name: "Load Unit Values (Not Authenticated)",
+            loading: testResults.units.withoutAuth.loading,
+            successful: testResults.units.withoutAuth.successful
+        },{
             name: "Load Weather Data",
             loading: props.weather.isLoading,
             successful: !!props.weather.weatherData

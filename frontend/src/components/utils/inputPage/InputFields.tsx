@@ -13,12 +13,16 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
-import React, {ReactNode, useState} from "react";
-import DynamicSelect, {DynamicSelectProps} from "./DynamicSelect";
+import React, {ReactNode, useRef, useState} from "react";
+import DynamicSelect, {
+    DynamicSelectProps,
+    DynamicUnitSelect,
+    DynamicUnitSelectParentProps,
+} from "../DynamicSelect";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {DesktopDatePicker, DesktopDatePickerProps, LocalizationProvider} from '@mui/x-date-pickers';
 import {
-    FormControlLabel,
+    FormControlLabel, InputAdornment,
     InputLabel,
     Radio,
     RadioGroup,
@@ -29,7 +33,7 @@ import FormLabel from '@mui/material/FormLabel';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from "@mui/material/IconButton";
-import {Option} from "../../reducers/lookup";
+import {Option} from "../../../reducers/lookup";
 
 type InputFieldProps = {
     title: string
@@ -60,15 +64,26 @@ export const BaseInputField = (props: BaseInputFieldProps) => {
 
 export type SelectionValue = {
     selectValue: number | null
-    textFieldValue: number | null
+    textFieldValue: MeasureValue
     textField2Value?: number | null
     unitFieldValue?: number | null
+}
+
+export type DateValue = {
+    value: Date | null
+    unit: number | null
+}
+
+export type MeasureValue = {
+    value: number | null
+    unit: number | null
 }
 
 
 // MeasureInput component
 export type MeasureInputProps = InputFieldProps & {
-    textFieldProps: TextFieldProps
+    textFieldProps: TextFieldProps,
+    unitName?: string | null
 }
 
 
@@ -78,10 +93,44 @@ export const MeasureInputField = (props: MeasureInputProps) => {
         <BaseInputField title={props.title} label={props.label}>
             <TextField
                 type="number"
+                placeholder='Menge'
+                InputProps={{
+                    endAdornment: <InputAdornment position="end">{props.unitName??""}</InputAdornment>,
+                }}
                 onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
                 {...props.textFieldProps}
                 fullWidth
             />
+        </BaseInputField>
+    )
+}
+
+
+// MeasureUnitInput component
+export type MeasureUnitInputProps = MeasureInputProps & {
+    textFieldProps: TextFieldProps,
+    selectProps: DynamicSelectProps<any>
+}
+
+
+export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
+
+    return(
+        <BaseInputField title={props.title} label={props.label}>
+            <TextField
+                type="number"
+                label='Menge'
+                onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
+                {...props.textFieldProps}
+                fullWidth
+                InputProps={{
+                    endAdornment: <InputAdornment position="end">{props.unitName}</InputAdornment>,
+                }}
+            />
+            <FormControl fullWidth sx={{marginTop:3}}>
+                <InputLabel id="unit-select-label">Einheit</InputLabel>
+                <DynamicSelect labelId="unit-select-label" label="Einheit" {...props.selectProps}/>
+            </FormControl>
         </BaseInputField>
     )
 }
@@ -203,10 +252,10 @@ export const SelectionRadioInputField = (props: SelectionRadioInputProps) => {
 
 
 // DynamicInput component
-type DynamicInputValue = {
+export type DynamicInputValue = {
     id: number
     selectValue: number | null
-    textFieldValue: number | null
+    textFieldValue: MeasureValue
     textField2Value?: number | null
     unitFieldValue?: number | null
 }
@@ -218,7 +267,7 @@ export type DynamicInputProps = InputFieldProps & {
     textFieldProps: TextFieldProps
     onValueChange: (values: DynamicInputState) => void
     textField2Props?: TextFieldProps
-    unitSelectProps?: DynamicSelectProps<any>
+    unitSelectProps?: DynamicUnitSelectParentProps<any>
     initValues: SelectionValue[]
 }
 
@@ -255,7 +304,7 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                             <Grid item xs={2}>
                                 <IconButton onClick={event => {
                                     const maxId = Math.max(...values.map(value => value.id))
-                                    setValues([...values, {id: maxId+1, selectValue: null, textFieldValue: null}])
+                                    setValues([...values, {id: maxId+1, selectValue: null, textFieldValue: {...value.textFieldValue, value: null}}])
                                     props.onValueChange(values.slice())
                                 }} size="large" color="primary" >
                                     <AddIcon />
@@ -279,9 +328,11 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                         <DynamicSelect {...props.selectProps}
                                             onChange={(event) => {
                                                 let idx = values.indexOf(value)
-                                                values[idx] = {...value, selectValue: parseInt(event.target.value)}
+                                                values[idx] = {...value, selectValue: parseInt(event.target.value),textFieldValue:{value:null,unit:null}}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
+                                                console.log("select value")
+                                                console.log(value.selectValue)
                                             }}
                                             value={value.selectValue}
                                             fullWidth
@@ -296,11 +347,12 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                     <TextField {...props.textFieldProps}
                                         onChange={(event) => {
                                             let idx = values.indexOf(value)
-                                            values[idx] = {...value, textFieldValue: parseInt(event.target.value)}
+                                            values[idx] = {...value, textFieldValue: {...value.textFieldValue, value: parseInt(event.target.value)}}
                                             setValues(values.slice())
                                             props.onValueChange(values.slice())
                                         }}
-                                        value={value.textFieldValue}
+                                        label="Menge"
+                                        value={value.textFieldValue.value}
                                         fullWidth
                                         type="number"
                                     />
@@ -311,14 +363,14 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                 <Paper>
                                     <FormControl fullWidth>
                                         <InputLabel id="unit-select-label">Einheit</InputLabel>
-                                        <DynamicSelect {...props.unitSelectProps}
+                                        <DynamicUnitSelect {...props.unitSelectProps} allValues={values} activeValue={value}
                                             onChange={(event) => {
                                                 let idx = values.indexOf(value)
-                                                values[idx] = {...value, unitFieldValue: parseInt(event.target.value)}
+                                                values[idx] = {...value, textFieldValue: {value: value.textFieldValue.value, unit: parseInt(event.target.value)}}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
                                             }}
-                                            value={value.unitFieldValue}
+                                            value={value.textFieldValue.unit}
                                             fullWidth
                                             labelId="unit-select-label"
                                             label="Einheit"
