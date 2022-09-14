@@ -292,7 +292,7 @@ export type GreenhouseData = {
     Belichtungsstrom: string
     "CO2-Herkunft": string
     "Duengemittel:VereinfachteAngabe": string
-    "Duengemittel:DetailierteAngabe": string
+    "Duengemittel:DetaillierteAngabe": string
     Nuetzlinge: string
     Growbags: string
     Kuebel: string
@@ -307,4 +307,5 @@ export type GreenhouseData = {
     Verpackungsmaterial: string
     SonstigeVerbrauchsmaterialien: string
     ZusaetzlicherMaschineneinsatz: string
+    BelichtungsstromEinheit: string
 }

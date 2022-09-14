@@ -20,7 +20,7 @@
 20,Belichtungsstrom
 21,CO2-Herkunft
 22,Duengemittel:VereinfachteAngabe
-23,Duengemittel:DetailierteAngabe
+23,Duengemittel:DetaillierteAngabe
 24,Nuetzlinge
 25,Growbags
 26,Kuebel
@@ -35,3 +35,4 @@
 35,Verpackungsmaterial
 36,SonstigeVerbrauchsmaterialien
 37,ZusaetzlicherMaschineneinsatz
+38,BelichtungsstromEinheit

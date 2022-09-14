@@ -8,12 +8,13 @@ import {
     SelectShowConditionalRadioInputProps,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
-} from "../../utils/InputFields";
+} from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -92,7 +93,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.snackReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackReihenanzahl: {value:parseFloat(event.target.value),unit:cultureInformation.snackReihenanzahl?.unit??null}
+                snackReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackReihenanzahl[0].id}
             })
         }
     }
@@ -105,7 +106,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.snackPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackPflanzenabstand: {value:parseFloat(event.target.value),unit:cultureInformation.snackPflanzenabstand?.unit??null}
+                snackPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackPflanzenabstandInDerReihe[0].id}
             })
         }
     }
@@ -118,7 +119,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.snackTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackTriebzahl: {value:parseFloat(event.target.value),unit:cultureInformation.snackTriebzahl?.unit??null}
+                snackTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackTriebzahl[0].id}
             })
         }
     }
@@ -131,7 +132,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.snackErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackErtragJahr: {value:parseFloat(event.target.value),unit:cultureInformation.snackErtragJahr?.unit??null}
+                snackErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackErtragJahr[0].id}
             })
         }
     }
@@ -162,7 +163,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.cocktailReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailReihenanzahl: {value:parseFloat(event.target.value),unit:cultureInformation.cocktailReihenanzahl?.unit??null}
+                cocktailReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailReihenanzahl[0].id}
             })
         }
     }
@@ -175,7 +176,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.cocktailPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailPflanzenabstand: {value:parseFloat(event.target.value),unit:cultureInformation.cocktailPflanzenabstand?.unit??null}
+                cocktailPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailPflanzenabstandInDerReihe[0].id}
             })
         }
     }
@@ -188,7 +189,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.cocktailTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailTriebzahl: {value:parseFloat(event.target.value),unit:cultureInformation.cocktailTriebzahl?.unit??null}
+                cocktailTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailTriebzahl[0].id}
             })
         }
     }
@@ -201,7 +202,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.cocktailErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailErtragJahr: {value:parseFloat(event.target.value),unit:cultureInformation.cocktailErtragJahr?.unit??null}
+                cocktailErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailErtragJahr[0].id}
             })
         }
     }
@@ -231,7 +232,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.rispenReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenReihenanzahl: {value:parseFloat(event.target.value),unit:cultureInformation.rispenReihenanzahl?.unit??null}
+                rispenReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenReihenanzahl[0].id}
             })
         }
     }
@@ -244,7 +245,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.rispenPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenPflanzenabstand: {value:parseFloat(event.target.value),unit:cultureInformation.rispenPflanzenabstand?.unit??null}
+                rispenPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenPflanzenabstandInDerReihe[0].id}
             })
         }
     }
@@ -257,7 +258,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.rispenTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenTriebzahl: {value:parseFloat(event.target.value),unit:cultureInformation.rispenTriebzahl?.unit??null}
+                rispenTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenTriebzahl[0].id}
             })
         }
     }
@@ -270,7 +271,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.rispenErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenErtragJahr: {value:parseFloat(event.target.value),unit:cultureInformation.rispenErtragJahr?.unit??null}
+                rispenErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenErtragJahr[0].id}
             })
         }
     }
@@ -301,7 +302,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.fleischReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischReihenanzahl: {value:parseFloat(event.target.value),unit:cultureInformation.fleischReihenanzahl?.unit??null}
+                fleischReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischReihenanzahl[0].id}
             })
         }
     }
@@ -314,7 +315,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.fleischPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischPflanzenabstand: {value:parseFloat(event.target.value),unit:cultureInformation.fleischPflanzenabstand?.unit??null}
+                fleischPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischPflanzenabstandInDerReihe[0].id}
             })
         }
     }
@@ -327,7 +328,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.fleischTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischTriebzahl: {value:parseFloat(event.target.value),unit:cultureInformation.fleischTriebzahl?.unit??null}
+                fleischTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischTriebzahl[0].id}
             })
         }
     }
@@ -340,7 +341,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.fleischErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischErtragJahr: {value:parseFloat(event.target.value),unit:cultureInformation.fleischErtragJahr?.unit??null}
+                fleischErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischErtragJahr[0].id}
             })
         }
     }
@@ -355,7 +356,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturflaeche?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                kulturflaeche: {value:parseFloat(event.target.value),unit:cultureInformation.kulturflaeche?.unit??null}
+                kulturflaeche: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kulturflaeche[0].id}
             })
         }
     }
@@ -368,7 +369,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturBeginn?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturBeginn: {value:parseFloat(event.target.value),unit:cultureInformation.kulturBeginn?.unit??null}
+               kulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturBeginn[0].id}
             })
         }
     }
@@ -381,7 +382,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.kulturEnde?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturEnde: {value:parseFloat(event.target.value),unit:cultureInformation.kulturEnde?.unit??null}
+               kulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturEnde[0].id}
             })
         }
     }
@@ -411,7 +412,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.nebenkulturBeginn?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               nebenkulturBeginn: {value:parseFloat(event.target.value),unit:cultureInformation.nebenkulturBeginn?.unit??null}
+               nebenkulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturBeginn[0].id}
             })
         }
     }
@@ -424,13 +425,14 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.nebenkulturEnde?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               nebenkulturEnde: {value:parseFloat(event.target.value),unit:cultureInformation.nebenkulturEnde?.unit??null}
+               nebenkulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturEnde[0].id}
             })
         }
     }
 
     return(
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title="Fruchtgröße"/>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...snackProps}>
                     <Grid item container xs={12} spacing={4}>
@@ -479,6 +481,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
                     </Grid>
                 </SingleShowConditionalRadioInputField>
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField  {...kulturflaecheProps}/>
                 <MeasureInputField {...kulturBeginnProps}/>

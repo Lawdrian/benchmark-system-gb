@@ -18,7 +18,7 @@ import DynamicSelect, {
     DynamicSelectProps,
     DynamicUnitSelect,
     DynamicUnitSelectParentProps,
-} from "./DynamicSelect";
+} from "../DynamicSelect";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {DesktopDatePicker, DesktopDatePickerProps, LocalizationProvider} from '@mui/x-date-pickers';
 import {
@@ -33,7 +33,7 @@ import FormLabel from '@mui/material/FormLabel';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from "@mui/material/IconButton";
-import {Option} from "../../reducers/lookup";
+import {Option} from "../../../reducers/lookup";
 
 type InputFieldProps = {
     title: string

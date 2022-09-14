@@ -7,12 +7,13 @@ import {
     SelectionValue, SelectShowConditionalRadioInputField, SelectShowConditionalRadioInputProps,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
-} from "../../utils/InputFields";
+} from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -52,6 +53,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
         setEnergyConsumption(energyConsumption)
         props.provideEnergyConsumption(energyConsumption)
+        console.log(energyConsumption)
     }
 
     // Properties of the input fields
@@ -163,7 +165,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.gwhStromverbrauch?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                gwhStromverbrauch: {value:parseFloat(event.target.value),unit:energyConsumption.gwhStromverbrauch?.unit??null}
+                gwhStromverbrauch: {value:parseFloat(event.target.value),unit:props.unitValues.measures.GWHStromverbrauch[0].id}
             })
         }
     }
@@ -176,7 +178,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.betriebStromverbrauch?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                betriebStromverbrauch: {value:parseFloat(event.target.value),unit:energyConsumption.betriebStromverbrauch?.unit??null}
+                betriebStromverbrauch: {value:parseFloat(event.target.value),unit:props.unitValues.measures.BetriebStromverbrauch[0].id}
             })
         }
     }
@@ -246,7 +248,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromStromverbrauch?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromStromverbrauch: {value: parseFloat(event.target.value), unit:energyConsumption.belichtungsstromStromverbrauch?.unit??null}
+                belichtungsstromStromverbrauch: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:Stromverbrauch"][0].id}
             })
         }
     }
@@ -258,7 +260,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromAnschlussleistung?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnschlussleistung: {value:parseFloat(event.target.value),unit:energyConsumption.belichtungsstromAnschlussleistung?.unit??null}
+                belichtungsstromAnschlussleistung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Belichtung:AnschlussleistungProLampe"][0].id}
             })
         }
     }
@@ -270,7 +272,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromAnzLampen?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnzLampen: {value:parseFloat(event.target.value),unit:energyConsumption.belichtungsstromAnzLampen?.unit??null}
+                belichtungsstromAnzLampen: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Belichtung:AnzahlLampen"][0].id}
             })
         }
     }
@@ -282,7 +284,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromLaufzeitTag?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromLaufzeitTag: {value: parseFloat(event.target.value), unit:energyConsumption.belichtungsstromLaufzeitTag?.unit??null}
+                belichtungsstromLaufzeitTag: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:LaufzeitProTag"][0].id}
             })
         }
     }
@@ -293,15 +295,21 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         title: "Belichtungsstrom Verbrauch",
         label: "Wollen Sie den Verbrauch in kWh angeben, oder Angaben über die Belichtung tätigen?",
         radioGroupProps: {
-            value: energyConsumption.belichtungsstrom,
+            value: energyConsumption.belichtungsstromEinheit,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstrom: parseFloat(event.target.value)
+                belichtungsstromEinheit: parseFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Belichtungsstrom,
-        showFirstChildren: value => {return 1  == value},
-        showSecondChildren: value => {return 2 == value},
+        radioButtonValues: props.lookupValues.BelichtungsstromEinheit,
+        showFirstChildren: value => {
+            let trueOptions = props.lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "KWH");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        },
+        showSecondChildren: value => {
+                let trueOptions = props.lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "ANGABEN");
+                return trueOptions.length > 0 && trueOptions[0].id == value
+        },
         firstChildren: (
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...belichtungsstromVerbrauchProps}/>
@@ -323,6 +331,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     return(
 
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title="Wärmeenergie"/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...energietraegerProps}/>
             </Grid>
@@ -337,6 +346,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                     </Grid>
                 </SingleShowConditionalRadioInputField>
             </Grid>
+            <SectionDivider title="Stromverbrauch"/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...gwhStromverbrauchProps}/>
                 <MeasureInputField {...betriebStromverbrauchProps}/>

@@ -1,8 +1,8 @@
-import React, {forwardRef, useImperativeHandle, useState} from "react";
+import React, {useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select, {SelectProps} from "@mui/material/Select";
 import {Option, UnitValues} from "../../reducers/lookup";
-import {DynamicInputValue} from "./InputFields";
+import {DynamicInputValue} from "./inputPage/InputFields";
 
 export type DynamicSelectProps<T> = SelectProps<T> & {
     lookupValues: Option[]

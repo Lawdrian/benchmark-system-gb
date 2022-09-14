@@ -50,7 +50,7 @@ export type LookupValues = {
     Belichtungsstrom: Option[]
     "CO2-Herkunft": Option[]
     "Duengemittel:VereinfachteAngabe": Option[]
-    "Duengemittel:DetalierteAngabe": Option[]
+    "Duengemittel:DetaillierteAngabe": Option[]
     Nuetzlinge: Option[]
     Growbags: Option[]
     Kuebel: Option[]
@@ -65,6 +65,7 @@ export type LookupValues = {
     Verpackungsmaterial: Option[]
     SonstigeVerbrauchsmaterialien: Option[]
     ZusaetzlicherMaschineneinsatz: Option[]
+    BelichtungsstromEinheit: Option[]
 }
 
 /**
@@ -271,7 +272,7 @@ export type UnitValues = {
             "Pflanzkali": Option[]
             "org. Vollduenger": Option[]
         }
-        "Duengemittel:DetalierteAngabe": {
+        "Duengemittel:DetaillierteAngabe": {
             "Ammoniumnitrat": Option[]
             "Kaliumnitrat (Kalisalpeter)": Option[]
             "Calciumnitrat fluessig (Kalksalpeter)": Option[]
@@ -319,11 +320,11 @@ export type UnitValues = {
             "nein": Option[]
         }
         Substrat: {
-            "Standardsubstrat": []
-            "Kokos": []
-            "Kompost": []
-            "Steinwolle": []
-            "Perlite": []
+            "Standardsubstrat": Option[]
+            "Kokos": Option[]
+            "Kompost": Option[]
+            "Steinwolle": Option[]
+            "Perlite": Option[]
             "Nachhaltiges Substrat": Option[]
         }
         "SchnuereRankhilfen:Material": {
@@ -380,6 +381,10 @@ export type UnitValues = {
         ZusaetzlicherMaschineneinsatz: {
             Gabelstapler: Option[]
         }
+        BelichtungsstromEinheit: {
+            kWh: Option[]
+            Angaben: Option[]
+        }
     }
 }
 
@@ -427,7 +432,7 @@ const initialState: LookupState = {
         Belichtungsstrom: [],
         "CO2-Herkunft": [],
         "Duengemittel:VereinfachteAngabe": [],
-        "Duengemittel:DetalierteAngabe": [],
+        "Duengemittel:DetaillierteAngabe": [],
         Nuetzlinge: [],
         Growbags: [],
         Kuebel: [],
@@ -441,7 +446,8 @@ const initialState: LookupState = {
         "Jungpflanzen:Substrat": [],
         Verpackungsmaterial: [],
         SonstigeVerbrauchsmaterialien: [],
-        ZusaetzlicherMaschineneinsatz: []
+        ZusaetzlicherMaschineneinsatz: [],
+        BelichtungsstromEinheit: []
     },
     unitValues: {
         measures: {
@@ -642,7 +648,7 @@ const initialState: LookupState = {
                 "Pflanzkali": [],
                 "org. Vollduenger": [],
             },
-            "Duengemittel:DetalierteAngabe": {
+            "Duengemittel:DetaillierteAngabe": {
                 "Ammoniumnitrat": [],
                 "Kaliumnitrat (Kalisalpeter)": [],
                 "Calciumnitrat fluessig (Kalksalpeter)": [],
@@ -750,6 +756,10 @@ const initialState: LookupState = {
             },
             ZusaetzlicherMaschineneinsatz: {
                 Gabelstapler: [],
+            },
+            BelichtungsstromEinheit: {
+                kWh: [],
+                Angaben: [],
             }
         }
     }
@@ -812,7 +822,7 @@ export default function (state: LookupState = initialState, action: any): Lookup
                     Belichtungsstrom: [],
                     "CO2-Herkunft": [],
                     "Duengemittel:VereinfachteAngabe": [],
-                    "Duengemittel:DetalierteAngabe": [],
+                    "Duengemittel:DetaillierteAngabe": [],
                     Nuetzlinge: [],
                     Growbags: [],
                     Kuebel: [],
@@ -826,7 +836,8 @@ export default function (state: LookupState = initialState, action: any): Lookup
                     "Jungpflanzen:Substrat": [],
                     Verpackungsmaterial: [],
                     SonstigeVerbrauchsmaterialien: [],
-                    ZusaetzlicherMaschineneinsatz: []
+                    ZusaetzlicherMaschineneinsatz: [],
+                    BelichtungsstromEinheit: [],
                 }
             }
         case UNITS_FAILED:

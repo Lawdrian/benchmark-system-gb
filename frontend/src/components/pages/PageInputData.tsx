@@ -15,7 +15,6 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import {connect, ConnectedProps} from "react-redux";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
-import {Option} from "../../reducers/lookup";
 import {submitGreenhouseData} from "../../actions/submission";
 import {RootState} from "../../store";
 import ConsumableMaterialsInput, {
@@ -38,19 +37,20 @@ import CompanyInformationInput, {
     CompanyInformationState
 } from "./inpututpages/CompanyInformation";
 import {GreenhouseData} from "../../types/reduxTypes";
-import {MeasureValue, SelectionValue} from "../utils/InputFields";
+import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
-  submission: state.submission,
+    submission: state.submission,
+    unitValues: state.lookup.unitValues
 });
 
 const mapDispatchToProps = {
-  submitGreenhouseData,
-  loadLookupValues,
-  loadUnitValues
+    submitGreenhouseData,
+    loadLookupValues,
+    loadUnitValues
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -81,8 +81,8 @@ const formatOptionValues = (values: SelectionValue[]|number): string => {
             let tupleString =
                 "(" +
                 value.selectValue +
-                (value.textFieldValue ?
-                    ("," + value.textFieldValue + (value.textField2Value ? "," + value.textField2Value : "")) : "") +
+                (value.textFieldValue.value && value.textFieldValue.unit ?
+                    ("," + value.textFieldValue.value + "," + value.textFieldValue.unit + (value.textField2Value ? "," + value.textField2Value : "")) : "") +
                 ")"
             formattedString = formattedString + tupleString
             if (i < values.length - 1) {
@@ -240,7 +240,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
         "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues(consumableItems.co2Herkunft) : "[]",
         "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple ? formatOptionValues(consumableItems.duengemittelSimple) : "[]",
-        "Duengemittel:DetailierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
+        "Duengemittel:DetaillierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
         Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : "[]",
         Growbags: consumableMaterials?.growbags ? formatOptionValues(consumableMaterials.growbags) : "[]",
         Kuebel: consumableMaterials?.kuebel ? formatOptionValues(consumableMaterials.kuebel) : "[]",
@@ -251,15 +251,16 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues(consumableMaterials.bewaesserArt) : "[]",
         Bodenfolien: consumableMaterials?.bodenfolien ? formatOptionValues(consumableMaterials.bodenfolien) : "[]",
         "Jungpflanzen:Zukauf": consumableMaterials?.jungpflanzenZukauf ? formatOptionValues(consumableMaterials.jungpflanzenZukauf) : "[]",
-        "Jungpflanzen:Substrat": consumableMaterials?.jungpflanzenSubstrat ? formatOptionValues(consumableMaterials.jungpflanzenSubstrat) : "[]",
         Verpackungsmaterial: consumableMaterials?.verpackungsmaterial ? formatOptionValues(consumableMaterials.verpackungsmaterial) : "[]",
+        SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : "[]",
         //Fields that might be optional due to dependency on conditional fields. Because of that only these fields get the defaultOption,
         // so that the other fields will trigger an error in the frontend validation if they are not filled out:
-        SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : "[]",
-        ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption
+        "Jungpflanzen:Substrat": consumableMaterials?.jungpflanzenSubstrat ? formatOptionValues(consumableMaterials.jungpflanzenSubstrat) : defaultOption,
+        ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
+        BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption
     }
-    //console.log("SubmissionData:")
-    //console.log(submissionData)
+    console.log("SubmissionData:")
+    console.log(submissionData)
     return submissionData
 }
 
@@ -281,13 +282,13 @@ const PageInputData = (props: InputDataProps) => {
             gwhFlaeche: {value: null, unit: null},
             waermeteilungFlaeche: {value: null, unit: null},
             gwhArt: null,
-            gwhAlter: {value: new Date(Date.now()), unit: null},
+            gwhAlter: {value: null, unit: null},
             bedachungsmaterial: null,
-            bedachungsmaterialAlter: {value: new Date(Date.now()), unit: null},
+            bedachungsmaterialAlter: {value: null, unit: null},
             stehwandmaterial: null,
-            stehwandmaterialAlter: {value: new Date(Date.now()), unit: null},
+            stehwandmaterialAlter: {value: null, unit: null},
             energieschirm: null,
-            energieschirmAlter: {value: new Date(Date.now()), unit: null},
+            energieschirmAlter: {value: null, unit: null},
             stehwandhoehe: { value: null, unit: null},
             laenge: {value: null, unit: null},
             breite: {value: null, unit: null},
@@ -296,12 +297,12 @@ const PageInputData = (props: InputDataProps) => {
             reihenabstand: {value: null, unit: null},
             vorwegbreite: {value: null, unit: null},
             transportsystem: null,
-            transportsystemAlter: {value: new Date(Date.now()),unit: null},
+            transportsystemAlter: {value:null,unit: null},
             produktionstyp: null,
             kultursystem: null,
-            kultursystemAlter: {value: new Date(Date.now()), unit: null},
+            kultursystemAlter: {value: null, unit: null},
             zusaetzlichesHeizsystem: null,
-            zusaetzlichesHeizsystemAlter: {value: new Date(Date.now()),unit: null},
+            zusaetzlichesHeizsystemAlter: {value: null,unit: null},
         },
         cultureInformation: {
             snack: null,
@@ -367,7 +368,7 @@ const PageInputData = (props: InputDataProps) => {
             growbagsVolumen: {value: null, unit: null},
             growbagsLaenge: {value: null, unit: null},
             growbagsPflanzenAnz: {value: null, unit: null},
-            growbagsSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            growbagsSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
             kuebel: null,
             kuebelVolumenProTopf: {value: null, unit: null},
             kuebelJungpflanzenProTopf: {value: null, unit: null},

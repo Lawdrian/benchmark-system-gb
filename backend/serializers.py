@@ -88,7 +88,7 @@ class ListOfTuples(serializers.Field):
         if not ListOfTuples._check_format(data):
             raise serializers.ValidationError({
                 'Passed string does not match format ' +
-                '[((<int>,<float>,<float>)|(<int>,<float>)|(<int>,)|(<int)), ...]'
+                '[((<int>,<float>,<int>)|(<int>,<float><int><float>)|(<int>,)|(<int)), ...]'
             })
         # Transform data from single string to a list of tuples
         data = re.sub('\)\s*,\s*\(', ');(', data)
@@ -104,17 +104,17 @@ class ListOfTuples(serializers.Field):
             try:
                 values[0] = int(values[0])  # first element is option_id
                 # check if an amount is declared for this option:
-                if len(values) >= 3:
-                    # if the tuple has the form (int,), the second element in
-                    # values is ''
+                # if the tuple has the form (int,), the second element in
+                # values is ''
+                if len(values) >= 2:
                     if values[1].strip() == '':
                         del values[1]
-                    else:
+                    elif len(values) >= 3:
                         values[1] = float(values[1])  # second element is amount
                         values[2] = int(values[2])    # third element is unit
-                    # if the tuple has the form (int,float,int,float)
-                    if len(values) == 4:
-                        values[3] = float(values[3])  # the fourth element is value2
+                        # if the tuple has the form (int,float,int,float)
+                        if len(values) == 4:
+                            values[3] = float(values[3])  # the fourth element is value2
             except (ValueError, TypeError):
                 raise serializers.ValidationError({
                     'A list of tuples with the form ((<int>,<float>,<int>) or (<int>,<float>,<int>,<float>)' +
@@ -193,7 +193,6 @@ class Tuple(serializers.Field):
                 'Index Error: Be aware that the separators in the tuple should be ","'
             })
         data = tuple(values)
-        print(data)
         return data  # returning a tuple
 
 

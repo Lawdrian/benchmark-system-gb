@@ -8,7 +8,7 @@ import {
     SelectionInputProps,
     SelectionRadioInputField,
     SelectionRadioInputProps, SingleShowConditionalRadioInputField, SingleShowConditionalRadioInputProps
-} from "../../utils/InputFields";
+} from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
@@ -17,6 +17,7 @@ import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import lookup from "../../../reducers/lookup";
 import {format} from "date-fns";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
@@ -110,7 +111,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.plz?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                plz: {value: parseFloat(event.target.value),unit:companyInformation.plz?.unit??null}
+                plz: {value: parseFloat(event.target.value),unit: props.unitValues.measures.PLZ[0].id}
             })
         }
     }
@@ -123,7 +124,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.gwhGesamtFlaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhGesamtFlaeche: {value: parseFloat(event.target.value),unit:companyInformation.gwhGesamtFlaeche?.unit??null}
+                gwhGesamtFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHGesamtflaeche[0].id}
             })
         }
     }
@@ -153,7 +154,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.waermeteilungFlaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:companyInformation.waermeteilungFlaeche?.unit??null}
+                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.WaermeteilungFlaeche[0].id}
             })
         }
     }
@@ -166,7 +167,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.gwhFlaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhFlaeche: {value: parseFloat(event.target.value),unit:companyInformation.gwhFlaeche?.unit??null}
+                gwhFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHFlaeche[0].id}
             })
         }
     }
@@ -192,7 +193,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.gwhAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhAlter: {value:event,unit:companyInformation.gwhAlter?.unit??null}
+                gwhAlter: {value:event,unit:props.unitValues.measures.GWHAlter[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -246,7 +247,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.stehwandmaterialAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandmaterialAlter: {value:event,unit:companyInformation.stehwandmaterialAlter?.unit??null}
+                stehwandmaterialAlter: {value:event,unit:props.unitValues.measures.AlterStehwandmaterial[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -273,7 +274,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.energieschirmAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                energieschirmAlter: {value:event,unit:companyInformation.energieschirmAlter?.unit??null}
+                energieschirmAlter: {value:event,unit:props.unitValues.measures.AlterEnergieschirm[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -287,7 +288,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.stehwandhoehe?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandhoehe: {...companyInformation.stehwandhoehe, value:parseFloat(event.target.value)}
+                stehwandhoehe: {value:parseFloat(event.target.value), unit: props.unitValues.measures.Stehwandhoehe[0].id}
             })
         }
     }
@@ -300,7 +301,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.laenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                laenge: {value:parseFloat(event.target.value),unit:companyInformation.laenge?.unit??null}
+                laenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Laenge[0].id}
             })
         }
     }
@@ -313,20 +314,20 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.breite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                breite: {value:parseFloat(event.target.value),unit:companyInformation.breite?.unit??null}
+                breite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Breite[0].id}
             })
         }
     }
 
-    const knappenbreiteProps: MeasureInputProps = {
-        title: "Knappenbreite",
+    const kappenbreiteProps: MeasureInputProps = {
+        title: "Kappenbreite",
         label: "Wie viele Meter beträgt die Knappenbreite?",
         unitName: props.unitValues.measures.Kappenbreite[0]?.values,
         textFieldProps: {
             value: companyInformation.knappenbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                knappenbreite: {value:parseFloat(event.target.value),unit:companyInformation.knappenbreite?.unit??null}
+                knappenbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kappenbreite[0].id}
             })
         }
     }
@@ -339,7 +340,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.scheibenlaenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                scheibenlaenge: {value:parseFloat(event.target.value),unit:companyInformation.scheibenlaenge?.unit??null}
+                scheibenlaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Scheibenlaenge[0].id}
             })
         }
     }
@@ -352,7 +353,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.reihenabstand?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                reihenabstand: {value:parseFloat(event.target.value),unit:companyInformation.reihenabstand?.unit??null}
+                reihenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0].id}
             })
         }
     }
@@ -365,7 +366,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.vorwegbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                vorwegbreite: {value:parseFloat(event.target.value),unit:companyInformation.vorwegbreite?.unit??null}
+                vorwegbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Vorwegbreite[0].id}
             })
         }
     }
@@ -395,7 +396,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.transportsystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                transportsystemAlter: {value:event,unit:companyInformation.transportsystemAlter?.unit??null}
+                transportsystemAlter: {value:event,unit:props.unitValues.measures.AlterTransportsystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -436,7 +437,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.kultursystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                kultursystemAlter: {value:event,unit:companyInformation.kultursystemAlter?.unit??null}
+                kultursystemAlter: {value:event,unit:props.unitValues.measures.AlterKultursystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -463,7 +464,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.zusaetzlichesHeizsystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                zusaetzlichesHeizsystemAlter: {value:event,unit:companyInformation.zusaetzlichesHeizsystemAlter?.unit??null}
+                zusaetzlichesHeizsystemAlter: {value:event,unit:props.unitValues.measures.AlterZusaetzlichesHeizsystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -471,20 +472,22 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     return (
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title="Allgemeine Daten"/>
             <Grid item container xs={12}  spacing={4}>
                 <MeasureInputField {...gewaechshausNameProps} />
                 <DateInputField {...datumProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...plzProps} />
-                <MeasureInputField {...gwhGesamtFlaecheProps} />
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...einheitlicheWaermeversorgungProps}>
                     <Grid item container xs={12} spacing={4}>
                         <MeasureInputField {...waermeteilungFlaecheProps} />
                     </Grid>
                 </SingleShowConditionalRadioInputField>
+                <MeasureInputField {...gwhGesamtFlaecheProps} />
                 <MeasureInputField {...gwhFlaecheProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
@@ -503,13 +506,14 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 <SelectionInputField {...energieschirmProps} />
                 <DateInputField {...energieschirmAlterProps} />
             </Grid>
+            <SectionDivider title="Gewächshaus Konstruktion"/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...stehwandhoeheProps} />
                 <MeasureInputField {...laengeProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...breiteProps} />
-                <MeasureInputField {...knappenbreiteProps} />
+                <MeasureInputField {...kappenbreiteProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...scheibenlaengeProps} />
@@ -518,6 +522,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...vorwegbreiteProps} />
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...transportsystemProps}>
                     <Grid item container xs={12} spacing={4}>

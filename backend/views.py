@@ -457,15 +457,19 @@ class CreateGreenhouseData(APIView):
                         # check if an amount is declared
                         amount = None
                         value2 = None
-                        if len(elem) == 2:
-                            amount = elem[1]
+                        selection_unit = None
                         if len(elem) == 3:
                             amount = elem[1]
-                            value2 = elem[2]
+                            selection_unit = elem[2]
+                        if len(elem) == 4:
+                            amount = elem[1]
+                            selection_unit = elem[2]
+                            value2 = elem[3]
                         Selections(
                             greenhouse_data=greenhouse_data,
                             option_id=elem[0],
                             amount=amount,
+                            selection_unit_id=selection_unit,
                             value2=value2
                         ).save()
 

@@ -169,7 +169,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Klipse:Wiederverwendung": "(30,1)",
         "Rispenbuegel:AnzahlProTrieb": "(30,1)",
         "Rispenbuegel:Wiederverwendung": "(30,1)",
-        "Bodenabdeckung:Wiederverwendung": "(30,1)",
+        "Bodenabdeckung:Wiederverwendung": "(0,0)",
         "Jungpflanzen:Distanz": "(30,1)",
         "Verpackungsmaterial:AnzahlMehrwegsteigen": "(30,1)",
         "Transport:Distanz": "(30,1)",
@@ -195,7 +195,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         Belichtungsstrom: "[(66)]",
         "CO2-Herkunft": "[(69,100,91)]",
         "Duengemittel:VereinfachteAngabe": "[(74,22.5,99),(75,10.5,100),(77,20,102)]",
-        "Duengemittel:DetailierteAngabe": "[(85,7,110),(83,1.5,108)]",
+        "Duengemittel:DetaillierteAngabe": "[(85,7,110),(83,1.5,108)]",
         Nuetzlinge: "[(113,700,138)]",
         Growbags: "[(117)]",
         Kuebel: "[(120)]",
@@ -209,7 +209,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Jungpflanzen:Substrat": "[(147)]",
         Verpackungsmaterial: "[(152)]",
         SonstigeVerbrauchsmaterialien: "[(157,290.5,182,5), (153,11.2,178,7.5)]",
-        ZusaetzlicherMaschineneinsatz: "[(159,20.5,184,17)]"
+        ZusaetzlicherMaschineneinsatz: "[(159,20.5,184,17)]",
+        BelichtungsstromEinheit: "[(160)]"
     }
 
     const testLoading = (test: EPTest) => { return {...test,  loading: true} }

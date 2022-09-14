@@ -34,7 +34,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
         "Zusatzbelichtung",
         "Belichtungsstrom",
         "CO2-Herkunft",
-        "Duengemittel:DetalierteAngabe",
+        "Duengemittel:DetaillierteAngabe",
         "Duengemittel:VereinfachteAngabe",
         "Nuetzlinge",
         "Growbags",

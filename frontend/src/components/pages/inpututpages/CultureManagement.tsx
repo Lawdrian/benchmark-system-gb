@@ -1,13 +1,10 @@
 import React, {useState} from "react";
 import {
-    DynamicInputField,
-    DynamicInputProps,
     MeasureInputField,
     MeasureInputProps, MeasureValue,
     SelectionRadioInputField,
     SelectionRadioInputProps,
-    SelectionValue
-} from "../../utils/InputFields";
+} from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
@@ -52,7 +49,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.mittlereSolltemperaturTag?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                mittlereSolltemperaturTag: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturTag?.unit??null}
+                mittlereSolltemperaturTag: {value:parseFloat(event.target.value),unit:props.unitValues.measures.MittlereSolltemperaturTag[0].id}
             })
         }
     }
@@ -65,7 +62,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.mittlereSolltemperaturNacht?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                mittlereSolltemperaturNacht: {value:parseFloat(event.target.value),unit:cultureManagement.mittlereSolltemperaturNacht?.unit??null}
+                mittlereSolltemperaturNacht: {value:parseFloat(event.target.value),unit:props.unitValues.measures.MittlereSolltemperaturNacht[0].id}
             })
         }
     }
@@ -90,7 +87,7 @@ const CultureManagementInput = (props: CultureManagementProps) => {
             value: cultureManagement.luftfeuchte?.value,
             onChange: event => setCultureManagementState({
                 ...cultureManagement,
-                luftfeuchte: {value:parseFloat(event.target.value),unit:cultureManagement.luftfeuchte?.unit??null}
+                luftfeuchte: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Luftfeuchte[0].id}
             })
         }
     }

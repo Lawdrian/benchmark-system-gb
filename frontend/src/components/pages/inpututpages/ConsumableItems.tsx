@@ -9,11 +9,12 @@ import {
     SelectionInputField,
     SelectionInputProps,
     SelectionValue
-} from "../../utils/InputFields"
+} from "../../utils/inputPage/InputFields"
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
   lookupValues: state.lookup.lookupValues,
@@ -44,6 +45,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const setConsumableItemsState = (consumableItems: ConsumableItemsState) => {
         setConsumableItems(consumableItems)
         props.provideItems(consumableItems)
+        console.log(consumableItems.duengemittelDetail)
     }
 
     const co2HerkunftProps: DynamicInputProps = {
@@ -70,11 +72,16 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const duengemittelSimpleProps: DynamicInputProps = {
-        title: "Düngemittel Einfach",
+        title: "Einfach",
         label: "Verwendetes Düngemittel und Menge eintragen.",
         textFieldProps:{},
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"],
+            unitValues:  props.unitValues,
+            optionGroup: "Duengemittel:VereinfachteAngabe"
         },
         onValueChange: values => setConsumableItemsState({
             ...consumableItems,
@@ -88,13 +95,17 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const duengemittelDetailProps: DynamicInputProps = {
-        title: "Düngemittel Detail",
+        title: "Detailliert",
         label: "Verwendetes Düngemittel und Menge eintragen.",
         selectProps: {
-            lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
+            lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"]
         },
-        textFieldProps: {
+        unitSelectProps: {
+            lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"],
+            unitValues:  props.unitValues,
+            optionGroup: "Duengemittel:DetaillierteAngabe"
         },
+        textFieldProps: {},
         onValueChange: values => setConsumableItemsState({
             ...consumableItems,
             duengemittelDetail: values.map(value => {
@@ -176,16 +187,19 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...co2HerkunftProps} />
             </Grid>
+            <SectionDivider title="Düngemittel"/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelSimpleProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelDetailProps} />
             </Grid>
+            <SectionDivider title="Pflanzenschutzmittel"/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureUnitInputField {...fungizideProps} />
                 <MeasureUnitInputField {...insektizideProps} />
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...nuetzlingeProps} />
             </Grid>

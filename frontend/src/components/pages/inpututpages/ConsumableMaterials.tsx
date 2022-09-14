@@ -8,18 +8,19 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps, MeasureUnitInputProps, MeasureValue,
+    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
-} from "../../utils/InputFields"
+} from "../../utils/inputPage/InputFields"
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import {TextField} from "@mui/material";
+import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -76,6 +77,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const setConsumableMaterialsState = (consumableMaterials: ConsumableMaterialsState) => {
         setConsumableMaterials(consumableMaterials)
         props.provideConsumables(consumableMaterials)
+        console.log(consumableMaterials)
     }
 
     // Properties of the input fields
@@ -125,7 +127,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.growbagsLaenge?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                growbagsLaenge: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsLaenge?.unit??null}
+                growbagsLaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:Laenge"][0].id}
             })
         }
     }
@@ -138,7 +140,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.growbagsPflanzenAnz?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsPflanzenAnz?.unit??null}
+                growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:PflanzenproBag"][0].id}
             })
         }
     }
@@ -147,15 +149,20 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         title: "Substrat",
         label: "Welches Substrat und zu welchem Anteil wird verwendet?",
         textFieldProps: {},
-        textField2Props: {},
+        textField2Props: {label: "Wiederverwendung", placeholder:"Jahre"},
         selectProps: {
             lookupValues: props.lookupValues.Substrat
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues.Substrat,
+            unitValues:  props.unitValues,
+            optionGroup: "Substrat"
         },
         onValueChange: values => setConsumableMaterialsState({
             ...consumableMaterials,
             growbagsSubstrat: values.map(value => {
                 return {
-                    selectValue: value.selectValue, textFieldValue:value.textFieldValue
+                    selectValue: value.selectValue, textFieldValue:value.textFieldValue, textField2Value: value.textField2Value
                 }
             })
         }),
@@ -187,7 +194,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.kuebelVolumenProTopf?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                kuebelVolumenProTopf: {value:parseFloat(event.target.value),unit:consumableMaterials.kuebelVolumenProTopf?.unit??null}
+                kuebelVolumenProTopf: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:VolumenProTopf"][0].id}
             })
         }
     }
@@ -200,7 +207,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.kuebelJungpflanzenProTopf?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                kuebelJungpflanzenProTopf: {value:parseFloat(event.target.value),unit:consumableMaterials.kuebelJungpflanzenProTopf?.unit??null}
+                kuebelJungpflanzenProTopf: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:JungpflanzenProTopf"][0].id}
             })
         }
     }
@@ -213,7 +220,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.kuebelAlter?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                kuebelAlter: {value:event,unit:consumableMaterials.kuebelAlter?.unit??null}
+                kuebelAlter: {value:event,unit:props.unitValues.measures["Kuebel:Alter"][0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -242,7 +249,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.schnurLaengeProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                schnurLaengeProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurLaengeProTrieb?.unit??null}
+                schnurLaengeProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["SchnuereRankhilfen:Laenge"][0].id}
             })
         }
     }
@@ -255,7 +262,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.schnurWiederverwendung?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                schnurWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.schnurWiederverwendung?.unit??null}
+                schnurWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0].id}
             })
         }
     }
@@ -281,7 +288,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.klipseAnzProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                klipseAnzProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseAnzProTrieb?.unit??null}
+                klipseAnzProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Klipse:AnzahlProTrieb"][0].id}
             })
         }
     }
@@ -290,10 +297,10 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         title: "Wiederverwendung",
         label: "Wie lange werden diese wiederverwendet?",
         textFieldProps: {
-            value: consumableMaterials.klipseWiederverwendung,
+            value: consumableMaterials.klipseWiederverwendung?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                klipseWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.klipseWiederverwendung?.unit??null}
+                klipseWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Klipse:Wiederverwendung"][0].id}
             })
         }
     }
@@ -319,7 +326,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.rispenbuegelAnzProTrieb?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                rispenbuegelAnzProTrieb: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelAnzProTrieb?.unit??null}
+                rispenbuegelAnzProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0].id}
             })
         }
     }
@@ -332,7 +339,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.rispenbuegelWiederverwendung?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                rispenbuegelWiederverwendung: {value:parseFloat(event.target.value),unit:consumableMaterials.rispenbuegelWiederverwendung?.unit??null}
+                rispenbuegelWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Rispenbuegel:Wiederverwendung"][0].id}
             })
         }
     }
@@ -375,7 +382,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.bodenfolienVerwendungsdauer?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                bodenfolienVerwendungsdauer: {value:parseFloat(event.target.value),unit:consumableMaterials.bodenfolienVerwendungsdauer?.unit??null}
+                bodenfolienVerwendungsdauer: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Bodenabdeckung:Wiederverwendung"][0].id}
             })
         }
     }
@@ -405,7 +412,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.jungpflanzenDistanz?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.jungpflanzenDistanz?.unit??null}
+                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Jungpflanzen:Distanz"][0].id}
             })
         }
     }
@@ -458,7 +465,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.anzahlNutzungenMehrwegsteigen?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                anzahlNutzungenMehrwegsteigen: {value:parseFloat(event.target.value),unit:consumableMaterials.anzahlNutzungenMehrwegsteigen?.unit??null}
+                anzahlNutzungenMehrwegsteigen: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0].id}
             })
         }
     }
@@ -497,7 +504,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             value: consumableMaterials.transportDistanz?.value,
             onChange: event => setConsumableMaterialsState({
                 ...consumableMaterials,
-                transportDistanz: {value:parseFloat(event.target.value),unit:consumableMaterials.transportDistanz?.unit??null}
+                transportDistanz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Transport:Distanz"][0].id}
             })
         }
     }
@@ -534,7 +541,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...growbagsProps}>
                     <Grid item container xs={12} spacing={4}>
-                        <MeasureInputField {...growbagsVolumenProps} />
+                        <MeasureUnitInputField {...growbagsVolumenProps} />
                         <MeasureInputField {...growbagsLaengeProps}/>
                     </Grid>
                     <Grid item container xs={12} spacing={4}>
@@ -556,6 +563,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
                     </Grid>
                 </SingleShowConditionalRadioInputField>
             </Grid>
+            <SectionDivider title="Schnur"/>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...schnurMaterialProps} />
                 <MeasureInputField {...schnurLaengeProps}/>
@@ -563,18 +571,23 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...schnurWiederverwendungProps} />
             </Grid>
+            <SectionDivider title="Klipse"/>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...klipseMaterialProps}/>
                 <MeasureInputField {...klipseAnzProTriebProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...klipseWiederverwendungProps} />
+            </Grid>
+            <SectionDivider title="Rispenbügel"/>
+            <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...rispenbuegelMaterialProps}/>
+                <MeasureInputField {...rispenbuegelAnzProTriebProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...rispenbuegelAnzProTriebProps}/>
                 <MeasureInputField {...rispenbuegelWiederverwendungProps} />
             </Grid>
+            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...bewaesserArtProps} />
             </Grid>
@@ -595,10 +608,11 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
                 <DynamicInputField {...verpackungsmaterialProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <DynamicInputField {...sonstVerbrauchsmaterialienProps} />
+                <MeasureInputField {...verpackungAnzahlNutzungenMehrwegsteigen}/>
+                <MeasureInputField {...transportDistanzProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...transportDistanzProps}/>
+                <DynamicInputField {...sonstVerbrauchsmaterialienProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...zusaetzlicherMaschineneinsatzProps} />
