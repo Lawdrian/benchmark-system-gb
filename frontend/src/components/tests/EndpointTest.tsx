@@ -188,7 +188,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         ">150Gramm(Fleisch)": "[(39)]",
         Nebenkultur: "[(42)]",
         Entfeuchtung: "[(43)]",
-        Energietraeger: "[(44,22.5,44),(47,10.5,53),(48,20,56)]",
+        Energietraeger: "[(44,22.5,45),(47,10.5,53),(48,20,56)]",
         BHKW: "[(53)]",
         Stromherkunft: "[(54,100,64)]",
         Zusatzbelichtung: "[(64)]",

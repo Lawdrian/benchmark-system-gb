@@ -23,6 +23,7 @@ from .dataValidation import validate_greenhouse_data
 from .models import GreenhouseData, Measurements, Measures, Selections, \
     OptionGroups, Options, Greenhouses, Calculations, Results, MeasurementUnits, OptionUnits
 from .serializers import InputDataSerializer
+from .standardizeUnits import standardize_units
 
 
 class GetGreenhouseData(APIView):
@@ -413,6 +414,12 @@ class CreateGreenhouseData(APIView):
                 return Response({'Bad Request': 'Not all fields have been filled out!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
+
+            print("Data")
+            print(serializer.data["BHKW:Menge"])
+            print(serializer.data["Energietraeger"])
+            processed_data = standardize_units(serializer.data)
+            print(processed_data["Energietraeger"])
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
