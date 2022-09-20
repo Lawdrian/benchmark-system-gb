@@ -43,7 +43,7 @@ export default function validateGreenhouseData(data: GreenhouseData) {
         "Klipse:Material",
         "Rispenbuegel:Material",
         "Bewaesserungsart",
-        "Bodenfolien",
+        "Bodenabdeckung",
         "SonstigeVerbrauchsmaterialien",
         "JungpflanzenZukauf"
     ]

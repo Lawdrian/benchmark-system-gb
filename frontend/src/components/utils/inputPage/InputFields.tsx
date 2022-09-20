@@ -344,14 +344,15 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                             </Grid>
                             <Grid item xs>
                                 <Paper>
-                                    <TextField {...props.textFieldProps}
+                                    <TextField
+                                        label="Menge"
+                                        {...props.textFieldProps}
                                         onChange={(event) => {
                                             let idx = values.indexOf(value)
                                             values[idx] = {...value, textFieldValue: {...value.textFieldValue, value: parseInt(event.target.value)}}
                                             setValues(values.slice())
                                             props.onValueChange(values.slice())
                                         }}
-                                        label="Menge"
                                         value={value.textFieldValue.value}
                                         fullWidth
                                         type="number"

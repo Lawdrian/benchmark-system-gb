@@ -44,10 +44,8 @@
 43,Auswahl,43
 44,kWh,44
 45,m3,44
-46,%,44
 47,kWh,45
 48,m3,45
-49,%,45
 50,kWh,46
 51,kg,46
 52,Liter,46
@@ -143,7 +141,6 @@
 142,Auswahl,117
 143,Auswahl,118
 144,Auswahl,119
-145,Auswahl,120
 146,kg,121
 147,kg,122
 148,kg,123
@@ -185,3 +182,12 @@
 184,l/h,159
 185,Auswahl,160
 186,Auswahl,161
+187,Auswahl,162
+188,Auswahl,163
+189,Auswahl,164
+190,Auswahl,165
+191,Auswahl,166
+192,Jahre,167
+193,Jahre,168
+194,Jahre,169
+195,Auswahl,170

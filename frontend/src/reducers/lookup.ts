@@ -52,14 +52,15 @@ export type LookupValues = {
     "Duengemittel:VereinfachteAngabe": Option[]
     "Duengemittel:DetaillierteAngabe": Option[]
     Nuetzlinge: Option[]
-    Growbags: Option[]
-    Kuebel: Option[]
+    GrowbagsKuebel: Option[]
     Substrat: Option[]
     "SchnuereRankhilfen:Material": Option[]
+    Klipse: Option[]
     "Klipse:Material": Option[]
+    Rispenbuegel: Option[]
     "Rispenbuegel:Material": Option[]
     Bewaesserungsart: Option[]
-    Bodenfolien: Option[]
+    Bodenabdeckung: Option[]
     "Jungpflanzen:Zukauf": Option[]
     "Jungpflanzen:Substrat": Option[]
     Verpackungsmaterial: Option[]
@@ -125,9 +126,9 @@ export type UnitValues = {
         "Belichtung:Stromverbrauch": Option[]
         "Belichtung:AnzahlLampen": Option[]
         "Belichtung:AnschlussleistungProLampe": Option[]
-        "Belichtung:LaufzeitProTag": Option[]
-        Fungizide: Option[]
-        Insektizide: Option[]
+        "Belichtung:LaufzeitProJahr": Option[]
+        FungizideKg: Option[]
+        InsektizideKg: Option[]
         "Growbags:Volumen": Option[]
         "Growbags:Laenge": Option[]
         "Growbags:PflanzenproBag": Option[]
@@ -194,6 +195,7 @@ export type UnitValues = {
         ZusaetzlichesHeizsystem: {
             Vegetationsheizung: Option[]
             Konvektionsheizung: Option[]
+            keines: Option[]
         }
         "10-30Gramm(Snack)": {
             ja: Option[]
@@ -311,13 +313,10 @@ export type UnitValues = {
             "Hummeln": Option[]
             "Andere": Option[]
         }
-        Growbags: {
-            "ja": Option[]
-            "nein": Option[]
-        }
-        Kuebel: {
-            "ja": Option[]
-            "nein": Option[]
+        GrowbagsKuebel: {
+            "Growbags": Option[]
+            "Kuebel": Option[]
+            "nichts": Option[]
         }
         Substrat: {
             "Standardsubstrat": Option[]
@@ -336,10 +335,18 @@ export type UnitValues = {
             "Bambusstab": Option[]
             "Edelstahl": Option[]
         }
+        Klipse: {
+            "ja": Option[]
+            "nein": Option[]
+        }
         "Klipse:Material": {
             "Kunststoff": Option[]
             "Metall": Option[]
             "Nachhaltige / kompostierbare Option": Option[]
+        }
+        Rispenbuegel: {
+            "ja": Option[]
+            "nein": Option[]
         }
         "Rispenbuegel:Material": {
             "Kunststoff": Option[]
@@ -351,9 +358,10 @@ export type UnitValues = {
             "Bodensprenkler": Option[]
             "Handschlauch": Option[]
         }
-        Bodenfolien: {
-            "ja": Option[]
-            "nein": Option[]
+        Bodenabdeckung: {
+            "Bodenfolie": Option[]
+            "Bodengewebe": Option[]
+            "Beton": Option[]
         }
         "Jungpflanzen:Zukauf": {
             "ja": Option[]
@@ -434,14 +442,15 @@ const initialState: LookupState = {
         "Duengemittel:VereinfachteAngabe": [],
         "Duengemittel:DetaillierteAngabe": [],
         Nuetzlinge: [],
-        Growbags: [],
-        Kuebel: [],
+        GrowbagsKuebel: [],
         Substrat: [],
         "SchnuereRankhilfen:Material": [],
+        Klipse: [],
         "Klipse:Material": [],
+        Rispenbuegel: [],
         "Rispenbuegel:Material": [],
         Bewaesserungsart: [],
-        Bodenfolien: [],
+        Bodenabdeckung: [],
         "Jungpflanzen:Zukauf": [],
         "Jungpflanzen:Substrat": [],
         Verpackungsmaterial: [],
@@ -501,9 +510,9 @@ const initialState: LookupState = {
             "Belichtung:Stromverbrauch": [],
             "Belichtung:AnzahlLampen": [],
             "Belichtung:AnschlussleistungProLampe": [],
-            "Belichtung:LaufzeitProTag": [],
-            Fungizide: [],
-            Insektizide: [],
+            "Belichtung:LaufzeitProJahr": [],
+            FungizideKg: [],
+            InsektizideKg: [],
             "Growbags:Volumen": [],
             "Growbags:Laenge": [],
             "Growbags:PflanzenproBag": [],
@@ -570,6 +579,7 @@ const initialState: LookupState = {
             ZusaetzlichesHeizsystem: {
                 Vegetationsheizung: [],
                 Konvektionsheizung: [],
+                keines: []
             },
             "10-30Gramm(Snack)": {
                 ja: [],
@@ -687,13 +697,10 @@ const initialState: LookupState = {
                 "Hummeln": [],
                 "Andere": [],
             },
-            Growbags: {
-                "ja": [],
-                "nein": [],
-            },
-            Kuebel: {
-                "ja": [],
-                "nein": [],
+            GrowbagsKuebel: {
+                "Growbags": [],
+                "Kuebel": [],
+                "nichts": [],
             },
             Substrat: {
                 "Standardsubstrat": [],
@@ -712,10 +719,18 @@ const initialState: LookupState = {
                 "Bambusstab": [],
                 "Edelstahl": [],
             },
+            Klipse: {
+                ja: [],
+                nein: []
+            },
             "Klipse:Material": {
                 "Kunststoff": [],
                 "Metall": [],
                 "Nachhaltige / kompostierbare Option": [],
+            },
+            Rispenbuegel: {
+                ja: [],
+                nein: []
             },
             "Rispenbuegel:Material": {
                 "Kunststoff": [],
@@ -727,9 +742,10 @@ const initialState: LookupState = {
                 "Bodensprenkler": [],
                 "Handschlauch": [],
             },
-            Bodenfolien: {
-                "ja": [],
-                "nein": [],
+            Bodenabdeckung: {
+                Bodenfolie: [],
+                Bodengewebe: [],
+                Beton: [],
             },
             "Jungpflanzen:Zukauf": {
                 "ja": [],
@@ -824,14 +840,15 @@ export default function (state: LookupState = initialState, action: any): Lookup
                     "Duengemittel:VereinfachteAngabe": [],
                     "Duengemittel:DetaillierteAngabe": [],
                     Nuetzlinge: [],
-                    Growbags: [],
-                    Kuebel: [],
+                    GrowbagsKuebel: [],
                     Substrat: [],
                     "SchnuereRankhilfen:Material": [],
+                    Klipse: [],
                     "Klipse:Material": [],
+                    Rispenbuegel: [],
                     "Rispenbuegel:Material": [],
                     Bewaesserungsart: [],
-                    Bodenfolien: [],
+                    Bodenabdeckung: [],
                     "Jungpflanzen:Zukauf": [],
                     "Jungpflanzen:Substrat": [],
                     Verpackungsmaterial: [],

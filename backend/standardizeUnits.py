@@ -34,9 +34,7 @@ def standardize_units(data):
         # calculating the correct value in kWh
         if(selected_optionunit_name !="kWh"):
             new_value = ()
-            if (selected_optionunit_name == "%"):
-                 new_value = data["Energietraeger"][index][1]
-            elif(selected_option_value=="Erdgas"):
+            if(selected_option_value=="Erdgas"):
                 new_value = data["Energietraeger"][index][1]*10.4/1.1268
             elif(selected_option_value=="Biogas"):
                 new_value = data["Energietraeger"][index][1]*5/1.1268
@@ -44,8 +42,7 @@ def standardize_units(data):
                 if(selected_optionunit_name == "liter"):
                     new_value = data["Energietraeger"][index][1]*0.85*11.87
                 elif(selected_optionunit_name == "kg"):
-                    new_value = data["Energietraeger"][index][1] * 0.85 * 11.87
-                    # Todo noch für kg berrechnen
+                    new_value = data["Energietraeger"][index][1]*0.85*11.87*1.17647059
             elif(selected_option_value=="Steinkohle"):
                 new_value = data["Energietraeger"][index][1]*8.06
             elif(selected_option_value=="Braunkohle"):
@@ -60,36 +57,36 @@ def standardize_units(data):
             values_list[2] = kwh_energietraeger_id
             data["Energietraeger"][index] = tuple(values_list)
 
-
-    # BHKW Gesamtmenge in kWh umrechnen
-    #Gesamt: m3*10,4/1,1268 = kWh
-
+    # BHKW Erdgas in kWh umrechnen (Einheit kann auch % sein. Dann Anteil von Gesamt nehmen!!!)
+    # Anteil Erdgas: m3*10,4/1,1268 = kWh
     # calculating the correct value in kWh
-    bhkw_id = all_measurements.filter(measurement_name="BHKW:Menge")
-    kwh_bhkw_gesamtmenge_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
-    selected_unit_name = all_measurementunits.filter(id=data["BHKW:Menge"][1])
+    bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilErdgas")[0].id
+    kwh_bhkw_erdgas_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
+    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilErdgas"][1])
 
     if(selected_unit_name != "kWh"):
         # change value and unit from m3 to kWh
-        new_value = data["BHKW:Menge"][0]*10.4/1.1268
-        data["BHKW:Menge"] = (new_value, kwh_bhkw_gesamtmenge_id)
+        new_value = data["BHKW:AnteilErdgas"][0]*10.4/1.1268
+        data["BHKW:AnteilErdgas"] = (new_value, kwh_bhkw_erdgas_id)
 
-
-    # BHKW Erdgas in kWh umrechnen (Einheit kann auch % sein. Dann Anteil von Gesamt nehmen!!!)
-    #Anteil Erdgas: m3*10,4/1,1268 = kWh
 
     # BHKW Biomethan in kWh umrechnen (Einheit kann auch % sein. Dann Anteil von Gesamt nehmen!!!)
     #Anteil Biomethan: m3*10,4/1,1268 = kWh
+    # calculating the correct value in kWh
+    bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilBiomethan")[0].id
+    kwh_bhkw_biomethan_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
+    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilBiomethan"][1])
 
-
+    if (selected_unit_name != "kWh"):
+        # change value and unit from m3 to kWh
+        new_value = data["BHKW:AnteilBiomethan"][0] * 10.4 / 1.1268
+        data["BHKW:AnteilBiomethan"] = (new_value, kwh_bhkw_biomethan_id)
 
     # Stromverbrauch/Stromherkunft entweder direkt kWh oder als % angegeben, dann von Gesamtverbrauch Anteil nehmen
     # Gilt für alle Options
     # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
     # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
     # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-
-
     for index, selected_option in enumerate(data["Stromherkunft"]):
         selected_option_value = all_options.filter(id=selected_option[0])[0].option_value
         kwh_stromherkunft_id = all_optionunits.filter(option_id=selected_option[0]).filter(unit_name="kWh")[0].id
@@ -106,8 +103,6 @@ def standardize_units(data):
                 values_list[2] = kwh_stromherkunft_id
                 data["Stromherkunft"][index] = tuple(values_list)
 
-
-
     # Co2-Zudosierung ist in kg gewollt
     #technisches CO2: m3*(0,00196*1000) = kg
     #direkte Gasverbrennung: m3*(0,00196*1000) = kg
@@ -123,20 +118,14 @@ def standardize_units(data):
             if (selected_optionunit_name == "m3"):
                 new_value = data["CO2-Herkunft"][index][1]*(0.00196*1000) #No differentiation is needed since all three options have the same conversion formula
 
-                values_list = list(data["CO2-Herkunft"][index])
-                values_list[1] = round(new_value, 2)
-                values_list[2] = kwh_co2herkunft_id
-                data["CO2-Herkunft"][index] = tuple(values_list)
+            elif(selected_optionunit_name == "kg/m2/a"):
+                new_value = data["CO2-Herkunft"][index][1]*data["GWHFlaeche"][0]  # No differentiation is needed since all three options have the same conversion formula
 
+            values_list = list(data["CO2-Herkunft"][index])
+            values_list[1] = round(new_value, 2)
+            values_list[2] = kwh_co2herkunft_id
+            data["CO2-Herkunft"][index] = tuple(values_list)
 
-
-
-
-    # Fungizide: Eventuell eigenes Eingabefeld für Fungizide mit Einheit Liter, dann keine Umrechnungen nötig
-    # kg = liter * Faktor(100) kg=default
-
-    # Insektizide: Eventuell eigenes Eingabefeld für Insektizide mit Einheit Liter, dann keine Umrechnungen nötig
-    # kg = liter * Faktor(100) kg=default
 
     return data
 

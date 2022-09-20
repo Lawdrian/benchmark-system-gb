@@ -416,7 +416,7 @@ class CreateGreenhouseData(APIView):
 
 
             print("Data")
-            print(serializer.data["BHKW:Menge"])
+            print(serializer.data["GWHFlaeche"][0])
             print(serializer.data["Energietraeger"])
             processed_data = standardize_units(serializer.data)
             print(processed_data["Energietraeger"])

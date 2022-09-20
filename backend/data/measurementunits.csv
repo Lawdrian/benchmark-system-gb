@@ -41,22 +41,18 @@
 40,Grad Celsius,40
 41,Grad Celsius,41
 42,%rLF,42
-43,kWh,43
-44,m3,43
 45,kWh,44
-46,%,44
+46,m3,44
 47,kWh,45
-48,%',45
+48,m3',45
 49,kWh,46
 50,kWh,47
 51,kWh,48
 52,Anzahl,49
 53,Watt,50
-54,Stunden,51
+54,h/a,51
 55,kg,52
-56,Liter,52
 57,kg,53
-58,Liter,53
 59,Liter,54
 60,m3,54
 61,Meter,55
@@ -70,7 +66,6 @@
 69,Jahre,63
 70,Anzahl,64
 71,Jahre,65
-72,Jahre,66
 73,km,67
 74,Anzahl,68
 75,km,69

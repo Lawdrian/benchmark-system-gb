@@ -32,7 +32,6 @@ type EnergyConsumptionProps = ReduxProps & SubpageProps & {
 export type EnergyConsumptionState = {
     energietraeger: SelectionValue[]
     bhkw: number | null
-    bhkwMenge: MeasureValue | null
     bhkwAnteilErdgas: MeasureValue | null
     bhkwAnteilBiomethan: MeasureValue | null
     gwhStromverbrauch: MeasureValue | null
@@ -44,7 +43,7 @@ export type EnergyConsumptionState = {
     belichtungsstromStromverbrauch: MeasureValue | null
     belichtungsstromAnzLampen: MeasureValue | null
     belichtungsstromAnschlussleistung: MeasureValue | null
-    belichtungsstromLaufzeitTag: MeasureValue | null
+    belichtungsstromLaufzeitJahr: MeasureValue | null
 }
 
 const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
@@ -94,26 +93,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         showChildren: value => {
             let trueOptions = props.lookupValues.BHKW.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const bhkwMengeProps: MeasureUnitInputProps = {
-        title: "Menge gesamt",
-        label: "Wie viel Energie wird von dem Blockheizkraftwerk verbraucht?",
-        textFieldProps: {
-            value: energyConsumption.bhkwMenge?.value,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwMenge: {value:parseFloat(event.target.value),unit:energyConsumption.bhkwMenge?.unit??null}
-            })
-        },
-        selectProps: {
-            value: energyConsumption.bhkwMenge?.unit,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwMenge: {value:energyConsumption.bhkwMenge?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures["BHKW:Menge"]
         }
     }
 
@@ -277,14 +256,14 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
         }
     }
 
-    const belichtungsstromLaufzeitTagProps: MeasureInputProps = {
-        title: "Stromverbrauch Belichtung Laufzeit Tag",
-        label: "Laufzeit pro Tag",
+    const belichtungsstromLaufzeitJahrProps: MeasureInputProps = {
+        title: "Stromverbrauch Belichtung Laufzeit Jahr",
+        label: "Laufzeit pro Jahr",
         textFieldProps: {
-            value: energyConsumption.belichtungsstromLaufzeitTag?.value,
+            value: energyConsumption.belichtungsstromLaufzeitJahr?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromLaufzeitTag: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:LaufzeitProTag"][0].id}
+                belichtungsstromLaufzeitJahr: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:LaufzeitProJahr"][0].id}
             })
         }
     }
@@ -319,7 +298,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             <>
                 <Grid item container xs={12} spacing={4}>
                     <MeasureInputField {...belichtungsstromAnzLampenProps}/>
-                    <MeasureInputField {...belichtungsstromLaufzeitTagProps}/>
+                    <MeasureInputField {...belichtungsstromLaufzeitJahrProps}/>
                 </Grid>
                 <Grid item container xs={12} spacing={4}>
                     <MeasureInputField {...belichtungsstromAnschlussleistungProps}/>
@@ -337,9 +316,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...bhkwProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureUnitInputField {...bhkwMengeProps}/>
-                    </Grid>
                     <Grid item container xs={12} spacing={4}>
                         <MeasureUnitInputField {...bhkwAnteilErdgasProps}/>
                         <MeasureUnitInputField {...bhkwAnteilBiomethanProps}/>

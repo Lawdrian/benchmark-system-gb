@@ -243,7 +243,6 @@ export type GreenhouseData = {
     MittlereSolltemperaturTag: string
     MittlereSolltemperaturNacht: string
     Luftfeuchte: string
-    "BHKW:Menge": string
     "BHKW:AnteilErdgas": string
     "BHKW:AnteilBiomethan": string
     GWHStromverbrauch: string
@@ -251,9 +250,9 @@ export type GreenhouseData = {
     "Belichtung:Stromverbrauch": string
     "Belichtung:AnzahlLampen": string
     "Belichtung:AnschlussleistungProLampe": string
-    "Belichtung:LaufzeitProTag": string
-    Fungizide: string
-    Insektizide: string
+    "Belichtung:LaufzeitProJahr": string
+    FungizideKg: string
+    InsektizideKg: string
     "Growbags:Volumen": string
     "Growbags:Laenge": string
     "Growbags:PflanzenproBag": string
@@ -266,7 +265,6 @@ export type GreenhouseData = {
     "Klipse:Wiederverwendung": string
     "Rispenbuegel:AnzahlProTrieb": string
     "Rispenbuegel:Wiederverwendung": string
-    "Bodenabdeckung:Wiederverwendung": string
     "Jungpflanzen:Distanz": string
     "Verpackungsmaterial:AnzahlMehrwegsteigen": string
     "Transport:Distanz": string
@@ -294,14 +292,15 @@ export type GreenhouseData = {
     "Duengemittel:VereinfachteAngabe": string
     "Duengemittel:DetaillierteAngabe": string
     Nuetzlinge: string
-    Growbags: string
-    Kuebel: string
+    GrowbagsKuebel: string
     Substrat: string
     "SchnuereRankhilfen:Material": string
+    Klipse: string
     "Klipse:Material": string
+    Rispenbuegel: string
     "Rispenbuegel:Material": string
     Bewaesserungsart: string
-    Bodenfolien: string
+    Bodenabdeckung: string
     "Jungpflanzen:Zukauf": string
     "Jungpflanzen:Substrat": string
     Verpackungsmaterial: string

@@ -40,7 +40,6 @@
 40,MittlereSolltemperaturTag
 41,MittlereSolltemperaturNacht
 42,Luftfeuchte
-43,BHKW:Menge
 44,BHKW:AnteilErdgas
 45,BHKW:AnteilBiomethan
 46,GWHStromverbrauch
@@ -48,9 +47,9 @@
 48,Belichtung:Stromverbrauch
 49,Belichtung:AnzahlLampen
 50,Belichtung:AnschlussleistungProLampe
-51,Belichtung:LaufzeitProTag
-52,Fungizide
-53,Insektizide
+51,Belichtung:LaufzeitProJahr
+52,FungizideKg
+53,InsektizideKg
 54,Growbags:Volumen
 55,Growbags:Laenge
 56,Growbags:PflanzenproBag
@@ -63,7 +62,6 @@
 63,Klipse:Wiederverwendung
 64,Rispenbuegel:AnzahlProTrieb
 65,Rispenbuegel:Wiederverwendung
-66,Bodenabdeckung:Wiederverwendung
 67,Jungpflanzen:Distanz
 68,Verpackungsmaterial:AnzahlMehrwegsteigen
 69,Transport:Distanz
