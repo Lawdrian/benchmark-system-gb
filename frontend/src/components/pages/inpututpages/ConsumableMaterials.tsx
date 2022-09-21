@@ -481,7 +481,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const verpackungsmaterialProps: DynamicInputProps = {
         title: "Verpackungsmaterial",
         label: "Welches Material benutzen Sie für die Verpackung Ihrer Ware?",
-        textFieldProps: { label: "Wiederverwendungsdauer"},
+        textFieldProps: {},
         selectProps: {
             lookupValues: props.lookupValues.Verpackungsmaterial
         },

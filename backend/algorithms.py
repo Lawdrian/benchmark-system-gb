@@ -19,26 +19,33 @@
 import math
 import random
 
-from backend.models import Options
+from backend.models import Options, OptionUnits
+from backend.models import MeasurementUnits
 
 
 def calc_co2_footprint(data):
-
+    all_options = Options.objects.all()
     helping_values = calc_helping_values(data)
 
-
-
     calculation_data = {
-        "gwh_konstruktion": calc_greenhouse_construction_co2(data),
-        "energietraeger": calc_energy_source_co2(data),
-        "strom": calc_electric_power_co2(data),
-        "co2_zudosierung": calc_co2_added(data),
-        "verbrauchsmaterialien": calc_consumables_co2(data),
+        "gwh_konstruktion": calc_greenhouse_construction_co2(data, helping_values, all_options),
+        "energietraeger": calc_energy_source_co2(data, helping_values, all_options),
+        "strom": calc_electric_power_co2(data, helping_values, all_options),
+        "co2_zudosierung": calc_co2_added(data, helping_values, all_options),
+        "pflanzenbehaelter": calc_pflanzenbehaelter_co2(data, helping_values, all_options),
         "psm_insgesamt": calc_psm_co2(data),
-        "duengemittel": calc_fertilizer_co2(data),
-        "jungpflanzen": calc_young_plants_co2(data),
-        "verpackung": calc_packaging_co2(data),
-        "transport": calc_transport_co2(data),
+        "duengemittel": calc_fertilizer_co2(data, helping_values, all_options),
+        "nuetzlinge": calc_nuetzlinge_co2(data, helping_values, all_options),
+        "jungpflanzen_substrat": calc_young_plants_substrate_co2(data, helping_values, all_options),
+        "verpackung": calc_packaging_co2(data, helping_values, all_options),
+        "transport": calc_young_plants_transport_co2(data, helping_values, all_options),
+        "schnuere": calc_cords_co2(data, helping_values, all_options),
+        "klipse": calc_clips_co2(data, helping_values, all_options),
+        "rispenbuegel": calc_panicle_hanger_co2(data, helping_values, all_options),
+        "bewaesserung": calc_irrigation_co2(data, helping_values, all_options),
+        "sonstige_verbrauchsmaterialien": calc_other_consumables_co2(data, helping_values, all_options),
+        "zusaetzlicher_machineneinsatz": calc_additional_machineusage_co2(data, helping_values, all_options),
+
         }
     return calculation_data
 
@@ -160,78 +167,747 @@ def calc_hull_size(data):
     return hull_size
 
 
+def calc_greenhouse_construction_co2(data, helping_values, all_options):
+    # First check which kind of greenhouse is used
+    norm_id = data["GWHArt"][0][0]
+    norm_name = all_options.get(id=norm_id).option_value
+    stehwandmaterial= all_options.get(id=data["Stehwandmaterial"][0][0]).option_value
+    bedachungsmaterial = all_options.get(id=data["Bedachungsmaterial"][0][0]).option_value
+    print(bedachungsmaterial)
+
+    beton = 0
+    stahl = 0
+    aluminium = 0
+    lpde = 0
+    stehwand = 0
+    bedachung = 0
+
+    # GWHart
+    if norm_name == "Venlo" or norm_name == "Deutsche Norm":
+        # Materials
+        if data["GWHAlter"][0] <= 20:
+            if norm_name == "Venlo":
+                beton = helping_values["gh_size"] * 2.52032 * 0.1707 * (helping_values["culture_length_usage"])
+                stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
+                aluminium = helping_values["gh_size"] * 0.125 * 14.365981 * (helping_values["culture_length_usage"])
+            elif norm_name == "Deutsche Norm":
+                beton = helping_values["gh_size"] * 2.52 * 0.1707 * (helping_values["culture_length_usage"])
+                stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
+                aluminium = helping_values["gh_size"] * 0.015 * 14.365981 * (helping_values["culture_length_usage"])
+
+        # Stehwand
+        if stehwandmaterial== "Einfachglas":
+            if data["GWHAlter"][0] <= 15:
+                stehwand = helping_values["hull_size"]["wall"]*0.664*1.1*(helping_values["culture_length_usage"])
+        elif stehwandmaterial== "Doppelglas":
+            if data["GWHAlter"][0] <= 15:
+                stehwand = helping_values["hull_size"]["wall"]*1.328*1.1*(helping_values["culture_length_usage"])
+        elif stehwandmaterial== "Doppelstegplatte":
+            if data["GWHAlter"][0] <= 10:
+                stehwand = helping_values["hull_size"]["wall"]*0.17*1*(helping_values["culture_length_usage"])
+        elif stehwandmaterial== "Dreifachstegplatte":
+            if data["GWHAlter"][0] <= 10:
+                stehwand = helping_values["hull_size"]["wall"]*0.27*1*(helping_values["culture_length_usage"])
+        elif stehwandmaterial== "Einfachfolie":
+            if data["GWHAlter"][0] <= 5:
+                stehwand = helping_values["hull_size"]["wall"]*0.0374*2.78897*(helping_values["culture_length_usage"])
+        elif stehwandmaterial== "Doppelfolie":
+            if data["GWHAlter"][0] <= 5:
+                stehwand = helping_values["hull_size"]["wall"]*0.0748*2.78897*(helping_values["culture_length_usage"])
+        else:
+            raise ValueError('No valid option for Stehwandmaterial has been selected')
+
+        # Bedachung
+        if bedachungsmaterial == "Einfachglas":
+            if data["AlterBedachungsmaterial"][0] <= 15:
+                bedachung = helping_values["hull_size"]["wall"] * 0.664 * 1.1 * (helping_values["culture_length_usage"])
+        elif bedachungsmaterial == "Doppelglas":
+            if data["AlterBedachungsmaterial"][0] <= 15:
+                bedachung = helping_values["hull_size"]["wall"] * 1.328 * 1.1 * (helping_values["culture_length_usage"])
+        elif bedachungsmaterial == "Doppelstegplatte":
+            if data["AlterBedachungsmaterial"][0] <= 10:
+                bedachung = helping_values["hull_size"]["wall"] * 0.17 * 1 * (helping_values["culture_length_usage"])
+        elif bedachungsmaterial == "Dreifachstegplatte":
+            if data["AlterBedachungsmaterial"][0] <= 10:
+                bedachung = helping_values["hull_size"]["wall"] * 0.27 * 1 * (helping_values["culture_length_usage"])
+        elif bedachungsmaterial == "Einfachfolie":
+            if data["AlterBedachungsmaterial"][0] <= 5:
+                bedachung = helping_values["hull_size"]["wall"] * 0.0374 * 2.78897 * (
+                helping_values["culture_length_usage"])
+        elif bedachungsmaterial == "Doppelfolie":
+            if data["AlterBedachungsmaterial"][0] <= 5:
+                bedachung = helping_values["hull_size"]["wall"] * 0.0748 * 2.78897 * (
+                helping_values["culture_length_usage"])
+        else:
+            raise ValueError('No valid option for Bedachungsmaterial has been selected')
+
+    elif norm_name == "Folientunnel":
+        if(bedachungsmaterial == "Einfachfolie"):
+            if data["AlterBedachungsmaterial"][0] <= 5:
+                ldpe = helping_values["hull_size"]["total"] * 0.06 * 2.78897 * (helping_values["culture_length_usage"])
+            if data["GWHAlter"][0] <= 20:
+                stahl = helping_values["gh_size"] * 0.13 * 1.5641297 * (helping_values["culture_length_usage"])
+        else: # Assume Doppelfolie has been selected. If something else has been selected this will be assumed to not cause unneccessary errors.
+            if data["AlterBedachungsmaterial"] <= 5:
+                ldpe = helping_values["hull_size"]["total"] * 0.14 * 2.78897 * (helping_values["culture_length_usage"])
+            if data["AlterBedachungsmaterial"][0] <= 5:
+                stahl = helping_values["gh_size"] * 0.195 * 1.5641297 * (helping_values["culture_length_usage"])
+    else:
+        raise ValueError('No valid option for GWHArt has been selected')
+
+
+    # Energieschirm
+    energieschirmmaterial = all_options.get(id=data["Energieschirm"][0][0]).option_value
+    energieschirm = 0
+
+    if data["AlterEnergieschirm"][0] <= 10:
+        if energieschirmmaterial == "kein":
+            energieschirm = 0  # nothing
+        elif energieschirmmaterial == "einfach":
+            energieschirm = helping_values["gh_size"] * 0.05 * 2.67 * (helping_values["culture_length_usage"])
+        elif energieschirmmaterial == "doppelt":
+            energieschirm = helping_values["gh_size"] * 0.1 * 2.67 * (helping_values["culture_length_usage"])
+        elif energieschirmmaterial == "einfach, aluminisiert":
+            energieschirm = helping_values["gh_size"] * 0.05 * 4.5168 * (helping_values["culture_length_usage"])
+        elif energieschirmmaterial == "doppelt, aluminisiert":
+            energieschirm = helping_values["gh_size"] * 0.1 * 4.5168 * (helping_values["culture_length_usage"])
+        else:
+            raise ValueError('No valid option for Energieschirm has been selected')
+
+    # Bodenabdeckung
+    bodenabdeckung = 0
+    for option in data["Bodenabdeckung"]:
+        bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
+        nutzdauer = option[1]
+        if bodenabdeckungmaterial == "Bodenfolie" and nutzdauer <= 10:
+            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
+        elif bodenabdeckungmaterial == "Bodengewebe" and nutzdauer <= 10:
+            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
+        elif bodenabdeckungmaterial == "Beton" and nutzdauer <= 20:
+            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
+        else:
+            raise ValueError('No valid option for Bodenabdeckung has been selected')
+
+
+    # Kultursystem
+    kultursystemtyp = all_options.get(id=data["Kultursystem"][0][0]).option_value
+    kultursystem = 0
+
+    if data["AlterKultursystem"][0] <= 15:
+        if kultursystemtyp == "Boden":
+            kultursystem = 0  # nothing
+        elif kultursystemtyp == "Hydroponik offen":
+            kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
+        elif energieschirmmaterial == "Hydroponik geschlossen":
+            kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
+        else:
+            raise ValueError('No valid option for Kultursystem has been selected')
+
+    # Transportsystem
+    transportsystemverwendung = all_options.get(id=data["Transportsystem"][0][0]).option_value
+    transportsystem = 0
+
+    if data["AlterTransportsystem"][0] <= 20:
+        if transportsystemverwendung == "nein":
+            transportsystem = 0  # nothing
+        elif transportsystemverwendung == "ja":
+            transportsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+        else:
+            raise ValueError('No valid option for Transportsystem has been selected')
+
+    # Zusaetzliches Heizsystem
+    zusaetzliches_heizsystemmaterial = all_options.get(id=data["ZusaetzlichesHeizsystem"][0][0]).option_value
+    zusaetzliches_heizsystem = 0
+
+    if data["AlterZusaetzlichesHeizsystem"][0] <= 15:
+        if zusaetzliches_heizsystemmaterial == "keines":
+            zusaetzliches_heizsystem = 0  # nothing
+        elif zusaetzliches_heizsystemmaterial == "Vegetationsheizung":
+            zusaetzliches_heizsystem = helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])
+        elif zusaetzliches_heizsystemmaterial == "Konvektionsheizung":
+            zusaetzliches_heizsystem = data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"])
+        elif zusaetzliches_heizsystemmaterial == "beides":
+            zusaetzliches_heizsystem = (helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])) + (data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"]))
+        else:
+            raise ValueError('No valid option for ZusaetzlichesHeizsystem has been selected')
+
+    gesamt_co2 = beton + stahl + aluminium + lpde + stehwand + bedachung + energieschirm + bodenabdeckung + kultursystem + transportsystem + zusaetzliches_heizsystem
+    # print("Gewächhauskonstruktion CO2: +")
+    # print("beton " + str(beton))
+    # print("aluminium " + str(aluminium))
+    # print("lpde " + str(lpde))
+    # print("stehwand " + str(stehwand))
+    # print("bedachung " + str(bedachung))
+    # print("energieschirm " + str(energieschirm))
+    # print("bodenabdeckung " + str(bodenabdeckung))
+    # print("kultursystem " + str(kultursystem))
+    # print("transportsystem " + str(transportsystem))
+    # print("zusaetzliches_heizsystem " + str(zusaetzliches_heizsystem))
+    print("gwh-konstruktion: " + str(gesamt_co2))
+    return gesamt_co2
 
 
 
+def calc_energy_source_co2(data, helping_values, all_options):
+
+    # Energietraeger
+    # They should always have the unit kWh already
+    energietraeger = 0
+    erdgas = 0
+    biogas = 0
+    heizoel = 0
+    steinkohle = 0
+    braunkohle = 0
+    hackschnitzel = 0
+    geothermie = 0
+    tiefengeothermie = 0
+    bhkwerdgas = 0
+    bhkwbiomethan = 0
+    for option in data["Energietraeger"]:
+        # Check if the values have the correct unit
+        if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
+            raise ValueError('Energietraeger value unit has not been converted to kWh!')
+        energietraegertyp = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if energietraegertyp == "Erdgas":
+            erdgas = menge * 0.252
+        elif energietraegertyp == "Biogas":
+            biogas = menge * 0.06785
+        elif energietraegertyp == "Heizoel":
+            heizoel = menge * 0.371
+        elif energietraegertyp == "Steinkohle":
+            steinkohle = menge * 0.285
+        elif energietraegertyp == "Braunkohle":
+            braunkohle = menge * 0.364
+        elif energietraegertyp == "Hackschnitzel":
+            hackschnitzel = menge * 0.025
+        elif energietraegertyp == "Geothermie(oberflaechennah)":
+            geothermie = menge * 0.0348
+        elif energietraegertyp == "Tiefengeothermie":
+            tiefengeothermie = menge * 0.00633
+        else:
+            raise ValueError('No valid option for Energietraeger has been selected')
+
+    # BHKW also counts to Energietraeger
+    bhkwverwendung = all_options.get(id=data["BHKW"][0][0]).option_value
+    if bhkwverwendung == "nein":
+        energietraeger = energietraeger  # nothing
+    elif bhkwverwendung == "ja":
+        bhkw_erdgas = data["BHKW:AnteilErdgas"][0]
+        bhkw_biomethan = data["BHKW:AnteilBiomethan"][0]
+        # Check if the values have the correct unit
+        if MeasurementUnits.objects.get(id=bhkw_erdgas[1]).unit_name != "kWh" or MeasurementUnits.objects.get(bhkw_biomethan[1]).unit_name != "kWh":
+            raise ValueError('BHKW value unit has not been converted to kWh!')
+        else:
+            bhkwerdgas = bhkw_erdgas[0] * 0.252
+            bhkwbiomethan = (bhkw_biomethan[0] * 0.06785)
+    else:
+        raise ValueError('No valid option for BHKW has been selected')
+
+    energietraeger = energietraeger + erdgas + biogas + heizoel + steinkohle + braunkohle + hackschnitzel + geothermie + tiefengeothermie + bhkwerdgas + bhkwbiomethan
+    print("energietraeger: " + str(energietraeger))
+    return energietraeger
 
 
+def calc_electric_power_co2(data, helping_values, all_options):
+    # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
+    # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+    # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+
+    strom_gesamt = 0
+    deutscher_strommix = 0
+    oekostrom = 0
+    photovoltaik = 0
+    windenergie_land = 0
+    windenergie_see = 0
+    wasserkraft = 0
+    tiefengeothermie = 0
+    bhkwerdgas = 0
+    bhkwbiomethan = 0
+    diesel = 0
+    for option in data["Stromherkunft"]:
+        # Check if the values have the correct unit
+        if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
+            raise ValueError('Stromherkunft value unit has not been converted to kWh!')
+        stromtyp = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if stromtyp == "Deutscher Strommix":
+            deutscher_strommix = menge * 0.485
+        elif stromtyp == "Oekostrom (Durschnitt Deutschland)":
+            oekostrom = menge * 0.024293333
+        elif stromtyp == "Photovoltaik":
+            photovoltaik = menge * 0.05571
+        elif stromtyp == "Windenergie (Land)":
+            windenergie_land = menge * 0.0088
+        elif stromtyp == "Windenergie (See)":
+            windenergie_see = menge * 0.00437
+        elif stromtyp == "Wasserkraft":
+            wasserkraft = menge * 0.0027
+        elif stromtyp == "Tiefengeothermie":
+            tiefengeothermie = menge * 0.00633
+        elif stromtyp == "BHKW Biomethan":
+            bhkwerdgas = menge * 0.06785
+        elif stromtyp == "BHKW Erdgas":
+            bhkwbiomethan = menge * 0.252
+        elif stromtyp == "Diesel":
+            diesel = menge * 0.048675561
+        else:
+            raise ValueError('No valid option for Stromherkunft has been selected')
+
+        # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
+        # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+        # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+        for option in data["Energietraeger"]:
+            if all_options.get(id=option[0]).option_value == "Tiefengeothermie":
+                tiefengeothermie = 0
+        if all_options.get(id=data["BHKW"][0][0]).option_value == "ja":
+            bhkwerdgas = 0
+            bhkwbiomethan = 0
+
+        strom_gesamt = deutscher_strommix + oekostrom + photovoltaik + windenergie_land + windenergie_see + wasserkraft + tiefengeothermie + bhkwerdgas + bhkwbiomethan + diesel
+
+        # Take Belichtung into account if it isn't already included in the calculation
+        if all_options.get(id=data["Zusatzbelichtung"][0][0]).option_value == "ja" and all_options.get(id=data["Belichtungsstrom"][0][0]).option_value == "nein":
+            deutscher_strommix = deutscher_strommix + (helping_values["energyconsumption_lighting"] * (deutscher_strommix / strom_gesamt) * 0.485)
+            oekostrom = oekostrom + (helping_values["energyconsumption_lighting"] * (oekostrom / strom_gesamt) * 0.024293333)
+            photovoltaik = photovoltaik + (helping_values["energyconsumption_lighting"] * (photovoltaik / strom_gesamt) * 0.05571)
+            windenergie_land = windenergie_land + (helping_values["energyconsumption_lighting"] * (windenergie_land / strom_gesamt) * 0.0088)
+            windenergie_see = windenergie_see + (helping_values["energyconsumption_lighting"] * (windenergie_see / strom_gesamt) * 0.00437)
+            wasserkraft = wasserkraft + (helping_values["energyconsumption_lighting"] * (wasserkraft / strom_gesamt) * 0.0027)
+            tiefengeothermie = tiefengeothermie + (helping_values["energyconsumption_lighting"] * (tiefengeothermie / strom_gesamt) * 0.00633)
+            bhkwerdgas = bhkwerdgas + (helping_values["energyconsumption_lighting"] * (bhkwerdgas / strom_gesamt) * 0.06785)
+            bhkwbiomethan = bhkwbiomethan + (helping_values["energyconsumption_lighting"] * (bhkwbiomethan / strom_gesamt) * 0.252)
+            diesel = diesel + (helping_values["energyconsumption_lighting"] * (diesel / strom_gesamt) * 0.048675561)
+            strom_gesamt = deutscher_strommix + oekostrom + photovoltaik + windenergie_land + windenergie_see + wasserkraft + tiefengeothermie + bhkwerdgas + bhkwbiomethan + diesel
+
+    print("strom: " + str(strom_gesamt))
+    return strom_gesamt
 
 
+def calc_co2_added(data, helping_values, all_options):
+
+    # CO2-Herkunft
+    co2_zudosierung = 0
+    for option in data["CO2-Herkunft"]:
+        # Check if the values have the correct unit
+        if OptionUnits.objects.get(id=option[2]).unit_name != "kg":
+            raise ValueError('CO2-Herkunft value unit has not been converted to kg!')
+
+        co2_zudosierungtyp = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if co2_zudosierungtyp == "technisches CO2":
+            co2_zudosierung = co2_zudosierung + menge * 0.5
+        elif co2_zudosierungtyp == "direkte Gasverbrennung":
+            co2_zudosierung = co2_zudosierung + menge * 0.252
+        elif co2_zudosierungtyp == "eigenes BHKW":  # There is no need to check, if energietraeger uses bhkw since it has no impact anyways.
+            co2_zudosierung = co2_zudosierung + menge * 0
+        else:
+            raise ValueError('No valid option for CO2-Herkunft has been selected')
 
 
+def calc_fertilizer_co2(data, helping_values, all_options):
+    # CO2-Herkunft
+    duengemittel_einfach = 0
+    for option in data["Duengemittel:VereinfachteAngabe"]:
+        # TODO Korrekte Äquivalente einfügen
+        duengemittel_einfachtyp = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if duengemittel_einfachtyp == "A/B Bag: Standardduengung":
+            duengemittel_einfach = duengemittel_einfach + menge * 1
+        elif duengemittel_einfachtyp == "Vinasse":
+            duengemittel_einfach = duengemittel_einfach + menge * 2
+        elif duengemittel_einfachtyp == "Pferdemist":
+            duengemittel_einfach = duengemittel_einfach + menge * 3
+        elif duengemittel_einfachtyp == "Kompost":
+            duengemittel_einfach = duengemittel_einfach + menge * 4
+        elif duengemittel_einfachtyp == "Hornmehl, -griess, -spaene":
+            duengemittel_einfach = duengemittel_einfach + menge * 5
+        elif duengemittel_einfachtyp == "Blutmehl":
+            duengemittel_einfach = duengemittel_einfach + menge * 6
+        elif duengemittel_einfachtyp == "Mist":
+            duengemittel_einfach = duengemittel_einfach + menge * 7
+        elif duengemittel_einfachtyp == "Gruenduengung":
+            duengemittel_einfach = duengemittel_einfach + menge * 8
+        elif duengemittel_einfachtyp == "Knochenmehl":
+            duengemittel_einfach = duengemittel_einfach + menge * 9
+        elif duengemittel_einfachtyp == "Pflanzkali":
+            duengemittel_einfach = duengemittel_einfach + menge * 10
+        else:
+            raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
 
 
+    duengemittel_detailliert = 0
+    for option in data["Duengemittel:DetaillierteAngabe"]:
+    # TODO Korrekte Äquivalente einfügen
+        duengemittel_detaillierttyp = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if duengemittel_detaillierttyp == "Ammoniumnitrat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 1.94
+        elif duengemittel_detaillierttyp == "Kaliumnitrat (Kalisalpeter)":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 0.677
+        elif duengemittel_detaillierttyp == "Calciumnitrat fluessig (Kalksalpeter)":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
+        elif duengemittel_detaillierttyp == "Calciumnitrat fest":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
+        elif duengemittel_detaillierttyp == "Kaliumcholird, KCL, muriate of potash":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 0.377
+        elif duengemittel_detaillierttyp == "Kaliumsulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 1.13
+        elif duengemittel_detaillierttyp == "Monokaliumphosphat (Flory6)":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 0.729
+        elif duengemittel_detaillierttyp == "Borax":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 1.62
+        elif duengemittel_detaillierttyp == "Eisen DDTPA 3%":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 1
+        elif duengemittel_detaillierttyp == "Eisen EDDHA 6 %":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 2
+        elif duengemittel_detaillierttyp == "25 % Cu Kupfersulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 3
+        elif duengemittel_detaillierttyp == "32 % Mn Mangansulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 4
+        elif duengemittel_detaillierttyp == "Natriummolybdat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 5
+        elif duengemittel_detaillierttyp == "Zinksulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 6
+        elif duengemittel_detaillierttyp == "Chlorbleichlauge":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 7
+        elif duengemittel_detaillierttyp == "Bittersalz":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 8
+        elif duengemittel_detaillierttyp == "Phosphorsaeure 75%":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 9
+        elif duengemittel_detaillierttyp == "Salpetersaeure 65%":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 10
+        elif duengemittel_detaillierttyp == "PflaSalpetersaeure 38%nzkali":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 11
+        elif duengemittel_detaillierttyp == "Kalksalpeter":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 12
+        elif duengemittel_detaillierttyp == "Magnesiumnitrat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 13
+        elif duengemittel_detaillierttyp == "Magnesiumsulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 14
+        elif duengemittel_detaillierttyp == "Kalisilikat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 15
+        elif duengemittel_detaillierttyp == "Mangansulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 16
+        elif duengemittel_detaillierttyp == "Kupfersulfat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 17
+        elif duengemittel_detaillierttyp == "Ammoniummolybdat":
+            duengemittel_detailliert = duengemittel_detailliert + menge * 18
+        else:
+            raise ValueError('No valid option for Duengemittel:DetaillierteAngabe has been selected')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def calc_greenhouse_construction_co2(data):
-    return random.random()
-
-
-def calc_energy_source_co2(data):
-    return random.random()
-
-
-def calc_electric_power_co2(data):
-    
-    return random.random()
-
-
-def calc_co2_added(data):
-    return random.random()
-
-
-def calc_consumables_co2(data):
-    
-    return random.random()
+        print("duengemittel: " + str(duengemittel_detailliert+duengemittel_einfach))
+        return duengemittel_einfach + duengemittel_detailliert
 
 
 def calc_psm_co2(data):
-    
-    return random.random()
+    fungizide = data["FungizideKg"][0] * 11
+    insektizide = data["InsektizideKg"][0] * 11
+
+    return fungizide + insektizide
 
 
-def calc_fertilizer_co2(data):
-    
-    return random.random()
+def calc_nuetzlinge_co2(data, helping_values, all_options):
+    # Nuetzlinge
+    # TODO Korrekte Äquivalente einfügen
+    nuetzlinge_co2 = 0
+    for option in data["Nuetzlinge"]:
+        nuetzlingeart = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if nuetzlingeart == "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 1
+        elif nuetzlingeart == "Macrolophus (oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 2
+        elif nuetzlingeart == "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 3
+        elif nuetzlingeart == "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 4
+        elif nuetzlingeart == "Gallmuecken (Aphidoletes, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 5
+        elif nuetzlingeart == "Florfliegen (Chrysoperla, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 6
+        elif nuetzlingeart == "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 7
+        elif nuetzlingeart == "Hummeln":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 8
+        elif nuetzlingeart == "Andere":
+            nuetzlinge_co2 = nuetzlinge_co2 + menge * 9
+        else:
+            raise ValueError('No valid option for Nuetzlinge has been selected')
+
+        print("nuetzlinge_co2: " + str(nuetzlinge_co2))
+        return nuetzlinge_co2
 
 
-def calc_young_plants_co2(data):
-    return random.random()
+def calc_pflanzenbehaelter_co2(data, helping_values, all_options):
+
+    # Growbags + Kuebel
+    growbagskuebelverwendung = all_options.get(id=data["GrowbagsKuebel"][0][0]).option_value
+    growbags_co2 = 0
+    kuebel_co2 = 0
+    volumen = 0
+    if growbagskuebelverwendung == "Growbags":
+        growbags_co2 = ((helping_values["row_length_total"]*0.2*2+helping_values["row_length_total"]*0.11*2+helping_values["row_length_total"]/1*2*(0.15*0.11))*0.186) * 2.78897
+    elif growbagskuebelverwendung == "Kuebel":
+        if data["Kuebel:Alter"][0] <= 10:
+            kuebel_co2 = ((0.03*data["Kuebel:VolumenProTopf"][0]-0.0214) / (data["Kuebel:JungpflanzenProTopf"][0]*helping_values["plant_count_total"]) / 10) * 2.88
+    elif growbagskuebelverwendung == "nichts":
+        growbags_co2 = 0  # nothing
+    else:
+        raise ValueError('No valid option for GrowbagsKuebel has been selected')
+
+    print("pflanzenbehaelter: " + str(growbags_co2+kuebel_co2))
+    return growbags_co2+kuebel_co2,
 
 
-def calc_packaging_co2(data):
-    return random.random()
+def calc_substrate_co2(data, helping_values, all_options):
+
+    # Substrat
+    substrat_co2 = 0
+    volumen = 0
+    # Asign the correct volume for the selected pflanzenbehaelter
+    # TODO Berechnung nochmal überprüfen !
+    growbagskuebelverwendung = all_options.get(id=data["GrowbagsKuebel"][0][0]).option_value
+    if growbagskuebelverwendung == "Growbags":
+        volumen = data["Growbags:Volumen"][0]
+        if volumen == 0:
+            volumen = helping_values["row_length_total"] * 2 * 0.11 #Alternative way of calculating volume
+    elif growbagskuebelverwendung == "Kuebel":
+        volumen = data["Kuebel:VolumenProTopf"][0]
+        if volumen == 0:
+            volumen = data["Kuebel:VolumenProTopf"]/data["Kuebel:JungpflanzenProTopf"] * helping_values["plant_count_total"] # Alternative way of calculating volume
+
+    for option in data["Substrat"]:
+        substratmaterial = all_options.get(id=option[0]).option_value
+        nutzdauer = option[3]
+
+        if substratmaterial == "Standardsubstrat":
+            substrat_co2 = substrat_co2 + (volumen * 100)/nutzdauer
+        elif substratmaterial == "Kokos":
+            substrat_co2 = substrat_co2 + (volumen * 33.29)/nutzdauer
+        elif substratmaterial == "Steinwolle":
+            substrat_co2 = substrat_co2 + (volumen * 93.01)/nutzdauer
+        elif substratmaterial == "Perlite":
+            substrat_co2 = substrat_co2 + (volumen * 93.37) / nutzdauer
+        elif substratmaterial == "Nachhaltiges Substrat":
+            substrat_co2 = substrat_co2 + (volumen * 16.01) / nutzdauer
+        else:
+            raise ValueError('No valid option for Substrat has been selected')
 
 
-def calc_transport_co2(data):
-    return random.random()
+    print("substrat_co2: " + str(substrat_co2))
+    return substrat_co2
+
+
+def calc_young_plants_substrate_co2(data, helping_values, all_options):
+    jungpflanzen_substratmaterial = all_options.get(id=data["Jungpflanzen:Substrat"][0][0]).option_value
+    jungpflanzenverwendung = all_options.get(id=data["Jungpflanzen:Zukauf"][0][0]).option_value
+    junpflanzen_substrat_co2 = 0
+    volumen = (0.1*0.1*0.1) * helping_values["plant_count_total"]
+    if jungpflanzenverwendung == "nein":
+        return junpflanzen_substrat_co2
+    elif jungpflanzenverwendung == "ja":
+        if jungpflanzen_substratmaterial == "Standardsubstrat":
+            junpflanzen_substrat_co2 = (volumen * 100)
+        elif jungpflanzen_substratmaterial == "Kokos":
+            junpflanzen_substrat_co2 = (volumen * 33.29)
+        elif jungpflanzen_substratmaterial == "Steinwolle":
+            junpflanzen_substrat_co2 = (volumen * 93.01)
+        elif jungpflanzen_substratmaterial == "Perlite":
+            junpflanzen_substrat_co2 = (volumen * 93.37)
+        elif jungpflanzen_substratmaterial == "Nachhaltiges Substrat":
+            junpflanzen_substrat_co2 = (volumen * 16.01)
+        else:
+            raise ValueError('No valid option for Jungpflanzen:Substrat has been selected')
+    else:
+        raise ValueError('No valid option for Jungpflanzen:Zukauf has been selected')
+
+    print("jungpflanzen_substrat_co2: " + str(junpflanzen_substrat_co2))
+    return junpflanzen_substrat_co2
+
+
+def calc_young_plants_transport_co2(data, helping_values, all_options):
+
+    transport_co2 = helping_values["plant_count_total"] / 1056 * 0.5 * data["Transport:Distanz"][0] * 0.112
+
+    print("transport_co2: " + str(transport_co2))
+    return transport_co2
+
+def calc_cords_co2(data, helping_values, all_options):
+
+    schnuerematerial = all_options.get(id=data["SchnuereRankhilfen:Material"][0][0]).option_value
+    schnuere_co2 = 0
+    nutzdauer = data["SchnuereRankhilfen:Wiederverwendung"][0]
+    if schnuerematerial == "Kunststoff":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 1/1000) * 1.73) / nutzdauer
+    elif schnuerematerial == "Jute":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+    elif schnuerematerial == "Sisal":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+    elif schnuerematerial == "Zellulose":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+    elif schnuerematerial == "andere Nachhaltige/abbaubare Option Substrat":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+    elif schnuerematerial == "Bambusstab":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 0.43/0.24) * 1.2) / nutzdauer
+    elif schnuerematerial == "Edelstahl":
+        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 1.2) / nutzdauer  # TODO Edelstahloption hat dummy Äquivalent und Menge
+    else:
+        raise ValueError('No valid option for SchnuereRankhilfen:Material has been selected')
+
+    print("schnuere_co2: " + str(schnuere_co2))
+    return schnuere_co2
+
+
+def calc_clips_co2(data, helping_values, all_options):
+
+    klipseverwendung = all_options.get(id=data["Klipse"][0][0]).option_value
+    klipsematerial = all_options.get(id=data["Klipse:Material"][0][0]).option_value
+    klipse_co2 = 0
+    nutzdauer = data["Klipse:Wiederverwendung"][0]
+    if klipseverwendung == "nein":
+        return klipse_co2
+    if klipseverwendung == "ja":
+        if klipsematerial == "Kunststoff":
+            klipse_co2 = ((helping_values["panicle_hanger_count_total"] * 0.0005) * 1.73) / nutzdauer
+        elif klipsematerial == "Metall":
+            klipse_co2 = ((helping_values["panicle_hanger_count_total"] * 0.0008) * 1.73) / nutzdauer
+        elif klipsematerial == "Nachhaltige / kompostierbare Option":
+            klipse_co2 = ((helping_values["panicle_hanger_count_total"] * 0.0008) * 0.4) / nutzdauer
+        else:
+            raise ValueError('No valid option for Klipse:Material has been selected')
+    else:
+        raise ValueError('No valid option for Klipse has been selected')
+
+    print("klipse_co2: " + str(klipse_co2))
+    return klipse_co2
+
+
+def calc_panicle_hanger_co2(data, helping_values, all_options):
+
+    rispenbuegelverwendung = all_options.get(id=data["Rispenbuegel"][0][0]).option_value
+    rispenbuegelmaterial = all_options.get(id=data["Rispenbuegel:Material"][0][0]).option_value
+    rispenbuegel_co2 = 0
+    nutzdauer = data["Rispenbuegel:Wiederverwendung"][0]
+    if rispenbuegelverwendung == "nein":
+        return rispenbuegel_co2
+    if rispenbuegelverwendung == "ja":
+        if rispenbuegelmaterial == "Kunststoff":
+            rispenbuegel_co2 = ((helping_values["shoots_count_total"] * 0.0008) * 1.73) / nutzdauer
+        elif rispenbuegelmaterial == "Metall":
+            rispenbuegel_co2 = ((helping_values["shoots_count_total"] * 0.001) * 1.73) / nutzdauer
+        elif rispenbuegelmaterial == "Nachhaltige / kompostierbare Option":
+            rispenbuegel_co2 = ((helping_values["shoots_count_total"] * 0.001) * 0.4) / nutzdauer
+        else:
+            raise ValueError('No valid option for Rispenbuegel:Material has been selected')
+    else:
+        raise ValueError('No valid option for Rispenbuegel has been selected')
+
+    print("rispenbuegel_co2: " + str(rispenbuegel_co2))
+    return rispenbuegel_co2
+
+
+def calc_irrigation_co2(data, helping_values, all_options):
+
+    bewaesserungmaterial = all_options.get(id=data["Bewaesserungsart"][0][0]).option_value
+    bewaesserung_co2 = 0
+
+    if bewaesserungmaterial == "Tropfschlaeuche":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 1.36/100) * 2.67) / 10
+    elif bewaesserungmaterial == "Bodenschsprenkler":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4/30) * 2.67) / 15
+    elif bewaesserungmaterial == "Handschlauch":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4/30) * 2.67) / 15
+    else:
+        raise ValueError('No valid option for Bewaesserungsart has been selected')
+
+    print("bewaesserung_co2: " + str(bewaesserung_co2))
+    return bewaesserung_co2
+
+
+def calc_packaging_co2(data, helping_values, all_options):
+    # Verpackungsmaterial
+    verpackung_co2 = 0
+    for option in data["Verpackungsmaterial"]:
+        verpackungmaterial = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        if verpackungmaterial == "Karton":
+            verpackung_co2 = verpackung_co2 + menge * 1.496
+        elif verpackungmaterial == "Plastik":
+            verpackung_co2 = verpackung_co2 + menge * 1.73
+        else:
+            raise ValueError('No valid option for Verpackungsmaterial has been selected')
+
+    # Mehrwegsteigen
+    verpackung_co2 = verpackung_co2 + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
+
+    print("verpackung_co2: " + str(verpackung_co2))
+    return verpackung_co2
+
+
+def calc_other_consumables_co2(data, helping_values, all_options):
+    # Sonstige Verbrauchsmaterialien
+    sonstige_verbrauchsmaterialien_co2 = 0
+    for option in data["SonstigeVerbrauchsmaterialien"]:
+        sonstige_verbrauchsmaterialienmaterial = all_options.get(id=option[0]).option_value
+        menge = option[1]
+        nutzdauer = option[3]
+        if sonstige_verbrauchsmaterialienmaterial == "Folie":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 2.67 / nutzdauer
+        elif sonstige_verbrauchsmaterialienmaterial == "Eisen":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.5641297 / nutzdauer
+        elif sonstige_verbrauchsmaterialienmaterial == "Alluminium":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 14.6 / nutzdauer
+        elif sonstige_verbrauchsmaterialienmaterial == "Kunststoff":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.73 / nutzdauer
+        elif sonstige_verbrauchsmaterialienmaterial == "Holz":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.0044 / nutzdauer
+        elif sonstige_verbrauchsmaterialienmaterial == "Pappe":
+            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.748 / nutzdauer
+        else:
+            raise ValueError('No valid option for SonstigeVerbrauchsmaterialien has been selected')
+
+    print("sonstige_verbrauchsmaterialien_co2: " + str(sonstige_verbrauchsmaterialien_co2))
+    return sonstige_verbrauchsmaterialien_co2
+
+
+def calc_transport_co2(data, helping_values, all_options):
+
+    transport_co2 = 0
+
+    snackVerwendung = all_options.get(id=data["10-30Gramm(Snack)"][0][0]).option_value
+    cocktailVerwendung = all_options.get(id=data["30-100Gramm(Cocktail)"][0][0]).option_value
+    rispenVerwendung = all_options.get(id=data["100-150Gramm(Rispen)"][0][0]).option_value
+    fleischVerwendung = all_options.get(id=data[">150Gramm(Fleisch)"][0][0]).option_value
+    distanz = data["Transport:Distanz"][0]
+
+    if snackVerwendung == "ja":
+        transport_co2 = transport_co2 + data["SnackErtragJahr"][0] * distanz * 0.112
+    if cocktailVerwendung == "ja":
+        transport_co2 = transport_co2 + data["CocktailErtragJahr"][0] * distanz * 0.112
+    if rispenVerwendung == "ja":
+        transport_co2 = transport_co2 + data["RispenErtragJahr"][0] * distanz * 0.112
+    if fleischVerwendung == "ja":
+        transport_co2 = transport_co2 + data["FleischErtragJahr"][0] * distanz * 0.112
+
+    print("transport_co2: " + str(transport_co2))
+    return transport_co2
+
+
+def calc_additional_machineusage_co2(data, helping_values, all_options):
+    # Zusaetzlicher Machineneinsatz
+    zusaetzlicher_maschineneinsatz_co2 = 0
+    for option in data["ZusaetzlicherMaschineneinsatz"]:
+        zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
+        verbrauch = option[1]
+        nutzdauer = option[3]
+        if zusaetzlicher_maschineneinsatzart == "Gabelstapler":
+            zusaetzlicher_maschineneinsatz_co2 = zusaetzlicher_maschineneinsatz_co2 + verbrauch * nutzdauer * 1  # TODO Äquivalent ist dummy value
+        else:
+            raise ValueError('No valid option for ZusaetzlicherMaschineneinsatz has been selected')
+
+    print("zusaetzlicher_maschineneinsatz_co2: " + str(zusaetzlicher_maschineneinsatz_co2))
+    return zusaetzlicher_maschineneinsatz_co2
+
+
+

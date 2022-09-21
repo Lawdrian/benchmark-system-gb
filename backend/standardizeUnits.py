@@ -84,9 +84,6 @@ def standardize_units(data):
 
     # Stromverbrauch/Stromherkunft entweder direkt kWh oder als % angegeben, dann von Gesamtverbrauch Anteil nehmen
     # Gilt für alle Options
-    # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
-    # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-    # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
     for index, selected_option in enumerate(data["Stromherkunft"]):
         selected_option_value = all_options.filter(id=selected_option[0])[0].option_value
         kwh_stromherkunft_id = all_optionunits.filter(option_id=selected_option[0]).filter(unit_name="kWh")[0].id
