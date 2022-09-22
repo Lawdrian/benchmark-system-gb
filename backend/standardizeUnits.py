@@ -62,7 +62,7 @@ def standardize_units(data):
     # calculating the correct value in kWh
     bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilErdgas")[0].id
     kwh_bhkw_erdgas_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
-    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilErdgas"][1])
+    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilErdgas"][1])[0].unit_name
 
     if(selected_unit_name != "kWh"):
         # change value and unit from m3 to kWh
@@ -75,12 +75,13 @@ def standardize_units(data):
     # calculating the correct value in kWh
     bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilBiomethan")[0].id
     kwh_bhkw_biomethan_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
-    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilBiomethan"][1])
-
+    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilBiomethan"][1])[0].unit_name
     if (selected_unit_name != "kWh"):
         # change value and unit from m3 to kWh
         new_value = data["BHKW:AnteilBiomethan"][0] * 10.4 / 1.1268
+        print(data["BHKW:AnteilBiomethan"])
         data["BHKW:AnteilBiomethan"] = (new_value, kwh_bhkw_biomethan_id)
+    print(data["BHKW:AnteilBiomethan"])
 
     # Stromverbrauch/Stromherkunft entweder direkt kWh oder als % angegeben, dann von Gesamtverbrauch Anteil nehmen
     # Gilt für alle Options

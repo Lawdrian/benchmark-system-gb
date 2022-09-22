@@ -25,7 +25,7 @@ from backend.models import MeasurementUnits
 
 def calc_co2_footprint(data):
     all_options = Options.objects.all()
-    helping_values = calc_helping_values(data)
+    helping_values = calc_helping_values(data, all_options)
 
     calculation_data = {
         "gwh_konstruktion": calc_greenhouse_construction_co2(data, helping_values, all_options),
@@ -36,6 +36,7 @@ def calc_co2_footprint(data):
         "psm_insgesamt": calc_psm_co2(data),
         "duengemittel": calc_fertilizer_co2(data, helping_values, all_options),
         "nuetzlinge": calc_nuetzlinge_co2(data, helping_values, all_options),
+        "substrat": calc_substrate_co2(data, helping_values, all_options),
         "jungpflanzen_substrat": calc_young_plants_substrate_co2(data, helping_values, all_options),
         "verpackung": calc_packaging_co2(data, helping_values, all_options),
         "transport": calc_young_plants_transport_co2(data, helping_values, all_options),
@@ -49,7 +50,7 @@ def calc_co2_footprint(data):
         }
     return calculation_data
 
-def calc_helping_values(data):
+def calc_helping_values(data, all_options):
     """This function calculates various helping values needed for calculating the co2-footprint
             Args:
                 data : greenhousedata
@@ -72,10 +73,23 @@ def calc_helping_values(data):
     row_length = data["Laenge"][0]-data["Vorwegbreite"][0]
     row_length_total = row_length*row_count
     walk_length_total = row_count-1*row_length
+
+    # Calculate the amount of fruits
+    snack_count = 0
+    cocktail_count = 0
+    rispen_count = 0
+    fleisch_count = 0
+
     snack_count = data["SnackReihenanzahl"][0]*row_length/data["SnackPflanzenabstandInDerReihe"][0]
-    cocktail_count = data["CocktailReihenanzahl"][0]*row_length/data["CocktailPflanzenabstandInDerReihe"][0]
-    rispen_count = data["RispenReihenanzahl"][0]*row_length/data["RispenPflanzenabstandInDerReihe"][0]
-    fleisch_count = data["FleischReihenanzahl"][0]*row_length/data["FleischPflanzenabstandInDerReihe"][0]
+    if all_options.get(id=data["10-30Gramm(Snack)"][0][0]).option_value == "ja":
+        snack_count = data["SnackReihenanzahl"][0] * row_length / data["SnackPflanzenabstandInDerReihe"][0]
+    if all_options.get(id=data["30-100Gramm(Cocktail)"][0][0]).option_value == "ja":
+        cocktail_count = data["CocktailReihenanzahl"][0] * row_length / data["CocktailPflanzenabstandInDerReihe"][0]
+    if all_options.get(id=data["100-150Gramm(Rispen)"][0][0]).option_value == "ja":
+        rispen_count = data["RispenReihenanzahl"][0] * row_length / data["RispenPflanzenabstandInDerReihe"][0]
+    if all_options.get(id=data[">150Gramm(Fleisch)"][0][0]).option_value == "ja":
+        fleisch_count = data["FleischReihenanzahl"][0]*row_length/data["FleischPflanzenabstandInDerReihe"][0]
+
     plant_count_total = snack_count+cocktail_count+rispen_count+fleisch_count
     #
     snack_shoots_count = snack_count*data["SnackTriebzahl"][0]
@@ -147,7 +161,7 @@ def calc_hull_size(data):
     print(norm_id)
     print(norm_name)
     if(norm_name=="Venlo"):
-        hull_size_wall = data["Laenge"][0]+data["Breite"][0]*2*data["Stehwandhoehe"][0]+((((data["Scheibenlaenge"]^2-(data["Kappenbreite"][0]/2)^2)*data["Kappenbreite"][0])/2)*(data["Breite"][0]/data["Kappenbreite"][0]))
+        hull_size_wall = data["Laenge"][0]+data["Breite"][0]*2*data["Stehwandhoehe"][0]+((((data["Scheibenlaenge"][0]**2 - (data["Kappenbreite"][0]/2)**2)*data["Kappenbreite"][0])/2)*(data["Breite"][0]/data["Kappenbreite"][0]))
         hull_size_roof = data["Scheibenlaenge"][0]*data["Laenge"][0]*(data["Breite"][0]/data["Kappenbreite"][0]*2)
         hull_size_total = hull_size_wall+hull_size_roof
     elif(norm_name=="Deutsche Norm"):
@@ -279,12 +293,15 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
     for option in data["Bodenabdeckung"]:
         bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
         nutzdauer = option[1]
-        if bodenabdeckungmaterial == "Bodenfolie" and nutzdauer <= 10:
-            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
-        elif bodenabdeckungmaterial == "Bodengewebe" and nutzdauer <= 10:
-            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
-        elif bodenabdeckungmaterial == "Beton" and nutzdauer <= 20:
-            bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
+        if bodenabdeckungmaterial == "Bodenfolie":
+            if nutzdauer <= 10:
+                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
+        elif bodenabdeckungmaterial == "Bodengewebe":
+            if nutzdauer <= 10:
+                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
+        elif bodenabdeckungmaterial == "Beton":
+            if nutzdauer <= 20:
+                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
         else:
             raise ValueError('No valid option for Bodenabdeckung has been selected')
 
@@ -292,13 +309,12 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
     # Kultursystem
     kultursystemtyp = all_options.get(id=data["Kultursystem"][0][0]).option_value
     kultursystem = 0
-
     if data["AlterKultursystem"][0] <= 15:
         if kultursystemtyp == "Boden":
             kultursystem = 0  # nothing
         elif kultursystemtyp == "Hydroponik offen":
             kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
-        elif energieschirmmaterial == "Hydroponik geschlossen":
+        elif kultursystemtyp == "Hydroponik geschlossen":
             kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
         else:
             raise ValueError('No valid option for Kultursystem has been selected')
@@ -364,6 +380,8 @@ def calc_energy_source_co2(data, helping_values, all_options):
     bhkwerdgas = 0
     bhkwbiomethan = 0
     for option in data["Energietraeger"]:
+        print("Energietraeger")
+        print(option)
         # Check if the values have the correct unit
         if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
             raise ValueError('Energietraeger value unit has not been converted to kWh!')
@@ -393,14 +411,14 @@ def calc_energy_source_co2(data, helping_values, all_options):
     if bhkwverwendung == "nein":
         energietraeger = energietraeger  # nothing
     elif bhkwverwendung == "ja":
-        bhkw_erdgas = data["BHKW:AnteilErdgas"][0]
-        bhkw_biomethan = data["BHKW:AnteilBiomethan"][0]
+        bhkw_erdgas = data["BHKW:AnteilErdgas"]
+        bhkw_biomethan = data["BHKW:AnteilBiomethan"]
         # Check if the values have the correct unit
-        if MeasurementUnits.objects.get(id=bhkw_erdgas[1]).unit_name != "kWh" or MeasurementUnits.objects.get(bhkw_biomethan[1]).unit_name != "kWh":
+        if MeasurementUnits.objects.get(id=bhkw_erdgas[1]).unit_name != "kWh" or MeasurementUnits.objects.get(id=bhkw_biomethan[1]).unit_name != "kWh":
             raise ValueError('BHKW value unit has not been converted to kWh!')
         else:
             bhkwerdgas = bhkw_erdgas[0] * 0.252
-            bhkwbiomethan = (bhkw_biomethan[0] * 0.06785)
+            bhkwbiomethan = bhkw_biomethan[0] * 0.06785
     else:
         raise ValueError('No valid option for BHKW has been selected')
 
@@ -504,6 +522,9 @@ def calc_co2_added(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for CO2-Herkunft has been selected')
 
+    print("co2_zudosierung: " + str(co2_zudosierung))
+    return co2_zudosierung
+
 
 def calc_fertilizer_co2(data, helping_values, all_options):
     # CO2-Herkunft
@@ -532,6 +553,8 @@ def calc_fertilizer_co2(data, helping_values, all_options):
             duengemittel_einfach = duengemittel_einfach + menge * 9
         elif duengemittel_einfachtyp == "Pflanzkali":
             duengemittel_einfach = duengemittel_einfach + menge * 10
+        elif duengemittel_einfachtyp == "org. Vollduenger":
+            duengemittel_einfach = duengemittel_einfach + menge * 11
         else:
             raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
 
@@ -604,6 +627,7 @@ def calc_psm_co2(data):
     fungizide = data["FungizideKg"][0] * 11
     insektizide = data["InsektizideKg"][0] * 11
 
+    print("psm: " + str(fungizide+insektizide))
     return fungizide + insektizide
 
 
@@ -678,6 +702,7 @@ def calc_substrate_co2(data, helping_values, all_options):
             volumen = data["Kuebel:VolumenProTopf"]/data["Kuebel:JungpflanzenProTopf"] * helping_values["plant_count_total"] # Alternative way of calculating volume
 
     for option in data["Substrat"]:
+        print(option)
         substratmaterial = all_options.get(id=option[0]).option_value
         nutzdauer = option[3]
 

@@ -423,13 +423,13 @@ class CreateGreenhouseData(APIView):
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
-                greenhouse_name=serializer.data.get('greenhouse_name')
+                greenhouse_name=processed_data.get('greenhouse_name')
             )
             if len(greenhouse) == 0:
                 # Generate a new greenhouse:
                 greenhouse = Greenhouses(
                     user_id=user_id,
-                    greenhouse_name=serializer.data.get('greenhouse_name')
+                    greenhouse_name=processed_data.get('greenhouse_name')
                 )
                 greenhouse.save()
             else:
@@ -449,7 +449,7 @@ class CreateGreenhouseData(APIView):
             options = OptionGroups.objects.in_bulk(
                 field_name='option_group_name')
 
-            for name, value in serializer.data.items():
+            for name, value in processed_data.items():
                 if name in measurements:
                     # metric (continuous) data (=> numbers)
                     Measures(
@@ -480,7 +480,7 @@ class CreateGreenhouseData(APIView):
                             value2=value2
                         ).save()
 
-            calculation_result = algorithms.calc_co2_footprint(serializer.data)
+            calculation_result = algorithms.calc_co2_footprint(processed_data)
             calculation_variables = Calculations.objects.in_bulk(
                 field_name='calculation_name')
             for variable, value in calculation_result.items():
