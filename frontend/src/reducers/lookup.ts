@@ -121,17 +121,12 @@ export type UnitValues = {
         "BHKW:Menge": Option[]
         "BHKW:AnteilErdgas": Option[]
         "BHKW:AnteilBiomethan": Option[]
-        GWHStromverbrauch: Option[]
-        BetriebStromverbrauch: Option[]
         "Belichtung:Stromverbrauch": Option[]
         "Belichtung:AnzahlLampen": Option[]
         "Belichtung:AnschlussleistungProLampe": Option[]
         "Belichtung:LaufzeitProJahr": Option[]
         FungizideKg: Option[]
         InsektizideKg: Option[]
-        "Growbags:Volumen": Option[]
-        "Growbags:Laenge": Option[]
-        "Growbags:PflanzenproBag": Option[]
         "Kuebel:VolumenProTopf": Option[]
         "Kuebel:JungpflanzenProTopf": Option[]
         "Kuebel:Alter": Option[]
@@ -505,17 +500,12 @@ const initialState: LookupState = {
             "BHKW:Menge": [],
             "BHKW:AnteilErdgas": [],
             "BHKW:AnteilBiomethan": [],
-            GWHStromverbrauch: [],
-            BetriebStromverbrauch: [],
             "Belichtung:Stromverbrauch": [],
             "Belichtung:AnzahlLampen": [],
             "Belichtung:AnschlussleistungProLampe": [],
             "Belichtung:LaufzeitProJahr": [],
             FungizideKg: [],
             InsektizideKg: [],
-            "Growbags:Volumen": [],
-            "Growbags:Laenge": [],
-            "Growbags:PflanzenproBag": [],
             "Kuebel:VolumenProTopf": [],
             "Kuebel:JungpflanzenProTopf": [],
             "Kuebel:Alter": [],

@@ -245,17 +245,12 @@ export type GreenhouseData = {
     Luftfeuchte: string
     "BHKW:AnteilErdgas": string
     "BHKW:AnteilBiomethan": string
-    GWHStromverbrauch: string
-    BetriebStromverbrauch: string
     "Belichtung:Stromverbrauch": string
     "Belichtung:AnzahlLampen": string
     "Belichtung:AnschlussleistungProLampe": string
     "Belichtung:LaufzeitProJahr": string
     FungizideKg: string
     InsektizideKg: string
-    "Growbags:Volumen": string
-    "Growbags:Laenge": string
-    "Growbags:PflanzenproBag": string
     "Kuebel:VolumenProTopf": string
     "Kuebel:JungpflanzenProTopf": string
     "Kuebel:Alter": string

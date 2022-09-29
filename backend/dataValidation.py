@@ -46,11 +46,11 @@ def validate_greenhouse_data(data):
         9: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
         10: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
         11: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
-        12: ("GrowbagsKuebel", "GROWBAGS", ["Growbags:Volumen", "Growbags:Laenge", "Growbags:PflanzenproBag"], ["Substrat"]),
+        12: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
         13: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
         14: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
-        15: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], []),
-        16: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], [])
+        15: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
+        16: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
     }
 
     for key, values in eventually_optional_fields.items():

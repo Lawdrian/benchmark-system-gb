@@ -38,9 +38,6 @@ type ConsumableMaterialsProps = ReduxProps & SubpageProps & {
 
 export type ConsumableMaterialsState = {
     growbagsKuebel: number | null
-    growbagsVolumen: MeasureValue | null
-    growbagsLaenge: MeasureValue | null
-    growbagsPflanzenAnz: MeasureValue | null
     growbagsKuebelSubstrat: SelectionValue[]
     kuebelVolumenProTopf: MeasureValue | null
     kuebelJungpflanzenProTopf: MeasureValue | null
@@ -81,60 +78,10 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     // Properties of the input fields
-
-
-
-    const growbagsVolumenProps: MeasureUnitInputProps = {
-        title: "Growbags Volumen",
-        label: "Welches Volumen haben die verwendeten Bags? Sie können entweder direkt das Volumen angeben, die Länge oder die Pflanzen pro Bag?",
-        textFieldProps: {
-            value: consumableMaterials.growbagsVolumen?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsVolumen: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsVolumen?.unit??null}
-            })
-        },
-        selectProps: {
-            value: consumableMaterials.growbagsVolumen?.unit,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsVolumen: {value:consumableMaterials.growbagsVolumen?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures["Growbags:Volumen"]
-        }
-    }
-
-    const growbagsLaengeProps: MeasureInputProps = {
-        title: "Growbags Länge",
-        label: "Wie lang sind die Growbags, die Sie verwenden?",
-        unitName: props.unitValues.measures["Growbags:Laenge"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.growbagsLaenge?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsLaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:Laenge"][0].id}
-            })
-        }
-    }
-
-    const growbagsPflanzenAnzProps: MeasureInputProps = {
-        title: "Pflanzen pro Growbag",
-        label: "Wie viele Pflanzen verwenden Sie in einem Growbag?",
-        unitName: props.unitValues.measures["Growbags:PflanzenproBag"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.growbagsPflanzenAnz?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:PflanzenproBag"][0].id}
-            })
-        }
-    }
-
     const growbagsKuebelSubstratProps: DynamicInputProps = {
         title: "Substrat",
-        label: "Welches Substrat und zu welchem Anteil wird verwendet?",
-        textFieldProps: {},
-        textField2Props: {label: "Wiederverwendung", placeholder:"Jahre"},
+        label: "Welches Substrat und wie lange wird es verwendet?",
+        textFieldProps: {label:"Wiederverwendung"},
         selectProps: {
             lookupValues: props.lookupValues.Substrat
         },
@@ -214,18 +161,9 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         firstChildren: (
-            <>
-                <Grid item container xs={12} spacing={4}>
-                    <MeasureUnitInputField {...growbagsVolumenProps} />
-                    <MeasureInputField {...growbagsLaengeProps}/>
-                </Grid>
-                <Grid item container xs={12} spacing={4}>
-                    <MeasureInputField {...growbagsPflanzenAnzProps} />
-                </Grid>
                 <Grid item container xs={12} spacing={4}>
                     <DynamicInputField {...growbagsKuebelSubstratProps}/>
                 </Grid>
-            </>
         ),
         secondChildren: (
             <>

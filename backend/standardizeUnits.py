@@ -83,24 +83,6 @@ def standardize_units(data):
         data["BHKW:AnteilBiomethan"] = (new_value, kwh_bhkw_biomethan_id)
     print(data["BHKW:AnteilBiomethan"])
 
-    # Stromverbrauch/Stromherkunft entweder direkt kWh oder als % angegeben, dann von Gesamtverbrauch Anteil nehmen
-    # Gilt für alle Options
-    for index, selected_option in enumerate(data["Stromherkunft"]):
-        selected_option_value = all_options.filter(id=selected_option[0])[0].option_value
-        kwh_stromherkunft_id = all_optionunits.filter(option_id=selected_option[0]).filter(unit_name="kWh")[0].id
-        selected_optionunit_name = all_optionunits.filter(id=selected_option[2])[0].unit_name
-
-        # calculating the correct value in kWh
-        if(selected_optionunit_name !="kWh"):
-            new_value = ()
-            if (selected_optionunit_name == "%"):
-                new_value = data["Stromherkunft"][index][1]*data["GWHStromverbrauch"][0]
-
-                values_list = list(data["Stromherkunft"][index])
-                values_list[1] = round(new_value, 2)
-                values_list[2] = kwh_stromherkunft_id
-                data["Stromherkunft"][index] = tuple(values_list)
-
     # Co2-Zudosierung ist in kg gewollt
     #technisches CO2: m3*(0,00196*1000) = kg
     #direkte Gasverbrennung: m3*(0,00196*1000) = kg

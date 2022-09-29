@@ -34,8 +34,6 @@ export type EnergyConsumptionState = {
     bhkw: number | null
     bhkwAnteilErdgas: MeasureValue | null
     bhkwAnteilBiomethan: MeasureValue | null
-    gwhStromverbrauch: MeasureValue | null
-    betriebStromverbrauch: MeasureValue | null
     stromherkunft: SelectionValue[]
     zusatzbelichtung: number | null
     belichtungsstrom: number | null
@@ -133,32 +131,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                 bhkwAnteilBiomethan: {value:energyConsumption.bhkwAnteilBiomethan?.value?? null ,unit:parseFloat(event.target.value)}
             }),
             lookupValues: props.unitValues.measures["BHKW:AnteilBiomethan"]
-        }
-    }
-
-    const gwhStromverbrauchProps: MeasureInputProps = {
-        title: "Stromverbrauch Gewächshaus",
-        label: "Stromverbrauch für die Kulturfläch",
-        unitName: props.unitValues.measures.GWHStromverbrauch[0]?.values,
-        textFieldProps: {
-            value: energyConsumption.gwhStromverbrauch?.value,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                gwhStromverbrauch: {value:parseFloat(event.target.value),unit:props.unitValues.measures.GWHStromverbrauch[0].id}
-            })
-        }
-    }
-
-    const betriebStromverbrauchProps: MeasureInputProps = {
-        title: "Stromverbrauch Betrieb",
-        label: "Stromverbrauch für den gesamten Betrieb",
-        unitName: props.unitValues.measures.BetriebStromverbrauch[0]?.values,
-        textFieldProps: {
-            value: energyConsumption.betriebStromverbrauch?.value,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                betriebStromverbrauch: {value:parseFloat(event.target.value),unit:props.unitValues.measures.BetriebStromverbrauch[0].id}
-            })
         }
     }
 
@@ -323,10 +295,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                 </SingleShowConditionalRadioInputField>
             </Grid>
             <SectionDivider title="Stromverbrauch"/>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...gwhStromverbrauchProps}/>
-                <MeasureInputField {...betriebStromverbrauchProps}/>
-            </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...stromherkunftProps}/>
             </Grid>

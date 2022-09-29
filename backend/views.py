@@ -50,7 +50,8 @@ class GetGreenhouseData(APIView):
         # Retrieve all measurement_ids and measurement_names
         measurements = Measurements.objects.all()
         measurement_ids = [measurements.values('id')[i]['id'] for i in range(len(measurements))]
-        measurement_names = [measurements.values('measurement_name')[i]['measurement_name'] for i in range(len(measurements))]
+        measurement_names = [measurements.values('measurement_name')[i]['measurement_name'] for i in
+                             range(len(measurements))]
 
         # Retrieve all option groups
         option_groups = OptionGroups.objects.all()
@@ -91,7 +92,6 @@ class GetGreenhouseData(APIView):
                 # Retrieve all measures for a specific dataset and save them into the temp_data_dict under the key
                 # 'measures'
                 for i, measurement_id in enumerate(measurement_ids):
-
                     # Retrieve the measure value for a specific measurement
                     value = Measures.objects \
                         .filter(greenhouse_data_id=data_set.id,
@@ -117,7 +117,7 @@ class GetGreenhouseData(APIView):
                             temp_option_dict = dict()
 
                             # Retrieve the selection for the current option
-                            selection = Selections.objects\
+                            selection = Selections.objects \
                                 .filter(greenhouse_data_id=data_set.id,
                                         option_id=option.id)
 
@@ -186,7 +186,25 @@ class GetCalculatedGreenhouseData(APIView):
         # map the requested datatype to the correct calculation_names in the calculations table
         map_data_type = {
             'co2FootprintData': (
-                'gwh_konstruktion', 'energietraeger', 'strom', 'co2_zudosierung', 'duengemittel', 'psm_insgesamt', 'verbrauchsmaterialien', 'jungpflanzen', 'verpackung', 'transport'),
+                "gwh_konstruktion_co2",
+                "energietraeger_co2",
+                "strom_co2",
+                "co2_zudosierung_co2",
+                "duengemittel_co2",
+                "psm_co2",
+                "nuetzlinge_co2",
+                "pflanzenbehaelter_co2",
+                "substrat_co2",
+                "jungpflanzen_substrat_co2",
+                "jungpflanzen_transport_co2",
+                "schnuere_co2",
+                "klipse_co2",
+                "rispenbuegel_co2",
+                "bewaesserung_co2",
+                "verpackung_co2",
+                "sonstige_verbrauchsmaterialien_co2",
+                "transport_co2",
+                "zusaetzlicher_machineneinsatz_co2"),
             'waterUsageData': 'water_usage',
             'benchmarkData': 'benchmark'
         }
@@ -414,7 +432,6 @@ class CreateGreenhouseData(APIView):
                 return Response({'Bad Request': 'Not all fields have been filled out!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-
             print("Data")
             print(serializer.data["GWHFlaeche"][0])
             print(serializer.data["Energietraeger"])
@@ -441,6 +458,17 @@ class CreateGreenhouseData(APIView):
                 date=serializer.data.get('date')
             )
             greenhouse_data.save()
+
+            # calculate co2 footprint
+            calculation_result = algorithms.calc_co2_footprint(processed_data)
+            calculation_variables = Calculations.objects.in_bulk(
+                field_name='calculation_name')
+            for variable, value in calculation_result.items():
+                Results(
+                    greenhouse_data=greenhouse_data,
+                    result_value=value,
+                    calculation_id=calculation_variables[variable].id,
+                ).save()
 
             # retrieve 'Measurements' table as dict to map measurement_name to
             # measurement_id
@@ -480,15 +508,6 @@ class CreateGreenhouseData(APIView):
                             value2=value2
                         ).save()
 
-            calculation_result = algorithms.calc_co2_footprint(processed_data)
-            calculation_variables = Calculations.objects.in_bulk(
-                field_name='calculation_name')
-            for variable, value in calculation_result.items():
-                Results(
-                    greenhouse_data=greenhouse_data,
-                    result_value=value,
-                    calculation_id=calculation_variables[variable].id,
-                ).save()
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)

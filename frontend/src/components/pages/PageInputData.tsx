@@ -193,17 +193,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Luftfeuchte: formatMeasureValue(cultureManagement?.luftfeuchte) ?? defaultValue,
         "BHKW:AnteilErdgas": formatMeasureValue(energyConsumption?.bhkwAnteilErdgas) ?? defaultValue,
         "BHKW:AnteilBiomethan": formatMeasureValue(energyConsumption?.bhkwAnteilBiomethan) ?? defaultValue,
-        GWHStromverbrauch: formatMeasureValue(energyConsumption?.gwhStromverbrauch) ?? defaultValue,
-        BetriebStromverbrauch: formatMeasureValue(energyConsumption?.betriebStromverbrauch) ?? defaultValue,
         "Belichtung:Stromverbrauch": formatMeasureValue(energyConsumption?.belichtungsstromStromverbrauch) ?? defaultValue,
         "Belichtung:AnzahlLampen": formatMeasureValue(energyConsumption?.belichtungsstromAnzLampen) ?? defaultValue,
         "Belichtung:AnschlussleistungProLampe": formatMeasureValue(energyConsumption?.belichtungsstromAnschlussleistung) ?? defaultValue,
         "Belichtung:LaufzeitProJahr": formatMeasureValue(energyConsumption?.belichtungsstromLaufzeitJahr) ?? defaultValue,
         FungizideKg: formatMeasureValue({value: (consumableItems?.fungizideKg?.value??0)+100*(consumableItems.fungizideLiter?.value??0), unit: consumableItems?.fungizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
         InsektizideKg: formatMeasureValue({value: (consumableItems?.insektizideKg?.value??0)+100*(consumableItems.insektizideLiter?.value??0), unit: consumableItems?.insektizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
-        "Growbags:Volumen": formatMeasureValue(consumableMaterials?.growbagsVolumen) ?? defaultValue,
-        "Growbags:Laenge": formatMeasureValue(consumableMaterials?.growbagsLaenge) ?? defaultValue,
-        "Growbags:PflanzenproBag": formatMeasureValue(consumableMaterials?.growbagsPflanzenAnz) ?? defaultValue,
         "Kuebel:VolumenProTopf": formatMeasureValue(consumableMaterials?.kuebelVolumenProTopf) ?? defaultValue,
         "Kuebel:JungpflanzenProTopf": formatMeasureValue(consumableMaterials?.kuebelJungpflanzenProTopf) ?? defaultValue,
         "Kuebel:Alter": consumableMaterials?.kuebelAlter ? calcAge(consumableMaterials?.kuebelAlter.value) : defaultValue,
@@ -244,9 +239,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Substrat: consumableMaterials?.growbagsKuebelSubstrat && consumableMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsKuebelSubstrat) : defaultOption,
         "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : "[]",
         Klipse:consumableMaterials?.klipse ? formatOptionValues(consumableMaterials.klipse) : "[]",
-        "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : "[]",
         Rispenbuegel:consumableMaterials?.rispenbuegel ? formatOptionValues(consumableMaterials.rispenbuegel) : "[]",
-        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : "[]",
         Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues(consumableMaterials.bewaesserArt) : "[]",
         Bodenabdeckung: consumableMaterials?.bodenabdeckung ? formatOptionValues(consumableMaterials.bodenabdeckung) : "[]",
         "Jungpflanzen:Zukauf": consumableMaterials?.jungpflanzenZukauf ? formatOptionValues(consumableMaterials.jungpflanzenZukauf) : "[]",
@@ -256,7 +249,9 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         // so that the other fields will trigger an error in the frontend validation if they are not filled out:
         "Jungpflanzen:Substrat": consumableMaterials?.jungpflanzenSubstrat ? formatOptionValues(consumableMaterials.jungpflanzenSubstrat) : defaultOption,
         ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
-        BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption
+        BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption,
+        "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : defaultOption,
+        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : defaultOption
     }
     console.log("SubmissionData:")
     console.log(submissionData)
@@ -342,8 +337,6 @@ const PageInputData = (props: InputDataProps) => {
             bhkw: null,
             bhkwAnteilErdgas: {value: null, unit: null},
             bhkwAnteilBiomethan: {value: null, unit: null},
-            gwhStromverbrauch: {value: null, unit: null},
-            betriebStromverbrauch: {value: null, unit: null},
             stromherkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             zusatzbelichtung: null,
             belichtungsstrom: null,
@@ -365,9 +358,6 @@ const PageInputData = (props: InputDataProps) => {
         },
         consumableMaterials: {
             growbagsKuebel: null,
-            growbagsVolumen: {value: null, unit: null},
-            growbagsLaenge: {value: null, unit: null},
-            growbagsPflanzenAnz: {value: null, unit: null},
             growbagsKuebelSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
             kuebelVolumenProTopf: {value: null, unit: null},
             kuebelJungpflanzenProTopf: {value: null, unit: null},
