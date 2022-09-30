@@ -1,10 +1,25 @@
-1,gwh_konstruktion,jahre
-2,energietraeger,kwh
-3,strom,kwh
-4,co2_zudosierung,m3
-5,verbrauchsmaterialien,kg
-6,psm_insgesamt,kg
-7,duengemittel,kg
-8,jungpflanzen,kg
-9,verpackung,kg
-10,transport,kg
+1,konstruktion_co2,kg co2
+2,energieschirm_co2,kg co2
+3,bodenabdeckung_co2,kg co2
+4,kultursystem_co2,kg co2
+5,transportsystem_co2,kg co2
+6,zusaetzliches_heizsystem_co2,kg co2
+7,energietraeger_co2,kg co2
+8,strom_co2,kg co2
+9,co2_zudosierung_co2,kg co2
+10,duengemittel_co2,kg co2
+11,psm_co2,kg co2
+12,nuetzlinge_co2,kg co2
+13,pflanzenbehaelter_co2,kg co2
+14,substrat_co2,kg co2
+15,jungpflanzen_substrat_co2,kg co2
+16,jungpflanzen_transport_co2,kg co2
+17,schnuere_co2,kg co2
+18,klipse_co2,kg co2
+19,rispenbuegel_co2,kg co2
+20,bewaesserung_co2,kg co2
+21,verpackung_co2,kg co2
+22,sonstige_verbrauchsmaterialien_co2,kg co2
+23,transport_co2,kg co2
+24,zusaetzlicher_machineneinsatz_co2,kg co2
+25,co2_footprint,kg co2

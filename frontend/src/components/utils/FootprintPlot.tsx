@@ -41,30 +41,44 @@ export default function footprintPlot(title: string, unit: string, data: Footpri
             },
             tooltip: {
                 callbacks: {
+                    beforeLabel: function (context: TooltipItem<'bar'>) {
+
+                        return context.dataset.label || ""
+
+                    },
                     label: function (context: TooltipItem<'bar'>) {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                            label += ': '
-                        }
+                        let label =  " "
+
                         if (context.parsed.y !== null) {
-                            label += context.parsed.y + ' ' + unit;
+                            label += Math.round(context.parsed.y) + ' ' + unit + " CO2-Äq.";
                         }
                         return label;
+                    },
+                    afterBody: function (context: TooltipItem<'bar'>[]) {
+                        let body = ""
+                        let j = context[0].dataIndex;
+
+                        // @ts-ignore
+                        if (context[0].dataset.splitData[j]) {
+                            const total_co2 = data.datasets.map(dataset => dataset.data[j])
+                                .reduce((partialSum, a) =>  partialSum + a, 0)
+                            body += "\n" + "𝐀𝐧𝐭𝐞𝐢𝐥 𝐚𝐦 𝐅𝐮ß𝐚𝐛𝐝𝐫𝐮𝐜𝐤: " + (context[0].dataset.data[j]/total_co2*100).toFixed(0) + "%\n"
+                            // @ts-ignore
+                            body += "\n" +"𝐙𝐮𝐬𝐚𝐦𝐦𝐞𝐧𝐬𝐞𝐭𝐳𝐮𝐧𝐠: \n" + context[0].dataset.splitData[j].map( singleData =>
+                            { return singleData.name + ": " + (singleData.value/context[0].dataset.data[j]*100).toFixed(2) + "%\n"})
+                        }
+                        body = body.replaceAll(",", "") // For some reason commas are automatically added, so they need to be removed.
+                        return body
                     },
                     footer: function (context: TooltipItem<'bar'>[]) {
                         let footer = '';
                         let j = context[0].dataIndex;
 
+
                         // @ts-ignore
                         if (context[0].dataset.optimization[j]) {
                             // @ts-ignore
                             footer += "Einsparmöglichkeiten: \n" + context[0].dataset.optimization[j] + "\n";
-                        }
-
-                        // @ts-ignore
-                        if (context[0].dataset.climateData[j]) {
-                            // @ts-ignore
-                            footer += "Klimadaten: \n" + context[0].dataset.climateData[j];
                         }
                         return footer;
                     }

@@ -104,7 +104,7 @@
 103,Magnesiumsulfat,23
 104,Kalisilikat,23
 105,Mangansulfat,23
-106,Cupfersulfat,23
+106,Kupfersulfat,23
 107,Ammoniummolybdat,23
 108,"Erzwespe (Encasia, Eretmocerus, oder vergleichbares)",24
 109,Macrolophus (oder vergleichbares),24
@@ -114,11 +114,9 @@
 113,"Florfliegen (Chrysoperla, oder vergleichbares)",24
 114,"Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)",24
 115,Hummeln,24
-116,Andere,24
-117,ja,25
-118,nein,25
-119,ja,26
-120,nein,26
+117,Growbags,25
+118,Kuebel,25
+119,nichts,25
 121,Standardsubstrat,27
 122,Kokos,27
 123,Steinwolle,27
@@ -140,8 +138,6 @@
 139,Tropfschlaeuche,31
 140,Bodenschsprenkler,31
 141,Handschlauch,31
-142,ja,32
-143,nein,32
 144,ja,33
 145,nein,33
 146,Standardsubstrat,34
@@ -160,3 +156,12 @@
 159,Gabelstapler,37
 160,kWh,38
 161,Angaben,38
+162,keines,9
+163,ja,39
+164,nein,39
+165,ja,40
+166,nein,40
+167,Bodenfolie,32
+168,Bodengewebe,32
+169,Beton,32
+170,beides,9

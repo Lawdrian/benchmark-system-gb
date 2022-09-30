@@ -34,8 +34,10 @@ export type ConsumableItemsState = {
     co2Herkunft: SelectionValue[]
     duengemittelSimple: SelectionValue[]
     duengemittelDetail: SelectionValue[]
-    fungizide: MeasureValue | null
-    insektizide: MeasureValue | null
+    fungizideKg: MeasureValue | null
+    fungizideLiter: MeasureValue | null
+    insektizideKg: MeasureValue | null
+    insektizideLiter: MeasureValue | null
     nuetzlinge: SelectionValue[]
 }
 
@@ -117,44 +119,56 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         initValues: props.values.duengemittelDetail
     }
 
-    const fungizideProps: MeasureUnitInputProps = {
-        title: "Fungizide",
-        label: "Wieviele Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Fungizide und geben Sie diese in Kilogramm an.",
+    const fungizideKgProps: MeasureInputProps = {
+        title: "Angabe Kilogramm",
+        label: "Wieviele feste Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Fungizide und geben Sie diese in Kilogramm an.",
+        unitName: props.unitValues.measures.FungizideKg[0]?.values,
         textFieldProps: {
-            value: consumableItems.fungizide?.value,
+            value: consumableItems.fungizideKg?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                fungizide: {value:parseFloat(event.target.value),unit:consumableItems.fungizide?.unit??null}
+                fungizideKg: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FungizideKg[0]?.id}
             })
         },
-        selectProps: {
-            value: consumableItems.fungizide?.unit,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
-                fungizide: {value:consumableItems.fungizide?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures.Fungizide
-        }
     }
 
-    const insektizideProps: MeasureUnitInputProps = {
-        title: "Insektizide",
-        label: "Wieviele Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten Mittel und geben Sie diese in Kilogramm an.",
+    const fungizideLiterProps: MeasureInputProps = {
+        title: "Angabe Liter",
+        label: "Wieviele flüssige Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssige Fungizide und geben Sie diese in Liter an.",
+        unitName: "Liter",
         textFieldProps: {
-            value: consumableItems.insektizide?.value,
+            value: consumableItems.fungizideLiter?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                insektizide: {value:parseFloat(event.target.value),unit:consumableItems.insektizide?.unit??null}
+                fungizideLiter: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FungizideKg[0].id}
             })
         },
-        selectProps: {
-            value: consumableItems.insektizide?.unit,
+    }
+
+    const insektizideKgProps: MeasureInputProps = {
+        title: "Angabe Kilogramm",
+        label: "Wieviele feste Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Mittel und geben Sie diese in Kilogramm an.",
+        unitName: props.unitValues.measures.InsektizideKg[0]?.values,
+        textFieldProps: {
+            value: consumableItems.insektizideKg?.value,
             onChange: event => setConsumableItemsState({
                 ...consumableItems,
-                insektizide: {value:consumableItems.insektizide?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures.Insektizide
-        }
+                insektizideKg: {value:parseFloat(event.target.value),unit:props.unitValues.measures.InsektizideKg[0].id}
+            })
+        },
+    }
+
+    const insektizideLiterProps: MeasureInputProps = {
+        title: "Angabe Liter",
+        label: "Wieviele flüssige Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssigen Mittel und geben Sie diese in Liter an.",
+        unitName: "Liter",
+        textFieldProps: {
+            value: consumableItems.insektizideLiter?.value,
+            onChange: event => setConsumableItemsState({
+                ...consumableItems,
+                insektizideLiter: {value:parseFloat(event.target.value),unit:props.unitValues.measures.InsektizideKg[0].id}
+            })
+        },
     }
 
     const nuetzlingeProps: DynamicInputProps = {
@@ -194,10 +208,15 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...duengemittelDetailProps} />
             </Grid>
-            <SectionDivider title="Pflanzenschutzmittel"/>
+            <SectionDivider title="Fungizide"/>
             <Grid item container xs={12} spacing={4}>
-                <MeasureUnitInputField {...fungizideProps} />
-                <MeasureUnitInputField {...insektizideProps} />
+                <MeasureInputField {...fungizideKgProps} />
+                <MeasureInputField {...fungizideLiterProps} />
+            </Grid>
+            <SectionDivider title="Insektizide"/>
+            <Grid item container xs={12} spacing={4}>
+                <MeasureInputField {...insektizideKgProps} />
+                <MeasureInputField {...insektizideLiterProps} />
             </Grid>
             <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>

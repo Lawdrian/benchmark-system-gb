@@ -23,6 +23,7 @@ from .dataValidation import validate_greenhouse_data
 from .models import GreenhouseData, Measurements, Measures, Selections, \
     OptionGroups, Options, Greenhouses, Calculations, Results, MeasurementUnits, OptionUnits
 from .serializers import InputDataSerializer
+from .standardizeUnits import standardize_units
 
 
 class GetGreenhouseData(APIView):
@@ -49,7 +50,8 @@ class GetGreenhouseData(APIView):
         # Retrieve all measurement_ids and measurement_names
         measurements = Measurements.objects.all()
         measurement_ids = [measurements.values('id')[i]['id'] for i in range(len(measurements))]
-        measurement_names = [measurements.values('measurement_name')[i]['measurement_name'] for i in range(len(measurements))]
+        measurement_names = [measurements.values('measurement_name')[i]['measurement_name'] for i in
+                             range(len(measurements))]
 
         # Retrieve all option groups
         option_groups = OptionGroups.objects.all()
@@ -90,7 +92,6 @@ class GetGreenhouseData(APIView):
                 # Retrieve all measures for a specific dataset and save them into the temp_data_dict under the key
                 # 'measures'
                 for i, measurement_id in enumerate(measurement_ids):
-
                     # Retrieve the measure value for a specific measurement
                     value = Measures.objects \
                         .filter(greenhouse_data_id=data_set.id,
@@ -116,7 +117,7 @@ class GetGreenhouseData(APIView):
                             temp_option_dict = dict()
 
                             # Retrieve the selection for the current option
-                            selection = Selections.objects\
+                            selection = Selections.objects \
                                 .filter(greenhouse_data_id=data_set.id,
                                         option_id=option.id)
 
@@ -185,7 +186,30 @@ class GetCalculatedGreenhouseData(APIView):
         # map the requested datatype to the correct calculation_names in the calculations table
         map_data_type = {
             'co2FootprintData': (
-                'gwh_konstruktion', 'energietraeger', 'strom', 'co2_zudosierung', 'duengemittel', 'psm_insgesamt', 'verbrauchsmaterialien', 'jungpflanzen', 'verpackung', 'transport'),
+                "konstruktion_co2",
+                "energieschirm_co2",
+                "bodenabdeckung_co2",
+                "kultursystem_co2",
+                "transportsystem_co2",
+                "zusaetzliches_heizsystem_co2",
+                "energietraeger_co2",
+                "strom_co2",
+                "co2_zudosierung_co2",
+                "duengemittel_co2",
+                "psm_co2",
+                "nuetzlinge_co2",
+                "pflanzenbehaelter_co2",
+                "substrat_co2",
+                "jungpflanzen_substrat_co2",
+                "jungpflanzen_transport_co2",
+                "schnuere_co2",
+                "klipse_co2",
+                "rispenbuegel_co2",
+                "bewaesserung_co2",
+                "verpackung_co2",
+                "sonstige_verbrauchsmaterialien_co2",
+                "transport_co2",
+                "zusaetzlicher_machineneinsatz_co2"),
             'waterUsageData': 'water_usage',
             'benchmarkData': 'benchmark'
         }
@@ -233,6 +257,60 @@ class GetCalculatedGreenhouseData(APIView):
                         temp_data_dict[calculation_names[i]] = value
 
                     temp_data_set_list.append(temp_data_dict)
+
+
+                # Check what production type the most recent dataset uses
+                if len(greenhouse_data) != 0:
+                    recent_dataset = greenhouse_data[len(greenhouse_data)-1]
+                    biologic_id = Options.objects.filter(option_value="Biologisch")[0]
+                    conventional_id = Options.objects.filter(option_value="Konventionell")[0]
+
+                    biologic = Selections.objects.filter(greenhouse_data_id=recent_dataset).filter(option_id=biologic_id)
+                    if biologic.exists():
+                        recent_dataset_is_biologic = True
+                        print("Aktuellster Datensatz ist Biologisch")
+                    else:
+                        recent_dataset_is_biologic = False
+                        print("Aktuellster Datensatz ist Konventionell")
+
+                    # Retrieve the result_values of the high performer and append them to response_data
+                    co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint").id
+                    found_correct_high_performer = False
+                    high_performers = Results.objects.filter(calculation_id=co2_footprint_id).order_by('result_value') # Sort from min to max
+                    index = 0
+                    high_performer_id = 1
+                    while found_correct_high_performer is False and index < len(high_performers):
+                        print(high_performers[index].greenhouse_data_id)
+                        high_performer_id = high_performers[index].greenhouse_data_id
+                        high_performer_biologic = Selections.objects.filter(
+                            greenhouse_data_id=high_performer_id).filter(option_id=biologic_id)
+                        high_performer_conventional = Selections.objects.filter(
+                            greenhouse_data_id=high_performer_id).filter(option_id=conventional_id)
+                        if recent_dataset_is_biologic and high_performer_biologic.exists():
+                            found_correct_high_performer = True
+                            print("High Performer ist Biologisch")
+                        elif recent_dataset_is_biologic is False and high_performer_conventional.exists():
+                            found_correct_high_performer = True
+                            print("High Performer ist Konventionell")
+
+                        index = index + 1
+
+                    high_performer_dataset = GreenhouseData.objects.filter(id=high_performer_id)
+
+                    if high_performer_dataset.exists():
+                        high_performer_dict = dict()
+                        high_performer_dict['label'] = "Optimaler Betrieb"
+
+                        for i, calculation_id in enumerate(calculation_ids):
+                            value = Results.objects \
+                                .filter(greenhouse_data_id=high_performer_dataset[0].id,
+                                        calculation_id=calculation_id) \
+                                .values('result_value')[0]['result_value']
+
+                            high_performer_dict[calculation_names[i]] = value
+
+                        temp_data_set_list.append(high_performer_dict)
+
                 temp_greenhouse_dict['greenhouseDatasets'] = temp_data_set_list
                 response_data.append(temp_greenhouse_dict)
             except IndexError:
@@ -413,16 +491,21 @@ class CreateGreenhouseData(APIView):
                 return Response({'Bad Request': 'Not all fields have been filled out!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
+            print("Data")
+            print(serializer.data["GWHFlaeche"][0])
+            print(serializer.data["Energietraeger"])
+            processed_data = standardize_units(serializer.data)
+            print(processed_data["Energietraeger"])
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
-                greenhouse_name=serializer.data.get('greenhouse_name')
+                greenhouse_name=processed_data.get('greenhouse_name')
             )
             if len(greenhouse) == 0:
                 # Generate a new greenhouse:
                 greenhouse = Greenhouses(
                     user_id=user_id,
-                    greenhouse_name=serializer.data.get('greenhouse_name')
+                    greenhouse_name=processed_data.get('greenhouse_name')
                 )
                 greenhouse.save()
             else:
@@ -435,6 +518,17 @@ class CreateGreenhouseData(APIView):
             )
             greenhouse_data.save()
 
+            # calculate co2 footprint
+            calculation_result = algorithms.calc_co2_footprint(processed_data)
+            calculation_variables = Calculations.objects.in_bulk(
+                field_name='calculation_name')
+            for variable, value in calculation_result.items():
+                Results(
+                    greenhouse_data=greenhouse_data,
+                    result_value=value,
+                    calculation_id=calculation_variables[variable].id,
+                ).save()
+
             # retrieve 'Measurements' table as dict to map measurement_name to
             # measurement_id
             measurements = Measurements.objects.in_bulk(
@@ -442,7 +536,7 @@ class CreateGreenhouseData(APIView):
             options = OptionGroups.objects.in_bulk(
                 field_name='option_group_name')
 
-            for name, value in serializer.data.items():
+            for name, value in processed_data.items():
                 if name in measurements:
                     # metric (continuous) data (=> numbers)
                     Measures(
@@ -473,15 +567,6 @@ class CreateGreenhouseData(APIView):
                             value2=value2
                         ).save()
 
-            calculation_result = algorithms.calc_co2_footprint(serializer.data)
-            calculation_variables = Calculations.objects.in_bulk(
-                field_name='calculation_name')
-            for variable, value in calculation_result.items():
-                Results(
-                    greenhouse_data=greenhouse_data,
-                    result_value=value,
-                    calculation_id=calculation_variables[variable].id,
-                ).save()
             return Response(request.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors,
                         status=status.HTTP_400_BAD_REQUEST)

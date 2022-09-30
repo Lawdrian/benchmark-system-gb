@@ -41,15 +41,16 @@ def validate_greenhouse_data(data):
         5: (">150Gramm(Fleisch)", "JA", ["FleischReihenanzahl", "FleischPflanzenabstandInDerReihe", "FleischTriebzahl", "FleischErtragJahr"], []),
         6: ("Transportsystem", "JA", ["AlterTransportsystem"], []),
         7: ("Nebenkultur", "JA", ["NebenkulturBeginn", "NebenkulturEnde"], []),
-        8: ("BHKW", "JA", ["BHKW:Menge", "BHKW:AnteilErdgas", "BHKW:AnteilBiomethan"], []),
-        9: ("Zusatzbelichtung", "JA", [], ["Belichtungsstrom"]),
-        10: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
-        11: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
-        12: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProTag", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
-        13: ("Growbags", "JA", ["Growbags:Volumen", "Growbags:Laenge", "Growbags:PflanzenproBag"], ["Substrat"]),
-        14: ("Kuebel", "JA", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], []),
-        15: ("Bodenfolien", "JA", ["Bodenabdeckung:Wiederverwendung"], []),
-        16: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
+        # 8: ("BHKW", "JA", ["BHKW:AnteilErdgas", "BHKW:AnteilBiomethan"], []), These fields get deleted anyways
+        8: ("Zusatzbelichtung", "JA", [], ["Belichtungsstrom"]),
+        9: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
+        10: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
+        11: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
+        12: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
+        13: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
+        14: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
+        15: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
+        16: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
     }
 
     for key, values in eventually_optional_fields.items():
@@ -80,6 +81,12 @@ def validate_greenhouse_data(data):
             if len(optiongroups) != 0:
                 for not_required_optiongroup in optiongroups:
                     del mandatory_optiongroups[not_required_optiongroup]
+
+
+    # This place is for manually deleting always optional fields out of the mandatory lists
+    del mandatory_optiongroups["ZusaetzlicherMaschineneinsatz"]
+    del mandatory_measurements["BHKW:AnteilErdgas"]
+    del mandatory_measurements["BHKW:AnteilBiomethan"]
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():

@@ -11,7 +11,7 @@ import {
     MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
-    SelectionValue,
+    SelectionValue, SelectShowConditionalRadioInputField, SelectShowConditionalRadioInputProps,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
 } from "../../utils/inputPage/InputFields"
@@ -37,28 +37,25 @@ type ConsumableMaterialsProps = ReduxProps & SubpageProps & {
 }
 
 export type ConsumableMaterialsState = {
-    growbags: number | null
-    growbagsVolumen: MeasureValue | null
-    growbagsLaenge: MeasureValue | null
-    growbagsPflanzenAnz: MeasureValue | null
-    growbagsSubstrat: SelectionValue[]
-    kuebel: number | null
+    growbagsKuebel: number | null
+    growbagsKuebelSubstrat: SelectionValue[]
     kuebelVolumenProTopf: MeasureValue | null
     kuebelJungpflanzenProTopf: MeasureValue | null
     kuebelAlter: DateValue | null
     schnurMaterial: number | null
     schnurLaengeProTrieb: MeasureValue | null
     schnurWiederverwendung: MeasureValue | null
+    klipse: number | null
     klipseMaterial: number | null
     klipseGesamtmenge: MeasureValue | null
     klipseAnzProTrieb: MeasureValue | null
     klipseWiederverwendung: MeasureValue | null
+    rispenbuegel: number | null
     rispenbuegelMaterial: number | null
     rispenbuegelAnzProTrieb: MeasureValue | null
     rispenbuegelWiederverwendung: MeasureValue | null
     bewaesserArt: number | null
-    bodenfolien: number | null
-    bodenfolienVerwendungsdauer: MeasureValue | null
+    bodenabdeckung: SelectionValue[]
     jungpflanzenZukauf: number | null
     jungpflanzenDistanz: MeasureValue | null
     jungpflanzenSubstrat: number | null
@@ -81,75 +78,10 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     // Properties of the input fields
-
-    const growbagsProps: SingleShowConditionalRadioInputProps = {
-        title: "Growbags",
-        label: "Verwenden Sie Growbags?",
-        radioGroupProps: {
-            value: consumableMaterials.growbags,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbags: parseFloat(event.target.value)
-            })
-        },
-        radioButtonValues: props.lookupValues.Growbags,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.Growbags.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const growbagsVolumenProps: MeasureUnitInputProps = {
-        title: "Growbags Volumen",
-        label: "Welches Volumen haben die verwendeten Bags? Sie können entweder direkt das Volumen angeben, die Länge oder die Pflanzen pro Bag?",
-        textFieldProps: {
-            value: consumableMaterials.growbagsVolumen?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsVolumen: {value:parseFloat(event.target.value),unit:consumableMaterials.growbagsVolumen?.unit??null}
-            })
-        },
-        selectProps: {
-            value: consumableMaterials.growbagsVolumen?.unit,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsVolumen: {value:consumableMaterials.growbagsVolumen?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures["Growbags:Volumen"]
-        }
-    }
-
-    const growbagsLaengeProps: MeasureInputProps = {
-        title: "Growbags Länge",
-        label: "Wie lang sind die Growbags, die Sie verwenden?",
-        unitName: props.unitValues.measures["Growbags:Laenge"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.growbagsLaenge?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsLaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:Laenge"][0].id}
-            })
-        }
-    }
-
-    const growbagsPflanzenAnzProps: MeasureInputProps = {
-        title: "Pflanzen pro Growbag",
-        label: "Wie viele Pflanzen verwenden Sie in einem Growbag?",
-        unitName: props.unitValues.measures["Growbags:PflanzenproBag"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.growbagsPflanzenAnz?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                growbagsPflanzenAnz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Growbags:PflanzenproBag"][0].id}
-            })
-        }
-    }
-
-    const growbagsSubstratProps: DynamicInputProps = {
+    const growbagsKuebelSubstratProps: DynamicInputProps = {
         title: "Substrat",
-        label: "Welches Substrat und zu welchem Anteil wird verwendet?",
-        textFieldProps: {},
-        textField2Props: {label: "Wiederverwendung", placeholder:"Jahre"},
+        label: "Welches Substrat und wie lange wird es verwendet?",
+        textFieldProps: {label:"Wiederverwendung"},
         selectProps: {
             lookupValues: props.lookupValues.Substrat
         },
@@ -160,30 +92,13 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         },
         onValueChange: values => setConsumableMaterialsState({
             ...consumableMaterials,
-            growbagsSubstrat: values.map(value => {
+            growbagsKuebelSubstrat: values.map(value => {
                 return {
                     selectValue: value.selectValue, textFieldValue:value.textFieldValue, textField2Value: value.textField2Value
                 }
             })
         }),
-        initValues: props.values.growbagsSubstrat
-    }
-
-    const kuebelProps: SingleShowConditionalRadioInputProps = {
-        title: "Kübel",
-        label: "Verwenden Sie Kübel/Töpfe?",
-        radioGroupProps: {
-            value: consumableMaterials.kuebel,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                kuebel: parseFloat(event.target.value)
-            })
-        },
-        radioButtonValues: props.lookupValues.Kuebel,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.Kuebel.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
+        initValues: props.values.growbagsKuebelSubstrat
     }
 
     const kuebelVolumenProps: MeasureInputProps = {
@@ -226,7 +141,45 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
-
+    const growbagsKuebelProps: SelectShowConditionalRadioInputProps = {
+        title: "Unterbau",
+        label: "Verwenden Sie Growbags oder Kübel?",
+        radioGroupProps: {
+            value: consumableMaterials.growbagsKuebel,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                growbagsKuebel: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.GrowbagsKuebel,
+        showFirstChildren: value => {
+            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "GROWBAGS");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        },
+        showSecondChildren: value => {
+            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "KUEBEL");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        },
+        firstChildren: (
+                <Grid item container xs={12} spacing={4}>
+                    <DynamicInputField {...growbagsKuebelSubstratProps}/>
+                </Grid>
+        ),
+        secondChildren: (
+            <>
+                <Grid item container xs={12} spacing={4}>
+                    <MeasureInputField {...kuebelVolumenProps} />
+                    <MeasureInputField {...kuebelJungpflanzenProps}/>
+                </Grid>
+                <Grid item container xs={12} spacing={4}>
+                    <DateInputField {...kuebelAnschaffungsjahrProps} />
+                </Grid>
+                <Grid item container xs={12} spacing={4}>
+                    <DynamicInputField {...growbagsKuebelSubstratProps}/>
+                </Grid>
+            </>
+        )
+    }
 
      const schnurMaterialProps: SelectionInputProps = {
         title: "Material",
@@ -267,6 +220,24 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
+    const klipseProps: SingleShowConditionalRadioInputProps = {
+        title: "Klipse",
+        label: "Verwenden Sie Klipse?",
+        radioGroupProps: {
+            value: consumableMaterials.klipse,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                klipse: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Klipse,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Klipse.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+
     const klipseMaterialProps: SelectionInputProps = {
         title: "Material",
         label: "Aus welchem Material sind die Klipse, falls welche verwendet werden?",
@@ -304,6 +275,24 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             })
         }
     }
+
+    const rispenbuegelProps: SingleShowConditionalRadioInputProps = {
+        title: "Rispenbügel",
+        label: "Verwenden Sie Rispenbügel?",
+        radioGroupProps: {
+            value: consumableMaterials.rispenbuegel,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                rispenbuegel: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Rispenbuegel,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Rispenbuegel.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
 
     const rispenbuegelMaterialProps: SelectionInputProps = {
         title: "Material",
@@ -357,34 +346,29 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         }
     }
 
-    const bodenfolienProps: SingleShowConditionalRadioInputProps = {
+    const bodenabdeckungProps: DynamicInputProps = {
         title: "Bodenabdeckung",
-        label: "Verwenden Sie Bodenfolien?",
-        radioGroupProps: {
-            value: consumableMaterials.bodenfolien,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                bodenfolien: parseFloat(event.target.value)
-            })
+        label: "Welche Bodenabdeckung verwenden Sie und wie viele Jahre lang?",
+        textFieldProps: {},
+        selectProps: {
+            lookupValues: props.lookupValues.Bodenabdeckung
         },
-        radioButtonValues: props.lookupValues.Bodenfolien,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.Bodenfolien.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const bodenfolienVerwendungsdauerProps: MeasureInputProps = {
-        title: "Wiederverwendung",
-        label: "Wie lange verbleiben die Bodenfolien im Gewächshaus?",
-        unitName: props.unitValues.measures["Bodenabdeckung:Wiederverwendung"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.bodenfolienVerwendungsdauer?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                bodenfolienVerwendungsdauer: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Bodenabdeckung:Wiederverwendung"][0].id}
+        unitSelectProps: {
+            lookupValues: props.lookupValues.Bodenabdeckung,
+            unitValues:  props.unitValues,
+            optionGroup: "Bodenabdeckung"
+        },
+        onValueChange: values => setConsumableMaterialsState({
+            ...consumableMaterials,
+            bodenabdeckung: values.map(value => {
+                return {
+                    selectValue: value.selectValue,
+                    textFieldValue:value.textFieldValue,
+                    textField2Value:value.textField2Value
+                }
             })
-        }
+        }),
+        initValues: props.values.bodenabdeckung
     }
 
     const jungpflanzenZukaufProps: SingleShowConditionalRadioInputProps = {
@@ -510,8 +494,8 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const zusaetzlicherMaschineneinsatzProps: DynamicInputProps = {
-        title: "Zusätzlicher Maschineneinsatz",
-        label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an.",
+        title: "Zusätzlicher Maschineneinsatz (optional)",
+        label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an, falls Sie welche verwenden.",
         textFieldProps: {},
         textField2Props: {placeholder:"h/a", label:"Nutzungsdauer"},
         selectProps: {
@@ -538,30 +522,9 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
 
     return (
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title="Unterbau"/>
             <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...growbagsProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureUnitInputField {...growbagsVolumenProps} />
-                        <MeasureInputField {...growbagsLaengeProps}/>
-                    </Grid>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureInputField {...growbagsPflanzenAnzProps} />
-                    </Grid>
-                    <Grid item container xs={12} spacing={4}>
-                         <DynamicInputField {...growbagsSubstratProps}/>
-                    </Grid>
-                </SingleShowConditionalRadioInputField>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...kuebelProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureInputField {...kuebelVolumenProps} />
-                        <MeasureInputField {...kuebelJungpflanzenProps}/>
-                    </Grid>
-                    <Grid item container xs={12} spacing={4}>
-                        <DateInputField {...kuebelAnschaffungsjahrProps} />
-                    </Grid>
-                </SingleShowConditionalRadioInputField>
+                <SelectShowConditionalRadioInputField {...growbagsKuebelProps}/>
             </Grid>
             <SectionDivider title="Schnur"/>
             <Grid item container xs={12} spacing={4}>
@@ -572,31 +535,36 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
                 <MeasureInputField {...schnurWiederverwendungProps} />
             </Grid>
             <SectionDivider title="Klipse"/>
+
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...klipseMaterialProps}/>
-                <MeasureInputField {...klipseAnzProTriebProps}/>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...klipseWiederverwendungProps} />
+                <SingleShowConditionalRadioInputField {...klipseProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <SelectionInputField {...klipseMaterialProps}/>
+                        <MeasureInputField {...klipseAnzProTriebProps}/>
+                    </Grid>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...klipseWiederverwendungProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
             </Grid>
             <SectionDivider title="Rispenbügel"/>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...rispenbuegelMaterialProps}/>
-                <MeasureInputField {...rispenbuegelAnzProTriebProps}/>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...rispenbuegelWiederverwendungProps} />
+                <SingleShowConditionalRadioInputField {...rispenbuegelProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <SelectionInputField {...rispenbuegelMaterialProps}/>
+                        <MeasureInputField {...rispenbuegelAnzProTriebProps}/>
+                    </Grid>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...rispenbuegelWiederverwendungProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
             </Grid>
             <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <SelectionInputField {...bewaesserArtProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...bodenfolienProps}>
-                    {<Grid item container xs={12} spacing={4}>
-                        <MeasureInputField {...bodenfolienVerwendungsdauerProps}/>
-                    </Grid>}
-                </SingleShowConditionalRadioInputField>
+                <DynamicInputField {...bodenabdeckungProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...jungpflanzenZukaufProps} >

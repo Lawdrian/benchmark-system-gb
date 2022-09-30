@@ -443,17 +443,16 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const zusaetzlichesHeizsystemProps: SelectionInputProps = {
+    const zusaetzlichesHeizsystemProps: SelectionRadioInputProps = {
         title: "Zusätzliches Heizsystem",
         label: "Welches zusätzliche Heizsystem wird verwendet?",
-        selectProps: {
+        radioProps: {
             value: companyInformation.zusaetzlichesHeizsystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 zusaetzlichesHeizsystem: parseFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues.ZusaetzlichesHeizsystem
-        }
+        },
     }
 
     const zusaetzlichesHeizsystemAlterProps: DateInputProps = {
@@ -538,7 +537,17 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 <DateInputField {...kultursystemAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...zusaetzlichesHeizsystemProps} />
+                <SelectionRadioInputField {...zusaetzlichesHeizsystemProps}>
+                    {props.lookupValues.ZusaetzlichesHeizsystem.map(option => {
+                        return <FormControlLabel
+                            value={option.id}
+                            control={<Radio/>}
+                            label={option.values}
+                        />
+                    })}
+                </SelectionRadioInputField>
+            </Grid>
+            <Grid item container xs={12} spacing={4}>
                 <DateInputField {...zusaetzlichesHeizsystemAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
