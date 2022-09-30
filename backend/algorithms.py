@@ -26,9 +26,15 @@ from backend.models import MeasurementUnits
 def calc_co2_footprint(data):
     all_options = Options.objects.all()
     helping_values = calc_helping_values(data, all_options)
+    konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, kultursystem_co2, transportsystem_co2,zusaetzliches_heizsystem_co2  = calc_greenhouse_construction_co2(data, helping_values, all_options)
 
     calculation_results = {
-        "gwh_konstruktion_co2": calc_greenhouse_construction_co2(data, helping_values, all_options),
+        "konstruktion_co2": konstruktion_co2,
+        "energieschirm_co2": energieschirm_co2,
+        "bodenabdeckung_co2": bodenabdeckung_co2,
+        "kultursystem_co2": kultursystem_co2,
+        "transportsystem_co2": transportsystem_co2,
+        "zusaetzliches_heizsystem_co2": zusaetzliches_heizsystem_co2,
         "energietraeger_co2": calc_energy_source_co2(data, helping_values, all_options),
         "strom_co2": calc_electric_power_co2(data, helping_values, all_options),
         "co2_zudosierung_co2": calc_co2_added(data, helping_values, all_options),
@@ -399,6 +405,7 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for ZusaetzlichesHeizsystem has been selected')
 
+    konstruktion = beton + stahl + aluminium + lpde + stehwand + bedachung
     gesamt_co2 = beton + stahl + aluminium + lpde + stehwand + bedachung + energieschirm + bodenabdeckung + kultursystem + transportsystem + zusaetzliches_heizsystem
     print("Gewächhauskonstruktion CO2: +")
     print("beton " + str(beton))
@@ -412,7 +419,7 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
     print("transportsystem " + str(transportsystem))
     print("zusaetzliches_heizsystem " + str(zusaetzliches_heizsystem))
     print("gwh-konstruktion: " + str(gesamt_co2))
-    return gesamt_co2
+    return konstruktion, energieschirm, bodenabdeckung, kultursystem, transportsystem, zusaetzliches_heizsystem
 
 
 

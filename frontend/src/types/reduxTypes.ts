@@ -119,6 +119,7 @@ type FootprintDataset = {
     label: string
     data: number[]
     backgroundColor: string
+    splitData: {name: string, value: number}[][]
     optimization: string[]
     climateData: string[]
 }

@@ -186,7 +186,12 @@ class GetCalculatedGreenhouseData(APIView):
         # map the requested datatype to the correct calculation_names in the calculations table
         map_data_type = {
             'co2FootprintData': (
-                "gwh_konstruktion_co2",
+                "konstruktion_co2",
+                "energieschirm_co2",
+                "bodenabdeckung_co2",
+                "kultursystem_co2",
+                "transportsystem_co2",
+                "zusaetzliches_heizsystem_co2",
                 "energietraeger_co2",
                 "strom_co2",
                 "co2_zudosierung_co2",
@@ -252,6 +257,60 @@ class GetCalculatedGreenhouseData(APIView):
                         temp_data_dict[calculation_names[i]] = value
 
                     temp_data_set_list.append(temp_data_dict)
+
+
+                # Check what production type the most recent dataset uses
+                if len(greenhouse_data) != 0:
+                    recent_dataset = greenhouse_data[len(greenhouse_data)-1]
+                    biologic_id = Options.objects.filter(option_value="Biologisch")[0]
+                    conventional_id = Options.objects.filter(option_value="Konventionell")[0]
+
+                    biologic = Selections.objects.filter(greenhouse_data_id=recent_dataset).filter(option_id=biologic_id)
+                    if biologic.exists():
+                        recent_dataset_is_biologic = True
+                        print("Aktuellster Datensatz ist Biologisch")
+                    else:
+                        recent_dataset_is_biologic = False
+                        print("Aktuellster Datensatz ist Konventionell")
+
+                    # Retrieve the result_values of the high performer and append them to response_data
+                    co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint").id
+                    found_correct_high_performer = False
+                    high_performers = Results.objects.filter(calculation_id=co2_footprint_id).order_by('result_value') # Sort from min to max
+                    index = 0
+                    high_performer_id = 1
+                    while found_correct_high_performer is False and index < len(high_performers):
+                        print(high_performers[index].greenhouse_data_id)
+                        high_performer_id = high_performers[index].greenhouse_data_id
+                        high_performer_biologic = Selections.objects.filter(
+                            greenhouse_data_id=high_performer_id).filter(option_id=biologic_id)
+                        high_performer_conventional = Selections.objects.filter(
+                            greenhouse_data_id=high_performer_id).filter(option_id=conventional_id)
+                        if recent_dataset_is_biologic and high_performer_biologic.exists():
+                            found_correct_high_performer = True
+                            print("High Performer ist Biologisch")
+                        elif recent_dataset_is_biologic is False and high_performer_conventional.exists():
+                            found_correct_high_performer = True
+                            print("High Performer ist Konventionell")
+
+                        index = index + 1
+
+                    high_performer_dataset = GreenhouseData.objects.filter(id=high_performer_id)
+
+                    if high_performer_dataset.exists():
+                        high_performer_dict = dict()
+                        high_performer_dict['label'] = "Optimaler Betrieb"
+
+                        for i, calculation_id in enumerate(calculation_ids):
+                            value = Results.objects \
+                                .filter(greenhouse_data_id=high_performer_dataset[0].id,
+                                        calculation_id=calculation_id) \
+                                .values('result_value')[0]['result_value']
+
+                            high_performer_dict[calculation_names[i]] = value
+
+                        temp_data_set_list.append(high_performer_dict)
+
                 temp_greenhouse_dict['greenhouseDatasets'] = temp_data_set_list
                 response_data.append(temp_greenhouse_dict)
             except IndexError:
