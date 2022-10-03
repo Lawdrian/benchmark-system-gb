@@ -31,6 +31,7 @@ import PageHome from "../components/pages/PageHome";
 import PageUserActivation from "../components/pages/PageUserActivation";
 import PageForgotPW from "../components/pages/PageForgotPW";
 import PageResetPW from "../components/pages/PageResetPW";
+import PagePreInputData from "../components/pages/PagePreInputData";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
@@ -58,7 +59,7 @@ const pageDefinitions: Array<Page> = [
         .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
         .includeInDrawer(<Co2Icon/>, "CO2 Footprint")
         .finalize(),
-    generatePage(<PageInputData/>, "input-data")
+    generatePage(<PagePreInputData/>, "input-data")
         .withHeaderTitle("Eingabe der Gewächshausdaten")
         .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Profile)
         .finalize(),

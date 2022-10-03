@@ -57,7 +57,9 @@ const connector = connect(mapStateToProps, mapDispatchToProps);
 
 type ReduxProps = ConnectedProps<typeof connector>
 
-type InputDataProps = ReduxProps & {}
+type InputDataProps = ReduxProps & {
+    initialData : DataToSubmit
+}
 
 export type SubpageProps = {
     paginationProps: InputPaginationButtonsProps
@@ -266,126 +268,7 @@ const PageInputData = (props: InputDataProps) => {
 
     const navigate = useNavigate()
 
-    const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>({
-        companyInformation: {
-            gewaechshausName: null,
-            datum: new Date(Date.now()),
-            plz: {value: null, unit: null},
-            gwhGesamtFlaeche: {value: null, unit: null},
-            einheitlicheWaermeversorgung: null,
-            gwhFlaeche: {value: null, unit: null},
-            waermeteilungFlaeche: {value: null, unit: null},
-            gwhArt: null,
-            gwhAlter: {value: null, unit: null},
-            bedachungsmaterial: null,
-            bedachungsmaterialAlter: {value: null, unit: null},
-            stehwandmaterial: null,
-            stehwandmaterialAlter: {value: null, unit: null},
-            energieschirm: null,
-            energieschirmAlter: {value: null, unit: null},
-            stehwandhoehe: { value: null, unit: null},
-            laenge: {value: null, unit: null},
-            breite: {value: null, unit: null},
-            knappenbreite: {value: null, unit: null},
-            scheibenlaenge: {value: null, unit: null},
-            reihenabstand: {value: null, unit: null},
-            vorwegbreite: {value: null, unit: null},
-            transportsystem: null,
-            transportsystemAlter: {value:null,unit: null},
-            produktionstyp: null,
-            kultursystem: null,
-            kultursystemAlter: {value: null, unit: null},
-            zusaetzlichesHeizsystem: null,
-            zusaetzlichesHeizsystemAlter: {value: null,unit: null},
-        },
-        cultureInformation: {
-            snack: null,
-            snackReihenanzahl: {value: null, unit: null},
-            snackPflanzenabstand: {value: null, unit: null},
-            snackTriebzahl: {value: null, unit: null},
-            snackErtragJahr: {value: null, unit: null},
-            cocktail: null,
-            cocktailReihenanzahl: {value: null, unit: null},
-            cocktailPflanzenabstand: {value: null, unit: null},
-            cocktailTriebzahl: {value: null, unit: null},
-            cocktailErtragJahr: {value: null, unit: null},
-            rispen: null,
-            rispenReihenanzahl: {value: null, unit: null},
-            rispenPflanzenabstand: {value: null, unit: null},
-            rispenTriebzahl: {value: null, unit: null},
-            rispenErtragJahr: {value: null, unit: null},
-            fleisch: null,
-            fleischReihenanzahl: {value: null, unit: null},
-            fleischPflanzenabstand: {value: null, unit: null},
-            fleischTriebzahl: {value: null, unit: null},
-            fleischErtragJahr: {value: null, unit: null},
-            kulturflaeche: {value: null, unit: null},
-            kulturBeginn: {value: null, unit: null},
-            kulturEnde: {value: null, unit: null},
-            nebenkultur: null,
-            nebenkulturBeginn: {value: null, unit: null},
-            nebenkulturEnde: {value: null, unit: null},
-        },
-        cultureManagement: {
-            mittlereSolltemperaturTag: {value: null,unit: null},
-            mittlereSolltemperaturNacht: {value: null,unit: null},
-            entfeuchtung: null,
-            luftfeuchte: {value: null,unit: null},
-        },
-        energyConsumption: {
-            energietraeger: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            bhkw: null,
-            bhkwAnteilErdgas: {value: null, unit: null},
-            bhkwAnteilBiomethan: {value: null, unit: null},
-            stromherkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            zusatzbelichtung: null,
-            belichtungsstrom: null,
-            belichtungsstromEinheit: null,
-            belichtungsstromStromverbrauch: {value: null, unit: null},
-            belichtungsstromAnzLampen: {value: null, unit: null},
-            belichtungsstromAnschlussleistung: {value: null, unit: null},
-            belichtungsstromLaufzeitJahr: {value: null, unit: null},
-        },
-        consumableItems: {
-            co2Herkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            duengemittelSimple: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            duengemittelDetail: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            fungizideKg: {value: null, unit: null},
-            insektizideKg: {value: null, unit: null},
-            fungizideLiter: {value: null, unit: null},
-            insektizideLiter: {value: null, unit: null},
-            nuetzlinge: [{selectValue: null, textFieldValue: { value: null, unit: null}}]
-        },
-        consumableMaterials: {
-            growbagsKuebel: null,
-            growbagsKuebelSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
-            kuebelVolumenProTopf: {value: null, unit: null},
-            kuebelJungpflanzenProTopf: {value: null, unit: null},
-            kuebelAlter: {value: null, unit: null},
-            schnurMaterial: null,
-            schnurLaengeProTrieb: {value: null, unit: null},
-            schnurWiederverwendung: {value: null, unit: null},
-            klipse: null,
-            klipseMaterial: null,
-            klipseGesamtmenge: {value: null, unit: null},
-            klipseAnzProTrieb: {value: null, unit: null},
-            klipseWiederverwendung: {value: null, unit: null},
-            rispenbuegel: null,
-            rispenbuegelMaterial: null,
-            rispenbuegelAnzProTrieb: {value: null, unit: null},
-            rispenbuegelWiederverwendung: {value: null, unit: null},
-            bewaesserArt: null,
-            bodenabdeckung: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            jungpflanzenZukauf: null,
-            jungpflanzenDistanz: {value: null, unit: null},
-            jungpflanzenSubstrat: null,
-            verpackungsmaterial: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
-            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
-            transportDistanz: {value: null, unit: null},
-            zusaetzlicherMaschineneinsatz: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}]
-        }
-    })
+    const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>(props.initialData)
     const [tab, setTab] = useState<number>(0)
     const paginationProps: InputPaginationButtonsProps = {
         hasNext: () => tab < 5,

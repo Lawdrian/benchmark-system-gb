@@ -86,6 +86,12 @@ export const UNITS_LOADING = "UNITS_LOADING";
 export const UNITS_LOADED = "UNITS_LOADED";
 // Loading of unit values failed
 export const UNITS_FAILED = "UNITS_FAILED";
+// Set the dataset-loading flag
+export const DATASET_LOADING = "DATASET_LOADING";
+// Loading of dataset was successful
+export const DATASET_LOADED = "DATASET_LOADED";
+// Loading of dataset failed
+export const DATASET_ERROR = "DATASET_ERROR";
 /**
  * ----------- REDUX RELATED TS-TYPES ---------------
  */

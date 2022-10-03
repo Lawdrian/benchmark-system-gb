@@ -71,6 +71,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
+        console.log(companyInformation.gewaechshausName)
     }
 
     // Properties of the input fields
