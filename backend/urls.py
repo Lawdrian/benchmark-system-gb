@@ -8,7 +8,7 @@
 
 
 from django.urls import path
-from .views import CreateGreenhouseData, GetOptionGroupValues, GetGreenhouseData, GetUnitValues
+from .views import CreateGreenhouseData, GetOptionGroupValues, GetGreenhouseData, GetUnitValues, GetDatasets
 from .views import GetCalculatedGreenhouseData
 from .weather import GetWeatherData
 
@@ -18,5 +18,6 @@ urlpatterns = [
     path('create-greenhouse-data', CreateGreenhouseData.as_view()),
     path('get-weather', GetWeatherData.as_view()),
     path('get-lookup-values', GetOptionGroupValues.as_view()),
-    path('get-unit-values', GetUnitValues.as_view())
+    path('get-unit-values', GetUnitValues.as_view()),
+    path('get-datasets', GetDatasets.as_view())
 ]

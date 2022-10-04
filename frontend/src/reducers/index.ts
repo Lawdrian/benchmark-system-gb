@@ -11,6 +11,7 @@ import benchmark from "./waterbenchmark";
 import weather from "./weather";
 import submission from "./submission";
 import lookup from "./lookup"
+import dataset from "./dataset";
 
 /**
  * Combine different specialized reducers to one global reducer.
@@ -37,5 +38,6 @@ export default combineReducers({
     benchmark: benchmark,
     weather: weather,
     submission: submission,
-    lookup: lookup
+    lookup: lookup,
+    dataset: dataset
 })

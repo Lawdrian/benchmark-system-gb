@@ -47,7 +47,6 @@ export type ConsumableMaterialsState = {
     schnurWiederverwendung: MeasureValue | null
     klipse: number | null
     klipseMaterial: number | null
-    klipseGesamtmenge: MeasureValue | null
     klipseAnzProTrieb: MeasureValue | null
     klipseWiederverwendung: MeasureValue | null
     rispenbuegel: number | null
