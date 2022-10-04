@@ -65,7 +65,7 @@ export type SubpageProps = {
     paginationProps: InputPaginationButtonsProps
 }
 
-type DataToSubmit = {
+export type DataToSubmit = {
     companyInformation: CompanyInformationState
     cultureInformation: CultureInformationState
     cultureManagement: CultureManagementState
@@ -162,7 +162,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Stehwandhoehe: formatMeasureValue(companyInformation?.stehwandhoehe) ?? defaultValue,
         Laenge: formatMeasureValue(companyInformation?.laenge) ?? defaultValue,
         Breite: formatMeasureValue(companyInformation?.breite) ?? defaultValue,
-        Kappenbreite: formatMeasureValue(companyInformation?.knappenbreite) ?? defaultValue,
+        Kappenbreite: formatMeasureValue(companyInformation?.kappenbreite) ?? defaultValue,
         Scheibenlaenge: formatMeasureValue(companyInformation?.scheibenlaenge) ?? defaultValue,
         "Reihenabstand(Rinnenabstand)": formatMeasureValue(companyInformation?.reihenabstand) ?? defaultValue,
         Vorwegbreite: formatMeasureValue(companyInformation?.vorwegbreite) ?? defaultValue,

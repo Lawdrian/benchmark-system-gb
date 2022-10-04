@@ -13,7 +13,7 @@ import {
 /**
  * @type DatasetState
  *
- * Contains the status of the current submission.
+ * Contains the status and data of fetching datasets from the database.
  *
  * @property {boolean} inProgress - True, when the dataset fetching is still in progress
  * @property {boolean|null} successful - True, when data was fetched successfully
@@ -35,7 +35,7 @@ const initialState: DatasetState = {
 }
 
 /**
- * Dispatches any actions related to the submission of data.
+ * Dispatches any actions related to the fetching of data.
  *
  * @param state - The current dataset state
  * @param action - The action to dispatch

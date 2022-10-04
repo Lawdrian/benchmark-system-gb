@@ -675,6 +675,9 @@ class GetDatasets(APIView):
 
                                     option_group_tuple = option_group_tuple + "]"
 
+                            if option_group_tuple == "[[":
+                                option_group_tuple = option_group_tuple + "null]"
+
                             option_group_tuple = option_group_tuple + "]"
                             temp_data_dict[option_group.option_group_name] = option_group_tuple
 

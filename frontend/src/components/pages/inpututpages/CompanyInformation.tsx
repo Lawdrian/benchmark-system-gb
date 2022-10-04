@@ -12,11 +12,9 @@ import {
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {FormControlLabel, Radio, TextField} from "@mui/material";
+import {Divider, FormControlLabel, Radio, TextField, Typography} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
-import lookup from "../../../reducers/lookup";
-import {format} from "date-fns";
 import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
@@ -52,7 +50,7 @@ export type CompanyInformationState = {
     stehwandhoehe: MeasureValue
     laenge: MeasureValue | null
     breite: MeasureValue | null
-    knappenbreite: MeasureValue | null
+    kappenbreite: MeasureValue | null
     scheibenlaenge: MeasureValue | null
     reihenabstand: MeasureValue | null
     vorwegbreite: MeasureValue | null
@@ -74,21 +72,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         console.log(companyInformation.gewaechshausName)
     }
 
-    // Properties of the input fields
-    const gewaechshausNameProps: MeasureInputProps = {
-        title: "Gewächshaus Name",
-        label: "Wie lautet der Name Ihres Gewächshauses? Wenn Sie einen neuen Datensatz für ein bestehendes Gewächshaus eingeben möchten, dann geben Sie dessen Namen in dieses Feld ein.",
-        unitName:"",
-        textFieldProps: {
-            value: companyInformation.gewaechshausName,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                gewaechshausName: event.target.value
-            }),
-            type:"text",
-            placeholder:"Name",
-        }
-    }
 
     const datumProps: DateInputProps = {
         title: "Datum",
@@ -325,10 +308,10 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Wie viele Meter beträgt die Knappenbreite?",
         unitName: props.unitValues.measures.Kappenbreite[0]?.values,
         textFieldProps: {
-            value: companyInformation.knappenbreite?.value,
+            value: companyInformation.kappenbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                knappenbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kappenbreite[0].id}
+                kappenbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kappenbreite[0].id}
             })
         }
     }
@@ -472,15 +455,14 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     return (
         <Grid container xs={12} spacing={8}>
-            <SectionDivider title="Allgemeine Daten"/>
-            <Grid item container xs={12}  spacing={4}>
-                <MeasureInputField {...gewaechshausNameProps} />
-                <DateInputField {...datumProps} />
+            <Grid container item direction="column" xs={12} sx={{marginTop:5}}>
+                <Typography variant="h4">{"Gewächshaus: " + companyInformation.gewaechshausName}</Typography>
+                <Divider sx={{ borderBottomWidth: 3, bgcolor: "black"  }}/>
             </Grid>
-            <Grid item container xs={12} spacing={4}>
+            <Grid item container xs={12}  spacing={4}>
+                <DateInputField {...datumProps} />
                 <MeasureInputField {...plzProps} />
             </Grid>
-            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...einheitlicheWaermeversorgungProps}>
                     <Grid item container xs={12} spacing={4}>
