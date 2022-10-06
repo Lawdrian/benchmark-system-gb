@@ -25,10 +25,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# http only cookies set
-CSRF_COOKIE_HTTPONLY = True
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.benchmark-gb.fagw.info']
 
 # email sending
 EMAIL_USE_TLS = True
@@ -160,4 +157,3 @@ STATIC_ROOT = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
