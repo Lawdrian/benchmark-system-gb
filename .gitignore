@@ -19,3 +19,10 @@ frontend/static/frontend/
 # Django migrations except __init__.py
 migrations/
 !migrations/__init__.py
+
+# additional settings
+local_settings.py
+
+# static content
+/static/
+/build/
