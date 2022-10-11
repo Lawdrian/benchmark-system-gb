@@ -122,7 +122,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
             data: {
                 labels: greenhouse.greenhouseDatasets
                     .map(dataset => dataset.label)
-                    .map(label => label == "Optimaler Betrieb" ? "Optimaler Betrieb" : format(new Date(label), 'dd/MM/yyyy')),
+                    .map(label => label == "Best Performer" ? "Best Performer" : format(new Date(label), 'yyyy')),
                 datasets: [{
                     label: "Gewächshaus Konstruktion",
                     data: greenhouse.greenhouseDatasets.map(dataset =>

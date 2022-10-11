@@ -299,7 +299,7 @@ class GetCalculatedGreenhouseData(APIView):
 
                     if high_performer_dataset.exists():
                         high_performer_dict = dict()
-                        high_performer_dict['label'] = "Optimaler Betrieb"
+                        high_performer_dict['label'] = "Best Performer"
 
                         for i, calculation_id in enumerate(calculation_ids):
                             value = Results.objects \

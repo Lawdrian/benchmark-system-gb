@@ -78,7 +78,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Von wann sind diese Daten?",
         datePickerProps: {
             value: companyInformation.datum,
-            inputFormat: "dd/MM/yyyy",
+            views: ['year'],
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 datum: event
