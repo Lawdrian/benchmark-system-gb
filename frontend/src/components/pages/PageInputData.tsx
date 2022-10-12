@@ -41,7 +41,7 @@ import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
-import {indexedTabProps, TabPanel} from "../utils/TabPanel";
+import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
 
 const mapStateToProps = (state: RootState) => ({
     submission: state.submission,

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {deleteUser, register} from "../../actions/auth";
+import {deleteUser} from "../../actions/auth";
 import {useNavigate} from "react-router-dom";
 
 const mapStateToProps = (state: RootState) => ({
@@ -42,7 +42,6 @@ const PageProfile = ({deleteUser, user, loginUrl}: ProfileProps) => {
         {'Betriebsname': user?.profile?.company_name},
         {'Email': user?.username}
         ]
-
 
     return (
         <Box sx={{width: '100%'}}>

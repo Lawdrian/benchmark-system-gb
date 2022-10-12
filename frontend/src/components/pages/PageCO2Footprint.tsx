@@ -15,10 +15,16 @@ import {
 } from "@mui/material";
 import {GreenhouseFootprint} from "../../types/reduxTypes";
 import {SectionDivider} from "../utils/inputPage/layout";
-import {indexedTabProps, TabPanel} from "../utils/TabPanel";
+import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
+import benchmarkPlot from "../utils/BenchmarkPlot";
 
 
-const mapStateToProps = (state: RootState) => ({plotData1: state.co2.plotData1, plotData2: state.co2.plotData2});
+const mapStateToProps = (state: RootState) => ({
+    plotData1: state.co2.plotData1,
+    plotData2: state.co2.plotData2,
+    plotData3: state.co2.plotData3,
+    plotData4: state.co2.plotData4
+});
 const connector = connect(mapStateToProps, {loadCO2Footprint});
 type ReduxProps = ConnectedProps<typeof connector>
 
@@ -36,7 +42,7 @@ type C02FootprintProps = ReduxProps & {}
  * loadCO2Footprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
-const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02FootprintProps) => {
+const PageC02Footprint = ({plotData1, plotData2, plotData3, plotData4, loadCO2Footprint}: C02FootprintProps) => {
     // Load CO2-Footprint data
     React.useEffect(() => {
         loadCO2Footprint()
@@ -64,8 +70,7 @@ const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02Footprint
                 {
                     section: dataset.label,
                     data: (
-                        // -2 so that the most recent dataset gets selected. -1 is the best performer
-                        dataset.splitData[dataset.splitData.length -2].map( row => (
+                        dataset.splitData[dataset.splitData.length -1].map( row => (
                             {
                                 name: row.name,
                                 co2: row.value
@@ -130,8 +135,9 @@ const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02Footprint
                   aria-label="tabs">
               <Tab label="Gesamt" {...indexedTabProps(0)} />
               <Tab label="Normiert" {...indexedTabProps(1)} />
-              <Tab label="Sortenspezifisch" {...indexedTabProps(2)} />
+              <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
               <Tab label="Benchmark" {...indexedTabProps(3)} />
+              <Tab label="Optimierung" {...indexedTabProps(4)} />
             </Tabs>
 
             <TabPanel index={0} value={tab}>
@@ -142,8 +148,7 @@ const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02Footprint
                     'kg',
                     plotData1[curGreenHouseIndex].data)}
                 <SectionDivider
-                    // -2 so that the most recent dataset gets selected. -1 is the best performer
-                    title={`CO2 Daten des Datensatzes aus dem Jahr ${plotData1[curGreenHouseIndex].data.labels[plotData1[curGreenHouseIndex].data.labels.length -2]}`}
+                    title={`CO2 Daten des Datensatzes aus dem Jahr ${plotData1[curGreenHouseIndex].data.labels[plotData1[curGreenHouseIndex].data.labels.length -1]}`}
                 />
                 {DataTable(createTableData(plotData1[curGreenHouseIndex]))}</TabPanel>
             <TabPanel index={1} value={tab}>
@@ -155,9 +160,22 @@ const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02Footprint
                     plotData2[curGreenHouseIndex].data)}
             </TabPanel>
             <TabPanel index={2} value={tab}>
-                <h1>{tab}</h1>
+                <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+                            currentIndex={curGreenHouseIndex}/>
+                {footprintPlot(
+                    ("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex]),
+                    'kg',
+                    plotData3[curGreenHouseIndex].data)}
             </TabPanel>
             <TabPanel index={3} value={tab}>
+                <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+                            currentIndex={curGreenHouseIndex}/>
+                {benchmarkPlot(
+                    ("CO2-Benchmark für " + greenhouses[curGreenHouseIndex]),
+                    'kg',
+                    plotData4[curGreenHouseIndex].data)}
+            </TabPanel>
+            <TabPanel index={4} value={tab}>
                 <h1>{tab}</h1>
             </TabPanel>
 

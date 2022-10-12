@@ -50,6 +50,12 @@ export const CO2FP_LOADING = "CO2FP_LOADING";
 export const CO2FP_LOADED = "CO2FP_LOADED";
 // Loading of co2-footprint failed
 export const CO2FP_ERROR = "CO2FP_ERROR";
+// Set the co2-benchmark-loading flag
+export const CO2BM_LOADING = "CO2BM_LOADING";
+// Loading of co2-benchmark was successful
+export const CO2BM_LOADED = "CO2BM_LOADED";
+// Loading of co2-benchmark failed
+export const CO2BM_ERROR = "CO2BM_ERROR";
 // Set the waterfooprint-loading flag
 export const WATERFP_LOADING = "WATERFP_LOADING";
 // Loading of waterfootprint was successful
@@ -134,8 +140,7 @@ type FootprintDataset = {
  * Represents a single dataset of a benchmark plot
  */
 type BenchmarkDataset = {
-    label: string,
-    data: { x: number, y: number }[]
+    data: number[]
     backgroundColor: string
 }
 
