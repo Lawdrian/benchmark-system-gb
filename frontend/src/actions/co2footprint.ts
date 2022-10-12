@@ -96,7 +96,8 @@ export const loadCO2Footprint = (
             console.log("CO2 Response", response)
             dispatch({
                 type: CO2FP_LOADED,
-                payload: toCO2FootprintPlot(response.data)
+                payload: toCO2FootprintPlot(response.data.total),
+                payload2: toCO2FootprintPlot(response.data.normalized),
             })
             successCB()
         })
@@ -209,9 +210,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         { "name": "Sonstige Verbrauchsmaterialien", "value": dataset.sonstige_verbrauchsmaterialien_co2},
                         { "name": "Transport", "value": dataset.transport_co2},
                         { "name": "Produktion", "value": dataset.zusaetzlicher_machineneinsatz_co2}
-                    ]),
-                    optimization: [],
-                    climateData: []
+                    ])
                 }]
             }
         }

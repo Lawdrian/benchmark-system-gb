@@ -21,13 +21,15 @@ import {
  */
 export type CO2FootprintState = {
     isLoading: boolean
-    plotData: GreenhouseFootprint[]
+    plotData1: GreenhouseFootprint[]
+    plotData2: GreenhouseFootprint[]
 }
 
 // Initialize the co2-footprint state
 const initialState: CO2FootprintState = {
     isLoading: false,
-    plotData: []
+    plotData1: [],
+    plotData2: []
 }
 
 /**
@@ -50,13 +52,15 @@ export default function (state: CO2FootprintState = initialState, action: any): 
             return {
                 ...state,
                 isLoading: false,
-                plotData: action.payload
+                plotData1: action.payload,
+                plotData2: action.payload2
             };
         case CO2FP_ERROR:
             return {
                 ...state,
                 isLoading: false,
-                plotData: []
+                plotData1: [],
+                plotData2: []
             };
         case RESET_DATA:
             return initialState

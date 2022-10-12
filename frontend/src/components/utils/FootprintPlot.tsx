@@ -69,18 +69,6 @@ export default function footprintPlot(title: string, unit: string, data: Footpri
                         }
                         body = body.replaceAll(",", "") // For some reason commas are automatically added, so they need to be removed.
                         return body
-                    },
-                    footer: function (context: TooltipItem<'bar'>[]) {
-                        let footer = '';
-                        let j = context[0].dataIndex;
-
-
-                        // @ts-ignore
-                        if (context[0].dataset.optimization[j]) {
-                            // @ts-ignore
-                            footer += "Einsparmöglichkeiten: \n" + context[0].dataset.optimization[j] + "\n";
-                        }
-                        return footer;
                     }
                 },
                 titleFont: {

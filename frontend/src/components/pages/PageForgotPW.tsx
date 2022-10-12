@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {forgotPW, resetPW} from "../../actions/auth";
+import {forgotPW} from "../../actions/auth";
 import {UserManagementLayout} from "../utils/UserManagement";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";

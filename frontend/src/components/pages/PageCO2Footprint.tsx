@@ -1,23 +1,24 @@
-import React from "react";
+import React, {useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import footprintPlot from "../utils/FootprintPlot";
 import {GreenhouseMenu} from "../utils/GreenhouseMenu";
 import {
-    Paper,
+    Paper, Tab,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
+    TableRow, Tabs,
 } from "@mui/material";
 import {GreenhouseFootprint} from "../../types/reduxTypes";
 import {SectionDivider} from "../utils/inputPage/layout";
+import {indexedTabProps, TabPanel} from "../utils/TabPanel";
 
 
-const mapStateToProps = (state: RootState) => ({plotData: state.co2.plotData});
+const mapStateToProps = (state: RootState) => ({plotData1: state.co2.plotData1, plotData2: state.co2.plotData2});
 const connector = connect(mapStateToProps, {loadCO2Footprint});
 type ReduxProps = ConnectedProps<typeof connector>
 
@@ -35,20 +36,21 @@ type C02FootprintProps = ReduxProps & {}
  * loadCO2Footprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
-const PageC02Footprint = ({plotData, loadCO2Footprint}: C02FootprintProps) => {
+const PageC02Footprint = ({plotData1, plotData2, loadCO2Footprint}: C02FootprintProps) => {
     // Load CO2-Footprint data
     React.useEffect(() => {
         loadCO2Footprint()
     }, [])
 
-    let greenhouses = plotData
+    const [tab, setTab] = useState<number>(0)
+    let greenhouses = plotData1
         .map(dataset => dataset.greenhouse)
 
     // Stuff for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
     // Return info message if data isn't loaded or no data entered yet:
-    if (plotData.length == 0) {
+    if (plotData1.length == 0) {
         return (<p> Bisher wurden noch keine Daten erfasst oder geladen. <br/>
             Bitte warten Sie einen Moment oder geben Sie Daten zu Ihren Gewächshäusern <a
                 href="/input-data">hier</a> ein.</p>)
@@ -62,6 +64,7 @@ const PageC02Footprint = ({plotData, loadCO2Footprint}: C02FootprintProps) => {
                 {
                     section: dataset.label,
                     data: (
+                        // -2 so that the most recent dataset gets selected. -1 is the best performer
                         dataset.splitData[dataset.splitData.length -2].map( row => (
                             {
                                 name: row.name,
@@ -119,20 +122,45 @@ const PageC02Footprint = ({plotData, loadCO2Footprint}: C02FootprintProps) => {
         )
     }
 
-
-
     return (
         <div id="co2-footprint" className="page">
-            <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+            <Tabs value={tab} onChange={(event, newValue) => setTab(newValue)}
+                  variant="scrollable"
+                  scrollButtons="auto"
+                  aria-label="tabs">
+              <Tab label="Gesamt" {...indexedTabProps(0)} />
+              <Tab label="Normiert" {...indexedTabProps(1)} />
+              <Tab label="Sortenspezifisch" {...indexedTabProps(2)} />
+              <Tab label="Benchmark" {...indexedTabProps(3)} />
+            </Tabs>
+
+            <TabPanel index={0} value={tab}>
+                <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                             currentIndex={curGreenHouseIndex}/>
-            {footprintPlot(
-                ("CO2-Footprint für " + greenhouses[curGreenHouseIndex]),
-                'kg',
-                plotData[curGreenHouseIndex].data)}
-            <SectionDivider
-                title={`CO2 Daten des Datensatzes aus dem Jahr ${plotData[curGreenHouseIndex].data.labels[plotData[curGreenHouseIndex].data.labels.length -2]}`}
-            />
-            {DataTable(createTableData(plotData[curGreenHouseIndex]))}
+                {footprintPlot(
+                    ("CO2-Footprint für " + greenhouses[curGreenHouseIndex]),
+                    'kg',
+                    plotData1[curGreenHouseIndex].data)}
+                <SectionDivider
+                    // -2 so that the most recent dataset gets selected. -1 is the best performer
+                    title={`CO2 Daten des Datensatzes aus dem Jahr ${plotData1[curGreenHouseIndex].data.labels[plotData1[curGreenHouseIndex].data.labels.length -2]}`}
+                />
+                {DataTable(createTableData(plotData1[curGreenHouseIndex]))}</TabPanel>
+            <TabPanel index={1} value={tab}>
+                <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+                            currentIndex={curGreenHouseIndex}/>
+                {footprintPlot(
+                    ("CO2-Footprint / kg Ertrag für " + greenhouses[curGreenHouseIndex]),
+                    'kg',
+                    plotData2[curGreenHouseIndex].data)}
+            </TabPanel>
+            <TabPanel index={2} value={tab}>
+                <h1>{tab}</h1>
+            </TabPanel>
+            <TabPanel index={3} value={tab}>
+                <h1>{tab}</h1>
+            </TabPanel>
+
 
         </div>
     );
