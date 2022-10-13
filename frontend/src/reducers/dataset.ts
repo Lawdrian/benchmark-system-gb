@@ -22,7 +22,7 @@ import {
 export type DatasetState = {
     inProgress: boolean
     successful: boolean | null
-    datasets: GreenhouseData[]
+    datasets: GreenhouseData[] | string
 }
 
 

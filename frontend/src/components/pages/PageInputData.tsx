@@ -41,6 +41,7 @@ import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
 import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
+import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
 
 const mapStateToProps = (state: RootState) => ({
     submission: state.submission,
@@ -336,38 +337,6 @@ const PageInputData = (props: InputDataProps) => {
 export default connector(PageInputData)
 
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  index: number;
-  value: number;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-function indexedTabProps(index: number) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
 
 
 

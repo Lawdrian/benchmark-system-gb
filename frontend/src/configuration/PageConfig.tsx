@@ -8,7 +8,6 @@
  * #############################################################################
  */
 import React from 'react';
-import SpeedIcon from '@mui/icons-material/Speed';
 import InvertColorsIcon from '@mui/icons-material/InvertColors';
 import Co2Icon from '@mui/icons-material/Co2';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
@@ -16,9 +15,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import PageWaterFootprint from "../components/pages/PageWaterFootprint";
-import PageWaterBenchmark from "../components/pages/PageWaterBenchmark";
 import PageC02Footprint from "../components/pages/PageCO2Footprint";
-import PageInputData from "../components/pages/PageInputData";
 import PageProfile from "../components/pages/PageProfile";
 import PageLogin from "../components/pages/PageLogin";
 import PageRegister from "../components/pages/PageRegister";
@@ -46,10 +43,6 @@ export const pageConfig: PageConfig = {
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
         .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
-        .finalize(),
-    generatePage(<PageWaterBenchmark/>, "water-benchmark")
-        .withHeaderTitle("Water Benchmark - Vergleich mit anderen Gewächshausbetreibern")
-        .includeInDrawer(<SpeedIcon/>, "Water Benchmark")
         .finalize(),
     generatePage(<PageWaterFootprint/>, "water-footprint")
         .withHeaderTitle("Water Footprint - Berechnung des Wasserverbrauchs")

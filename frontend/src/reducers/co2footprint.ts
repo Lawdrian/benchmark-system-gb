@@ -21,13 +21,19 @@ import {
  */
 export type CO2FootprintState = {
     isLoading: boolean
-    plotData: GreenhouseFootprint[]
+    plotData1: GreenhouseFootprint[]
+    plotData2: GreenhouseFootprint[]
+    plotData3: GreenhouseFootprint[]
+    plotData4: GreenhouseFootprint[]
 }
 
 // Initialize the co2-footprint state
 const initialState: CO2FootprintState = {
     isLoading: false,
-    plotData: []
+    plotData1: [],
+    plotData2: [],
+    plotData3: [],
+    plotData4: []
 }
 
 /**
@@ -46,17 +52,24 @@ export default function (state: CO2FootprintState = initialState, action: any): 
                 isLoading: true
             };
         case CO2FP_LOADED:
-            console.log("CO2-Plot Data:", action.payload)
+            console.log("CO2-Plot Data:", action.payload1)
+            console.log("CO2-FruitSize-Plot Data:", action.payload3)
             return {
                 ...state,
                 isLoading: false,
-                plotData: action.payload
+                plotData1: action.payload1,
+                plotData2: action.payload2,
+                plotData3: action.payload3,
+                plotData4: action.payload4
             };
         case CO2FP_ERROR:
             return {
                 ...state,
                 isLoading: false,
-                plotData: []
+                plotData1: [],
+                plotData2: [],
+                plotData3: [],
+                plotData4: []
             };
         case RESET_DATA:
             return initialState

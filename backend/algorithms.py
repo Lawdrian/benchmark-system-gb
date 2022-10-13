@@ -17,7 +17,6 @@
   co2_footprint = calc_co2_footprint(data)
 """
 import math
-import random
 
 from backend.models import Options, OptionUnits
 from backend.models import MeasurementUnits
@@ -58,6 +57,12 @@ def calc_co2_footprint(data):
     print("co2_footprint: " + str(co2_footprint))
 
     calculation_results["co2_footprint"] = co2_footprint
+    calculation_results["co2_footprint_norm"] = co2_footprint / (
+            data["SnackErtragJahr"][0] +
+            data["CocktailErtragJahr"][0] +
+            data["RispenErtragJahr"][0] +
+            data["FleischErtragJahr"][0]
+    )
 
     return calculation_results
 

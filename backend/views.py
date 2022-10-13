@@ -172,7 +172,11 @@ class GetCalculatedGreenhouseData(APIView):
         Returns:
             json: The calculated data requested
         """
-        response_data = []
+        total_response_data = []
+        normalized_response_data = []
+        fruitsize_response_data = []
+        benchmark_response_data = []
+        response_data = dict()
 
         # read url query parameters
         user_id = request.GET.get('userId', None)
@@ -232,9 +236,17 @@ class GetCalculatedGreenhouseData(APIView):
         # and store them in a defined dictionary/list structure
         for greenhouse in greenhouses:
 
-            temp_greenhouse_dict = dict()
-            temp_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
-            temp_data_set_list = []
+            total_greenhouse_dict = dict()
+            normalized_greenhouse_dict = dict()
+            fruitsize_greenhouse_dict = dict()
+            benchmark_greenhouse_dict = dict()
+            total_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
+            normalized_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
+            fruitsize_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
+            benchmark_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
+            total_data_set_list = []
+            normalized_data_set_list = []
+            benchmark_data_set_list = []
 
             greenhouse_data = GreenhouseData.objects.filter(
                 greenhouse_id=greenhouse.id)
@@ -242,11 +254,37 @@ class GetCalculatedGreenhouseData(APIView):
             if not greenhouse_data.exists():
                 return Response({'Bad Request': 'A greenhouse has no greenhouse data'},
                                 status=status.HTTP_400_BAD_REQUEST)
-            # Retrieve the result_values for every data_set of a greenhouse and store them in the temp_data_set_list
+            # Retrieve the result_values for every data_set of a greenhouse and store them in the total_data_set_list
             try:
                 for data_set in greenhouse_data:
-                    temp_data_dict = dict()
-                    temp_data_dict['label'] = data_set.date
+                    total_data_dict = dict()
+                    normalized_data_dict = dict()
+                    total_data_dict['label'] = data_set.date
+                    normalized_data_dict['label'] = data_set.date
+
+                    # Ertrag
+                    snack_ertrag_id = Measurements.objects.get(measurement_name="SnackErtragJahr")
+                    snack_ertrag = Measures.objects \
+                        .get(greenhouse_data_id=data_set.id,
+                             measurement_id=snack_ertrag_id
+                             ).measure_value
+                    cocktail_ertrag_id = Measurements.objects.get(measurement_name="CocktailErtragJahr")
+                    cocktail_ertrag = Measures.objects \
+                        .get(greenhouse_data_id=data_set.id,
+                             measurement_id=cocktail_ertrag_id
+                             ).measure_value
+                    rispen_ertrag_id = Measurements.objects.get(measurement_name="RispenErtragJahr")
+                    rispen_ertrag = Measures.objects \
+                        .get(greenhouse_data_id=data_set.id,
+                             measurement_id=rispen_ertrag_id
+                             ).measure_value
+                    fleisch_ertrag_id = Measurements.objects.get(measurement_name="FleischErtragJahr")
+                    fleisch_ertrag = Measures.objects \
+                        .get(greenhouse_data_id=data_set.id,
+                             measurement_id=fleisch_ertrag_id
+                             ).measure_value
+
+                    total_ertrag = snack_ertrag+cocktail_ertrag+rispen_ertrag+fleisch_ertrag
 
                     for i, calculation_id in enumerate(calculation_ids):
                         value = Results.objects \
@@ -254,11 +292,14 @@ class GetCalculatedGreenhouseData(APIView):
                                     calculation_id=calculation_id) \
                             .values('result_value')[0]['result_value']
 
-                        temp_data_dict[calculation_names[i]] = value
+                        total_data_dict[calculation_names[i]] = value
+                        normalized_data_dict[calculation_names[i]] = value / total_ertrag
 
-                    temp_data_set_list.append(temp_data_dict)
+                    total_data_set_list.append(total_data_dict)
+                    normalized_data_set_list.append(normalized_data_dict)
 
-
+                # Append only the most recent dataset to the benchmark_data_set_list
+                benchmark_data_set_list.append(normalized_data_set_list[len(normalized_data_set_list)-1])
                 # Check what production type the most recent dataset uses
                 if len(greenhouse_data) != 0:
                     recent_dataset = greenhouse_data[len(greenhouse_data)-1]
@@ -273,8 +314,8 @@ class GetCalculatedGreenhouseData(APIView):
                         recent_dataset_is_biologic = False
                         print("Aktuellster Datensatz ist Konventionell")
 
-                    # Retrieve the result_values of the high performer and append them to response_data
-                    co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint").id
+                    # Retrieve the result_values of the high performer and append them to total_response_data (Using normalized data)
+                    co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint_norm").id
                     found_correct_high_performer = False
                     high_performers = Results.objects.filter(calculation_id=co2_footprint_id).order_by('result_value') # Sort from min to max
                     index = 0
@@ -298,8 +339,35 @@ class GetCalculatedGreenhouseData(APIView):
                     high_performer_dataset = GreenhouseData.objects.filter(id=high_performer_id)
 
                     if high_performer_dataset.exists():
-                        high_performer_dict = dict()
-                        high_performer_dict['label'] = "Optimaler Betrieb"
+                        high_performer_normalized_dict = dict()
+                        if recent_dataset_is_biologic:
+                            high_performer_normalized_dict['label'] = "Best Performer Biologisch"
+                        else:
+                            high_performer_normalized_dict['label'] = "Best Performer Konventionell"
+
+                        # Ertrag
+                        snack_ertrag_id = Measurements.objects.get(measurement_name="SnackErtragJahr")
+                        snack_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=high_performer_dataset[0].id,
+                                 measurement_id=snack_ertrag_id
+                                 ).measure_value
+                        cocktail_ertrag_id = Measurements.objects.get(measurement_name="CocktailErtragJahr")
+                        cocktail_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=high_performer_dataset[0].id,
+                                 measurement_id=cocktail_ertrag_id
+                                 ).measure_value
+                        rispen_ertrag_id = Measurements.objects.get(measurement_name="RispenErtragJahr")
+                        rispen_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=high_performer_dataset[0].id,
+                                 measurement_id=rispen_ertrag_id
+                                 ).measure_value
+                        fleisch_ertrag_id = Measurements.objects.get(measurement_name="FleischErtragJahr")
+                        fleisch_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=high_performer_dataset[0].id,
+                                 measurement_id=fleisch_ertrag_id
+                                 ).measure_value
+
+                        total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
                         for i, calculation_id in enumerate(calculation_ids):
                             value = Results.objects \
@@ -307,15 +375,130 @@ class GetCalculatedGreenhouseData(APIView):
                                         calculation_id=calculation_id) \
                                 .values('result_value')[0]['result_value']
 
-                            high_performer_dict[calculation_names[i]] = value
+                            high_performer_normalized_dict[calculation_names[i]] = value / total_ertrag
 
-                        temp_data_set_list.append(high_performer_dict)
+                        normalized_data_set_list.append(high_performer_normalized_dict)
+                        benchmark_data_set_list.append(high_performer_normalized_dict)
 
-                temp_greenhouse_dict['greenhouseDatasets'] = temp_data_set_list
-                response_data.append(temp_greenhouse_dict)
+                    # Benchmark Plot Data: Get low performer
+                    index = len(high_performers)-1
+                    low_performer_id = 1
+                    found_correct_low_performer = False
+                    while found_correct_low_performer is False and index >= 0:
+                        low_performer_id = high_performers[index].greenhouse_data_id
+                        low_performer_biologic = Selections.objects.filter(
+                            greenhouse_data_id=low_performer_id).filter(option_id=biologic_id)
+                        low_performer_conventional = Selections.objects.filter(
+                            greenhouse_data_id=low_performer_id).filter(option_id=conventional_id)
+                        if recent_dataset_is_biologic and low_performer_biologic.exists():
+                            found_correct_low_performer = True
+                            print("Low Performer ist Biologisch")
+                        elif recent_dataset_is_biologic is False and low_performer_conventional.exists():
+                            found_correct_low_performer = True
+                            print("Low Performer ist Konventionell")
+
+                        index = index - 1
+
+                    low_performer_dataset = GreenhouseData.objects.filter(id=low_performer_id)
+
+                    if low_performer_dataset.exists():
+                        low_performer_benchmark_dict = dict()
+                        if recent_dataset_is_biologic:
+                            low_performer_benchmark_dict['label'] = "Worst Performer Biologisch"
+                        else:
+                            low_performer_benchmark_dict['label'] = "Worst Performer Konventionell"
+
+                        # Ertrag
+                        snack_ertrag_id = Measurements.objects.get(measurement_name="SnackErtragJahr")
+                        snack_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=low_performer_dataset[0].id,
+                                 measurement_id=snack_ertrag_id
+                                 ).measure_value
+                        cocktail_ertrag_id = Measurements.objects.get(measurement_name="CocktailErtragJahr")
+                        cocktail_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=low_performer_dataset[0].id,
+                                 measurement_id=cocktail_ertrag_id
+                                 ).measure_value
+                        rispen_ertrag_id = Measurements.objects.get(measurement_name="RispenErtragJahr")
+                        rispen_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=low_performer_dataset[0].id,
+                                 measurement_id=rispen_ertrag_id
+                                 ).measure_value
+                        fleisch_ertrag_id = Measurements.objects.get(measurement_name="FleischErtragJahr")
+                        fleisch_ertrag = Measures.objects \
+                            .get(greenhouse_data_id=low_performer_dataset[0].id,
+                                 measurement_id=fleisch_ertrag_id
+                                 ).measure_value
+
+                        total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
+
+                        for i, calculation_id in enumerate(calculation_ids):
+                            value = Results.objects \
+                                .filter(greenhouse_data_id=low_performer_dataset[0].id,
+                                        calculation_id=calculation_id) \
+                                .values('result_value')[0]['result_value']
+
+                            low_performer_benchmark_dict[calculation_names[i]] = value / total_ertrag
+
+                        benchmark_data_set_list.append(low_performer_benchmark_dict)
+
+                total_greenhouse_dict['greenhouseDatasets'] = total_data_set_list
+                normalized_greenhouse_dict['greenhouseDatasets'] = normalized_data_set_list
+                benchmark_greenhouse_dict['greenhouseDatasets'] = benchmark_data_set_list
+                total_response_data.append(total_greenhouse_dict)
+                normalized_response_data.append(normalized_greenhouse_dict)
+                benchmark_response_data.append(benchmark_greenhouse_dict)
+
+                # Fruit Size Plot Data:
+                recent_dataset = greenhouse_data[len(greenhouse_data)-1]
+                fruitsize_data_set_list = []
+                fruitsizes = ["Snack", "Cocktail", "Rispen", "Fleisch"]
+                fruitunit = ["10-30Gramm", "30-100Gramm", "100-150Gramm", ">150Gramm"]
+
+                # Calculate the total amount of rows
+                total_reihenanzahl = 0
+                for fruit in fruitsizes:
+                    fruit_reihenanzahl_id = Measurements.objects.get(measurement_name=fruit + "Reihenanzahl")
+                    total_reihenanzahl = total_reihenanzahl + Measures.objects \
+                        .get(greenhouse_data_id=recent_dataset.id,
+                             measurement_id=fruit_reihenanzahl_id
+                             ).measure_value
+
+                for index, fruit in enumerate(fruitsizes):
+                    fruitsize_data_dict = dict()
+                    fruitsize_data_dict['label'] = fruitunit[index]
+                    fruit_reihenanzahl_id = Measurements.objects.get(measurement_name=fruit+"Reihenanzahl")
+                    fruit_reihenanzahl = Measures.objects \
+                        .get(greenhouse_data_id=recent_dataset.id,
+                             measurement_id=fruit_reihenanzahl_id
+                             ).measure_value
+
+                    fruit_ertrag_id = Measurements.objects.get(measurement_name=fruit + "ErtragJahr")
+                    fruit_ertrag = Measures.objects \
+                        .get(greenhouse_data_id=recent_dataset.id,
+                             measurement_id=fruit_ertrag_id
+                             ).measure_value
+
+                    for i, calculation_id in enumerate(calculation_ids):
+                        value = Results.objects \
+                            .filter(greenhouse_data_id=recent_dataset.id,
+                                    calculation_id=calculation_id) \
+                            .values('result_value')[0]['result_value']
+                        if fruit_ertrag != 0.000:
+                            fruitsize_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / fruit_ertrag
+                        else:
+                            fruitsize_data_dict[calculation_names[i]] = 0
+                    fruitsize_data_set_list.append(fruitsize_data_dict)
+                fruitsize_greenhouse_dict['greenhouseDatasets'] = fruitsize_data_set_list
+                fruitsize_response_data.append(fruitsize_greenhouse_dict)
+
             except IndexError:
                 return Response({'No Content': 'No data for given parameters found'},
                                 status=status.HTTP_204_NO_CONTENT)
+        response_data["total"] = total_response_data
+        response_data["normalized"] = normalized_response_data
+        response_data["fruitsize"] = fruitsize_response_data
+        response_data["benchmark"] = benchmark_response_data
         return Response(response_data, status=status.HTTP_200_OK)
 
 
