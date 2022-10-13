@@ -789,6 +789,9 @@ def calc_substrate_co2(data, helping_values, all_options):
         volumen = helping_values["row_length_total"] * 2 * 0.11
     elif growbagskuebelverwendung == "Kuebel":
         volumen = data["Kuebel:VolumenProTopf"][0]/data["Kuebel:JungpflanzenProTopf"][0] * helping_values["plant_count_total"]
+    elif growbagskuebelverwendung == "nichts":
+        print("substrat_co2: " + str(substrat_co2))
+        return substrat_co2
 
     for option in data["Substrat"]:
         substratmaterial = all_options.get(id=option[0]).option_value
@@ -1010,14 +1013,16 @@ def calc_transport_co2(data, helping_values, all_options):
 def calc_additional_machineusage_co2(data, helping_values, all_options):
     # Zusaetzlicher Machineneinsatz
     zusaetzlicher_maschineneinsatz_co2 = 0
-    for option in data["ZusaetzlicherMaschineneinsatz"]:
-        zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
-        verbrauch = option[1]
-        nutzdauer = option[3]
-        if zusaetzlicher_maschineneinsatzart == "Gabelstapler":
-            zusaetzlicher_maschineneinsatz_co2 = zusaetzlicher_maschineneinsatz_co2 + verbrauch * nutzdauer * 0.476534124
-        else:
-            raise ValueError('No valid option for ZusaetzlicherMaschineneinsatz has been selected')
+    # Since this field is optional it is possible, that the default value comes back
+    if data["ZusaetzlicherMaschineneinsatz"] != [(0,)]:
+        for option in data["ZusaetzlicherMaschineneinsatz"]:
+            zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
+            verbrauch = option[1]
+            nutzdauer = option[3]
+            if zusaetzlicher_maschineneinsatzart == "Gabelstapler":
+                zusaetzlicher_maschineneinsatz_co2 = zusaetzlicher_maschineneinsatz_co2 + verbrauch * nutzdauer * 0.476534124
+            else:
+                raise ValueError('No valid option for ZusaetzlicherMaschineneinsatz has been selected')
 
     print("zusaetzlicher_maschineneinsatz_co2: " + str(zusaetzlicher_maschineneinsatz_co2))
     return zusaetzlicher_maschineneinsatz_co2
