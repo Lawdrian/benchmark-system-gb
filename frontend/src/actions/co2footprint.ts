@@ -26,7 +26,9 @@ import {format} from "date-fns";
  * The structure of a single co2-footprint dataset, that is provided by the server.
  */
 type RawGreenhouseCO2Dataset = {
-    greenhouse_name: string,
+    greenhouse_name: string
+    performer_productiontype?: string
+    performer_date?: string
     greenhouseDatasets: RawCO2Dataset[]
 }
 
@@ -97,9 +99,12 @@ export const loadCO2Footprint = (
             dispatch({
                 type: CO2FP_LOADED,
                 payload1: toCO2FootprintPlot(response.data.total),
-                payload2: toCO2FootprintPlot(response.data.normalized),
-                payload3: toCO2FootprintPlot(response.data.fruitsize),
-                payload4: toCO2BenchmarkPlot(response.data.benchmark)
+                payload2: toCO2FootprintPlot(response.data.normalizedkg),
+                payload3: toCO2FootprintPlot(response.data.normalizedm2),
+                payload4: toCO2FootprintPlot(response.data.fruitsizekg),
+                payload5: toCO2FootprintPlot(response.data.fruitsizem2),
+                payload6: toCO2BenchmarkPlot(response.data.benchmarkkg),
+                payload7: toCO2BenchmarkPlot(response.data.benchmarkm2)
             })
             successCB()
         })
@@ -123,6 +128,8 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
     return responseData.map(greenhouse => {
         return {
             greenhouse: greenhouse.greenhouse_name,
+            performerProductionType: greenhouse.performer_productiontype ?? "",
+            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
             data: {
                 labels: greenhouse.greenhouseDatasets
                     .map(dataset => dataset.label)
@@ -201,7 +208,6 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         dataset.bewaesserung_co2 +
                         dataset.verpackung_co2 +
                         dataset.sonstige_verbrauchsmaterialien_co2 +
-                        dataset.transport_co2 +
                         dataset.zusaetzlicher_machineneinsatz_co2
                     ),
                     backgroundColor: "rgba(91,6,239,0.7)",
@@ -216,7 +222,6 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         { "name": "Bewässerung", "value": dataset.bewaesserung_co2},
                         { "name": "Verpackung", "value": dataset.verpackung_co2},
                         { "name": "Sonstige Verbrauchsmaterialien", "value": dataset.sonstige_verbrauchsmaterialien_co2},
-                        { "name": "Transport", "value": dataset.transport_co2},
                         { "name": "Produktion", "value": dataset.zusaetzlicher_machineneinsatz_co2}
                     ])
                 },]
@@ -267,13 +272,14 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
                 greenhouse.greenhouseDatasets[i].bewaesserung_co2 +
                 greenhouse.greenhouseDatasets[i].verpackung_co2 +
                 greenhouse.greenhouseDatasets[i].sonstige_verbrauchsmaterialien_co2 +
-                greenhouse.greenhouseDatasets[i].transport_co2 +
                 greenhouse.greenhouseDatasets[i].zusaetzlicher_machineneinsatz_co2
         }
 
 
         return {
             greenhouse: greenhouse.greenhouse_name,
+            performerProductionType: greenhouse.performer_productiontype ?? "",
+            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
             data: {
                 labels: ["Gwh Konstruktion", "Wärmeträger", "Strom", "Verbrauchsmittel", "Verbrauchsmaterialien"],
                 datasets: [
@@ -282,20 +288,33 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
                         type: 'scatter' as const,
                         data: [konstruktion[1], waermetraeger[1], strom[1], verbrauchsmittel[1], verbrauchsmaterialien[1]],
                         backgroundColor: "rgba(11,156,49,0.6)",
+                        pointStyle: "line",
+                        borderColor: "rgba(11,156,49,0.6)",
+                        borderWidth: 3,
+                        radius: 60,
+                        hitRadius: 5,
+                        hoverRadius: 60,
+                        hoverBorderWidth: 3
                     },
                     {
                         label: formatLabel(greenhouse.greenhouseDatasets[2].label),
                         type: 'scatter' as const,
                         data: [konstruktion[2], waermetraeger[2], strom[2], verbrauchsmittel[2], verbrauchsmaterialien[2]],
                         backgroundColor: "rgba(255,0,0,0.8)",
+                        pointStyle: "line",
+                        borderColor: "rgba(255,0,0,0.8)",
+                        borderWidth: 3,
+                        radius: 60,
+                        hitRadius: 5,
+                        hoverRadius: 60,
+                        hoverBorderWidth: 3
                     },
                     {
                         label: formatLabel(greenhouse.greenhouseDatasets[0].label),
                         type: 'bar' as const,
                         data: [konstruktion[0], waermetraeger[0], strom[0], verbrauchsmittel[0], verbrauchsmaterialien[0]],
-                        backgroundColor: "rgba(187, 181, 184, 0.8)",
+                        backgroundColor: "rgba(187, 181, 184, 0.8)"
                     }
-
                 ]
             }
         }

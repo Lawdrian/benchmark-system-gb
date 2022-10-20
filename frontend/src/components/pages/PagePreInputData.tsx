@@ -80,6 +80,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             stehwandmaterial: null,
             stehwandmaterialAlter: {value: null, unit: null},
             energieschirm: null,
+            energieschirmTyp: null,
             energieschirmAlter: {value: null, unit: null},
             stehwandhoehe: { value: null, unit: null},
             laenge: {value: null, unit: null},
@@ -94,6 +95,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             kultursystem: null,
             kultursystemAlter: {value: null, unit: null},
             zusaetzlichesHeizsystem: null,
+            zusaetzlichesHeizsystemTyp: null,
             zusaetzlichesHeizsystemAlter: {value: null,unit: null},
         },
         cultureInformation: {
@@ -179,7 +181,6 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             verpackungsmaterial: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
             sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
-            transportDistanz: {value: null, unit: null},
             zusaetzlicherMaschineneinsatz: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}]
         }
     }
@@ -267,6 +268,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     stehwandmaterial: parseSelectionTuple(initialDataset.Stehwandmaterial),
                     stehwandmaterialAlter: parseDateTuple(initialDataset.AlterStehwandmaterial),
                     energieschirm: parseSelectionTuple(initialDataset.Energieschirm),
+                    energieschirmTyp: parseSelectionTuple(initialDataset.EnergieschirmTyp),
                     energieschirmAlter: parseDateTuple(initialDataset.AlterEnergieschirm),
                     stehwandhoehe: parseMeasureTuple(initialDataset.Stehwandhoehe),
                     laenge: parseMeasureTuple(initialDataset.Laenge),
@@ -281,6 +283,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     kultursystem: parseSelectionTuple(initialDataset.Kultursystem),
                     kultursystemAlter: parseDateTuple(initialDataset.AlterKultursystem),
                     zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem),
+                    zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp),
                     zusaetzlichesHeizsystemAlter: parseDateTuple(initialDataset.AlterZusaetzlichesHeizsystem),
                 },
                 cultureInformation: {
@@ -366,7 +369,6 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial),
                     anzahlNutzungenMehrwegsteigen: parseMeasureTuple(initialDataset["Verpackungsmaterial:AnzahlMehrwegsteigen"]),
                     sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien),
-                    transportDistanz: parseMeasureTuple(initialDataset["Transport:Distanz"]),
                     zusaetzlicherMaschineneinsatz: parseSelectionTuple(initialDataset.ZusaetzlicherMaschineneinsatz),
                 }
             })

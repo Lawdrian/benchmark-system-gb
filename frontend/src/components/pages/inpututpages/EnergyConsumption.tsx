@@ -50,7 +50,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
         setEnergyConsumption(energyConsumption)
         props.provideEnergyConsumption(energyConsumption)
-        console.log(energyConsumption)
     }
 
     // Properties of the input fields
@@ -207,6 +206,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const belichtungsstromAnschlussleistungProps: MeasureInputProps = {
         title: "Stromverbrauch Belichtung Anschlussleistung",
         label: "Anschlussleistung pro Lampe",
+        unitName: props.unitValues.measures["Belichtung:AnschlussleistungProLampe"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnschlussleistung?.value,
             onChange: event => setEnergyConsumptionState({
@@ -219,6 +219,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const belichtungsstromAnzLampenProps: MeasureInputProps = {
         title: "Stromverbrauch Belichtung Anzahl Lampen",
         label: "Anzahl Lampen",
+        unitName: props.unitValues.measures["Belichtung:AnzahlLampen"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnzLampen?.value,
             onChange: event => setEnergyConsumptionState({
@@ -231,6 +232,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const belichtungsstromLaufzeitJahrProps: MeasureInputProps = {
         title: "Stromverbrauch Belichtung Laufzeit Jahr",
         label: "Laufzeit pro Jahr",
+        unitName: props.unitValues.measures["Belichtung:LaufzeitProJahr"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromLaufzeitJahr?.value,
             onChange: event => setEnergyConsumptionState({

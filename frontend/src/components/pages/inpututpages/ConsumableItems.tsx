@@ -47,7 +47,6 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const setConsumableItemsState = (consumableItems: ConsumableItemsState) => {
         setConsumableItems(consumableItems)
         props.provideItems(consumableItems)
-        console.log(consumableItems.duengemittelDetail)
     }
 
     const co2HerkunftProps: DynamicInputProps = {

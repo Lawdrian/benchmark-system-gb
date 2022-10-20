@@ -12,7 +12,6 @@
 import * as React from "react";
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import {connect, ConnectedProps} from "react-redux";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
 import {submitGreenhouseData} from "../../actions/submission";
@@ -213,7 +212,6 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Rispenbuegel:Wiederverwendung": formatMeasureValue(consumableMaterials?.rispenbuegelWiederverwendung) ?? defaultValue,
         "Jungpflanzen:Distanz": formatMeasureValue(consumableMaterials?.jungpflanzenDistanz) ?? defaultValue,
         "Verpackungsmaterial:AnzahlMehrwegsteigen": formatMeasureValue(consumableMaterials?.anzahlNutzungenMehrwegsteigen) ?? defaultValue,
-        "Transport:Distanz": formatMeasureValue(consumableMaterials?.transportDistanz) ?? defaultValue,
         EinheitlicheWaermeversorgung: companyInformation?.einheitlicheWaermeversorgung ? formatOptionValues(companyInformation.einheitlicheWaermeversorgung) : "[]",
         GWHArt: companyInformation?.gwhArt ? formatOptionValues(companyInformation.gwhArt) : "[]",
         Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues(companyInformation.bedachungsmaterial) : "[]",
@@ -232,14 +230,11 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : "[]",
         BHKW: energyConsumption?.bhkw ? formatOptionValues(energyConsumption.bhkw) : "[]",
         Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : "[]",
-        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues(energyConsumption.zusatzbelichtung) : defaultOption,
-        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
         "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues(consumableItems.co2Herkunft) : "[]",
         "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple ? formatOptionValues(consumableItems.duengemittelSimple) : "[]",
         "Duengemittel:DetaillierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
         Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : "[]",
         GrowbagsKuebel: consumableMaterials?.growbagsKuebel ? formatOptionValues(consumableMaterials.growbagsKuebel) : "[]",
-        Substrat: consumableMaterials?.growbagsKuebelSubstrat && consumableMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsKuebelSubstrat) : defaultOption,
         "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : "[]",
         Klipse:consumableMaterials?.klipse ? formatOptionValues(consumableMaterials.klipse) : "[]",
         Rispenbuegel:consumableMaterials?.rispenbuegel ? formatOptionValues(consumableMaterials.rispenbuegel) : "[]",
@@ -254,7 +249,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
         BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption,
         "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : defaultOption,
-        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : defaultOption
+        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : defaultOption,
+        Substrat: consumableMaterials?.growbagsKuebelSubstrat && consumableMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsKuebelSubstrat) : defaultOption,
+        Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues(energyConsumption.zusatzbelichtung) : defaultOption,
+        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
+        EnergieschirmTyp: companyInformation?.energieschirmTyp ? formatOptionValues(companyInformation.energieschirmTyp) : defaultOption,
+        ZusaetzlichesHeizsystemTyp: companyInformation?.zusaetzlichesHeizsystemTyp ? formatOptionValues(companyInformation.zusaetzlichesHeizsystemTyp) : defaultOption,
     }
     console.log("SubmissionData:")
     console.log(submissionData)

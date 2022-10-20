@@ -38,7 +38,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
 
     return (
         <>
-        {showAlert ? submitErrorAlert() : null}
+            {showAlert ? submitErrorAlert() : null}
             <Box sx={{display:"flex", justifyContent:"center"}} >
                 <>
                 <Button
@@ -73,7 +73,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                     }
                 </>
             </Box>
-            </>
-       )
+        </>
+    )
 }
 export default InputPaginationButtons

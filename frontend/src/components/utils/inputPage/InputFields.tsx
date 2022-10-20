@@ -331,8 +331,6 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                                 values[idx] = {...value, selectValue: parseInt(event.target.value),textFieldValue:{value:null,unit:null}}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
-                                                console.log("select value")
-                                                console.log(value.selectValue)
                                             }}
                                             value={value.selectValue}
                                             fullWidth
