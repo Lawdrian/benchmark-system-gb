@@ -16,7 +16,6 @@
 15,Dreifachstegplatte,4
 16,Einfachfolie,4
 17,Doppelfolie,4
-18,kein,5
 19,einfach,5
 20,doppelt,5
 21,"einfach, aluminisiert",5
@@ -156,7 +155,6 @@
 159,Gabelstapler,37
 160,kWh,38
 161,Angaben,38
-162,keines,9
 163,ja,39
 164,nein,39
 165,ja,40
@@ -165,3 +163,7 @@
 168,Bodengewebe,32
 169,Beton,32
 170,beides,9
+171,ja,41
+172,nein,41
+173,ja,42
+174,nein,42

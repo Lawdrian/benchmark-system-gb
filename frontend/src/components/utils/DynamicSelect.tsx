@@ -57,19 +57,19 @@ export const DynamicUnitSelect = (props: DynamicUnitSelectProps<any>) => {
         let lookupName:string = "\"" + lookupNameRaw + "\""
         let activeUnitValues = unitValues.selections[optionGroup as keyof typeof unitValues.selections]
 
-        console.log("lookupName: " + lookupName)
-        console.log("activeUnitValues: ")
-        console.log(activeUnitValues)
-        console.log(activeUnitValues[lookupName as keyof typeof activeUnitValues])
+        //console.log("lookupName: " + lookupName)
+        //console.log("activeUnitValues: ")
+        //onsole.log(activeUnitValues)
+        //console.log(activeUnitValues[lookupName as keyof typeof activeUnitValues])
 
         Object.entries(activeUnitValues).find(([key, value]) => {
             if(!key.includes("\"")) lookupName=lookupName.replaceAll("\"","")
-            console.log("Compare")
-            console.log(lookupName)
-            console.log(key)
-            console.log(key == lookupName)
+            //console.log("Compare")
+            //console.log(lookupName)
+            //console.log(key)
+            //console.log(key == lookupName)
             if (key == lookupName) {
-                console.log("Funktioniert")
+                //console.log("Funktioniert")
                 setUnits(value)
             }
         })

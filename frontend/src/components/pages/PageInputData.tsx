@@ -252,8 +252,9 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : defaultOption,
         Substrat: consumableMaterials?.growbagsKuebelSubstrat && consumableMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsKuebelSubstrat) : defaultOption,
         Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues(energyConsumption.zusatzbelichtung) : defaultOption,
-        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption
-
+        Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
+        EnergieschirmTyp: companyInformation?.energieschirmTyp ? formatOptionValues(companyInformation.energieschirmTyp) : defaultOption,
+        ZusaetzlichesHeizsystemTyp: companyInformation?.zusaetzlichesHeizsystemTyp ? formatOptionValues(companyInformation.zusaetzlichesHeizsystemTyp) : defaultOption,
     }
     console.log("SubmissionData:")
     console.log(submissionData)

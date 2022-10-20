@@ -332,10 +332,11 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
 
 
     # Energieschirm
-    energieschirmmaterial = all_options.get(id=data["Energieschirm"][0][0]).option_value
     energieschirm = 0
+    energieschirmverwendung = all_options.get(id=data["Energieschirm"][0][0]).option_value
 
-    if data["AlterEnergieschirm"][0] <= 10:
+    if data["AlterEnergieschirm"][0] <= 10 and energieschirmverwendung == "ja":
+        energieschirmmaterial = all_options.get(id=data["EnergieschirmTyp"][0][0]).option_value
         if energieschirmmaterial == "kein":
             energieschirm = 0  # nothing
         elif energieschirmmaterial == "einfach":
@@ -394,13 +395,13 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
             raise ValueError('No valid option for Transportsystem has been selected')
 
     # Zusaetzliches Heizsystem
-    zusaetzliches_heizsystemmaterial = all_options.get(id=data["ZusaetzlichesHeizsystem"][0][0]).option_value
     zusaetzliches_heizsystem = 0
-
-    if data["AlterZusaetzlichesHeizsystem"][0] <= 15:
-        if zusaetzliches_heizsystemmaterial == "keines":
-            zusaetzliches_heizsystem = 0  # nothing
-        elif zusaetzliches_heizsystemmaterial == "Vegetationsheizung":
+    zusaetzliches_heizsystemverwendung = all_options.get(id=data["ZusaetzlichesHeizsystem"][0][0]).option_value
+    print("zh" + str(zusaetzliches_heizsystemverwendung))
+    if data["AlterZusaetzlichesHeizsystem"][0] <= 15 and zusaetzliches_heizsystemverwendung == "ja":
+        zusaetzliches_heizsystemmaterial = all_options.get(id=data["ZusaetzlichesHeizsystemTyp"][0][0]).option_value
+        print("zhv" + str(zusaetzliches_heizsystemmaterial))
+        if zusaetzliches_heizsystemmaterial == "Vegetationsheizung":
             zusaetzliches_heizsystem = helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])
         elif zusaetzliches_heizsystemmaterial == "Konvektionsheizung":
             zusaetzliches_heizsystem = data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"])

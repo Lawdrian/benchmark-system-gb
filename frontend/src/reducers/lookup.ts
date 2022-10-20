@@ -32,11 +32,13 @@ export type LookupValues = {
     Stehwandmaterial: Option[]
     AlterdesBedachungsmaterials: Option[]
     Energieschirm: Option[]
+    EnergieschirmTyp: Option[]
     Transportsystem: Option[]
     Produktionstyp: Option[]
     Kultursystem: Option[]
     AnzahlTriebe: Option[]
     ZusaetzlichesHeizsystem: Option[]
+    ZusaetzlichesHeizsystemTyp: Option[]
     "10-30Gramm(Snack)": Option[]
     "30-100Gramm(Cocktail)": Option[]
     "100-150Gramm(Rispen)": Option[]
@@ -168,6 +170,10 @@ export type UnitValues = {
             "Doppelfolie": Option[]
         }
         Energieschirm: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        EnergieschirmTyp: {
             "kein": Option[]
             "einfach": Option[]
             "doppelt": Option[]
@@ -188,6 +194,10 @@ export type UnitValues = {
             "Hydroponikgeschlossen": Option[]
         }
         ZusaetzlichesHeizsystem: {
+            ja: Option[]
+            nein: Option[]
+        }
+        ZusaetzlichesHeizsystemTyp: {
             Vegetationsheizung: Option[]
             Konvektionsheizung: Option[]
             keines: Option[]
@@ -417,11 +427,13 @@ const initialState: LookupState = {
         Stehwandmaterial: [],
         AlterdesBedachungsmaterials: [],
         Energieschirm: [],
+        EnergieschirmTyp: [],
         Transportsystem: [],
         Produktionstyp: [],
         Kultursystem: [],
         AnzahlTriebe: [],
         ZusaetzlichesHeizsystem: [],
+        ZusaetzlichesHeizsystemTyp: [],
         "10-30Gramm(Snack)": [],
         "30-100Gramm(Cocktail)": [],
         "100-150Gramm(Rispen)": [],
@@ -547,6 +559,10 @@ const initialState: LookupState = {
                 "Doppelfolie": [],
             },
             Energieschirm: {
+                "ja": [],
+                "nein": [],
+            },
+            EnergieschirmTyp: {
                 "kein": [],
                 "einfach": [],
                 "doppelt": [],
@@ -567,6 +583,10 @@ const initialState: LookupState = {
                 "Hydroponikgeschlossen": [],
             },
             ZusaetzlichesHeizsystem: {
+                "ja": [],
+                "nein": [],
+            },
+            ZusaetzlichesHeizsystemTyp: {
                 Vegetationsheizung: [],
                 Konvektionsheizung: [],
                 keines: []
@@ -810,11 +830,13 @@ export default function (state: LookupState = initialState, action: any): Lookup
                     Stehwandmaterial: [],
                     AlterdesBedachungsmaterials: [],
                     Energieschirm: [],
+                    EnergieschirmTyp: [],
                     Transportsystem: [],
                     Produktionstyp: [],
                     Kultursystem: [],
                     AnzahlTriebe: [],
                     ZusaetzlichesHeizsystem: [],
+                    ZusaetzlichesHeizsystemTyp: [],
                     "10-30Gramm(Snack)": [],
                     "30-100Gramm(Cocktail)": [],
                     "100-150Gramm(Rispen)": [],

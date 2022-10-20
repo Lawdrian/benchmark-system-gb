@@ -35,29 +35,28 @@ def validate_greenhouse_data(data):
     # 3rd element are option_groups that depend on conditional field
     eventually_optional_fields = {
         1: ("EinheitlicheWaermeversorgung", "NEIN", ["WaermeteilungFlaeche"], []),
-        2: ("10-30Gramm(Snack)", "JA", ["SnackReihenanzahl", "SnackPflanzenabstandInDerReihe", "SnackTriebzahl", "SnackErtragJahr"], []),
-        3: ("30-100Gramm(Cocktail)", "JA", ["CocktailReihenanzahl", "CocktailPflanzenabstandInDerReihe", "CocktailTriebzahl", "CocktailErtragJahr"], []),
-        4: ("100-150Gramm(Rispen)", "JA", ["RispenReihenanzahl", "RispenPflanzenabstandInDerReihe", "RispenTriebzahl", "RispenErtragJahr"], []),
-        5: (">150Gramm(Fleisch)", "JA", ["FleischReihenanzahl", "FleischPflanzenabstandInDerReihe", "FleischTriebzahl", "FleischErtragJahr"], []),
-        6: ("Transportsystem", "JA", ["AlterTransportsystem"], []),
-        7: ("Nebenkultur", "JA", ["NebenkulturBeginn", "NebenkulturEnde"], []),
-        # 8: ("BHKW", "JA", ["BHKW:AnteilErdgas", "BHKW:AnteilBiomethan"], []), These fields get deleted anyways
-        8: ("Zusatzbelichtung", "JA", [], ["Belichtungsstrom"]),
-        9: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
-        10: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
-        11: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
-        12: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
-        13: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
-        14: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
-        15: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
-        16: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
+        2: ("Energieschirm", "Ja", ["AlterEnergieschirm"], ["EnergieschirmTyp"]),
+        3: ("ZusaetzlichesHeizsystem", "Ja", ["AlterZusaetzlichesHeizsystem"], ["ZusaetzlichesHeizsystemTyp"]),
+        4: ("10-30Gramm(Snack)", "JA", ["SnackReihenanzahl", "SnackPflanzenabstandInDerReihe", "SnackTriebzahl", "SnackErtragJahr"], []),
+        5: ("30-100Gramm(Cocktail)", "JA", ["CocktailReihenanzahl", "CocktailPflanzenabstandInDerReihe", "CocktailTriebzahl", "CocktailErtragJahr"], []),
+        6: ("100-150Gramm(Rispen)", "JA", ["RispenReihenanzahl", "RispenPflanzenabstandInDerReihe", "RispenTriebzahl", "RispenErtragJahr"], []),
+        7: (">150Gramm(Fleisch)", "JA", ["FleischReihenanzahl", "FleischPflanzenabstandInDerReihe", "FleischTriebzahl", "FleischErtragJahr"], []),
+        8: ("Transportsystem", "JA", ["AlterTransportsystem"], []),
+        9: ("Nebenkultur", "JA", ["NebenkulturBeginn", "NebenkulturEnde"], []),
+        10: ("Zusatzbelichtung", "JA", [], ["Belichtungsstrom"]),
+        11: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
+        12: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
+        13: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
+        14: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
+        15: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
+        16: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
+        17: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
+        18: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
     }
 
     for key, values in eventually_optional_fields.items():
         optiongroup = values[0]
-        #print(optiongroup)
         condition = values[1]
-        #print(condition)
         measurements = values[2]
         optiongroups = values[3]
         # retrieve the selected option id for the current optiongroup

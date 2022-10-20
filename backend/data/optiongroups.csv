@@ -2,11 +2,11 @@
 2,GWHArt
 3,Bedachungsmaterial
 4,Stehwandmaterial
-5,Energieschirm
+5,EnergieschirmTyp
 6,Transportsystem
 7,Produktionstyp
 8,Kultursystem
-9,ZusaetzlichesHeizsystem
+9,ZusaetzlichesHeizsystemTyp
 10,10-30Gramm(Snack)
 11,30-100Gramm(Cocktail)
 12,100-150Gramm(Rispen)
@@ -37,3 +37,5 @@
 38,BelichtungsstromEinheit
 39,Klipse
 40,Rispenbuegel
+41,ZusaetzlichesHeizsystem
+42,Energieschirm

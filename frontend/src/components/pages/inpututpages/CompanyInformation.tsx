@@ -6,13 +6,12 @@ import {
     MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
-    SelectionRadioInputField,
-    SelectionRadioInputProps, SingleShowConditionalRadioInputField, SingleShowConditionalRadioInputProps
+    SingleShowConditionalRadioInputField, SingleShowConditionalRadioInputProps
 } from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {Divider, FormControlLabel, Radio, TextField, Typography} from "@mui/material";
+import {Divider, TextField, Typography} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
@@ -46,6 +45,7 @@ export type CompanyInformationState = {
     stehwandmaterial: number | null
     stehwandmaterialAlter: DateValue | null
     energieschirm: number | null
+    energieschirmTyp: number | null
     energieschirmAlter: DateValue | null
     stehwandhoehe: MeasureValue
     laenge: MeasureValue | null
@@ -60,6 +60,7 @@ export type CompanyInformationState = {
     transportsystem: number | null
     transportsystemAlter: DateValue | null
     zusaetzlichesHeizsystem: number | null
+    zusaetzlichesHeizsystemTyp: number | null
     zusaetzlichesHeizsystemAlter: DateValue | null
 }
 
@@ -69,7 +70,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
-        console.log(companyInformation.gewaechshausName)
     }
 
 
@@ -92,6 +92,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Postleitzahl (zur Wetterdatenbestimmung)",
         unitName: props.unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
+            placeholder: "Postleizahl",
             value: companyInformation.plz?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
@@ -237,15 +238,34 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const energieschirmProps: SelectionInputProps = {
+    const energieschirmProps: SingleShowConditionalRadioInputProps = {
         title: "Energieschirm",
-        label: "Art des Energieschirms",
-        selectProps: {
-            lookupValues: props.lookupValues.Energieschirm,
+        label: "Verwenden Sie einen Energieschirm?",
+        radioGroupProps: {
             value: companyInformation.energieschirm,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 energieschirm: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Energieschirm,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Energieschirm.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+
+
+    const energieschirmTypProps: SelectionInputProps = {
+        title: "Typ",
+        label: "Welchen Typ von Energieschirm verwenden Sie?",
+        selectProps: {
+            lookupValues: props.lookupValues.EnergieschirmTyp,
+            value: companyInformation.energieschirmTyp,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                energieschirmTyp: parseFloat(event.target.value)
             })
         }
     }
@@ -427,14 +447,32 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const zusaetzlichesHeizsystemProps: SelectionRadioInputProps = {
+    const zusaetzlichesHeizsystemProps: SingleShowConditionalRadioInputProps = {
         title: "Zusätzliches Heizsystem",
-        label: "Welches zusätzliche Heizsystem wird verwendet?",
-        radioProps: {
+        label: "Verwenden Sie ein zusätzliches Heizsystem?",
+        radioGroupProps: {
             value: companyInformation.zusaetzlichesHeizsystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 zusaetzlichesHeizsystem: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.ZusaetzlichesHeizsystem,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.ZusaetzlichesHeizsystem.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const zusaetzlichesHeizsystemTypProps: SelectionInputProps = {
+        title: "Typ",
+        label: "Welches zusätzliche Heizsystem wird verwendet?",
+        selectProps: {
+            lookupValues: props.lookupValues.ZusaetzlichesHeizsystemTyp,
+            value: companyInformation.zusaetzlichesHeizsystemTyp,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                zusaetzlichesHeizsystemTyp: parseFloat(event.target.value)
             }),
         },
     }
@@ -485,8 +523,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 <DateInputField {...stehwandmaterialAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...energieschirmProps} />
-                <DateInputField {...energieschirmAlterProps} />
+                <SingleShowConditionalRadioInputField {...energieschirmProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <SelectionInputField {...energieschirmTypProps} />
+                    <DateInputField {...energieschirmAlterProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
             </Grid>
             <SectionDivider title="Gewächshaus Konstruktion"/>
             <Grid item container xs={12} spacing={4}>
@@ -520,18 +562,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 <DateInputField {...kultursystemAlterProps} />
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <SelectionRadioInputField {...zusaetzlichesHeizsystemProps}>
-                    {props.lookupValues.ZusaetzlichesHeizsystem.map(option => {
-                        return <FormControlLabel
-                            value={option.id}
-                            control={<Radio/>}
-                            label={option.values}
-                        />
-                    })}
-                </SelectionRadioInputField>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <DateInputField {...zusaetzlichesHeizsystemAlterProps} />
+                <SingleShowConditionalRadioInputField {...zusaetzlichesHeizsystemProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <SelectionInputField {...zusaetzlichesHeizsystemTypProps} />
+                        <DateInputField {...zusaetzlichesHeizsystemAlterProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>

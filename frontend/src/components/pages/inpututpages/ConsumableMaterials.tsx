@@ -8,7 +8,7 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
+    MeasureInputProps, MeasureValue,
     SelectionInputField,
     SelectionInputProps,
     SelectionValue, SelectShowConditionalRadioInputField, SelectShowConditionalRadioInputProps,
@@ -72,7 +72,6 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const setConsumableMaterialsState = (consumableMaterials: ConsumableMaterialsState) => {
         setConsumableMaterials(consumableMaterials)
         props.provideConsumables(consumableMaterials)
-        console.log(consumableMaterials)
     }
 
     // Properties of the input fields

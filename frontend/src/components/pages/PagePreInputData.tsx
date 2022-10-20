@@ -80,6 +80,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             stehwandmaterial: null,
             stehwandmaterialAlter: {value: null, unit: null},
             energieschirm: null,
+            energieschirmTyp: null,
             energieschirmAlter: {value: null, unit: null},
             stehwandhoehe: { value: null, unit: null},
             laenge: {value: null, unit: null},
@@ -94,6 +95,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             kultursystem: null,
             kultursystemAlter: {value: null, unit: null},
             zusaetzlichesHeizsystem: null,
+            zusaetzlichesHeizsystemTyp: null,
             zusaetzlichesHeizsystemAlter: {value: null,unit: null},
         },
         cultureInformation: {
@@ -266,6 +268,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     stehwandmaterial: parseSelectionTuple(initialDataset.Stehwandmaterial),
                     stehwandmaterialAlter: parseDateTuple(initialDataset.AlterStehwandmaterial),
                     energieschirm: parseSelectionTuple(initialDataset.Energieschirm),
+                    energieschirmTyp: parseSelectionTuple(initialDataset.EnergieschirmTyp),
                     energieschirmAlter: parseDateTuple(initialDataset.AlterEnergieschirm),
                     stehwandhoehe: parseMeasureTuple(initialDataset.Stehwandhoehe),
                     laenge: parseMeasureTuple(initialDataset.Laenge),
@@ -280,6 +283,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     kultursystem: parseSelectionTuple(initialDataset.Kultursystem),
                     kultursystemAlter: parseDateTuple(initialDataset.AlterKultursystem),
                     zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem),
+                    zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp),
                     zusaetzlichesHeizsystemAlter: parseDateTuple(initialDataset.AlterZusaetzlichesHeizsystem),
                 },
                 cultureInformation: {

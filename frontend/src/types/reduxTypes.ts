@@ -282,10 +282,12 @@ export type GreenhouseData = {
     Bedachungsmaterial: string
     Stehwandmaterial: string
     Energieschirm: string
+    EnergieschirmTyp: string
     Transportsystem: string
     Produktionstyp: string
     Kultursystem: string
     ZusaetzlichesHeizsystem: string
+    ZusaetzlichesHeizsystemTyp: string
     "10-30Gramm(Snack)": string
     "30-100Gramm(Cocktail)": string
     "100-150Gramm(Rispen)": string
