@@ -6,7 +6,7 @@
 import {
     CO2FP_ERROR,
     CO2FP_LOADED,
-    CO2FP_LOADING,
+    CO2FP_LOADING, GreenhouseBenchmark,
     GreenhouseFootprint,
     RESET_DATA
 } from "../types/reduxTypes";
@@ -21,19 +21,25 @@ import {
  */
 export type CO2FootprintState = {
     isLoading: boolean
-    plotData1: GreenhouseFootprint[]
-    plotData2: GreenhouseFootprint[]
-    plotData3: GreenhouseFootprint[]
-    plotData4: GreenhouseFootprint[]
+    total: GreenhouseFootprint[]
+    normalizedkg: GreenhouseFootprint[]
+    normalizedm2: GreenhouseFootprint[]
+    fruitsizekg: GreenhouseFootprint[]
+    fruitsizem2: GreenhouseFootprint[]
+    benchmarkkg: GreenhouseBenchmark[]
+    benchmarkm2: GreenhouseBenchmark[]
 }
 
 // Initialize the co2-footprint state
 const initialState: CO2FootprintState = {
     isLoading: false,
-    plotData1: [],
-    plotData2: [],
-    plotData3: [],
-    plotData4: []
+    total: [],
+    normalizedkg: [],
+    normalizedm2: [],
+    fruitsizekg: [],
+    fruitsizem2: [],
+    benchmarkkg: [],
+    benchmarkm2: []
 }
 
 /**
@@ -53,23 +59,30 @@ export default function (state: CO2FootprintState = initialState, action: any): 
             };
         case CO2FP_LOADED:
             console.log("CO2-Plot Data:", action.payload1)
+            console.log("CO2-Benchmark Data:", action.payload6)
             console.log("CO2-FruitSize-Plot Data:", action.payload3)
             return {
                 ...state,
                 isLoading: false,
-                plotData1: action.payload1,
-                plotData2: action.payload2,
-                plotData3: action.payload3,
-                plotData4: action.payload4
+                total: action.payload1,
+                normalizedkg: action.payload2,
+                normalizedm2: action.payload3,
+                fruitsizekg: action.payload4,
+                fruitsizem2: action.payload5,
+                benchmarkkg: action.payload6,
+                benchmarkm2: action.payload7
             };
         case CO2FP_ERROR:
             return {
                 ...state,
                 isLoading: false,
-                plotData1: [],
-                plotData2: [],
-                plotData3: [],
-                plotData4: []
+                total: [],
+                normalizedkg: [],
+                normalizedm2: [],
+                fruitsizekg: [],
+                fruitsizem2: [],
+                benchmarkkg: [],
+                benchmarkm2: []
             };
         case RESET_DATA:
             return initialState

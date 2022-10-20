@@ -50,7 +50,6 @@ def calc_co2_footprint(data):
         "bewaesserung_co2": calc_irrigation_co2(data, helping_values, all_options),
         "verpackung_co2": calc_packaging_co2(data, helping_values, all_options),
         "sonstige_verbrauchsmaterialien_co2": calc_other_consumables_co2(data, helping_values, all_options),
-        "transport_co2": calc_transport_co2(data, helping_values, all_options),
         "zusaetzlicher_machineneinsatz_co2": calc_additional_machineusage_co2(data, helping_values, all_options)
     }
     co2_footprint = sum(calculation_results.values())
@@ -821,6 +820,7 @@ def calc_young_plants_substrate_co2(data, helping_values, all_options):
     junpflanzen_substrat_co2 = 0
     volumen = (0.1*0.1*0.1) * helping_values["plant_count_total"]
     if jungpflanzenverwendung == "nein":
+        print("jungpflanzen_substrat_co2: " + str(junpflanzen_substrat_co2))
         return junpflanzen_substrat_co2
     elif jungpflanzenverwendung == "ja":
         if jungpflanzen_substratmaterial == "Standardsubstrat":
@@ -882,6 +882,7 @@ def calc_clips_co2(data, helping_values, all_options):
     klipse_co2 = 0
     nutzdauer = data["Klipse:Wiederverwendung"][0]
     if klipseverwendung == "nein":
+        print("klipse_co2: " + str(klipse_co2))
         return klipse_co2
     if klipseverwendung == "ja":
         if klipsematerial == "Kunststoff":
@@ -906,6 +907,7 @@ def calc_panicle_hanger_co2(data, helping_values, all_options):
     rispenbuegel_co2 = 0
     nutzdauer = data["Rispenbuegel:Wiederverwendung"][0]
     if rispenbuegelverwendung == "nein":
+        print("rispenbuegel_co2: " + str(rispenbuegel_co2))
         return rispenbuegel_co2
     if rispenbuegelverwendung == "ja":
         if rispenbuegelmaterial == "Kunststoff":
@@ -985,29 +987,6 @@ def calc_other_consumables_co2(data, helping_values, all_options):
 
     print("sonstige_verbrauchsmaterialien_co2: " + str(sonstige_verbrauchsmaterialien_co2))
     return sonstige_verbrauchsmaterialien_co2
-
-
-def calc_transport_co2(data, helping_values, all_options):
-
-    transport_co2 = 0
-
-    snackVerwendung = all_options.get(id=data["10-30Gramm(Snack)"][0][0]).option_value
-    cocktailVerwendung = all_options.get(id=data["30-100Gramm(Cocktail)"][0][0]).option_value
-    rispenVerwendung = all_options.get(id=data["100-150Gramm(Rispen)"][0][0]).option_value
-    fleischVerwendung = all_options.get(id=data[">150Gramm(Fleisch)"][0][0]).option_value
-    distanz = data["Transport:Distanz"][0]
-
-    if snackVerwendung == "ja":
-        transport_co2 = transport_co2 + data["SnackErtragJahr"][0] * distanz * 0.112
-    if cocktailVerwendung == "ja":
-        transport_co2 = transport_co2 + data["CocktailErtragJahr"][0] * distanz * 0.112
-    if rispenVerwendung == "ja":
-        transport_co2 = transport_co2 + data["RispenErtragJahr"][0] * distanz * 0.112
-    if fleischVerwendung == "ja":
-        transport_co2 = transport_co2 + data["FleischErtragJahr"][0] * distanz * 0.112
-
-    print("transport_co2: " + str(transport_co2))
-    return transport_co2
 
 
 def calc_additional_machineusage_co2(data, helping_values, all_options):

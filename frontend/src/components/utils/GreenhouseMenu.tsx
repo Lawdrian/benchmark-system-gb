@@ -1,5 +1,5 @@
 import React, {ReactNode} from "react";
-import {Menu, MenuItem} from "@mui/material";
+import {Grid, Menu, MenuItem} from "@mui/material";
 import Button from "@mui/material/Button";
 
 /**
@@ -58,33 +58,34 @@ export const GreenhouseMenu = ({greenhouses, setIndexCB, currentIndex}: Greenhou
         })
 
     return (
-        <div>Gewächshaus auswählen:
-            <Button
-                id="greenhouse-button"
-                aria-controls={open ? "greenhouse-menu" : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? "true" : undefined}
-                onClick={handleClick}
-                disabled={greenhouses.length < 2}
-            >
-                {greenhouses[currentIndex]}
-            </Button>
-            <Menu
-                id="greenhouse-menu"
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                {menuItems}
-            </Menu>
-        </div>
+        <Grid item container height={1} minHeight={42} xs direction="row" alignItems={"center"} justifyContent={"start"}>
+            Gewächshaus auswählen:
+                <Button
+                    id="greenhouse-button"
+                    aria-controls={open ? "greenhouse-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                    disabled={greenhouses.length < 2}
+                >
+                    {greenhouses[currentIndex]}
+                </Button>
+                <Menu
+                    id="greenhouse-menu"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'left',
+                    }}
+                >
+                    {menuItems}
+                </Menu>
+        </Grid>
     )
 }

@@ -3,7 +3,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
 import {loadWaterFootprint} from "../../actions/waterfootprint";
 import {GreenhouseMenu} from "../utils/GreenhouseMenu";
-import footprintPlot from "../utils/FootprintPlot";
+import FootprintPlotObject from "../utils/FootprintPlot";
 
 
 const mapStateToProps = (state: RootState) => ({plotData: state.water.plotData});
@@ -47,10 +47,11 @@ const PageWaterFootprint = ({plotData, loadWaterFootprint}: WaterFootprintProps)
         <div id="water-footprint" className="page">
             <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                             currentIndex={curGreenHouseIndex}/>
-            {footprintPlot(
-                ("Wasser-Footprint für " + greenhouses[curGreenHouseIndex]),
-                'kg',
-                plotData[curGreenHouseIndex].data)}
+            <FootprintPlotObject
+                title={("Wasser-Footprint für " + greenhouses[curGreenHouseIndex])}
+                unit={'kg'}
+                data={plotData[curGreenHouseIndex].data}
+            />
         </div>
     );
 }

@@ -61,7 +61,6 @@ export type ConsumableMaterialsState = {
     verpackungsmaterial: SelectionValue[]
     anzahlNutzungenMehrwegsteigen: MeasureValue | null
     sonstVerbrauchsmaterialien: SelectionValue[]
-    transportDistanz: MeasureValue | null
     zusaetzlicherMaschineneinsatz: SelectionValue[]
 
 
@@ -479,19 +478,6 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
         initValues: props.values.sonstVerbrauchsmaterialien
     }
 
-    const transportDistanzProps: MeasureInputProps = {
-        title: "Warentransport Distanz",
-        label: "Welche Strecke wird dabei durchschnittlich gefahren? (Hin- & Rückfahrt)?",
-        unitName: props.unitValues.measures["Transport:Distanz"][0]?.values,
-        textFieldProps: {
-            value: consumableMaterials.transportDistanz?.value,
-            onChange: event => setConsumableMaterialsState({
-                ...consumableMaterials,
-                transportDistanz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Transport:Distanz"][0].id}
-            })
-        }
-    }
-
     const zusaetzlicherMaschineneinsatzProps: DynamicInputProps = {
         title: "Zusätzlicher Maschineneinsatz (optional)",
         label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an, falls Sie welche verwenden.",
@@ -576,7 +562,6 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...verpackungAnzahlNutzungenMehrwegsteigen}/>
-                <MeasureInputField {...transportDistanzProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...sonstVerbrauchsmaterialienProps} />

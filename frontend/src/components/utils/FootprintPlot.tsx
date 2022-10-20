@@ -1,7 +1,7 @@
 import React from 'react';
 import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip, TooltipItem,} from 'chart.js'; // TODO clean up imports
 import {Bar} from 'react-chartjs-2';
-import {FootprintPlot} from "../../types/reduxTypes";
+import {BenchmarkPlot, FootprintPlot} from "../../types/reduxTypes";
 
 ChartJS.register(
     CategoryScale,
@@ -12,6 +12,11 @@ ChartJS.register(
     Legend,
 );
 
+type splitDataObject = {
+    name: string
+    value: number
+}
+
 /**
  * Returns a Footprint plot for the given data.
  *
@@ -20,7 +25,14 @@ ChartJS.register(
  * @param {FootprintPlot} data Data to be shown in the plot. (see reduxTypes)
  * @return JSX.Element
  */
-export default function footprintPlot(title: string, unit: string, data: FootprintPlot) {
+
+type props = {
+    title: string
+    unit: string
+    data: BenchmarkPlot
+}
+
+export default function FootprintPlotObject({title, unit, data}:props) {
     let options = {
         responsive: true,
         plugins: {
@@ -64,7 +76,10 @@ export default function footprintPlot(title: string, unit: string, data: Footpri
                                 .reduce((partialSum, a) =>  partialSum + a, 0)
                             body += "\n" + "𝐀𝐧𝐭𝐞𝐢𝐥 𝐚𝐦 𝐅𝐮ß𝐚𝐛𝐝𝐫𝐮𝐜𝐤: " + (context[0].dataset.data[j]/total_co2*100).toFixed(0) + "%\n"
                             // @ts-ignore
-                            body += "\n" +"𝐙𝐮𝐬𝐚𝐦𝐦𝐞𝐧𝐬𝐞𝐭𝐳𝐮𝐧𝐠: \n" + context[0].dataset.splitData[j].map( singleData =>
+                            body += "\n" +"𝐙𝐮𝐬𝐚𝐦𝐦𝐞𝐧𝐬𝐞𝐭𝐳𝐮𝐧𝐠: \n" + context[0].dataset.splitData[j]
+                                // Sort list so that the splitDataObject with the highest value is at the first place of the list
+                                .sort((firstObject: splitDataObject, secondObject: splitDataObject) => (firstObject.value > secondObject.value) ? -1 : 1)
+                                .map((singleData: splitDataObject) =>
                             { return singleData.name + ": " + (singleData.value/context[0].dataset.data[j]*100).toFixed(2) + "%\n"})
                         }
                         body = body.replaceAll(",", "") // For some reason commas are automatically added, so they need to be removed.

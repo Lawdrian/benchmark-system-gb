@@ -80,8 +80,10 @@ def validate_greenhouse_data(data):
             # if an optiongroup is not mandatory delete it out of the mandatory optiongroups list
             if len(optiongroups) != 0:
                 for not_required_optiongroup in optiongroups:
-                    del mandatory_optiongroups[not_required_optiongroup]
-
+                    try:
+                        del mandatory_optiongroups[not_required_optiongroup]
+                    except KeyError:
+                        print("Optiongroup " + str(not_required_optiongroup) + " has already been deleted or doesn't exist")
 
     # This place is for manually deleting always optional fields out of the mandatory lists
     del mandatory_optiongroups["ZusaetzlicherMaschineneinsatz"]

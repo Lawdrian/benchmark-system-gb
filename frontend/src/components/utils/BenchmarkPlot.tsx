@@ -1,28 +1,11 @@
 import React from 'react';
-import {
-    BarElement,
-    CategoryScale,
-    Chart as ChartJS,
-    Legend,
-    LinearScale,
-    LineElement, PointElement,
-    Title,
-    Tooltip,
-    TooltipItem,
-} from 'chart.js';
+import {Chart as ChartJS, registerables, TooltipItem} from 'chart.js';
 import {Bar} from 'react-chartjs-2';
 import {BenchmarkPlot} from "../../types/reduxTypes";
+import zoomPlugin from 'chartjs-plugin-zoom';
+import {Button} from "@mui/material";
 
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    PointElement,
-    LineElement,
-);
+ChartJS.register(...registerables, zoomPlugin);
 
 /**
  * Returns a Benchmark plot for the given data.
@@ -32,10 +15,37 @@ ChartJS.register(
  * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
  * @return JSX.Element
  */
-export default function benchmarkPlot(title: string, unit: string, data: BenchmarkPlot) {
+
+type props = {
+    title: string
+    unit: string
+    data: BenchmarkPlot
+}
+
+export default function BenchmarkPlotObject({title, unit, data}:props) {
+
+    const chartRef = React.useRef<any>(null);
+
+    const handleResetZoom = () => {
+        chartRef.current.resetZoom();
+    };
+
+
+
+
     let options = {
         responsive: true,
         plugins: {
+            zoom: {
+                zoom: {
+                    wheel: {
+                        enabled: true // SET SCROOL ZOOM TO TRUE
+                    },
+                },
+                pan: {
+                    enabled: true,
+                }
+            },
             legend: {
                 position: 'right' as const,
                 labels: {
@@ -88,7 +98,7 @@ export default function benchmarkPlot(title: string, unit: string, data: Benchma
                 },
             },
             y: {
-                stacked: true,
+                stacked: false,
                 title: {
                     display: true,
                     text: 'CO2-Äquivalente [' + unit + ']',
@@ -107,7 +117,8 @@ export default function benchmarkPlot(title: string, unit: string, data: Benchma
 
     return (
         <div className="Plot">
-            <Bar options={options} data={data}/>
+            <Bar ref={chartRef} options={options} data={data}/>
+            <Button onClick={handleResetZoom}>Zoom zurücksetzen</Button>
         </div>
     );
 }

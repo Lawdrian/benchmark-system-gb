@@ -179,7 +179,6 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             verpackungsmaterial: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
             sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
-            transportDistanz: {value: null, unit: null},
             zusaetzlicherMaschineneinsatz: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}]
         }
     }
@@ -366,7 +365,6 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial),
                     anzahlNutzungenMehrwegsteigen: parseMeasureTuple(initialDataset["Verpackungsmaterial:AnzahlMehrwegsteigen"]),
                     sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien),
-                    transportDistanz: parseMeasureTuple(initialDataset["Transport:Distanz"]),
                     zusaetzlicherMaschineneinsatz: parseSelectionTuple(initialDataset.ZusaetzlicherMaschineneinsatz),
                 }
             })

@@ -140,6 +140,7 @@ type FootprintDataset = {
  * Represents a single dataset of a benchmark plot
  */
 type BenchmarkDataset = {
+    label: string
     data: number[]
     backgroundColor: string
 }
@@ -169,6 +170,8 @@ export type FootprintPlot = Plot & {
  */
 export type GreenhouseFootprint = {
     greenhouse: string
+    performerProductionType: string
+    performerDate: string
     data: FootprintPlot
 }
 
@@ -188,6 +191,8 @@ export type BenchmarkPlot = Plot & {
  */
 export type GreenhouseBenchmark = {
     greenhouse: string
+    performerProductionType: string
+    performerDate: string
     data: BenchmarkPlot
 }
 
@@ -272,7 +277,6 @@ export type GreenhouseData = {
     "Rispenbuegel:Wiederverwendung": string
     "Jungpflanzen:Distanz": string
     "Verpackungsmaterial:AnzahlMehrwegsteigen": string
-    "Transport:Distanz": string
     EinheitlicheWaermeversorgung: string
     GWHArt: string
     Bedachungsmaterial: string

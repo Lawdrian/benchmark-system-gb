@@ -165,7 +165,6 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Rispenbuegel:Wiederverwendung": "(3,71)",
         "Jungpflanzen:Distanz": "(88,73)",
         "Verpackungsmaterial:AnzahlMehrwegsteigen": "(6000,74)",
-        "Transport:Distanz": "(80,75)",
         EinheitlicheWaermeversorgung: "[(1)]",
         GWHArt: "[(3)]",
         Bedachungsmaterial: "[(6)]",
