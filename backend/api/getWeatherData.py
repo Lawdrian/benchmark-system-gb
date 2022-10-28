@@ -11,15 +11,13 @@
     
 """
 
-
-from django.shortcuts import render
 import pandas as pd
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import pgeocode
 from wetterdienst.provider.dwd.observation import DwdObservationRequest, DwdObservationResolution, \
-    DwdObservationDataset, DwdObservationPeriod
+     DwdObservationPeriod
 from wetterdienst import Settings
 from datetime import datetime
 

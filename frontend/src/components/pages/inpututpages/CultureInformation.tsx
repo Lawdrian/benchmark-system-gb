@@ -2,10 +2,6 @@ import React, {useState} from "react";
 import {
     MeasureInputField,
     MeasureInputProps, MeasureValue,
-    SelectionInputField,
-    SelectionInputProps,
-    SelectShowConditionalRadioInputField,
-    SelectShowConditionalRadioInputProps,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
 } from "../../utils/inputPage/InputFields";
@@ -13,7 +9,7 @@ import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
-import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
@@ -370,7 +366,15 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
                kulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturBeginn[0].id}
-            })
+            }),
+            inputProps: { min: 1, max: 52 },
+            helperText: cultureInformation.kulturBeginn?.value ? (
+                cultureInformation.kulturBeginn?.value > 52 ||
+                cultureInformation.kulturBeginn?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
+            error: cultureInformation.kulturBeginn?.value ? (
+                cultureInformation.kulturBeginn?.value > 52 ||
+                cultureInformation.kulturBeginn?.value < 1
+            ) : false
         }
     }
 
@@ -383,7 +387,15 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
                kulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturEnde[0].id}
-            })
+            }),
+            inputProps: { min: 1, max: 52 },
+            helperText: cultureInformation.kulturEnde?.value ? (
+                cultureInformation.kulturEnde?.value > 52 ||
+                cultureInformation.kulturEnde?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
+            error: cultureInformation.kulturEnde?.value ? (
+                cultureInformation.kulturEnde?.value > 52 ||
+                cultureInformation.kulturEnde?.value < 1
+            ) : false
         }
     }
 
@@ -413,7 +425,15 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
                nebenkulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturBeginn[0].id}
-            })
+            }),
+            inputProps: { min: 1, max: 52 },
+            helperText: cultureInformation.nebenkulturBeginn?.value ? (
+                cultureInformation.nebenkulturBeginn?.value > 52 ||
+                cultureInformation.nebenkulturBeginn?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
+            error: cultureInformation.nebenkulturBeginn?.value ? (
+                cultureInformation.nebenkulturBeginn?.value > 52 ||
+                cultureInformation.nebenkulturBeginn?.value < 1
+            ) : false
         }
     }
 
@@ -426,7 +446,15 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
                nebenkulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturEnde[0].id}
-            })
+            }),
+            inputProps: { min: 1, max: 52 },
+            helperText: cultureInformation.nebenkulturEnde?.value ? (
+                cultureInformation.nebenkulturEnde?.value > 52 ||
+                cultureInformation.nebenkulturEnde?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
+            error: cultureInformation.nebenkulturEnde?.value ? (
+                cultureInformation.nebenkulturEnde?.value > 52 ||
+                cultureInformation.nebenkulturEnde?.value < 1
+            ) : false
         }
     }
 

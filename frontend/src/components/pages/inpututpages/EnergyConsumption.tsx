@@ -12,7 +12,7 @@ import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
-import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
@@ -50,6 +50,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
         setEnergyConsumption(energyConsumption)
         props.provideEnergyConsumption(energyConsumption)
+        console.log(energyConsumption.energietraeger)
     }
 
     // Properties of the input fields

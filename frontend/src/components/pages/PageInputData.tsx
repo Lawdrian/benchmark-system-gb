@@ -37,7 +37,7 @@ import CompanyInformationInput, {
 } from "./inpututpages/CompanyInformation";
 import {GreenhouseData} from "../../types/reduxTypes";
 import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
-import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
+import {InputPaginationButtonsProps} from "../utils/inputPage/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
 import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";

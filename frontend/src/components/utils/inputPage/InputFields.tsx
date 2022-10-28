@@ -38,17 +38,24 @@ import {Option} from "../../../reducers/lookup";
 type InputFieldProps = {
     title: string
     label: string
+    optional?: boolean
 }
 type BaseInputFieldProps = InputFieldProps & {
     children?: ReactNode
 }
+
+const optionalColor = "gray"
+
 // BaseInput component
 export const BaseInputField = (props: BaseInputFieldProps) => {
-
+    console.log(props.title + ": " + props.optional)
     return(
         <Grid item container xs={6} direction="row">
             <Grid sx={{p:1}} item xs={6} component={Paper}>
-                <Typography variant="h6"> {props.title} </Typography>
+                {props.optional ?
+                    <Typography variant="h6" color={optionalColor}> {props.title} (optional)</Typography> :
+                    <Typography variant="h6"> {props.title} </Typography>
+                }
                 <Typography paragraph={true}> {props.label} </Typography>
             </Grid>
             <Grid item xs={6}>
@@ -90,7 +97,7 @@ export type MeasureInputProps = InputFieldProps & {
 export const MeasureInputField = (props: MeasureInputProps) => {
 
     return(
-        <BaseInputField title={props.title} label={props.label}>
+        <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <TextField
                 type="number"
                 placeholder='Menge'
@@ -116,7 +123,7 @@ export type MeasureUnitInputProps = MeasureInputProps & {
 export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
 
     return(
-        <BaseInputField title={props.title} label={props.label}>
+        <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <TextField
                 type="number"
                 label='Menge'
@@ -142,7 +149,7 @@ export type DateInputProps = InputFieldProps & {
 export const DateInputField = (props: DateInputProps) => {
 
     return(
-        <BaseInputField title={props.title} label={props.label}>
+        <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DesktopDatePicker
                     maxDate={new Date()}
@@ -165,7 +172,7 @@ type SelectionBaseInputProps = InputFieldProps & {
 const SelectionBaseInputField = (props: SelectionBaseInputProps) => {
 
     return(
-        <BaseInputField title={props.title} label={props.label}>
+        <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <FormControl fullWidth>
                 <InputLabel id="amount-select-label">Auswahl</InputLabel>
                 <DynamicSelect labelId="amount-select-label" label="Auswahl" {...props.selectProps} />
@@ -288,12 +295,15 @@ export const DynamicInputField = (props: DynamicInputProps) => {
         dynInitValues.push({...props.initValues[i], id: i})
     }
     const [values, setValues] = useState<DynamicInputState>(dynInitValues)
-
+    console.log(props)
     return(
             <>
                 <Grid container item direction="column" xs={12}>
                     <Grid sx={{p:1}} item xs={12} component={Paper}>
-                        <Typography variant="h6"> {props.title} </Typography>
+                        {props.optional ?
+                            <Typography variant="h6" color={optionalColor}> {props.title} (optional) </Typography> :
+                            <Typography variant="h6"> {props.title} </Typography>
+                        }
                         <Typography paragraph={true}> {props.label} </Typography>
                     </Grid>
                 </Grid>

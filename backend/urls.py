@@ -1,16 +1,20 @@
 """
     This file provides the URL-paths connected to their view for the website.
     Views are specified in views.py, except GetWeatherData (specified in 
-    weather.py, but unused in regular application usage).
+    getWeatherData.py, but unused in regular application usage).
     
   The array urlpatterns contains all paths linked with their view.
 """
 
 
 from django.urls import path
-from .views import CreateGreenhouseData, GetOptionGroupValues, GetGreenhouseData, GetUnitValues, GetDatasets
-from .views import GetCalculatedGreenhouseData
-from .weather import GetWeatherData
+from .api.createGreenhouseData import CreateGreenhouseData
+from .api.getCalculatedGreenhouseData import GetCalculatedGreenhouseData
+from .api.getDatasets import GetDatasets
+from .api.getGreenhouseData import GetGreenhouseData
+from .api.getOptionGroupValues import GetOptionGroupValues
+from .api.getUnitValues import GetUnitValues
+from backend.api.getWeatherData import GetWeatherData
 
 urlpatterns = [
     path('get-calculated-data', GetCalculatedGreenhouseData.as_view()),

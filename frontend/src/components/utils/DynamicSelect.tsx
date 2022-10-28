@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select, {SelectProps} from "@mui/material/Select";
 import {Option, UnitValues} from "../../reducers/lookup";
@@ -37,6 +37,12 @@ export type DynamicUnitSelectProps<T> = SelectProps<T> & {
 
 
 export const DynamicUnitSelect = (props: DynamicUnitSelectProps<any>) => {
+
+    // This will call the updateUnits function upon render.(Selected Unit will be shown if one switches tab and back)
+    useEffect(() => {
+        updateUnits()
+    },[])
+
     const {lookupValues,unitValues,optionGroup, allValues,activeValue, ...selectProps} = props
 
     const defaultOption:Option[] = [
@@ -74,6 +80,7 @@ export const DynamicUnitSelect = (props: DynamicUnitSelectProps<any>) => {
             }
         })
     }
+
     return (
         <Select {...selectProps} onOpen={()=>updateUnits()}>
             {generateMenuItems(units)}

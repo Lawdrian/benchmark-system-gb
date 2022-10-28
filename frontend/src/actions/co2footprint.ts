@@ -288,12 +288,12 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
                         type: 'scatter' as const,
                         data: [konstruktion[1], waermetraeger[1], strom[1], verbrauchsmittel[1], verbrauchsmaterialien[1]],
                         backgroundColor: "rgba(11,156,49,0.6)",
-                        pointStyle: "line",
+                        pointStyle: "cross",
                         borderColor: "rgba(11,156,49,0.6)",
                         borderWidth: 3,
-                        radius: 60,
+                        radius: 10,
                         hitRadius: 5,
-                        hoverRadius: 60,
+                        hoverRadius: 10,
                         hoverBorderWidth: 3
                     },
                     {
@@ -301,12 +301,12 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
                         type: 'scatter' as const,
                         data: [konstruktion[2], waermetraeger[2], strom[2], verbrauchsmittel[2], verbrauchsmaterialien[2]],
                         backgroundColor: "rgba(255,0,0,0.8)",
-                        pointStyle: "line",
+                        pointStyle: "cross",
                         borderColor: "rgba(255,0,0,0.8)",
                         borderWidth: 3,
-                        radius: 60,
+                        radius: 10,
                         hitRadius: 5,
-                        hoverRadius: 60,
+                        hoverRadius: 10,
                         hoverBorderWidth: 3
                     },
                     {

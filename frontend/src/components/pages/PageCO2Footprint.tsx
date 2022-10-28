@@ -16,8 +16,10 @@ import {
 import {GreenhouseBenchmark, GreenhouseFootprint} from "../../types/reduxTypes";
 import {SectionDivider} from "../utils/inputPage/layout";
 import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
-import BenchmarkPlotObject from "../utils/BenchmarkPlot";
-import FootprintPlotObject from "../utils/FootprintPlot";
+import BenchmarkPlotObject from "../utils/footprintPages/BenchmarkPlot";
+import FootprintPlotObject from "../utils/footprintPages/FootprintPlot";
+import {FootprintTable} from "../utils/footprintPages/FootprintTable";
+import {CO2FootprintOptimization} from "../utils/footprintPages/CO2FootprintOptimization";
 
 
 const mapStateToProps = (state: RootState) => ({
@@ -72,74 +74,6 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 href="/input-data">hier</a> ein.</p>)
     }
 
-
-    function createTableData(data: GreenhouseFootprint): tableData[] {
-
-        return (
-            data.data.datasets.map(dataset => (
-                {
-                    section: dataset.label,
-                    total: +dataset.data[dataset.data.length -1].toFixed(2),
-                    data: (
-                        dataset.splitData[dataset.splitData.length -1].map( row => (
-                            {
-                                name: row.name,
-                                co2: row.value
-                            }
-                        ))
-                    )
-                }
-            ))
-        )
-    }
-
-    type tableData = {
-        section: string
-        total: number
-        data: {
-            name: string,
-            co2: number
-        }[]
-    }
-
-    const DataTable = (tableData:tableData[]) => {
-        return(
-            <TableContainer sx={{ maxWidth: 650 }} component={Paper}>
-                    <Table  aria-label="simple table">
-                        {tableData.map((table) => (
-                            <>
-                                <TableHead  sx={{
-                                    borderBottom: "2px solid black",
-                                    "& th": {
-                                      fontSize: "1.25rem",
-                                      color: "rgba(96, 96, 96)"
-                                    }
-                                  }}>
-                                    <TableRow>
-                                        <TableCell>{table.section}</TableCell>
-                                        <TableCell >kg Co2 Äq</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow key="Gesamt">
-                                        <TableCell><b>Gesamt</b></TableCell>
-                                        <TableCell sx={{ fontSize: "1rem"}}><b>{table.total}</b></TableCell>
-                                    </TableRow>
-                                    {table.data.map((row) => (
-                                        <TableRow
-                                            key={row.name}
-                                        >
-                                            <TableCell>{row.name}</TableCell>
-                                            <TableCell sx={{ fontSize: "1rem"}}>{row.co2}</TableCell>
-                                        </TableRow>
-                                  ))}
-                                </TableBody>
-                            </>
-                        ))}
-                    </Table>
-            </TableContainer>
-        )
-    }
 
     const createFootprintPageHeader = () => {
         return(
@@ -234,7 +168,8 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 <SectionDivider
                     title={`CO2 Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length -1]}`}
                 />
-                {DataTable(createTableData(total[curGreenHouseIndex]))}</TabPanel>
+                <FootprintTable footprintData={total[curGreenHouseIndex]} unit="kg CO2 Äq"/>
+            </TabPanel>
             <TabPanel index={1} value={tab}>
                 {createFootprintPageHeader()}
                 {createFootprintProductionTypeHeader(normalizedkg)}
@@ -255,16 +190,16 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
             <TabPanel index={3} value={tab}>
                 <>
                 {createFootprintPageHeader()}
+                {createFootprintProductionTypeHeader(benchmarkkg)}
                 <BenchmarkPlotObject
                     title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
                     unit={'kg'}
                     data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                 />
-                {createFootprintProductionTypeHeader(benchmarkkg)}
                 </>
             </TabPanel>
             <TabPanel index={4} value={tab}>
-                <h1>{tab}</h1>
+                <CO2FootprintOptimization/>
             </TabPanel>
         </div>
     );
