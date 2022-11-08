@@ -3,7 +3,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
 import {loadWaterFootprint} from "../../actions/waterfootprint";
 import {GreenhouseMenu} from "../utils/GreenhouseMenu";
-import FootprintPlotObject from "../utils/FootprintPlot";
+import FootprintPlotObject from "../utils/footprintPages/FootprintPlot";
 
 
 const mapStateToProps = (state: RootState) => ({plotData: state.water.plotData});

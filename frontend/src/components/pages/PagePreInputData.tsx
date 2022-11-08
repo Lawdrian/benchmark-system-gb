@@ -20,12 +20,11 @@ import {connect, ConnectedProps} from "react-redux";
 import PageInputData, {DataToSubmit} from "./PageInputData";
 import {useEffect, useState} from "react";
 import FormControl from "@mui/material/FormControl";
-import {Divider, InputLabel} from "@mui/material";
+import {Divider, FormHelperText, InputLabel} from "@mui/material";
 import DynamicSelect, {DynamicSelectProps} from "../utils/DynamicSelect";
 import {loadDatasets} from "../../actions/dataset";
 import {Option} from "../../reducers/lookup";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
-import {GreenhouseData} from "../../types/reduxTypes";
 
 
 
@@ -58,7 +57,8 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
         OldGH = "OldGH",
     }
     const [pageStatus, setPageStatus] = useState<PageStatus>(PageStatus.PreInput)
-
+    const [nameTries, setNameTries] = useState<number>(0)
+    const [selectTries, setSelectTries] = useState<number>(0)
 
     const getGreenhouseName = (greenhouse:string) => {
         return greenhouse.replaceAll("[","").replaceAll("]","").split(",")
@@ -188,6 +188,14 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
     const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(initialData)
 
 
+    const hasNameTried = () => {
+        return nameTries > 0
+    }
+
+    const hasSelectTried = () => {
+        return selectTries > 0
+    }
+
 
     const parseMeasureTuple = (tuple:string) => {
         const measure = JSON.parse(tuple)
@@ -249,7 +257,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
     // The data for the input fields comes from the most recent dataset from the selected greenhouse
     const renderFilledInputPages = () => {
 
-        if(dataset.datasets != "" && typeof dataset.datasets != "string") {
+        if(selectedGreenhouse != null && dataset.datasets != "" && typeof dataset.datasets != "string") {
             const initialDataset = dataset.datasets.filter(value => parseInt(getGreenhouseName(value.greenhouse_name)[0]) == selectedGreenhouse)[0]
 
             setInputFieldData({
@@ -374,10 +382,14 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             })
             setPageStatus(PageStatus.OldGH)
         }
+        setSelectTries(selectTries+1)
     }
 
     const renderEmptyInputPages = () => {
-        setPageStatus(PageStatus.NewGH)
+        if(inputFieldData.companyInformation.gewaechshausName != null && inputFieldData.companyInformation.gewaechshausName != "") {
+            setPageStatus(PageStatus.NewGH)
+        }
+        setNameTries(nameTries+1)
     }
 
 
@@ -385,7 +397,11 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
     const ghSelectProps: DynamicSelectProps<any> = {
         "lookupValues": lookupGreenhouses,
         value: selectedGreenhouse,
-        onChange: event => setSelectedGreenhouse(parseFloat(event.target.value))
+        onChange: event => {
+            setSelectedGreenhouse(parseFloat(event.target.value))
+            setSelectTries(0)
+        },
+        error: hasSelectTried()
     }
 
 
@@ -400,8 +416,11 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     ...inputFieldData.companyInformation,
                         gewaechshausName: event.target.value
                 }}
-            )
+            ),
+            setNameTries(0)
         },
+        error: hasNameTried(),
+        helperText: hasNameTried() ? "Bitte geben Sie einen Namen für Ihr Gewächshaus ein": undefined,
         type:"text",
         placeholder:"Name",
     }
@@ -433,6 +452,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                                 <FormControl fullWidth sx={{mt:2}}>
                                     <InputLabel id="amount-select-label">Gewächshaus</InputLabel>
                                 <DynamicSelect label="GWH" {...ghSelectProps} />
+                                    <FormHelperText error>{hasSelectTried() ? "Bitte wählen Sie eines Ihrer Gewächshäuser aus": ""}</FormHelperText>
                                 </FormControl>
                                 <Button
                                     sx={{mt:2}}

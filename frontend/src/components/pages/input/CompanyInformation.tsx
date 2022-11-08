@@ -13,7 +13,7 @@ import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {Divider, TextField, Typography} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
-import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
@@ -92,12 +92,20 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         label: "Postleitzahl (zur Wetterdatenbestimmung)",
         unitName: props.unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
-            placeholder: "Postleizahl",
+            placeholder: "Postleitzahl",
             value: companyInformation.plz?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
                 plz: {value: parseFloat(event.target.value),unit: props.unitValues.measures.PLZ[0].id}
-            })
+            }),
+            inputProps: { min: 11111, max: 99999 },
+            helperText: companyInformation.plz?.value ? (
+                companyInformation.plz?.value > 99999 ||
+                companyInformation.plz?.value < 11111) ? "Geben Sie eine valide Postleitzahl an!": undefined : undefined,
+            error: companyInformation.plz?.value ? (
+                companyInformation.plz?.value > 99999 ||
+                companyInformation.plz?.value < 11111
+            ) : false
         }
     }
 

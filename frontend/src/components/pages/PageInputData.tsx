@@ -18,26 +18,26 @@ import {submitGreenhouseData} from "../../actions/submission";
 import {RootState} from "../../store";
 import ConsumableMaterialsInput, {
     ConsumableMaterialsState
-} from "./inpututpages/ConsumableMaterials";
+} from "./input/ConsumableMaterials";
 import ConsumableItemsInput, {
     ConsumableItemsState
-} from "./inpututpages/ConsumableItems";
+} from "./input/ConsumableItems";
 import {Tab, Tabs} from "@mui/material";
 import EnergyConsumptionInput, {
     EnergyConsumptionState
-} from "./inpututpages/EnergyConsumption";
+} from "./input/EnergyConsumption";
 import CultureManagementInput, {
     CultureManagementState
-} from "./inpututpages/CultureManagement";
+} from "./input/CultureManagement";
 import CultureInformationInput, {
     CultureInformationState
-} from "./inpututpages/CultureInformation";
+} from "./input/CultureInformation";
 import CompanyInformationInput, {
     CompanyInformationState
-} from "./inpututpages/CompanyInformation";
+} from "./input/CompanyInformation";
 import {GreenhouseData} from "../../types/reduxTypes";
 import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
-import {InputPaginationButtonsProps} from "../utils/InputPaginationButtons";
+import {InputPaginationButtonsProps} from "../utils/inputPage/InputPaginationButtons";
 import {useNavigate} from "react-router-dom";
 import {format} from "date-fns";
 import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
@@ -309,8 +309,8 @@ const PageInputData = (props: InputDataProps) => {
               <Tab label="Kulturdaten" {...indexedTabProps(1)} />
               <Tab label="Kulturführung" {...indexedTabProps(2)} />
               <Tab label="Energieverbrauch" {...indexedTabProps(3)} />
-              <Tab label="Verbrauchsmittel" {...indexedTabProps(4)} />
-              <Tab label="Verbrauchsmaterialien" {...indexedTabProps(5)} />
+              <Tab label="Hilfsstoffe" {...indexedTabProps(4)} />
+              <Tab label="Betriebsstoffe" {...indexedTabProps(5)} />
             </Tabs>
 
             <TabPanel index={0} value={tab}>

@@ -102,8 +102,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         endDate: new Date("2022-06-20")
     }
     let testData: GreenhouseData = {
-        greenhouse_name: "Rottner Gemüse",
-        date: "2022-09-29",
+        greenhouse_name: "Haus1",
+        date: "2019-09-29",
         PLZ: "(90427,1)",
         GWHGesamtflaeche: "(8000,2)",
         GWHFlaeche: "(5000,3)",
@@ -182,9 +182,9 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         ">150Gramm(Fleisch)": "[(39)]",
         Nebenkultur: "[(40)]",
         Entfeuchtung: "[(42)]",
-        Energietraeger: "[(44,1300,45),(45,1600,48),(46,700,51)]",
+        Energietraeger: "[(44,40000,45),(45,16000,48),(46,700,51)]",
         BHKW: "[(53)]",
-        Stromherkunft: "[(54,20,63),(55,24,65),(56,13,67)]",
+        Stromherkunft: "[(54,20000,63),(55,2400,65),(56,13,67)]",
         Zusatzbelichtung: "[(64)]",
         Belichtungsstrom: "[(67)]",
         "CO2-Herkunft": "[(68,60,88),(70,50,94)]",
@@ -192,7 +192,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Duengemittel:DetaillierteAngabe": "[(82,3,107),(83,5,108),(84,8,109),(85,4,110),(86,5,111),(87,8,112),(89,5,114),(90,85,115),(91,5,116),(92,8,117),(93,44,118),(94,5,119),(95,8,120),(96,8,121),(97,5,122),(98,54,123),(99,4,124),(100,55,125),(101,8,126),(102,5,127),(103,4,128),(104,4,129),(105,5,130),(106,54,131),(107,4,132)]",
         Nuetzlinge: "[(115,92,140),(108,12,133),(109,10,134),(110,11,135),(111,13,136),(112,14,137),(113,55,138),(114,2,139)]",
         GrowbagsKuebel: "[(117)]",
-        Substrat: "[(124,1,149)]",
+        Substrat: "[(124,5,149)]",
         "SchnuereRankhilfen:Material": "[(129)]",
         Klipse: "[(163)]",
         "Klipse:Material": "[(133)]",
@@ -202,7 +202,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         Bodenabdeckung: "[(167,12,192)]",
         "Jungpflanzen:Zukauf": "[(144)]",
         "Jungpflanzen:Substrat": "[(148)]",
-        Verpackungsmaterial: "[(152,3500,177),(151,1500,176)]",
+        Verpackungsmaterial: "[(152,350,177),(151,150,176)]",
         SonstigeVerbrauchsmaterialien: "[(157,200,182,20), (153,1000,178,10),(154,8000,179,15),(155,120,180,10),(156,300,181,2),(158,100,183,2)]",
         ZusaetzlicherMaschineneinsatz: "[(159,3,184,322)]",
         BelichtungsstromEinheit: "[(160)]"

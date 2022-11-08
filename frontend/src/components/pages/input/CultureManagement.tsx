@@ -10,7 +10,7 @@ import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {FormControlLabel, Radio} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
-import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,

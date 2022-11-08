@@ -1,18 +1,28 @@
 import React from 'react';
-import {Chart as ChartJS, registerables, TooltipItem} from 'chart.js';
+import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip, TooltipItem,} from 'chart.js'; // TODO clean up imports
 import {Bar} from 'react-chartjs-2';
-import {BenchmarkPlot} from "../../types/reduxTypes";
-import zoomPlugin from 'chartjs-plugin-zoom';
-import {Button} from "@mui/material";
+import {BenchmarkPlot, FootprintPlot} from "../../../types/reduxTypes";
 
-ChartJS.register(...registerables, zoomPlugin);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+);
+
+type splitDataObject = {
+    name: string
+    value: number
+}
 
 /**
- * Returns a Benchmark plot for the given data.
+ * Returns a Footprint plot for the given data.
  *
  * @param {string} title The title of the plot
  * @param {string} unit The unit shown in the plot
- * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
+ * @param {FootprintPlot} data Data to be shown in the plot. (see reduxTypes)
  * @return JSX.Element
  */
 
@@ -22,30 +32,10 @@ type props = {
     data: BenchmarkPlot
 }
 
-export default function BenchmarkPlotObject({title, unit, data}:props) {
-
-    const chartRef = React.useRef<any>(null);
-
-    const handleResetZoom = () => {
-        chartRef.current.resetZoom();
-    };
-
-
-
-
+export default function FootprintPlotObject({title, unit, data}:props) {
     let options = {
         responsive: true,
         plugins: {
-            zoom: {
-                zoom: {
-                    wheel: {
-                        enabled: true // SET SCROOL ZOOM TO TRUE
-                    },
-                },
-                pan: {
-                    enabled: true,
-                }
-            },
             legend: {
                 position: 'right' as const,
                 labels: {
@@ -75,6 +65,25 @@ export default function BenchmarkPlotObject({title, unit, data}:props) {
                             label += Math.round(context.parsed.y) + ' ' + unit + " CO2-Äq.";
                         }
                         return label;
+                    },
+                    afterBody: function (context: TooltipItem<'bar'>[]) {
+                        let body = ""
+                        let j = context[0].dataIndex;
+
+                        // @ts-ignore
+                        if (context[0].dataset.splitData[j]) {
+                            const total_co2 = data.datasets.map(dataset => dataset.data[j])
+                                .reduce((partialSum, a) =>  partialSum + a, 0)
+                            body += "\n" + "𝐀𝐧𝐭𝐞𝐢𝐥 𝐚𝐦 𝐅𝐮ß𝐚𝐛𝐝𝐫𝐮𝐜𝐤: " + (context[0].dataset.data[j]/total_co2*100).toFixed(0) + "%\n"
+                            // @ts-ignore
+                            body += "\n" +"𝐙𝐮𝐬𝐚𝐦𝐦𝐞𝐧𝐬𝐞𝐭𝐳𝐮𝐧𝐠: \n" + context[0].dataset.splitData[j]
+                                // Sort list so that the splitDataObject with the highest value is at the first place of the list
+                                .sort((firstObject: splitDataObject, secondObject: splitDataObject) => (firstObject.value > secondObject.value) ? -1 : 1)
+                                .map((singleData: splitDataObject) =>
+                            { return singleData.name + ": " + (singleData.value/context[0].dataset.data[j]*100).toFixed(2) + "%\n"})
+                        }
+                        body = body.replaceAll(",", "") // For some reason commas are automatically added, so they need to be removed.
+                        return body
                     }
                 },
                 titleFont: {
@@ -98,7 +107,7 @@ export default function BenchmarkPlotObject({title, unit, data}:props) {
                 },
             },
             y: {
-                stacked: false,
+                stacked: true,
                 title: {
                     display: true,
                     text: 'CO2-Äquivalente [' + unit + ']',
@@ -117,8 +126,7 @@ export default function BenchmarkPlotObject({title, unit, data}:props) {
 
     return (
         <div className="Plot">
-            <Bar ref={chartRef} options={options} data={data}/>
-            <Button onClick={handleResetZoom}>Zoom zurücksetzen</Button>
+            <Bar options={options} data={data}/>
         </div>
     );
 }

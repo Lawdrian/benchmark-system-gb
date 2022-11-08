@@ -7,8 +7,8 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import {Link, useNavigate} from "react-router-dom";
 import {connect, ConnectedProps} from "react-redux";
-import {login} from "../../actions/auth";
-import {RootState} from "../../store";
+import {login} from "../../../actions/auth";
+import {RootState} from "../../../store";
 import {Alert, AlertTitle} from "@mui/material";
 
 const mapStateToProps = (state: RootState) => ({

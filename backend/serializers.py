@@ -10,8 +10,8 @@
 
 from django.db import OperationalError
 from rest_framework import serializers
-from .models import Measurements, OptionGroups
 import re  # python standard library
+from backend.models import Measurements, OptionGroups
 
 
 class ListOfTuples(serializers.Field):

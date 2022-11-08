@@ -17,17 +17,17 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import PageWaterFootprint from "../components/pages/PageWaterFootprint";
 import PageC02Footprint from "../components/pages/PageCO2Footprint";
 import PageProfile from "../components/pages/PageProfile";
-import PageLogin from "../components/pages/PageLogin";
-import PageRegister from "../components/pages/PageRegister";
+import PageLogin from "../components/pages/user/PageLogin";
+import PageRegister from "../components/pages/user/PageRegister";
 import PageImpressum from "../components/pages/PageImpressum";
 import PageAbout from "../components/pages/PageAbout";
 import {generatePage} from "../helpers/PageBuilder";
 import {Page, PageConfig, Section} from "../types/PageConfigTypes";
 import EndpointTest from "../components/tests/EndpointTest";
 import PageHome from "../components/pages/PageHome";
-import PageUserActivation from "../components/pages/PageUserActivation";
-import PageForgotPW from "../components/pages/PageForgotPW";
-import PageResetPW from "../components/pages/PageResetPW";
+import PageUserActivation from "../components/pages/user/PageUserActivation";
+import PageForgotPW from "../components/pages/user/PageForgotPW";
+import PageResetPW from "../components/pages/user/PageResetPW";
 import PagePreInputData from "../components/pages/PagePreInputData";
 
 export const pageConfig: PageConfig = {

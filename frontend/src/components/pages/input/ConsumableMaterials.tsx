@@ -18,7 +18,7 @@ import {
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
-import InputPaginationButtons from "../../utils/InputPaginationButtons";
+import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {TextField} from "@mui/material";
 import {SectionDivider} from "../../utils/inputPage/layout";
 
@@ -478,8 +478,9 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     }
 
     const zusaetzlicherMaschineneinsatzProps: DynamicInputProps = {
-        title: "Zusätzlicher Maschineneinsatz (optional)",
+        title: "Zusätzlicher Maschineneinsatz",
         label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an, falls Sie welche verwenden.",
+        optional: true,
         textFieldProps: {},
         textField2Props: {placeholder:"h/a", label:"Nutzungsdauer"},
         selectProps: {

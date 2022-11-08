@@ -4,7 +4,7 @@
  * #############################################################################
  */
 import {
-    ACTIVATE_FAIL,
+    ACTIVATE_FAIL, ACTIVATE_LOADING,
     ACTIVATE_SUCCESS,
     AUTH_ERROR, DELETE_SUCCESS,
     LOGIN_FAIL,
@@ -56,6 +56,7 @@ const initialState: AuthenticationState = {
 export default function (state = initialState, action: any): AuthenticationState {
     switch (action.type) {
         case USER_LOADING:
+        case ACTIVATE_LOADING:
             return {
                 ...state,
                 isLoading: true
@@ -92,9 +93,15 @@ export default function (state = initialState, action: any): AuthenticationState
         case ACTIVATE_SUCCESS:
             return {
                 ...state,
-                isActivated: true
+                isActivated: true,
+                isLoading: false
             }
         case ACTIVATE_FAIL:
+            return {
+                ...state,
+                isActivated: false,
+                isLoading: false
+            }
         default:
             return state;
     }
