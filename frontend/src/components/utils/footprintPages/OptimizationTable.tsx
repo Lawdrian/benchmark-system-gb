@@ -23,21 +23,21 @@ export const OptimizationTable = (props:OptimizationTableProps) => {
             <Table  aria-label="simple table">
                 <TableHead  sx={{borderBottom: "2px solid black", "& th": {fontSize: "1.25rem", color: "rgba(96, 96, 96)"}}}>
                     <TableRow>
-                        <TableCell>{"Auswahl"}</TableCell>
-                        <TableCell >{"%"}</TableCell>
-                        <TableCell >{props.unit}</TableCell>
+                        <TableCell width={300}>{"Auswahl"}</TableCell>
+                        <TableCell>{"%"}</TableCell>
+                        <TableCell>{props.unit}</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     <TableRow key={selectedOption.name}>
-                        <TableCell><b>{selectedOption.name}</b></TableCell>
+                        <TableCell width={300}><b>{selectedOption.name}</b></TableCell>
                         <TableCell sx={{ fontSize: "1rem"}}><b>{selectedOption.percentage}</b></TableCell>
                         <TableCell sx={{ fontSize: "1rem"}}><b>{selectedOption.value}</b></TableCell>
                     </TableRow>
                     {improvingOptions.map(option => {
                         return(
                             <TableRow key="Gesamt">
-                                <TableCell>{option.name}</TableCell>
+                                <TableCell width={300}>{option.name}</TableCell>
                                 <TableCell sx={{ fontSize: "1rem"}}>{option.percentage}</TableCell>
                                 <TableCell sx={{ fontSize: "1rem"}}>{option.value}</TableCell>
                             </TableRow>

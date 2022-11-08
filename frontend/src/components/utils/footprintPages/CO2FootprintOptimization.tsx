@@ -10,19 +10,35 @@ type CO2FootprintOptimizationData = {
 
 export const CO2FootprintOptimization = () => {
 
-    const simpleTableData:OptimizationTableData[] = [
+    const simpleWärmeträgerTableData:OptimizationTableData[] = [
+        {
+            name: "Braunkohle",
+            value: 2000,
+            percentage: 100
+        },        {
+            name: "Erdgas",
+            value: 1800,
+            percentage: 90
+        },        {
+            name: "Tiefengeothermie",
+            value: 1000,
+            percentage: 50
+        },
+    ]
+
+    const simpleStromTableData:OptimizationTableData[] = [
         {
             name: "Diesel",
             value: 2000,
             percentage: 100
         },        {
-            name: "Ökostrom",
-            value: 1800,
+            name: "Deutscher Strommix",
+            value: 1600,
             percentage: 80
         },        {
-            name: "Gras",
-            value: 1000,
-            percentage: 50
+            name: "Wasserkraft",
+            value: 500,
+            percentage: 25
         },
     ]
 
@@ -46,14 +62,14 @@ export const CO2FootprintOptimization = () => {
             <Grid container item xs={12} direction={"row"}>
                 <Grid item container xs={6} alignItems={"start"} justifyContent={"center"}>
                     <Grid item container xs={12} sx={{mr: 2}}>
-                        <Typography variant={"h4"}>Energietraeger</Typography>
-                        Sie verwenden als Energieträger blabla und prduzieren dadurch 2000 kg CO2 jährlich. Das entspricht dem jährlichen Verbrauch von 2 Haushalten. Wenn sie auf eine umweltfreundlichere Alternative wechseln, können Sie bis zu 80 % einsparen.
+                        <Typography variant={"h4"}>Wärmeverbrauch</Typography>
+                        Sie verwenden für die Wärmeproduktion hauptsächlich Braunkohle und prduzieren dadurch 2000 kg CO2 jährlich. Das entspricht dem jährlichen Verbrauch von 2 Haushalten. Wenn sie auf eine umweltfreundlichere Alternative wechseln, können Sie bis zu 50 % einsparen.
                     </Grid>
                 </Grid>
                 <Grid container item direction={"column"} xs={6}>
                     <OptimizationTable
-                        unit={"jo"}
-                        data={simpleTableData}
+                        unit={"kg CO2"}
+                        data={simpleWärmeträgerTableData}
                     />
                 </Grid>
             </Grid>
@@ -61,11 +77,11 @@ export const CO2FootprintOptimization = () => {
                 <Grid item container xs={6} alignItems={"start"} justifyContent={"center"}>
                     <Grid item container xs={12} sx={{mr: 2}}>
                         <Typography variant={"h4"}>Strom</Typography>
-                        Sie verwenden als für die Stromproduktion blabla und prduzieren dadurch 1000 kg CO2 jährlich. Das entspricht dem jährlichen Verbrauch von 1 Haushalt. Wenn sie auf eine umweltfreundlichere Alternative wechseln, können Sie bis zu 70 % einsparen.
+                        Sie verwenden als für die Stromproduktion blabla und prduzieren dadurch 2000 kg CO2 jährlich. Das entspricht dem jährlichen Verbrauch von 1 Haushalt. Wenn sie auf eine umweltfreundlichere Alternative wechseln, können Sie bis zu 75 % einsparen.
                     </Grid>
                 </Grid>
                 <Grid container item direction={"column"} xs={6}>
-                    <OptimizationTable unit={"ho"} data={simpleTableData}/>
+                    <OptimizationTable unit={"kg CO2"} data={simpleStromTableData}/>
                 </Grid>
             </Grid>
             <Grid item xs={12}>

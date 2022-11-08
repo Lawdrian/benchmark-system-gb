@@ -5,9 +5,8 @@ import {
     DynamicInputField,
     DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
-    SelectionInputField,
-    SelectionInputProps,
+    MeasureInputProps,
+    MeasureValue,
     SelectionValue
 } from "../../utils/inputPage/InputFields"
 import {RootState} from "../../../store";

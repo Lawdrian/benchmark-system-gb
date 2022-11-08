@@ -12,7 +12,7 @@
  * #############################################################################
  */
 import {
-    ACTIVATE_FAIL,
+    ACTIVATE_FAIL, ACTIVATE_LOADING,
     ACTIVATE_SUCCESS,
     AUTH_ERROR, DELETE_FAIL, DELETE_SUCCESS,
     LOGIN_FAIL,
@@ -139,6 +139,9 @@ export const activate = (
     };
 
     const url = `/accounts/auth/activate?uid=${uidb64}&token=${token}`
+    console.log("Activate called")
+    // Activate Loading
+    dispatch({type: ACTIVATE_LOADING});
 
     axios.patch(url, {}, config)
         .then((response) => {

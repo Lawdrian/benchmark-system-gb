@@ -1,11 +1,11 @@
-import {RootState} from "../../store";
+import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {resetPW} from "../../actions/auth";
-import {UserManagementLayout, UserManagementLayoutProps} from "../utils/UserManagement";
+import {resetPW} from "../../../actions/auth";
+import {UserManagementLayout, UserManagementLayoutProps} from "../../utils/UserManagementLayout";
 import React, {useState} from "react";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import {getPasswordHelperText, getPasswordInputProps, passwordsValid} from "../../helpers/UserManagement";
+import {getPasswordHelperText, getPasswordInputProps, passwordsValid} from "../../../helpers/UserManagement";
 import Button from "@mui/material/Button";
 import {Dialog, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {useNavigate} from "react-router-dom";

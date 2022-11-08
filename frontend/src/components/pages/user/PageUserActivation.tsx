@@ -1,19 +1,13 @@
-import React, {ReactNode, useEffect, useState} from "react";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import {Link, Navigate, useNavigate} from "react-router-dom";
+import React, {useEffect} from "react";
 import {connect, ConnectedProps} from "react-redux";
-import {activate, login} from "../../actions/auth";
-import {RootState} from "../../store";
-import {Alert, AlertTitle} from "@mui/material";
-import {UserManagementLayout, UserManagementLayoutProps} from "../utils/UserManagement";
+import {activate} from "../../../actions/auth";
+import {RootState} from "../../../store";
+import {UserManagementLayout, UserManagementLayoutProps} from "../../utils/UserManagementLayout";
+import {LoadingLayout, LoadingLayoutProps} from "../../utils/LoadingLayout";
 
 const mapStateToProps = (state: RootState) => ({
-    isActivated: state.auth.isActivated
+    isActivated: state.auth.isActivated,
+    isLoading: state.auth.isLoading
 });
 
 const connector = connect(mapStateToProps, {activate});
@@ -24,7 +18,7 @@ type userActivationProps = ReduxProps & {
     loginUrl: string
 }
 
-const PageUserActivation = ({isActivated, activate, loginUrl}: userActivationProps) => {
+const PageUserActivation = ({isActivated, isLoading, activate, loginUrl}: userActivationProps) => {
 
     console.log("UserActivation Page!")
 
@@ -34,10 +28,19 @@ const PageUserActivation = ({isActivated, activate, loginUrl}: userActivationPro
     const uidb64 = urlParams.get('uid')
     const token = urlParams.get('token')
 
+    // Use useEffect so activate gets only called once
+    useEffect(() => {
+        if (uidb64!=null && token!=null) {
+            activate(uidb64, token)
+        }
+    },[])
 
-    if (uidb64!=null && token!=null) {
-        activate(uidb64, token)
+
+    const loadingProps: LoadingLayoutProps = {
+        title: "Email wird verifiziert",
+        subtitle: "Haben Sie einen Moment Gedult."
     }
+
 
     const successProps: UserManagementLayoutProps = {
         title: "Email wurde erfolgreich bestätigt!",
@@ -52,8 +55,10 @@ const PageUserActivation = ({isActivated, activate, loginUrl}: userActivationPro
         buttonText: "Zur Anmeldung",
         navigateTo: loginUrl
     }
-
-    if(isActivated) {
+    if(isLoading && !isActivated) {
+        return <LoadingLayout {...loadingProps}/>
+    }
+    else if(isActivated && !isLoading) {
         return <UserManagementLayout {...successProps}/>
     }
     else {

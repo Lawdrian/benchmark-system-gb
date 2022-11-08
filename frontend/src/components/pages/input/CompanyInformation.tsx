@@ -90,7 +90,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const plzProps: MeasureInputProps = {
         title: "Postleitzahl",
         label: "Postleitzahl (zur Wetterdatenbestimmung)",
-        optional: true,
         unitName: props.unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
             placeholder: "Postleitzahl",
@@ -113,7 +112,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const gwhGesamtFlaecheProps: MeasureInputProps = {
         title: "Gewächshaus Gesamtfläche",
         label: "Die gesamte Fläche des Gewächshauses",
-        optional: true,
         unitName: props.unitValues.measures.GWHGesamtflaeche[0]?.values,
         textFieldProps: {
             value: companyInformation.gwhGesamtFlaeche?.value,

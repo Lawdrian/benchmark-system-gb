@@ -32,6 +32,8 @@ export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";
 // Activation of a new user was successful
 export const ACTIVATE_SUCCESS = "ACTIVATE_SUCCESS";
+// Activation of a new user is loading
+export const ACTIVATE_LOADING = "ACTIVATE_LOADING";
 // Activation of a new user failed
 export const ACTIVATE_FAIL = "ACTIVATE_FAIL";
 // Reset of a user password was successful

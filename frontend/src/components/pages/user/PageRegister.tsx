@@ -9,9 +9,9 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
-import {register} from "../../actions/auth";
+import {register} from "../../../actions/auth";
 import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
-import {RootState} from "../../store";
+import {RootState} from "../../../store";
 import {
     companyValid,
     emailValid, getCompanyHelperText,
@@ -20,7 +20,7 @@ import {
     getPasswordInputProps,
     inputValid,
     passwordsValid
-} from "../../helpers/UserManagement";
+} from "../../../helpers/UserManagement";
 
 const mapStateToProps = (state: RootState) => ({
 })
