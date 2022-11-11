@@ -56,6 +56,7 @@ export type LookupValues = {
     Nuetzlinge: Option[]
     GrowbagsKuebel: Option[]
     Substrat: Option[]
+    Schnur: Option[]
     "SchnuereRankhilfen:Material": Option[]
     Klipse: Option[]
     "Klipse:Material": Option[]
@@ -331,6 +332,10 @@ export type UnitValues = {
             "Perlite": Option[]
             "Nachhaltiges Substrat": Option[]
         }
+        Schnur: {
+            "ja": Option[]
+            "nein": Option[]
+        }
         "SchnuereRankhilfen:Material": {
             "Kunststoff": Option[]
             "Jute": Option[]
@@ -451,6 +456,7 @@ const initialState: LookupState = {
         Nuetzlinge: [],
         GrowbagsKuebel: [],
         Substrat: [],
+        Schnur: [],
         "SchnuereRankhilfen:Material": [],
         Klipse: [],
         "Klipse:Material": [],
@@ -720,6 +726,10 @@ const initialState: LookupState = {
                 "Perlite": [],
                 "Nachhaltiges Substrat": [],
             },
+            Schnur: {
+                ja: [],
+                nein: []
+            },
             "SchnuereRankhilfen:Material": {
                 "Kunststoff": [],
                 "Jute": [],
@@ -820,55 +830,6 @@ export default function (state: LookupState = initialState, action: any): Lookup
                 unitValues: action.payload
             }
         case LOOKUP_FAILED:
-            return {
-                ...state,
-                isLoading: false,
-                lookupValues: {
-                    EinheitlicheWaermeversorgung: [],
-                    GWHArt: [],
-                    Bedachungsmaterial: [],
-                    Stehwandmaterial: [],
-                    AlterdesBedachungsmaterials: [],
-                    Energieschirm: [],
-                    EnergieschirmTyp: [],
-                    Transportsystem: [],
-                    Produktionstyp: [],
-                    Kultursystem: [],
-                    AnzahlTriebe: [],
-                    ZusaetzlichesHeizsystem: [],
-                    ZusaetzlichesHeizsystemTyp: [],
-                    "10-30Gramm(Snack)": [],
-                    "30-100Gramm(Cocktail)": [],
-                    "100-150Gramm(Rispen)": [],
-                    ">150Gramm(Fleisch)": [],
-                    Nebenkultur: [],
-                    Entfeuchtung: [],
-                    Energietraeger: [],
-                    BHKW: [],
-                    Stromherkunft: [],
-                    Zusatzbelichtung: [],
-                    Belichtungsstrom: [],
-                    "CO2-Herkunft": [],
-                    "Duengemittel:VereinfachteAngabe": [],
-                    "Duengemittel:DetaillierteAngabe": [],
-                    Nuetzlinge: [],
-                    GrowbagsKuebel: [],
-                    Substrat: [],
-                    "SchnuereRankhilfen:Material": [],
-                    Klipse: [],
-                    "Klipse:Material": [],
-                    Rispenbuegel: [],
-                    "Rispenbuegel:Material": [],
-                    Bewaesserungsart: [],
-                    Bodenabdeckung: [],
-                    "Jungpflanzen:Zukauf": [],
-                    "Jungpflanzen:Substrat": [],
-                    Verpackungsmaterial: [],
-                    SonstigeVerbrauchsmaterialien: [],
-                    ZusaetzlicherMaschineneinsatz: [],
-                    BelichtungsstromEinheit: [],
-                }
-            }
         case UNITS_FAILED:
         case RESET_DATA:
             return initialState

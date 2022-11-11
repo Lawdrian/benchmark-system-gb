@@ -271,6 +271,7 @@ export type GreenhouseData = {
     "Kuebel:VolumenProTopf": string
     "Kuebel:JungpflanzenProTopf": string
     "Kuebel:Alter": string
+    Schnur: string
     "SchnuereRankhilfen:Laenge": string
     "SchnuereRankhilfen:Wiederverwendung": string
     "Klipse:AnzahlProTrieb": string

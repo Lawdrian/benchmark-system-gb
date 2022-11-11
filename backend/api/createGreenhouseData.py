@@ -69,23 +69,29 @@ class CreateGreenhouseData(APIView):
             print("IsVALID!!!")
             # Validate that every required field has been filled out with not a default value
             if validate_greenhouse_data(data=serializer.data) is False:
-                return Response({'Bad Request': 'Not all fields have been filled out!'},
+                return Response({'Bad Request': 'Not all mandatory fields have been filled out!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-            processed_data = standardize_units(serializer.data)
+            standardized_data = standardize_units(serializer.data)
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
-                greenhouse_name=processed_data.get('greenhouse_name')
+                greenhouse_name=standardized_data.get('greenhouse_name')
             )
             new_greenhouse = len(greenhouse) == 0
             if new_greenhouse:
                 # Generate a new greenhouse:
                 greenhouse = Greenhouses(
                     user_id=user_id,
-                    greenhouse_name=processed_data.get('greenhouse_name')
+                    greenhouse_name=standardized_data.get('greenhouse_name')
                 )
                 greenhouse.save()
+
+                greenhouse_data = GreenhouseData(
+                    greenhouse_id=greenhouse.id,
+                    date=serializer.data.get('date')
+                )
+                greenhouse_data.save()
             else:
                 # if a greenhouse exist, take the object out of the query set:
                 greenhouse = greenhouse[0]
@@ -99,7 +105,7 @@ class CreateGreenhouseData(APIView):
             # Calculate co2 footprint and save it in Results table in db
             try:
                 # calculate co2 footprint
-                calculation_result = algorithms.calc_co2_footprint(processed_data)
+                calculation_result = algorithms.calc_co2_footprint(standardized_data)
                 calculation_variables = Calculations.objects.in_bulk(
                     field_name='calculation_name')
                 for variable, value in calculation_result.items():
@@ -128,7 +134,7 @@ class CreateGreenhouseData(APIView):
                 options = OptionGroups.objects.in_bulk(
                     field_name='option_group_name')
 
-                for name, value in processed_data.items():
+                for name, value in standardized_data.items():
                     if name in measurements:
                         # metric (continuous) data (=> numbers)
                         Measures(

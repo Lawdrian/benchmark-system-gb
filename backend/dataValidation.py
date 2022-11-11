@@ -50,8 +50,9 @@ def validate_greenhouse_data(data):
         14: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
         15: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
         16: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
-        17: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
-        18: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
+        17: ("Schnur", "JA", ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
+        18: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
+        19: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
     }
 
     for key, values in eventually_optional_fields.items():
@@ -86,8 +87,18 @@ def validate_greenhouse_data(data):
 
     # This place is for manually deleting always optional fields out of the mandatory lists
     del mandatory_optiongroups["ZusaetzlicherMaschineneinsatz"]
+    del mandatory_optiongroups["SonstigeVerbrauchsmaterialien"]
+    del mandatory_optiongroups["CO2-Herkunft"]
+    del mandatory_optiongroups["Duengemittel:VereinfachteAngabe"]
+    del mandatory_optiongroups["Duengemittel:DetaillierteAngabe"]
+    del mandatory_optiongroups["Verpackungsmaterial"]
+    del mandatory_optiongroups["Bodenabdeckung"]
+    del mandatory_optiongroups["Nuetzlinge"]
     del mandatory_measurements["BHKW:AnteilErdgas"]
     del mandatory_measurements["BHKW:AnteilBiomethan"]
+    del mandatory_measurements["FungizideKg"]
+    del mandatory_measurements["InsektizideKg"]
+    del mandatory_measurements["Verpackungsmaterial:AnzahlMehrwegsteigen"]
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():

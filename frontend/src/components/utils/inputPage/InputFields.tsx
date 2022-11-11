@@ -48,7 +48,6 @@ const optionalColor = "gray"
 
 // BaseInput component
 export const BaseInputField = (props: BaseInputFieldProps) => {
-    console.log(props.title + ": " + props.optional)
     return(
         <Grid item container xs={6} direction="row">
             <Grid sx={{p:1}} item xs={6} component={Paper}>
@@ -295,7 +294,6 @@ export const DynamicInputField = (props: DynamicInputProps) => {
         dynInitValues.push({...props.initValues[i], id: i})
     }
     const [values, setValues] = useState<DynamicInputState>(dynInitValues)
-    console.log(props)
     return(
             <>
                 <Grid container item direction="column" xs={12}>

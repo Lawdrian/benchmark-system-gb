@@ -24,7 +24,7 @@ import {SectionDivider} from "../../utils/inputPage/layout";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
-    unitValues: state.lookup.unitValues
+    unitValues: state.lookup.unitValues,
 });
 
 const connector = connect(mapStateToProps);
@@ -42,6 +42,7 @@ export type ConsumableMaterialsState = {
     kuebelVolumenProTopf: MeasureValue | null
     kuebelJungpflanzenProTopf: MeasureValue | null
     kuebelAlter: DateValue | null
+    schnur: number | null
     schnurMaterial: number | null
     schnurLaengeProTrieb: MeasureValue | null
     schnurWiederverwendung: MeasureValue | null
@@ -177,6 +178,24 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             </>
         )
     }
+
+    const schnurProps: SingleShowConditionalRadioInputProps = {
+        title: "Schnur/Rankhilfen",
+        label: "Verwenden Sie Schnur/Rankhilfen?",
+        radioGroupProps: {
+            value: consumableMaterials.schnur,
+            onChange: event => setConsumableMaterialsState({
+                ...consumableMaterials,
+                schnur: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Schnur,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Schnur.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
 
      const schnurMaterialProps: SelectionInputProps = {
         title: "Material",
@@ -346,6 +365,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const bodenabdeckungProps: DynamicInputProps = {
         title: "Bodenabdeckung",
         label: "Welche Bodenabdeckung verwenden Sie und wie viele Jahre lang?",
+        optional: true,
         textFieldProps: {},
         selectProps: {
             lookupValues: props.lookupValues.Bodenabdeckung
@@ -416,6 +436,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const verpackungsmaterialProps: DynamicInputProps = {
         title: "Verpackungsmaterial",
         label: "Welches Material benutzen Sie für die Verpackung Ihrer Ware?",
+        optional: true,
         textFieldProps: {},
         selectProps: {
             lookupValues: props.lookupValues.Verpackungsmaterial
@@ -441,6 +462,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const verpackungAnzahlNutzungenMehrwegsteigen: MeasureInputProps = {
         title: "Mehrwegsteigen",
         label: "Anzahl Nutzungen von Mehrwegsteigen (IFCO, EPS)",
+        optional: true,
         unitName: props.unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0]?.values,
         textFieldProps: {
             value: consumableMaterials.anzahlNutzungenMehrwegsteigen?.value,
@@ -454,6 +476,7 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
     const sonstVerbrauchsmaterialienProps: DynamicInputProps = {
         title: "Sonstige Verbrauchsmaterialien",
         label: "Geben Sie sonstige Verbrauchsmaterialien und die Gebrauchslänge an.",
+        optional: true,
         textFieldProps: {},
         textField2Props: {placeholder:"Jahre", label:"Wiederverwendung"},
         selectProps: {
@@ -513,14 +536,17 @@ const ConsumableMaterialsInput = (props: ConsumableMaterialsProps) => {
             </Grid>
             <SectionDivider title="Schnur"/>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...schnurMaterialProps} />
-                <MeasureInputField {...schnurLaengeProps}/>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...schnurWiederverwendungProps} />
+                <SingleShowConditionalRadioInputField {...schnurProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <SelectionInputField {...schnurMaterialProps}/>
+                        <MeasureInputField {...schnurLaengeProps}/>
+                    </Grid>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...schnurWiederverwendungProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
             </Grid>
             <SectionDivider title="Klipse"/>
-
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...klipseProps}>
                     <Grid item container xs={12} spacing={4}>
