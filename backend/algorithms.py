@@ -20,6 +20,7 @@ import math
 
 from backend.models import Options, OptionUnits
 from backend.models import MeasurementUnits
+from .utils import defaultValue, defaultOption
 
 
 def calc_co2_footprint(data):
@@ -352,20 +353,21 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
 
     # Bodenabdeckung
     bodenabdeckung = 0
-    for option in data["Bodenabdeckung"]:
-        bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
-        nutzdauer = option[1]
-        if bodenabdeckungmaterial == "Bodenfolie":
-            if nutzdauer <= 10:
-                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
-        elif bodenabdeckungmaterial == "Bodengewebe":
-            if nutzdauer <= 10:
-                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
-        elif bodenabdeckungmaterial == "Beton":
-            if nutzdauer <= 20:
-                bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
-        else:
-            raise ValueError('No valid option for Bodenabdeckung has been selected')
+    if data["Bodenabdeckung"] != defaultOption:
+        for option in data["Bodenabdeckung"]:
+            bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
+            nutzdauer = option[1]
+            if bodenabdeckungmaterial == "Bodenfolie":
+                if nutzdauer <= 10:
+                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
+            elif bodenabdeckungmaterial == "Bodengewebe":
+                if nutzdauer <= 10:
+                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
+            elif bodenabdeckungmaterial == "Beton":
+                if nutzdauer <= 20:
+                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
+            else:
+                raise ValueError('No valid option for Bodenabdeckung has been selected')
 
 
     # Kultursystem
@@ -601,21 +603,24 @@ def calc_co2_added(data, helping_values, all_options):
 
     # CO2-Herkunft
     co2_zudosierung = 0
-    for option in data["CO2-Herkunft"]:
-        # Check if the values have the correct unit
-        if OptionUnits.objects.get(id=option[2]).unit_name != "kg":
-            raise ValueError('CO2-Herkunft value unit has not been converted to kg!')
+    # Check if there is even a co2-zudosierung
+    print("CO-Herkunft")
+    if (data["CO2-Herkunft"] != defaultOption):
+        for option in data["CO2-Herkunft"]:
+            # Check if the values have the correct unit
+            if OptionUnits.objects.get(id=option[2]).unit_name != "kg":
+                raise ValueError('CO2-Herkunft value unit has not been converted to kg!')
 
-        co2_zudosierungtyp = all_options.get(id=option[0]).option_value
-        menge = option[1]
-        if co2_zudosierungtyp == "technisches CO2":
-            co2_zudosierung = co2_zudosierung + menge * 0.5
-        elif co2_zudosierungtyp == "direkte Gasverbrennung":
-            co2_zudosierung = co2_zudosierung + menge * 0.252
-        elif co2_zudosierungtyp == "eigenes BHKW":  # There is no need to check, if energietraeger uses bhkw since it has no impact anyways.
-            co2_zudosierung = co2_zudosierung + menge * 0
-        else:
-            raise ValueError('No valid option for CO2-Herkunft has been selected')
+            co2_zudosierungtyp = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            if co2_zudosierungtyp == "technisches CO2":
+                co2_zudosierung = co2_zudosierung + menge * 0.5
+            elif co2_zudosierungtyp == "direkte Gasverbrennung":
+                co2_zudosierung = co2_zudosierung + menge * 0.252
+            elif co2_zudosierungtyp == "eigenes BHKW":  # There is no need to check, if energietraeger uses bhkw since it has no impact anyways.
+                co2_zudosierung = co2_zudosierung + menge * 0
+            else:
+                raise ValueError('No valid option for CO2-Herkunft has been selected')
 
     print("co2_zudosierung: " + str(co2_zudosierung))
     return co2_zudosierung
@@ -624,94 +629,96 @@ def calc_co2_added(data, helping_values, all_options):
 def calc_fertilizer_co2(data, helping_values, all_options):
     # CO2-Herkunft
     duengemittel_einfach = 0
-    for option in data["Duengemittel:VereinfachteAngabe"]:
-        # TODO Korrekte Äquivalente einfügen
-        duengemittel_einfachtyp = all_options.get(id=option[0]).option_value
-        menge = option[1]
-        if duengemittel_einfachtyp == "A/B Bag: Standardduengung":
-            duengemittel_einfach = duengemittel_einfach + menge * 1
-        elif duengemittel_einfachtyp == "Vinasse":
-            duengemittel_einfach = duengemittel_einfach + menge * 2
-        elif duengemittel_einfachtyp == "Pferdemist":
-            duengemittel_einfach = duengemittel_einfach + menge * 3
-        elif duengemittel_einfachtyp == "Kompost":
-            duengemittel_einfach = duengemittel_einfach + menge * 4
-        elif duengemittel_einfachtyp == "Hornmehl, -griess, -spaene":
-            duengemittel_einfach = duengemittel_einfach + menge * 5
-        elif duengemittel_einfachtyp == "Blutmehl":
-            duengemittel_einfach = duengemittel_einfach + menge * 6
-        elif duengemittel_einfachtyp == "Mist":
-            duengemittel_einfach = duengemittel_einfach + menge * 7
-        elif duengemittel_einfachtyp == "Gruenduengung":
-            duengemittel_einfach = duengemittel_einfach + menge * 8
-        elif duengemittel_einfachtyp == "Knochenmehl":
-            duengemittel_einfach = duengemittel_einfach + menge * 9
-        elif duengemittel_einfachtyp == "Pflanzkali":
-            duengemittel_einfach = duengemittel_einfach + menge * 10
-        elif duengemittel_einfachtyp == "org. Vollduenger":
-            duengemittel_einfach = duengemittel_einfach + menge * 11
-        else:
-            raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
+    if data["Duengemittel:VereinfachteAngabe"] != defaultOption:
+        for option in data["Duengemittel:VereinfachteAngabe"]:
+            # TODO Korrekte Äquivalente einfügen
+            duengemittel_einfachtyp = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            if duengemittel_einfachtyp == "A/B Bag: Standardduengung":
+                duengemittel_einfach = duengemittel_einfach + menge * 1
+            elif duengemittel_einfachtyp == "Vinasse":
+                duengemittel_einfach = duengemittel_einfach + menge * 2
+            elif duengemittel_einfachtyp == "Pferdemist":
+                duengemittel_einfach = duengemittel_einfach + menge * 3
+            elif duengemittel_einfachtyp == "Kompost":
+                duengemittel_einfach = duengemittel_einfach + menge * 4
+            elif duengemittel_einfachtyp == "Hornmehl, -griess, -spaene":
+                duengemittel_einfach = duengemittel_einfach + menge * 5
+            elif duengemittel_einfachtyp == "Blutmehl":
+                duengemittel_einfach = duengemittel_einfach + menge * 6
+            elif duengemittel_einfachtyp == "Mist":
+                duengemittel_einfach = duengemittel_einfach + menge * 7
+            elif duengemittel_einfachtyp == "Gruenduengung":
+                duengemittel_einfach = duengemittel_einfach + menge * 8
+            elif duengemittel_einfachtyp == "Knochenmehl":
+                duengemittel_einfach = duengemittel_einfach + menge * 9
+            elif duengemittel_einfachtyp == "Pflanzkali":
+                duengemittel_einfach = duengemittel_einfach + menge * 10
+            elif duengemittel_einfachtyp == "org. Vollduenger":
+                duengemittel_einfach = duengemittel_einfach + menge * 11
+            else:
+                raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
 
     duengemittel_detailliert = 0
-    for option in data["Duengemittel:DetaillierteAngabe"]:
-    # TODO Korrekte Äquivalente einfügen
-        duengemittel_detaillierttyp = all_options.get(id=option[0]).option_value
-        menge = option[1]
-        if duengemittel_detaillierttyp == "Ammoniumnitrat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 1.94
-        elif duengemittel_detaillierttyp == "Kaliumnitrat (Kalisalpeter)":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 0.677
-        elif duengemittel_detaillierttyp == "Calciumnitrat fluessig (Kalksalpeter)":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
-        elif duengemittel_detaillierttyp == "Calciumnitrat fest":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
-        elif duengemittel_detaillierttyp == "Kaliumcholird, KCL, muriate of potash":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 0.377
-        elif duengemittel_detaillierttyp == "Kaliumsulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 1.13
-        elif duengemittel_detaillierttyp == "Monokaliumphosphat (Flory6)":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 0.729
-        elif duengemittel_detaillierttyp == "Borax":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 1.62
-        elif duengemittel_detaillierttyp == "Eisen DDTPA 3%":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 1
-        elif duengemittel_detaillierttyp == "Eisen EDDHA 6 %":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 2
-        elif duengemittel_detaillierttyp == "25 % Cu Kupfersulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 3
-        elif duengemittel_detaillierttyp == "32 % Mn Mangansulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 4
-        elif duengemittel_detaillierttyp == "Natriummolybdat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 5
-        elif duengemittel_detaillierttyp == "Zinksulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 6
-        elif duengemittel_detaillierttyp == "Chlorbleichlauge":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 7
-        elif duengemittel_detaillierttyp == "Bittersalz":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 8
-        elif duengemittel_detaillierttyp == "Phosphorsaeure 75%":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 9
-        elif duengemittel_detaillierttyp == "Salpetersaeure 65%":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 10
-        elif duengemittel_detaillierttyp == "Salpetersaeure 38%":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 11
-        elif duengemittel_detaillierttyp == "Kalksalpeter":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 12
-        elif duengemittel_detaillierttyp == "Magnesiumnitrat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 13
-        elif duengemittel_detaillierttyp == "Magnesiumsulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 14
-        elif duengemittel_detaillierttyp == "Kalisilikat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 15
-        elif duengemittel_detaillierttyp == "Mangansulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 16
-        elif duengemittel_detaillierttyp == "Kupfersulfat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 17
-        elif duengemittel_detaillierttyp == "Ammoniummolybdat":
-            duengemittel_detailliert = duengemittel_detailliert + menge * 18
-        else:
-            raise ValueError('No valid option for Duengemittel:DetaillierteAngabe has been selected')
+    if data["Duengemittel:DetaillierteAngabe"] != defaultOption:
+        for option in data["Duengemittel:DetaillierteAngabe"]:
+        # TODO Korrekte Äquivalente einfügen
+            duengemittel_detaillierttyp = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            if duengemittel_detaillierttyp == "Ammoniumnitrat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 1.94
+            elif duengemittel_detaillierttyp == "Kaliumnitrat (Kalisalpeter)":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 0.677
+            elif duengemittel_detaillierttyp == "Calciumnitrat fluessig (Kalksalpeter)":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
+            elif duengemittel_detaillierttyp == "Calciumnitrat fest":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 4.43
+            elif duengemittel_detaillierttyp == "Kaliumcholird, KCL, muriate of potash":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 0.377
+            elif duengemittel_detaillierttyp == "Kaliumsulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 1.13
+            elif duengemittel_detaillierttyp == "Monokaliumphosphat (Flory6)":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 0.729
+            elif duengemittel_detaillierttyp == "Borax":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 1.62
+            elif duengemittel_detaillierttyp == "Eisen DDTPA 3%":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 1
+            elif duengemittel_detaillierttyp == "Eisen EDDHA 6 %":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 2
+            elif duengemittel_detaillierttyp == "25 % Cu Kupfersulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 3
+            elif duengemittel_detaillierttyp == "32 % Mn Mangansulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 4
+            elif duengemittel_detaillierttyp == "Natriummolybdat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 5
+            elif duengemittel_detaillierttyp == "Zinksulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 6
+            elif duengemittel_detaillierttyp == "Chlorbleichlauge":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 7
+            elif duengemittel_detaillierttyp == "Bittersalz":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 8
+            elif duengemittel_detaillierttyp == "Phosphorsaeure 75%":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 9
+            elif duengemittel_detaillierttyp == "Salpetersaeure 65%":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 10
+            elif duengemittel_detaillierttyp == "Salpetersaeure 38%":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 11
+            elif duengemittel_detaillierttyp == "Kalksalpeter":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 12
+            elif duengemittel_detaillierttyp == "Magnesiumnitrat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 13
+            elif duengemittel_detaillierttyp == "Magnesiumsulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 14
+            elif duengemittel_detaillierttyp == "Kalisilikat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 15
+            elif duengemittel_detaillierttyp == "Mangansulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 16
+            elif duengemittel_detaillierttyp == "Kupfersulfat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 17
+            elif duengemittel_detaillierttyp == "Ammoniummolybdat":
+                duengemittel_detailliert = duengemittel_detailliert + menge * 18
+            else:
+                raise ValueError('No valid option for Duengemittel:DetaillierteAngabe has been selected')
 
     print("duengemittel: " + str(duengemittel_detailliert+duengemittel_einfach))
     return duengemittel_einfach + duengemittel_detailliert
@@ -729,28 +736,29 @@ def calc_nuetzlinge_co2(data, helping_values, all_options):
     # Nuetzlinge
     # TODO Korrekte Äquivalente einfügen
     nuetzlinge_co2 = 0
-    for option in data["Nuetzlinge"]:
-        nuetzlingeart = all_options.get(id=option[0]).option_value
-        menge = option[1]
+    if data["Nuetzlinge"] != defaultOption:
+        for option in data["Nuetzlinge"]:
+            nuetzlingeart = all_options.get(id=option[0]).option_value
+            menge = option[1]
 
-        if nuetzlingeart == "Hummeln":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 1
-        elif nuetzlingeart == "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 2
-        elif nuetzlingeart == "Macrolophus (oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 3
-        elif nuetzlingeart == "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 4
-        elif nuetzlingeart == "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 5
-        elif nuetzlingeart == "Gallmuecken (Aphidoletes, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 6
-        elif nuetzlingeart == "Florfliegen (Chrysoperla, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 7
-        elif nuetzlingeart == "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)":
-            nuetzlinge_co2 = nuetzlinge_co2 + menge * 8
-        else:
-            raise ValueError('No valid option for Nuetzlinge has been selected')
+            if nuetzlingeart == "Hummeln":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 1
+            elif nuetzlingeart == "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 2
+            elif nuetzlingeart == "Macrolophus (oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 3
+            elif nuetzlingeart == "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 4
+            elif nuetzlingeart == "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 5
+            elif nuetzlingeart == "Gallmuecken (Aphidoletes, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 6
+            elif nuetzlingeart == "Florfliegen (Chrysoperla, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 7
+            elif nuetzlingeart == "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)":
+                nuetzlinge_co2 = nuetzlinge_co2 + menge * 8
+            else:
+                raise ValueError('No valid option for Nuetzlinge has been selected')
 
     print("nuetzlinge_co2: " + str(nuetzlinge_co2))
     return nuetzlinge_co2
@@ -851,29 +859,36 @@ def calc_young_plants_transport_co2(data, helping_values, all_options):
     return young_plants_transport_co2
 
 def calc_cords_co2(data, helping_values, all_options):
-
+    schnurverwendung = all_options.get(id=data["Schnur"][0][0]).option_value
     schnuerematerial = all_options.get(id=data["SchnuereRankhilfen:Material"][0][0]).option_value
     schnuere_co2 = 0
-    nutzdauer = data["SchnuereRankhilfen:Wiederverwendung"][0]
-    if schnuerematerial == "Kunststoff":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 1/1000) * 1.73) / nutzdauer
-    elif schnuerematerial == "Jute":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
-    elif schnuerematerial == "Sisal":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
-    elif schnuerematerial == "Zellulose":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
-    elif schnuerematerial == "andere Nachhaltige/abbaubare Option Substrat":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
-    elif schnuerematerial == "Bambusstab":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 0.32) * 1.2) / nutzdauer
-    elif schnuerematerial == "Edelstahl":
-        schnuere_co2 = ((helping_values["cord_length_total"] * 0.62) * 1.712) / nutzdauer
+    if schnurverwendung == "nein":
+        print("schnuere_co2: " + str(schnuere_co2))
+        return schnuere_co2
+    elif schnurverwendung == "ja":
+        nutzdauer = data["SchnuereRankhilfen:Wiederverwendung"][0]
+        if schnuerematerial == "Kunststoff":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 1/1000) * 1.73) / nutzdauer
+        elif schnuerematerial == "Jute":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+        elif schnuerematerial == "Sisal":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+        elif schnuerematerial == "Zellulose":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+        elif schnuerematerial == "andere Nachhaltige/abbaubare Option Substrat":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
+        elif schnuerematerial == "Bambusstab":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 0.32) * 1.2) / nutzdauer
+        elif schnuerematerial == "Edelstahl":
+            schnuere_co2 = ((helping_values["cord_length_total"] * 0.62) * 1.712) / nutzdauer
+        else:
+            raise ValueError('No valid option for SchnuereRankhilfen:Material has been selected')
     else:
-        raise ValueError('No valid option for SchnuereRankhilfen:Material has been selected')
+        raise ValueError('No valid option for Schnur has been selected')
 
     print("schnuere_co2: " + str(schnuere_co2))
     return schnuere_co2
+
 
 
 def calc_clips_co2(data, helping_values, all_options):
@@ -947,18 +962,20 @@ def calc_irrigation_co2(data, helping_values, all_options):
 def calc_packaging_co2(data, helping_values, all_options):
     # Verpackungsmaterial
     verpackung_co2 = 0
-    for option in data["Verpackungsmaterial"]:
-        verpackungmaterial = all_options.get(id=option[0]).option_value
-        menge = option[1]
-        if verpackungmaterial == "Karton":
-            verpackung_co2 = verpackung_co2 + menge * 0.748
-        elif verpackungmaterial == "Plastik":
-            verpackung_co2 = verpackung_co2 + menge * 1.73
-        else:
-            raise ValueError('No valid option for Verpackungsmaterial has been selected')
+    if data["Verpackungsmaterial"] != defaultOption:
+        for option in data["Verpackungsmaterial"]:
+            verpackungmaterial = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            if verpackungmaterial == "Karton":
+                verpackung_co2 = verpackung_co2 + menge * 0.748
+            elif verpackungmaterial == "Plastik":
+                verpackung_co2 = verpackung_co2 + menge * 1.73
+            else:
+                raise ValueError('No valid option for Verpackungsmaterial has been selected')
 
     # Mehrwegsteigen
-    verpackung_co2 = verpackung_co2 + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
+    if data["Verpackungsmaterial:AnzahlMehrwegsteigen"] != defaultValue:
+        verpackung_co2 = verpackung_co2 + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
 
     print("verpackung_co2: " + str(verpackung_co2))
     return verpackung_co2
@@ -967,24 +984,25 @@ def calc_packaging_co2(data, helping_values, all_options):
 def calc_other_consumables_co2(data, helping_values, all_options):
     # Sonstige Verbrauchsmaterialien
     sonstige_verbrauchsmaterialien_co2 = 0
-    for option in data["SonstigeVerbrauchsmaterialien"]:
-        sonstige_verbrauchsmaterialienmaterial = all_options.get(id=option[0]).option_value
-        menge = option[1]
-        nutzdauer = option[3]
-        if sonstige_verbrauchsmaterialienmaterial == "Folie":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 2.67 / nutzdauer
-        elif sonstige_verbrauchsmaterialienmaterial == "Eisen":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.5641297 / nutzdauer
-        elif sonstige_verbrauchsmaterialienmaterial == "Alluminium":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 14.6 / nutzdauer
-        elif sonstige_verbrauchsmaterialienmaterial == "Kunststoff":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.73 / nutzdauer
-        elif sonstige_verbrauchsmaterialienmaterial == "Holz":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.0044 / nutzdauer
-        elif sonstige_verbrauchsmaterialienmaterial == "Pappe":
-            sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.748 / nutzdauer
-        else:
-            raise ValueError('No valid option for SonstigeVerbrauchsmaterialien has been selected')
+    if data["SonstigeVerbrauchsmaterialien"] != defaultOption:
+        for option in data["SonstigeVerbrauchsmaterialien"]:
+            sonstige_verbrauchsmaterialienmaterial = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            nutzdauer = option[3]
+            if sonstige_verbrauchsmaterialienmaterial == "Folie":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 2.67 / nutzdauer
+            elif sonstige_verbrauchsmaterialienmaterial == "Eisen":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.5641297 / nutzdauer
+            elif sonstige_verbrauchsmaterialienmaterial == "Alluminium":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 14.6 / nutzdauer
+            elif sonstige_verbrauchsmaterialienmaterial == "Kunststoff":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 1.73 / nutzdauer
+            elif sonstige_verbrauchsmaterialienmaterial == "Holz":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.0044 / nutzdauer
+            elif sonstige_verbrauchsmaterialienmaterial == "Pappe":
+                sonstige_verbrauchsmaterialien_co2 = sonstige_verbrauchsmaterialien_co2 + menge * 0.748 / nutzdauer
+            else:
+                raise ValueError('No valid option for SonstigeVerbrauchsmaterialien has been selected')
 
     print("sonstige_verbrauchsmaterialien_co2: " + str(sonstige_verbrauchsmaterialien_co2))
     return sonstige_verbrauchsmaterialien_co2
@@ -994,7 +1012,7 @@ def calc_additional_machineusage_co2(data, helping_values, all_options):
     # Zusaetzlicher Machineneinsatz
     zusaetzlicher_maschineneinsatz_co2 = 0
     # Since this field is optional it is possible, that the default value comes back
-    if data["ZusaetzlicherMaschineneinsatz"] != [(0,)]:
+    if data["ZusaetzlicherMaschineneinsatz"] != defaultOption:
         for option in data["ZusaetzlicherMaschineneinsatz"]:
             zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
             verbrauch = option[1]

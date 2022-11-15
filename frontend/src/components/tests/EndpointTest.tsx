@@ -193,6 +193,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         Nuetzlinge: "[(115,92,140),(108,12,133),(109,10,134),(110,11,135),(111,13,136),(112,14,137),(113,55,138),(114,2,139)]",
         GrowbagsKuebel: "[(117)]",
         Substrat: "[(124,5,149)]",
+        Schnur: "[(175)]",
         "SchnuereRankhilfen:Material": "[(129)]",
         Klipse: "[(163)]",
         "Klipse:Material": "[(133)]",
@@ -393,11 +394,11 @@ const EndpointTest = (props: EndpointTestProps) => {
             name: "Load Unit Values (Not Authenticated)",
             loading: testResults.units.withoutAuth.loading,
             successful: testResults.units.withoutAuth.successful
-        },{
+        }/*,{
             name: "Load Weather Data",
             loading: props.weather.isLoading,
             successful: !!props.weather.weatherData
-        },
+        },*/
     ]
 
     return (

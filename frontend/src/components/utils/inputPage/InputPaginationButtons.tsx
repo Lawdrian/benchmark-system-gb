@@ -1,7 +1,18 @@
 import React, {useState} from 'react'
 import Button from "@mui/material/Button";
 import {NavigateBefore, NavigateNext} from "@mui/icons-material";
-import {Alert, AlertTitle, Box, Grid} from "@mui/material";
+import {
+    Alert,
+    AlertTitle,
+    Box,
+    CircularProgress,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Grid
+} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 
 export type InputPaginationButtonsProps = {
     hasPrevious: () => boolean
@@ -22,6 +33,22 @@ export type InputPaginationButtonsProps = {
  */
 const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
     const [showAlert, setShowAlert] = useState<boolean>(false)
+    const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const navigate = useNavigate()
+
+    const handleSubmitSuccess = () => {
+        setTimeout(function(){
+            setOpenDialog(false)
+            navigate("../co2-footprint")
+        }, 2000);
+    }
+
+    const handleSubmitError = () => {
+        setTimeout(function(){
+            setOpenDialog(false)
+            setShowAlert(true)
+        }, 2000);
+    }
 
     const submitErrorAlert = () => {
         return (
@@ -38,6 +65,16 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
 
     return (
         <>
+            <Dialog open={openDialog}>
+                <>
+                    <DialogTitle>Ihr persöhnlicher Fußabdruck wird erstellt</DialogTitle>
+                     <DialogContent sx={{display: "flex"}}>
+                         <Grid container item xs={12} alignItems={"center"} justifyContent={"center"}>
+                            <CircularProgress/>
+                         </Grid>
+                    </DialogContent>
+                </>
+            </Dialog>
             {showAlert ? submitErrorAlert() : null}
             <Box sx={{display:"flex", justifyContent:"center"}} >
                 <>
@@ -66,7 +103,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                         size="large"
                         disabled={false}
                         endIcon={<NavigateNext/>}
-                        onClick={() => props.submit(() => setShowAlert(true))}
+                        onClick={() => props.submit(() => setOpenDialog(true), () => handleSubmitSuccess(), () => handleSubmitError())}
                     >
                         Abschicken
                     </Button>

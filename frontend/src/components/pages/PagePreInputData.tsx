@@ -162,6 +162,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             kuebelVolumenProTopf: {value: null, unit: null},
             kuebelJungpflanzenProTopf: {value: null, unit: null},
             kuebelAlter: {value: null, unit: null},
+            schnur: null,
             schnurMaterial: null,
             schnurLaengeProTrieb: {value: null, unit: null},
             schnurWiederverwendung: {value: null, unit: null},
@@ -205,11 +206,19 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
         return {value: measure[0], unit: measure[1]}
     }
 
+    /**
+     * This function is used for parsing a selectionTuple to the correct data struct
+     *
+     * @param tuple:string The tuple that needs to be parsed
+     *
+     * @return {ReactNode} datastruct
+     */
     const parseSelectionTuple = (tuple:string) => {
         const selection = JSON.parse(tuple)
 
-        if(selection[0][0] == null)
+        if(selection[0][0] == null) {
             return null
+        }
 
         if(selection[0].length == 1) {
             let parsedSelection = selection[0][0]
@@ -248,7 +257,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             })
         }
         else if(dataset.datasets == "") {
-            console.log("Hab ichs doch gesagt")
+            console.log("Dataset corrupted")
         }
 
     }
@@ -266,17 +275,17 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     datum: new Date(Date.now()),
                     plz: parseMeasureTuple(initialDataset.PLZ),
                     gwhGesamtFlaeche: parseMeasureTuple(initialDataset.GWHGesamtflaeche),
-                    einheitlicheWaermeversorgung: parseSelectionTuple(initialDataset.EinheitlicheWaermeversorgung),
+                    einheitlicheWaermeversorgung: parseSelectionTuple(initialDataset.EinheitlicheWaermeversorgung) ?? inputFieldData.consumableItems.co2Herkunft,
                     gwhFlaeche: parseMeasureTuple(initialDataset.GWHFlaeche),
                     waermeteilungFlaeche: parseMeasureTuple(initialDataset.WaermeteilungFlaeche),
-                    gwhArt: parseSelectionTuple(initialDataset.GWHArt),
+                    gwhArt: parseSelectionTuple(initialDataset.GWHArt) ?? inputFieldData.companyInformation.gwhArt,
                     gwhAlter: parseDateTuple(initialDataset.GWHAlter),
-                    bedachungsmaterial: parseSelectionTuple(initialDataset.Bedachungsmaterial),
+                    bedachungsmaterial: parseSelectionTuple(initialDataset.Bedachungsmaterial) ?? inputFieldData.companyInformation.bedachungsmaterial,
                     bedachungsmaterialAlter: parseDateTuple(initialDataset.AlterBedachungsmaterial),
-                    stehwandmaterial: parseSelectionTuple(initialDataset.Stehwandmaterial),
+                    stehwandmaterial: parseSelectionTuple(initialDataset.Stehwandmaterial) ?? inputFieldData.companyInformation.stehwandmaterial,
                     stehwandmaterialAlter: parseDateTuple(initialDataset.AlterStehwandmaterial),
-                    energieschirm: parseSelectionTuple(initialDataset.Energieschirm),
-                    energieschirmTyp: parseSelectionTuple(initialDataset.EnergieschirmTyp),
+                    energieschirm: parseSelectionTuple(initialDataset.Energieschirm) ?? inputFieldData.companyInformation.energieschirm,
+                    energieschirmTyp: parseSelectionTuple(initialDataset.EnergieschirmTyp) ?? inputFieldData.companyInformation.energieschirmTyp,
                     energieschirmAlter: parseDateTuple(initialDataset.AlterEnergieschirm),
                     stehwandhoehe: parseMeasureTuple(initialDataset.Stehwandhoehe),
                     laenge: parseMeasureTuple(initialDataset.Laenge),
@@ -285,32 +294,32 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     scheibenlaenge: parseMeasureTuple(initialDataset.Scheibenlaenge),
                     reihenabstand: parseMeasureTuple(initialDataset["Reihenabstand(Rinnenabstand)"]),
                     vorwegbreite: parseMeasureTuple(initialDataset.Vorwegbreite),
-                    transportsystem: parseSelectionTuple(initialDataset.Transportsystem),
+                    transportsystem: parseSelectionTuple(initialDataset.Transportsystem) ?? inputFieldData.companyInformation.transportsystem,
                     transportsystemAlter: parseDateTuple(initialDataset.AlterTransportsystem),
-                    produktionstyp: parseSelectionTuple(initialDataset.Produktionstyp),
-                    kultursystem: parseSelectionTuple(initialDataset.Kultursystem),
+                    produktionstyp: parseSelectionTuple(initialDataset.Produktionstyp) ?? inputFieldData.consumableItems.co2Herkunft,
+                    kultursystem: parseSelectionTuple(initialDataset.Kultursystem) ?? inputFieldData.consumableItems.co2Herkunft,
                     kultursystemAlter: parseDateTuple(initialDataset.AlterKultursystem),
-                    zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem),
-                    zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp),
+                    zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystem,
+                    zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystemTyp,
                     zusaetzlichesHeizsystemAlter: parseDateTuple(initialDataset.AlterZusaetzlichesHeizsystem),
                 },
                 cultureInformation: {
-                    snack: parseSelectionTuple(initialDataset["10-30Gramm(Snack)"]),
+                    snack: parseSelectionTuple(initialDataset["10-30Gramm(Snack)"]) ?? inputFieldData.cultureInformation.snack,
                     snackReihenanzahl: parseMeasureTuple(initialDataset.SnackReihenanzahl),
                     snackPflanzenabstand: parseMeasureTuple(initialDataset.SnackPflanzenabstandInDerReihe),
                     snackTriebzahl: parseMeasureTuple(initialDataset.SnackTriebzahl),
                     snackErtragJahr: parseMeasureTuple(initialDataset.SnackErtragJahr),
-                    cocktail: parseSelectionTuple(initialDataset["30-100Gramm(Cocktail)"]),
+                    cocktail: parseSelectionTuple(initialDataset["30-100Gramm(Cocktail)"]) ?? inputFieldData.cultureInformation.cocktail,
                     cocktailReihenanzahl: parseMeasureTuple(initialDataset.CocktailReihenanzahl),
                     cocktailPflanzenabstand: parseMeasureTuple(initialDataset.CocktailPflanzenabstandInDerReihe),
                     cocktailTriebzahl: parseMeasureTuple(initialDataset.CocktailTriebzahl),
                     cocktailErtragJahr: parseMeasureTuple(initialDataset.CocktailErtragJahr),
-                    rispen: parseSelectionTuple(initialDataset["100-150Gramm(Rispen)"]),
+                    rispen: parseSelectionTuple(initialDataset["100-150Gramm(Rispen)"]) ?? inputFieldData.cultureInformation.rispen,
                     rispenReihenanzahl: parseMeasureTuple(initialDataset.RispenReihenanzahl),
                     rispenPflanzenabstand: parseMeasureTuple(initialDataset.RispenPflanzenabstandInDerReihe),
                     rispenTriebzahl: parseMeasureTuple(initialDataset.RispenTriebzahl),
                     rispenErtragJahr: parseMeasureTuple(initialDataset.RispenErtragJahr),
-                    fleisch: parseSelectionTuple(initialDataset[">150Gramm(Fleisch)"]),
+                    fleisch: parseSelectionTuple(initialDataset[">150Gramm(Fleisch)"]) ?? inputFieldData.cultureInformation.fleisch,
                     fleischReihenanzahl: parseMeasureTuple(initialDataset.FleischReihenanzahl),
                     fleischPflanzenabstand: parseMeasureTuple(initialDataset.FleischPflanzenabstandInDerReihe),
                     fleischTriebzahl: parseMeasureTuple(initialDataset.FleischTriebzahl),
@@ -318,66 +327,67 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     kulturflaeche: parseMeasureTuple(initialDataset.Kulturflaeche),
                     kulturBeginn: parseMeasureTuple(initialDataset.KulturBeginn),
                     kulturEnde: parseMeasureTuple(initialDataset.KulturEnde),
-                    nebenkultur: parseSelectionTuple(initialDataset.Nebenkultur),
+                    nebenkultur: parseSelectionTuple(initialDataset.Nebenkultur) ?? inputFieldData.cultureInformation.nebenkultur,
                     nebenkulturBeginn: parseMeasureTuple(initialDataset.NebenkulturBeginn),
                     nebenkulturEnde: parseMeasureTuple(initialDataset.NebenkulturEnde),
                 },
                 cultureManagement: {
                     mittlereSolltemperaturTag: parseMeasureTuple(initialDataset.MittlereSolltemperaturTag),
                     mittlereSolltemperaturNacht: parseMeasureTuple(initialDataset.MittlereSolltemperaturNacht),
-                    entfeuchtung: parseSelectionTuple(initialDataset.Entfeuchtung),
+                    entfeuchtung: parseSelectionTuple(initialDataset.Entfeuchtung) ?? inputFieldData.cultureManagement.entfeuchtung,
                     luftfeuchte: parseMeasureTuple(initialDataset.Luftfeuchte),
                 },
                 energyConsumption: {
-                    energietraeger: parseSelectionTuple(initialDataset.Energietraeger),
-                    bhkw: parseSelectionTuple(initialDataset.BHKW),
+                    energietraeger: parseSelectionTuple(initialDataset.Energietraeger) ?? inputFieldData.energyConsumption.energietraeger,
+                    bhkw: parseSelectionTuple(initialDataset.BHKW) ?? inputFieldData.energyConsumption.bhkw,
                     bhkwAnteilErdgas: parseMeasureTuple(initialDataset["BHKW:AnteilErdgas"]),
                     bhkwAnteilBiomethan: parseMeasureTuple(initialDataset["BHKW:AnteilBiomethan"]),
-                    stromherkunft: parseSelectionTuple(initialDataset.Stromherkunft),
-                    zusatzbelichtung: parseSelectionTuple(initialDataset.Zusatzbelichtung),
-                    belichtungsstrom: parseSelectionTuple(initialDataset.Belichtungsstrom),
-                    belichtungsstromEinheit: parseSelectionTuple(initialDataset.BelichtungsstromEinheit),
+                    stromherkunft: parseSelectionTuple(initialDataset.Stromherkunft) ?? inputFieldData.energyConsumption.stromherkunft,
+                    zusatzbelichtung: parseSelectionTuple(initialDataset.Zusatzbelichtung) ?? inputFieldData.energyConsumption.zusatzbelichtung,
+                    belichtungsstrom: parseSelectionTuple(initialDataset.Belichtungsstrom) ?? inputFieldData.energyConsumption.belichtungsstrom,
+                    belichtungsstromEinheit: parseSelectionTuple(initialDataset.BelichtungsstromEinheit) ?? inputFieldData.energyConsumption.belichtungsstromEinheit,
                     belichtungsstromStromverbrauch: parseMeasureTuple(initialDataset["Belichtung:Stromverbrauch"]),
                     belichtungsstromAnzLampen: parseMeasureTuple(initialDataset["Belichtung:AnzahlLampen"]),
                     belichtungsstromAnschlussleistung: parseMeasureTuple(initialDataset["Belichtung:AnschlussleistungProLampe"]),
                     belichtungsstromLaufzeitJahr: parseMeasureTuple(initialDataset["Belichtung:LaufzeitProJahr"]),
                 },
                 consumableItems: {
-                    co2Herkunft: parseSelectionTuple(initialDataset["CO2-Herkunft"]),
-                    duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]),
-                    duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]),
+                    co2Herkunft: parseSelectionTuple(initialDataset["CO2-Herkunft"]) ?? inputFieldData.consumableItems.co2Herkunft,
+                    duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]) ?? inputFieldData.consumableItems.duengemittelSimple,
+                    duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]) ?? inputFieldData.consumableItems.duengemittelDetail,
                     fungizideKg: parseMeasureTuple(initialDataset.FungizideKg),
                     insektizideKg: parseMeasureTuple(initialDataset.InsektizideKg),
                     fungizideLiter: {value: null, unit: null},
                     insektizideLiter: {value: null, unit: null},
-                    nuetzlinge: parseSelectionTuple(initialDataset.Nuetzlinge),
+                    nuetzlinge: parseSelectionTuple(initialDataset.Nuetzlinge) ?? inputFieldData.consumableItems.nuetzlinge,
                 },
                 consumableMaterials: {
-                    growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel),
-                    growbagsKuebelSubstrat: parseSelectionTuple(initialDataset.Substrat),
+                    growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel) ?? inputFieldData.consumableMaterials.growbagsKuebel,
+                    growbagsKuebelSubstrat: parseSelectionTuple(initialDataset.Substrat) ?? inputFieldData.consumableMaterials.growbagsKuebelSubstrat,
                     kuebelVolumenProTopf: parseMeasureTuple(initialDataset["Kuebel:VolumenProTopf"]),
                     kuebelJungpflanzenProTopf: parseMeasureTuple(initialDataset["Kuebel:JungpflanzenProTopf"]),
                     kuebelAlter: parseDateTuple(initialDataset["Kuebel:Alter"]),
-                    schnurMaterial: parseSelectionTuple(initialDataset["SchnuereRankhilfen:Material"]),
+                    schnur: parseSelectionTuple(initialDataset.Schnur) ?? inputFieldData.consumableMaterials.schnur,
+                    schnurMaterial: parseSelectionTuple(initialDataset["SchnuereRankhilfen:Material"]) ?? inputFieldData.consumableMaterials.schnurMaterial,
                     schnurLaengeProTrieb: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Laenge"]),
                     schnurWiederverwendung: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Wiederverwendung"]),
-                    klipse: parseSelectionTuple(initialDataset.Klipse),
-                    klipseMaterial: parseSelectionTuple(initialDataset["Klipse:Material"]),
+                    klipse: parseSelectionTuple(initialDataset.Klipse) ?? inputFieldData.consumableMaterials.klipse,
+                    klipseMaterial: parseSelectionTuple(initialDataset["Klipse:Material"]) ?? inputFieldData.consumableMaterials.klipseMaterial,
                     klipseAnzProTrieb: parseMeasureTuple(initialDataset["Klipse:AnzahlProTrieb"]),
                     klipseWiederverwendung: parseMeasureTuple(initialDataset["Klipse:Wiederverwendung"]),
-                    rispenbuegel: parseSelectionTuple(initialDataset.Rispenbuegel),
-                    rispenbuegelMaterial: parseSelectionTuple(initialDataset["Rispenbuegel:Material"]),
+                    rispenbuegel: parseSelectionTuple(initialDataset.Rispenbuegel) ?? inputFieldData.consumableMaterials.rispenbuegel,
+                    rispenbuegelMaterial: parseSelectionTuple(initialDataset["Rispenbuegel:Material"]) ?? inputFieldData.consumableMaterials.rispenbuegelMaterial,
                     rispenbuegelAnzProTrieb: parseMeasureTuple(initialDataset["Rispenbuegel:AnzahlProTrieb"]),
                     rispenbuegelWiederverwendung: parseMeasureTuple(initialDataset["Rispenbuegel:Wiederverwendung"]),
-                    bewaesserArt: parseSelectionTuple(initialDataset.Bewaesserungsart),
-                    bodenabdeckung: parseSelectionTuple(initialDataset.Bodenabdeckung),
-                    jungpflanzenZukauf: parseSelectionTuple(initialDataset["Jungpflanzen:Zukauf"]),
+                    bewaesserArt: parseSelectionTuple(initialDataset.Bewaesserungsart) ?? inputFieldData.consumableMaterials.bewaesserArt,
+                    bodenabdeckung: parseSelectionTuple(initialDataset.Bodenabdeckung) ?? inputFieldData.consumableMaterials.bodenabdeckung,
+                    jungpflanzenZukauf: parseSelectionTuple(initialDataset["Jungpflanzen:Zukauf"]) ?? inputFieldData.consumableMaterials.jungpflanzenZukauf,
                     jungpflanzenDistanz: parseMeasureTuple(initialDataset["Jungpflanzen:Distanz"]),
-                    jungpflanzenSubstrat: parseSelectionTuple(initialDataset["Jungpflanzen:Substrat"]),
-                    verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial),
+                    jungpflanzenSubstrat: parseSelectionTuple(initialDataset["Jungpflanzen:Substrat"]) ?? inputFieldData.consumableMaterials.jungpflanzenSubstrat,
+                    verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial) ?? inputFieldData.consumableMaterials.verpackungsmaterial,
                     anzahlNutzungenMehrwegsteigen: parseMeasureTuple(initialDataset["Verpackungsmaterial:AnzahlMehrwegsteigen"]),
-                    sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien),
-                    zusaetzlicherMaschineneinsatz: parseSelectionTuple(initialDataset.ZusaetzlicherMaschineneinsatz),
+                    sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien) ?? inputFieldData.consumableMaterials.sonstVerbrauchsmaterialien,
+                    zusaetzlicherMaschineneinsatz: parseSelectionTuple(initialDataset.ZusaetzlicherMaschineneinsatz) ?? inputFieldData.consumableMaterials.zusaetzlicherMaschineneinsatz,
                 }
             })
             setPageStatus(PageStatus.OldGH)

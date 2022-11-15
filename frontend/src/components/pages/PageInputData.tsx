@@ -230,22 +230,23 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : "[]",
         BHKW: energyConsumption?.bhkw ? formatOptionValues(energyConsumption.bhkw) : "[]",
         Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : "[]",
-        "CO2-Herkunft": consumableItems?.co2Herkunft ? formatOptionValues(consumableItems.co2Herkunft) : "[]",
-        "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple ? formatOptionValues(consumableItems.duengemittelSimple) : "[]",
-        "Duengemittel:DetaillierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : "[]",
         Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : "[]",
         GrowbagsKuebel: consumableMaterials?.growbagsKuebel ? formatOptionValues(consumableMaterials.growbagsKuebel) : "[]",
-        "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : "[]",
+        Schnur:consumableMaterials?.schnur? formatOptionValues(consumableMaterials.schnur) : "[]",
         Klipse:consumableMaterials?.klipse ? formatOptionValues(consumableMaterials.klipse) : "[]",
         Rispenbuegel:consumableMaterials?.rispenbuegel ? formatOptionValues(consumableMaterials.rispenbuegel) : "[]",
         Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues(consumableMaterials.bewaesserArt) : "[]",
-        Bodenabdeckung: consumableMaterials?.bodenabdeckung ? formatOptionValues(consumableMaterials.bodenabdeckung) : "[]",
         "Jungpflanzen:Zukauf": consumableMaterials?.jungpflanzenZukauf ? formatOptionValues(consumableMaterials.jungpflanzenZukauf) : "[]",
-        Verpackungsmaterial: consumableMaterials?.verpackungsmaterial ? formatOptionValues(consumableMaterials.verpackungsmaterial) : "[]",
-        SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : "[]",
         //Fields that might be optional due to dependency on conditional fields. Because of that only these fields get the defaultOption,
         // so that the other fields will trigger an error in the frontend validation if they are not filled out:
+        "CO2-Herkunft": consumableItems?.co2Herkunft[0].selectValue ? formatOptionValues(consumableItems.co2Herkunft) : defaultOption,
+        "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple[0].selectValue ? formatOptionValues(consumableItems.duengemittelSimple) : defaultOption,
+        "Duengemittel:DetaillierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : defaultOption,
         "Jungpflanzen:Substrat": consumableMaterials?.jungpflanzenSubstrat ? formatOptionValues(consumableMaterials.jungpflanzenSubstrat) : defaultOption,
+        "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : defaultOption,
+        Bodenabdeckung: consumableMaterials?.bodenabdeckung ? formatOptionValues(consumableMaterials.bodenabdeckung) : defaultOption,
+        SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : defaultOption,
+        Verpackungsmaterial: consumableMaterials?.verpackungsmaterial ? formatOptionValues(consumableMaterials.verpackungsmaterial) : defaultOption,
         ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
         BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption,
         "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : defaultOption,
@@ -276,14 +277,14 @@ const PageInputData = (props: InputDataProps) => {
         hasPrevious: () => tab > 0,
         next: () => setTab(tab + 1),
         previous: () => setTab(tab - 1),
-        submit: (setShowAlert: Function) => {
+        submit: (setOpenDialog: Function, handleSubmitSuccess: Function, handleSubmitError: Function) => {
             props.submitGreenhouseData(
                 processDataToSubmit(dataToSubmit),
                 () => {},
                 true,
-                () => {},
-                () => {navigate("../co2-footprint")},
-                () => {setShowAlert()}
+                () => {setOpenDialog()},
+                () => {handleSubmitSuccess()},
+                () => {handleSubmitError()}
             )
 
         }

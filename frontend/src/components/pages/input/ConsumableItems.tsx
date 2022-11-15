@@ -51,6 +51,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const co2HerkunftProps: DynamicInputProps = {
         title: "CO2 Zudosierung",
         label: "Wie und wieviel CO2 führen Sie der Kultur hinzu?.",
+        optional: true,
         textFieldProps:{},
         selectProps: {
             lookupValues: props.lookupValues["CO2-Herkunft"]
@@ -74,6 +75,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const duengemittelSimpleProps: DynamicInputProps = {
         title: "Einfach",
         label: "Verwendetes Düngemittel und Menge eintragen.",
+        optional: true,
         textFieldProps:{},
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:VereinfachteAngabe"]
@@ -97,6 +99,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const duengemittelDetailProps: DynamicInputProps = {
         title: "Detailliert",
         label: "Verwendetes Düngemittel und Menge eintragen.",
+        optional: true,
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"]
         },
@@ -120,6 +123,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const fungizideKgProps: MeasureInputProps = {
         title: "Angabe Kilogramm",
         label: "Wieviele feste Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Fungizide und geben Sie diese in Kilogramm an.",
+        optional: true,
         unitName: props.unitValues.measures.FungizideKg[0]?.values,
         textFieldProps: {
             value: consumableItems.fungizideKg?.value,
@@ -133,6 +137,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const fungizideLiterProps: MeasureInputProps = {
         title: "Angabe Liter",
         label: "Wieviele flüssige Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssige Fungizide und geben Sie diese in Liter an.",
+        optional: true,
         unitName: "Liter",
         textFieldProps: {
             value: consumableItems.fungizideLiter?.value,
@@ -146,6 +151,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const insektizideKgProps: MeasureInputProps = {
         title: "Angabe Kilogramm",
         label: "Wieviele feste Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Mittel und geben Sie diese in Kilogramm an.",
+        optional: true,
         unitName: props.unitValues.measures.InsektizideKg[0]?.values,
         textFieldProps: {
             value: consumableItems.insektizideKg?.value,
@@ -159,6 +165,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const insektizideLiterProps: MeasureInputProps = {
         title: "Angabe Liter",
         label: "Wieviele flüssige Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssigen Mittel und geben Sie diese in Liter an.",
+        optional: true,
         unitName: "Liter",
         textFieldProps: {
             value: consumableItems.insektizideLiter?.value,
@@ -172,6 +179,7 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     const nuetzlingeProps: DynamicInputProps = {
         title: "Nützlinge",
         label: "Welche und wieviele Nützlinge werden in der genannten Kulturdauer ausgebracht?",
+        optional: true,
         textFieldProps: {
 
         },

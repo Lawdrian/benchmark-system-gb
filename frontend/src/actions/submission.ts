@@ -16,7 +16,6 @@ import {
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
-import validateGreenhouseData from "../helpers/dataValidation";
 import {tokenConfig} from "./auth";
 
 /**
@@ -33,14 +32,6 @@ export const submitGreenhouseData = (
     successCB: Function = () => { /* NOOP */ },
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
-        // Check, if the submitted greenhouse data is valid
-        try {
-            validateGreenhouseData(data);
-        }
-        catch (e ) {
-            errorCB()
-            throw e
-        }
         dispatch({type: SUBMISSION_INPROGRESS})
         inProgressCB();
 
