@@ -56,7 +56,7 @@ const pageDefinitions: Array<Page> = [
         .withHeaderTitle("Eingabe der Gewächshausdaten")
         .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Profile)
         .finalize(),
-    generatePage(<PageProfile loginUrl={pageConfig.loginUrl}/>, "profile")
+    generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")
         .includeInDrawer(<AccountCircle/>, "Profil", Section.Profile)
         .includeInAccountMenu("Profil")

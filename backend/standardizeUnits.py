@@ -54,7 +54,7 @@ def standardize_units(data):
                 new_value = (0, 0, 0)
 
             values_list = list(data["Energietraeger"][index])
-            values_list[1] = round(new_value, 2)
+            values_list[1] = round(new_value, 0)
             values_list[2] = kwh_energietraeger_id
             data["Energietraeger"][index] = tuple(values_list)
 

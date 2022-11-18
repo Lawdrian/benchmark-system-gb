@@ -17,16 +17,15 @@ class GetDatasets(APIView):
     def get(self, request, format=None):
         """
         Args:
-            request: user id as query parameter
+            request:
 
         Returns:
             response_data: most recent greenhouse data for every greenhouse in json format
         """
-        # Read Url query parameters
-        user_id = request.GET.get('userId', None)
-
+        user_id = self.request.user.id
         if user_id is None:
-            return Response({'Bad Request': 'Query Parameter missing'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Bad Request': 'No valid user!'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         # Retrieve all measurement_ids and measurement_names
         all_measurements = Measurements.objects.all()

@@ -10,6 +10,7 @@
 from django.urls import path
 from .api.createGreenhouseData import CreateGreenhouseData
 from .api.getCalculatedGreenhouseData import GetCalculatedGreenhouseData
+from .api.getProfileSummary import GetProfileSummary
 from .api.getDatasets import GetDatasets
 from .api.getGreenhouseData import GetGreenhouseData
 from .api.getOptionGroupValues import GetOptionGroupValues
@@ -23,5 +24,6 @@ urlpatterns = [
     path('get-weather', GetWeatherData.as_view()),
     path('get-lookup-values', GetOptionGroupValues.as_view()),
     path('get-unit-values', GetUnitValues.as_view()),
-    path('get-datasets', GetDatasets.as_view())
+    path('get-datasets', GetDatasets.as_view()),
+    path('get-profile-summary', GetProfileSummary.as_view())
 ]

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {
     Box,
-    Button,
+    Button, Card, CardContent,
     Dialog, DialogActions,
     DialogContent,
     DialogContentText,
@@ -14,34 +14,32 @@ import {
 import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {deleteUser} from "../../actions/auth";
-import {useNavigate} from "react-router-dom";
+import {loadProfile} from "../../actions/profile";
+import {SectionDivider} from "../utils/inputPage/layout";
+import {DatasetSummary} from "../../types/reduxTypes";
 
 const mapStateToProps = (state: RootState) => ({
-    user: state.auth.user
+    user: state.auth.user,
+    profileData: state.profile.profileData
 })
 
-const connector = connect(mapStateToProps, {deleteUser});
+const connector = connect(mapStateToProps, {deleteUser, loadProfile});
 
 type ReduxProps = ConnectedProps<typeof connector>
 
-type ProfileProps = ReduxProps & {
-    loginUrl: string
-}
+type ProfileProps = ReduxProps & {}
 
-const PageProfile = ({deleteUser, user, loginUrl}: ProfileProps) => {
-
+const PageProfile = ({deleteUser, user, profileData, loadProfile}: ProfileProps) => {
+    // Load profile data
+    React.useEffect(() => {
+        loadProfile()
+    }, [])
     const [openDialog, setOpenDialog] = useState<boolean>(false)
 
-    const navigate = useNavigate()
 
     const handleDelete = () => {
         deleteUser()
     }
-
-    const tableData = [
-        {'Betriebsname': user?.profile?.company_name},
-        {'Email': user?.username}
-        ]
 
     return (
         <Box sx={{width: '100%'}}>
@@ -49,7 +47,7 @@ const PageProfile = ({deleteUser, user, loginUrl}: ProfileProps) => {
                 <Grid item xs={10}>
                     <Paper variant="outlined" >
                         <Typography variant="h5" sx={{p:2}}>
-                            Benutzermanagement
+                            Benutzer
                         </Typography>
                         <Table>
                             <TableBody>
@@ -91,9 +89,58 @@ const PageProfile = ({deleteUser, user, loginUrl}: ProfileProps) => {
                         </Button>
                     </Paper>
                 </Grid>
+                <SectionDivider title={"Datensätze"}/>
+                {profileData.length != 0 ?
+                    <Grid container xs={12}>
+                        {profileData.map( (greenhouse) => {
+                            return (
+                                <Grid container direction={"row"} xs={12} sx={{mt:2}}>
+                                    <Grid item xs={12}>
+                                        <Typography variant="h5" sx={{p:2}}>
+                                            Gewächshaus: {greenhouse.greenhouse_name}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid container direction={"row"} spacing={2} justifyContent={"start"} xs={12}>
+                                        {greenhouse.data.map((dataset: DatasetSummary) => {
+                                            return (
+                                                <Grid item xs={3}>
+                                                    <DatasetCard {...dataset}/>
+                                                </Grid>
+                                            )
+                                        })}
+                                    </Grid>
+                                </Grid>
+                            )
+                        })}
+                    </Grid>
+                    : undefined
+                }
             </Grid>
         </Box>
     );
 }
 
 export default connector(PageProfile);
+
+
+
+const DatasetCard = (data: DatasetSummary) => {
+    return (
+        <Card sx={{ minWidth: 100, maxWidth: 250 }}>
+            <CardContent>
+                <Typography sx={{ mb: 1.5 }} variant="h6" component="div">
+                    Jahr: {data.label}
+                </Typography>
+                <Typography sx={{textDecoration: 'underline'}} variant="subtitle1" component="div">
+                    Footprints
+                </Typography>
+                <Typography  color="text.secondary">
+                    CO2: {data.co2_footprint} kg
+                </Typography>
+                <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                    H2O: {data.h2o_footprint} m3
+                </Typography>
+            </CardContent>
+        </Card>
+    );
+}

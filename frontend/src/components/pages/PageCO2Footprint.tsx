@@ -4,14 +4,11 @@ import {RootState} from "../../store";
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {GreenhouseMenu} from "../utils/GreenhouseMenu";
 import {
+    CircularProgress, Dialog,
+    DialogContent,
+    DialogTitle,
     FormControl, FormControlLabel, FormLabel, Grid,
-    Paper, Radio, RadioGroup, Tab,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow, Tabs, Typography,
+    Radio, RadioGroup, Tab, Tabs, Typography,
 } from "@mui/material";
 import {GreenhouseBenchmark, GreenhouseFootprint} from "../../types/reduxTypes";
 import {SectionDivider} from "../utils/inputPage/layout";
@@ -51,8 +48,17 @@ type C02FootprintProps = ReduxProps & {}
 const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, benchmarkkg, benchmarkm2, loadCO2Footprint}: C02FootprintProps) => {
     // Load CO2-Footprint data
     React.useEffect(() => {
-        loadCO2Footprint()
+        loadCO2Footprint(
+            true,
+            () => setOpenDialog(true),
+            () => handleLoadSuccess(),
+            () => handleLoadError()
+        )
     }, [])
+
+    const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [loadError, setLoadError] = useState<boolean>(false)
+    const [loadSuccess, setLoadSuccess] = useState<boolean>(false)
 
     enum NormalizedType {
         kg = "kg",
@@ -67,13 +73,16 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     // Stuff for Dropdown Menu:
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
 
-    // Return info message if data isn't loaded or no data entered yet:
-    if (total.length == 0) {
-        return (<p> Bisher wurden noch keine Daten erfasst oder geladen. <br/>
-            Bitte warten Sie einen Moment oder geben Sie Daten zu Ihren Gewächshäusern <a
-                href="/input-data">hier</a> ein.</p>)
+
+    const handleLoadSuccess = () => {
+        setOpenDialog(false)
+        setLoadSuccess(true)
     }
 
+    const handleLoadError = () => {
+        setOpenDialog(false)
+        setLoadError(true)
+    }
 
     const createFootprintPageHeader = () => {
         return(
@@ -143,66 +152,90 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
 
 
-    return (
-        <div id="co2-footprint" className="page">
-            <Tabs value={tab} onChange={(event, newValue) => setTab(newValue)}
-                  variant="scrollable"
-                  scrollButtons="auto"
-                  aria-label="tabs">
-              <Tab label="Gesamt" {...indexedTabProps(0)} />
-              <Tab label="Normiert" {...indexedTabProps(1)} />
-              <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
-              <Tab label="Benchmark" {...indexedTabProps(3)} />
-              <Tab label="Optimierung" {...indexedTabProps(4)} />
-            </Tabs>
-
-            <TabPanel index={0} value={tab}>
-                <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
-                        currentIndex={curGreenHouseIndex}
-                />
-                <FootprintPlotObject
-                    title={("CO2-Footprint für " + greenhouses[curGreenHouseIndex])}
-                    unit={'kg'}
-                    data={total[curGreenHouseIndex].data}
-                />
-                <SectionDivider
-                    title={`CO2 Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length -1]}`}
-                />
-                <FootprintTable footprintData={total[curGreenHouseIndex]} unit="kg CO2 Äq"/>
-            </TabPanel>
-            <TabPanel index={1} value={tab}>
-                {createFootprintPageHeader()}
-                {createFootprintProductionTypeHeader(normalizedkg)}
-                <FootprintPlotObject
-                    title={("CO2-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
-                    unit={'kg'}
-                    data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data}
-                />
-            </TabPanel>
-            <TabPanel index={2} value={tab}>
-                {createFootprintPageHeader()}
-                <FootprintPlotObject
-                    title={("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
-                    unit={'kg'}
-                    data={selectNormalizedPlotData(fruitsizekg, fruitsizem2, normalizedType)[curGreenHouseIndex].data}
-                />
-            </TabPanel>
-            <TabPanel index={3} value={tab}>
+    if(openDialog) {
+        return(
+            <Dialog open={openDialog}>
                 <>
-                {createFootprintPageHeader()}
-                {createFootprintProductionTypeHeader(benchmarkkg)}
-                <BenchmarkPlotObject
-                    title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
-                    unit={'kg'}
-                    data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
-                />
+                    <DialogTitle>Ihre persöhnlichen Plots werden generiert</DialogTitle>
+                    <DialogContent sx={{display: "flex"}}>
+                        <Grid container item xs={12} alignItems={"center"} justifyContent={"center"}>
+                            <CircularProgress/>
+                        </Grid>
+                    </DialogContent>
                 </>
-            </TabPanel>
-            <TabPanel index={4} value={tab}>
-                <CO2FootprintOptimization/>
-            </TabPanel>
-        </div>
-    );
+            </Dialog>
+        )
+    }
+    else if(loadError) {
+        return (<p> Bisher wurden noch keine Daten erfasst. <br/>
+            Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus ein. <a
+                href="/input-data">hier</a> ein.</p>)
+    }
+    else if(loadSuccess) {
+        return (
+            <div id="co2-footprint" className="page">
+                <Tabs value={tab} onChange={(event, newValue) => setTab(newValue)}
+                      variant="scrollable"
+                      scrollButtons="auto"
+                      aria-label="tabs">
+                    <Tab label="Gesamt" {...indexedTabProps(0)} />
+                    <Tab label="Normiert" {...indexedTabProps(1)} />
+                    <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
+                    <Tab label="Benchmark" {...indexedTabProps(3)} />
+                    <Tab label="Optimierung" {...indexedTabProps(4)} />
+                </Tabs>
+
+                <TabPanel index={0} value={tab}>
+                    <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+                                    currentIndex={curGreenHouseIndex}
+                    />
+                    <FootprintPlotObject
+                        title={("CO2-Footprint für " + greenhouses[curGreenHouseIndex])}
+                        unit={'kg'}
+                        data={total[curGreenHouseIndex].data}
+                    />
+                    <SectionDivider
+                        title={`CO2 Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length - 1]}`}
+                    />
+                    <FootprintTable footprintData={total[curGreenHouseIndex]} unit="kg CO2 Äq"/>
+                </TabPanel>
+                <TabPanel index={1} value={tab}>
+                    {createFootprintPageHeader()}
+                    {createFootprintProductionTypeHeader(normalizedkg)}
+                    <FootprintPlotObject
+                        title={("CO2-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
+                        unit={'kg'}
+                        data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data}
+                    />
+                </TabPanel>
+                <TabPanel index={2} value={tab}>
+                    {createFootprintPageHeader()}
+                    <FootprintPlotObject
+                        title={("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
+                        unit={'kg'}
+                        data={selectNormalizedPlotData(fruitsizekg, fruitsizem2, normalizedType)[curGreenHouseIndex].data}
+                    />
+                </TabPanel>
+                <TabPanel index={3} value={tab}>
+                    <>
+                        {createFootprintPageHeader()}
+                        {createFootprintProductionTypeHeader(benchmarkkg)}
+                        <BenchmarkPlotObject
+                            title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
+                            unit={'kg'}
+                            data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
+                        />
+                    </>
+                </TabPanel>
+                <TabPanel index={4} value={tab}>
+                    <CO2FootprintOptimization/>
+                </TabPanel>
+            </div>
+        )
+    }
+    else return <></>
 }
+
+
 
 export default connector(PageC02Footprint);

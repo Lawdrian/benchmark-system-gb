@@ -53,11 +53,10 @@ class CreateGreenhouseData(APIView):
         exec(open("./backend/serializers.py").read(), globals())
         CreateGreenhouseData.serializer_class = InputDataSerializer
 
-        # Read Url query parameters
-        user_id = request.GET.get('userId', None)
-        # Map anonymous user to user_id=1
-        if user_id is None or user_id == '':
-            user_id = '1'
+        user_id = self.request.user.id
+        if user_id is None:
+            return Response({'Bad Request': 'No valid user!'},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
@@ -111,7 +110,7 @@ class CreateGreenhouseData(APIView):
                 for variable, value in calculation_result.items():
                     Results(
                         greenhouse_data=greenhouse_data,
-                        result_value=value,
+                        result_value=round(value, 0),
                         calculation_id=calculation_variables[variable].id,
                     ).save()
             except ValueError:

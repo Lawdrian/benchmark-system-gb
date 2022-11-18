@@ -100,6 +100,12 @@ export const DATASET_LOADING = "DATASET_LOADING";
 export const DATASET_LOADED = "DATASET_LOADED";
 // Loading of dataset failed
 export const DATASET_ERROR = "DATASET_ERROR";
+// Set the profile-loading flag
+export const PROFILE_LOADING = "PROFILE_LOADING";
+// Loading of profile data was successful
+export const PROFILE_LOADED = "PROFILE_LOADED";
+// Loading of profile data failed
+export const PROFILE_ERROR = "PROFILE_ERROR";
 /**
  * ----------- REDUX RELATED TS-TYPES ---------------
  */
@@ -111,6 +117,31 @@ export const DATASET_ERROR = "DATASET_ERROR";
 type Profile = {
     company_name?: string
 }
+
+
+/**
+ * @type ProfileData
+ *
+ * The Metadata of a users datasets
+ */
+export type ProfileData = {
+    "greenhouse_name": string,
+    "data": DatasetSummary[]
+
+}
+
+/**
+ * @type DatasetSummary
+ *
+ * The Metadata of one dataset
+ */
+export type DatasetSummary = {
+    "label": string,
+    "co2_footprint": number,
+    "h2o_footprint": number
+}
+
+
 
 /**
  * @type User
