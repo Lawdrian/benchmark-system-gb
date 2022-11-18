@@ -1,4 +1,3 @@
 
-
-defaultValue = (0,0)
-defaultOption = [(0,)]
+default_value = (0.0, 0)
+default_option = [(0,)]

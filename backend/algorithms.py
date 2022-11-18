@@ -20,7 +20,7 @@ import math
 
 from backend.models import Options, OptionUnits
 from backend.models import MeasurementUnits
-from .utils import defaultValue, defaultOption
+from .utils import default_value, default_option
 
 
 def calc_co2_footprint(data):
@@ -353,7 +353,7 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
 
     # Bodenabdeckung
     bodenabdeckung = 0
-    if data["Bodenabdeckung"] != defaultOption:
+    if data["Bodenabdeckung"] != default_option:
         for option in data["Bodenabdeckung"]:
             bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
             nutzdauer = option[1]
@@ -605,7 +605,7 @@ def calc_co2_added(data, helping_values, all_options):
     co2_zudosierung = 0
     # Check if there is even a co2-zudosierung
     print("CO-Herkunft")
-    if (data["CO2-Herkunft"] != defaultOption):
+    if (data["CO2-Herkunft"] != default_option):
         for option in data["CO2-Herkunft"]:
             # Check if the values have the correct unit
             if OptionUnits.objects.get(id=option[2]).unit_name != "kg":
@@ -629,7 +629,7 @@ def calc_co2_added(data, helping_values, all_options):
 def calc_fertilizer_co2(data, helping_values, all_options):
     # CO2-Herkunft
     duengemittel_einfach = 0
-    if data["Duengemittel:VereinfachteAngabe"] != defaultOption:
+    if data["Duengemittel:VereinfachteAngabe"] != default_option:
         for option in data["Duengemittel:VereinfachteAngabe"]:
             # TODO Korrekte Äquivalente einfügen
             duengemittel_einfachtyp = all_options.get(id=option[0]).option_value
@@ -660,7 +660,7 @@ def calc_fertilizer_co2(data, helping_values, all_options):
                 raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
 
     duengemittel_detailliert = 0
-    if data["Duengemittel:DetaillierteAngabe"] != defaultOption:
+    if data["Duengemittel:DetaillierteAngabe"] != default_option:
         for option in data["Duengemittel:DetaillierteAngabe"]:
         # TODO Korrekte Äquivalente einfügen
             duengemittel_detaillierttyp = all_options.get(id=option[0]).option_value
@@ -736,7 +736,7 @@ def calc_nuetzlinge_co2(data, helping_values, all_options):
     # Nuetzlinge
     # TODO Korrekte Äquivalente einfügen
     nuetzlinge_co2 = 0
-    if data["Nuetzlinge"] != defaultOption:
+    if data["Nuetzlinge"] != default_option:
         for option in data["Nuetzlinge"]:
             nuetzlingeart = all_options.get(id=option[0]).option_value
             menge = option[1]
@@ -962,7 +962,7 @@ def calc_irrigation_co2(data, helping_values, all_options):
 def calc_packaging_co2(data, helping_values, all_options):
     # Verpackungsmaterial
     verpackung_co2 = 0
-    if data["Verpackungsmaterial"] != defaultOption:
+    if data["Verpackungsmaterial"] != default_option:
         for option in data["Verpackungsmaterial"]:
             verpackungmaterial = all_options.get(id=option[0]).option_value
             menge = option[1]
@@ -974,7 +974,7 @@ def calc_packaging_co2(data, helping_values, all_options):
                 raise ValueError('No valid option for Verpackungsmaterial has been selected')
 
     # Mehrwegsteigen
-    if data["Verpackungsmaterial:AnzahlMehrwegsteigen"] != defaultValue:
+    if data["Verpackungsmaterial:AnzahlMehrwegsteigen"] != default_value:
         verpackung_co2 = verpackung_co2 + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
 
     print("verpackung_co2: " + str(verpackung_co2))
@@ -984,7 +984,7 @@ def calc_packaging_co2(data, helping_values, all_options):
 def calc_other_consumables_co2(data, helping_values, all_options):
     # Sonstige Verbrauchsmaterialien
     sonstige_verbrauchsmaterialien_co2 = 0
-    if data["SonstigeVerbrauchsmaterialien"] != defaultOption:
+    if data["SonstigeVerbrauchsmaterialien"] != default_option:
         for option in data["SonstigeVerbrauchsmaterialien"]:
             sonstige_verbrauchsmaterialienmaterial = all_options.get(id=option[0]).option_value
             menge = option[1]
@@ -1012,7 +1012,7 @@ def calc_additional_machineusage_co2(data, helping_values, all_options):
     # Zusaetzlicher Machineneinsatz
     zusaetzlicher_maschineneinsatz_co2 = 0
     # Since this field is optional it is possible, that the default value comes back
-    if data["ZusaetzlicherMaschineneinsatz"] != defaultOption:
+    if data["ZusaetzlicherMaschineneinsatz"] != default_option:
         for option in data["ZusaetzlicherMaschineneinsatz"]:
             zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
             verbrauch = option[1]

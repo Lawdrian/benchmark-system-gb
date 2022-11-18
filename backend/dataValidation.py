@@ -3,6 +3,7 @@
 
 """
 from backend.models import Measurements, Options, OptionGroups
+from backend.utils import default_value, default_option
 
 
 def validate_greenhouse_data(data):
@@ -15,9 +16,8 @@ def validate_greenhouse_data(data):
         Returns:
             boolean: true = valid date; false = invalid data
     """
-
-    default_value = (0.0, 0)
-    default_option = "[(0,)]"
+    print("Data")
+    print(data)
 
 
     # Retrieve all measurements, optiongroups and options from the database
@@ -99,6 +99,20 @@ def validate_greenhouse_data(data):
     del mandatory_measurements["FungizideKg"]
     del mandatory_measurements["InsektizideKg"]
     del mandatory_measurements["Verpackungsmaterial:AnzahlMehrwegsteigen"]
+
+    # check if at least one fruitclass has been selected
+    fruit_class_fields = ["10-30Gramm(Snack)", "30-100Gramm(Cocktail)", "100-150Gramm(Rispen)", ">150Gramm(Fleisch)"]
+    fruit_class_selected = False
+    for fruit_class in fruit_class_fields:
+        if all_options.get(id=data[fruit_class][0][0]).option_value == "ja":
+            fruit_class_selected = True
+        # Delete fruit class out of mandatory fields, because it should be allowed to not select the radio button at all.
+        del mandatory_optiongroups[fruit_class]
+
+    if fruit_class_selected==False:
+        print("Error: No fruit class has been selected")
+        return False
+
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():

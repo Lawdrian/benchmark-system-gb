@@ -341,7 +341,8 @@ class GetCalculatedGreenhouseData(APIView):
                             .get(greenhouse_data_id=recent_dataset.id,
                                  measurement_id=fruit_reihenanzahl_id
                                  ).measure_value
-
+                    reihenabstand_id = Measurements.objects.get(measurement_name="Reihenabstand(Rinnenabstand)").id
+                    reihenabstand = Measures.objects.filter(greenhouse_data_id=recent_dataset.id, measurement_id=reihenabstand_id)[0].measure_value
                     for index, fruit in enumerate(fruitsizes):
                         fruitsizekg_data_dict = dict()
                         fruitsizem2_data_dict = dict()
@@ -353,10 +354,6 @@ class GetCalculatedGreenhouseData(APIView):
                                  measurement_id=fruit_reihenanzahl_id
                                  ).measure_value
                         fruit_pflanzenabstand_id = Measurements.objects.get(measurement_name=fruit+"PflanzenabstandInDerReihe")
-                        fruit_pflanzenabstand = Measures.objects \
-                            .get(greenhouse_data_id=recent_dataset.id,
-                                 measurement_id=fruit_pflanzenabstand_id
-                                 ).measure_value
 
                         fruit_ertrag_id = Measurements.objects.get(measurement_name=fruit + "ErtragJahr")
                         fruit_ertrag = Measures.objects \
@@ -371,7 +368,7 @@ class GetCalculatedGreenhouseData(APIView):
                                 .values('result_value')[0]['result_value']
                             if fruit_ertrag != 0.000:
                                 fruitsizekg_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / fruit_ertrag
-                                fruitsizem2_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*fruit_pflanzenabstand)
+                                fruitsizem2_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*reihenabstand)
                             else:
                                 fruitsizekg_data_dict[calculation_names[i]] = 0
                                 fruitsizem2_data_dict[calculation_names[i]] = 0
