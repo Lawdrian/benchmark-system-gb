@@ -82,19 +82,14 @@ export const loadCO2Footprint = (
     successCB: Function = () => { /* NOOP */ },
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
-    // Get the ID of the currently logged in user
-    const user = getState().auth.user;
-    const userID = user ? user.id : '1';
 
     // User Loading
     dispatch({type: CO2FP_LOADING});
     loadingCB();
 
     // Send request
-    axios.get(
-        '/backend/get-calculated-data?userId=' + userID + '&dataType=co2FootprintData',
-        withAuth ? tokenConfig(getState) : undefined
-    ).then((response) => {
+    axios.get('/backend/get-calculated-data?dataType=co2FootprintData', withAuth ? tokenConfig(getState) : undefined)
+        .then((response) => {
             console.log("CO2 Response", response)
             dispatch({
                 type: CO2FP_LOADED,
@@ -321,7 +316,7 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
     });
 }
 
-function formatLabel(label: string):string {
+export function formatLabel(label: string):string {
         try {
             const formattedLabel = format(new Date(label), 'yyyy')
             return formattedLabel
@@ -330,4 +325,4 @@ function formatLabel(label: string):string {
         catch(e) {
             return label
         }
-    }
+}

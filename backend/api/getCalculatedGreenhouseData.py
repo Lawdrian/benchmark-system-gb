@@ -23,7 +23,7 @@ class GetCalculatedGreenhouseData(APIView):
                 - benchmarkData
 
         Args:
-            request : Query parameter userId and dataType
+            request : Query parameter dataType
 
         Returns:
             json: The calculated data requested
@@ -38,12 +38,14 @@ class GetCalculatedGreenhouseData(APIView):
         optimization_response_data = []
         response_data = dict()
 
-        # read url query parameters
-        user_id = request.GET.get('userId', None)
+        user_id = self.request.user.id
+        if user_id is None:
+            return Response({'Bad Request': 'No valid user!'},
+                            status=status.HTTP_400_BAD_REQUEST)
         # data_type is needed for selecting the correct data to return
         data_type = request.GET.get('dataType', None)
 
-        if user_id is None or data_type is None:
+        if data_type is None:
             return Response({'Bad Request': 'Query Parameter missing'},
                             status=status.HTTP_400_BAD_REQUEST)
 

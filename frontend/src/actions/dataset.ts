@@ -1,7 +1,7 @@
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
-import {DATASET_ERROR, DATASET_LOADED, DATASET_LOADING, UNITS_FAILED, UNITS_LOADED} from "../types/reduxTypes";
+import {DATASET_ERROR, DATASET_LOADED, DATASET_LOADING} from "../types/reduxTypes";
 
 
 /**
@@ -18,13 +18,8 @@ export const loadDatasets = (
     dispatch({type: DATASET_LOADING});
     loadingCB();
 
-    // Get the ID of the currently logged in user
-    const user = getState().auth.user;
-    const userID = user ? user.id : '1';
-
-
     // Send request
-    axios.get('/backend/get-datasets?userId=' + userID, withAuth ? tokenConfig(getState) : undefined)
+    axios.get('/backend/get-datasets', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Dataset response", response)
             dispatch({

@@ -12,6 +12,7 @@ import weather from "./weather";
 import submission from "./submission";
 import lookup from "./lookup"
 import dataset from "./dataset";
+import profile from "./profile";
 
 /**
  * Combine different specialized reducers to one global reducer.
@@ -39,5 +40,6 @@ export default combineReducers({
     weather: weather,
     submission: submission,
     lookup: lookup,
-    dataset: dataset
+    dataset: dataset,
+    profile: profile,
 })

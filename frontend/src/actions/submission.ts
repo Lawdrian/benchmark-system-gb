@@ -35,10 +35,6 @@ export const submitGreenhouseData = (
         dispatch({type: SUBMISSION_INPROGRESS})
         inProgressCB();
 
-        // Get the ID of the currently logged in user
-        const user = getState().auth.user;
-        const userID = user ? user.id : '1';
-
         // Create the request headers
         const config = withAuth ? tokenConfig(getState) : {
             headers: {
@@ -50,7 +46,7 @@ export const submitGreenhouseData = (
         const body = JSON.stringify(data);
 
         // Send the post request to the server
-        axios.post("/backend/create-greenhouse-data?userId=" + userID, body, config)
+        axios.post("/backend/create-greenhouse-data", body, config)
             .then((response) => {
                 //console.log("CO2 Response", response)
                 dispatch({
