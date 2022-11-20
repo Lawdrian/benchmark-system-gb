@@ -7,6 +7,7 @@ import {ReactNode} from "react";
 
 export enum Section {
     Default,
+    Home,
     Diagrams,
     Profile,
     FurtherReading

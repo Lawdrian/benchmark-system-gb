@@ -48,7 +48,7 @@ def validate_greenhouse_data(data):
         12: ("BelichtungsstromEinheit", ["KWH"], ["Belichtung:Stromverbrauch"], []),
         13: ("BelichtungsstromEinheit", ["ANGABEN"], ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
         14: ("GrowbagsKuebel", ["GROWBAGS"], [], ["Substrat"]),
-        15: ("GrowbagsKuebel", ["Andere Kulturgefäße (Topf, Kübel)"], ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
+        15: ("GrowbagsKuebel", ["Andere Kulturgefaesse (Topf, Kuebel)"], ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
         16: ("Jungpflanzen:Zukauf", ["JA"], ["Jungpflanzen:Distanz"], []),
         17: ("Schnur", ["JA"], ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
         18: ("Klipse", ["JA"], ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
@@ -91,14 +91,12 @@ def validate_greenhouse_data(data):
                         print("Optiongroup " + str(not_required_optiongroup) + " has already been deleted or doesn't exist")
 
     # This place is for manually deleting always optional fields out of the mandatory lists
-    del mandatory_optiongroups["ZusaetzlicherMaschineneinsatz"]
     del mandatory_optiongroups["SonstigeVerbrauchsmaterialien"]
     del mandatory_optiongroups["CO2-Herkunft"]
     del mandatory_optiongroups["Duengemittel:VereinfachteAngabe"]
     del mandatory_optiongroups["Duengemittel:DetaillierteAngabe"]
     del mandatory_optiongroups["Verpackungsmaterial"]
     del mandatory_optiongroups["Bodenabdeckung"]
-    del mandatory_optiongroups["Nuetzlinge"]
     del mandatory_measurements["BHKW:AnteilErdgas"]
     del mandatory_measurements["BHKW:AnteilBiomethan"]
     del mandatory_measurements["FungizideKg"]

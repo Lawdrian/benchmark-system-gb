@@ -37,7 +37,6 @@ export type HelpingMaterialsState = {
     fungizideLiter: MeasureValue | null
     insektizideKg: MeasureValue | null
     insektizideLiter: MeasureValue | null
-    nuetzlinge: SelectionValue[]
 }
 
 const HelpingMaterialsInput = (props: HelpingMaterialsProps) => {

@@ -9,7 +9,6 @@
 9,co2_zudosierung_co2,kg co2
 10,duengemittel_co2,kg co2
 11,psm_co2,kg co2
-12,nuetzlinge_co2,kg co2
 13,pflanzenbehaelter_co2,kg co2
 14,substrat_co2,kg co2
 15,jungpflanzen_substrat_co2,kg co2
@@ -20,6 +19,5 @@
 20,bewaesserung_co2,kg co2
 21,verpackung_co2,kg co2
 22,sonstige_verbrauchsmaterialien_co2,kg co2
-24,zusaetzlicher_machineneinsatz_co2,kg co2
 25,co2_footprint,kg co2
 26,co2_footprint_norm, kg co2/kg harvest

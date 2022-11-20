@@ -40,6 +40,7 @@ const AppDrawer = (
         listItems
     }: DrawerProps
 ) => {
+    const homeSection = listItems.filter(item => item.section == Section.Home);
     const diagramSection = listItems.filter(item => item.section == Section.Diagrams);
     const profileSection = listItems.filter(item => item.section == Section.Profile);
     const fReadingSection = listItems.filter(item => item.section == Section.FurtherReading);
@@ -60,6 +61,8 @@ const AppDrawer = (
             </Toolbar>
             <Divider />
             <List component="nav">
+                {generateNodes(homeSection)}
+                {homeSection.length && diagramSection.length ? getSectionDivider() : undefined}
                 {generateNodes(diagramSection)}
                 {diagramSection.length && profileSection.length ? getSectionDivider() : undefined}
                 {generateNodes(profileSection)}

@@ -287,9 +287,6 @@ export type GreenhouseData = {
     KulturEnde: string
     NebenkulturBeginn: string
     NebenkulturEnde: string
-    MittlereSolltemperaturTag: string
-    MittlereSolltemperaturNacht: string
-    Luftfeuchte: string
     "BHKW:AnteilErdgas": string
     "BHKW:AnteilBiomethan": string
     "Belichtung:Stromverbrauch": string
@@ -326,7 +323,6 @@ export type GreenhouseData = {
     "100-150Gramm(Rispen)": string
     ">150Gramm(Fleisch)": string
     Nebenkultur: string
-    Entfeuchtung: string
     Energietraeger: string
     BHKW: string
     Stromherkunft: string
@@ -335,7 +331,6 @@ export type GreenhouseData = {
     "CO2-Herkunft": string
     "Duengemittel:VereinfachteAngabe": string
     "Duengemittel:DetaillierteAngabe": string
-    Nuetzlinge: string
     GrowbagsKuebel: string
     Substrat: string
     "SchnuereRankhilfen:Material": string
@@ -349,6 +344,5 @@ export type GreenhouseData = {
     "Jungpflanzen:Substrat": string
     Verpackungsmaterial: string
     SonstigeVerbrauchsmaterialien: string
-    ZusaetzlicherMaschineneinsatz: string
     BelichtungsstromEinheit: string
 }

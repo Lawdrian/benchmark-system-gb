@@ -44,6 +44,7 @@ export type CompanyInformationState = {
     datum: Date | null
     plz: MeasureValue | null
     gwhFlaeche: MeasureValue | null
+    nutzflaeche: MeasureValue | null
     gwhArt: number | null
     gwhAlter: DateValue | null
     bedachungsmaterial: number | null
@@ -78,7 +79,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
         props.provideCompanyInformation(companyInformation)
-        console.log(companyInformation.produktionssystemAlter)
     }
 
 
@@ -147,12 +147,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const nutzflaecheProps: MeasureInputProps = {
         title: "Nutzfläche",
         label: "Effektiv genutzte/bestellte Fläche des Hauses",
-        unitName: "m2",
+        unitName: props.unitValues.measures.Nutzflaeche[0]?.values,
         textFieldProps: {
-            value: companyInformation.gwhFlaeche?.value,
+            value: companyInformation.nutzflaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.Nutzflaeche[0].id}
+                nutzflaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.Nutzflaeche[0].id}
             })
         }
     }
@@ -333,7 +333,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Bodenabdeckung",
         label: "Welche Bodenabdeckungen werden verwendet? Wie lang ist die erwartete Nutzungsdauer?",
         optional: true,
-        textFieldProps: {},
+        textFieldProps: {label:"Nutzungsdauer"},
         selectProps: {
             lookupValues: props.lookupValues.Bodenabdeckung
         },

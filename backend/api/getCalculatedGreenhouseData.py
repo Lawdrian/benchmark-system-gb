@@ -65,7 +65,6 @@ class GetCalculatedGreenhouseData(APIView):
                 "co2_zudosierung_co2",
                 "duengemittel_co2",
                 "psm_co2",
-                "nuetzlinge_co2",
                 "pflanzenbehaelter_co2",
                 "substrat_co2",
                 "jungpflanzen_substrat_co2",
@@ -76,7 +75,6 @@ class GetCalculatedGreenhouseData(APIView):
                 "bewaesserung_co2",
                 "verpackung_co2",
                 "sonstige_verbrauchsmaterialien_co2",
-                "zusaetzlicher_machineneinsatz_co2"
             ),
             water_footprint: 'water_usage'
         }
@@ -179,10 +177,8 @@ class GetCalculatedGreenhouseData(APIView):
                     biologic = Selections.objects.filter(greenhouse_data_id=recent_dataset).filter(option_id=biologic_id)
                     if biologic.exists():
                         recent_dataset_is_biologic = True
-                        print("Aktuellster Datensatz ist Biologisch")
                     else:
                         recent_dataset_is_biologic = False
-                        print("Aktuellster Datensatz ist Konventionell")
 
                     # Retrieve the result_values of the high performer and append them to total_response_data (Using normalized data)
                     co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint_norm").id
@@ -191,7 +187,6 @@ class GetCalculatedGreenhouseData(APIView):
                     index = 0
                     high_performer_id = 1
                     while found_correct_high_performer is False and index < len(high_performers):
-                        print(high_performers[index].greenhouse_data_id)
                         high_performer_id = high_performers[index].greenhouse_data_id
                         high_performer_biologic = Selections.objects.filter(
                             greenhouse_data_id=high_performer_id).filter(option_id=biologic_id)
@@ -264,10 +259,8 @@ class GetCalculatedGreenhouseData(APIView):
                                 greenhouse_data_id=low_performer_id).filter(option_id=conventional_id)
                             if recent_dataset_is_biologic and low_performer_biologic.exists():
                                 found_correct_low_performer = True
-                                print("Low Performer ist Biologisch")
                             elif recent_dataset_is_biologic is False and low_performer_conventional.exists():
                                 found_correct_low_performer = True
-                                print("Low Performer ist Konventionell")
 
                             index = index - 1
 

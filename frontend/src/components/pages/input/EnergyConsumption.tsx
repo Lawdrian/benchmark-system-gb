@@ -52,7 +52,6 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
         setEnergyConsumption(energyConsumption)
         props.provideEnergyConsumption(energyConsumption)
-        console.log(energyConsumption.energietraeger)
     }
 
     // Properties of the input fields

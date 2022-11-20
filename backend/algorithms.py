@@ -41,7 +41,6 @@ def calc_co2_footprint(data):
         "co2_zudosierung_co2": calc_co2_added(data, helping_values, all_options),
         "duengemittel_co2": calc_fertilizer_co2(data, helping_values, all_options),
         "psm_co2": calc_psm_co2(data),
-        "nuetzlinge_co2": calc_nuetzlinge_co2(data, helping_values, all_options),
         "pflanzenbehaelter_co2": calc_pflanzenbehaelter_co2(data, helping_values, all_options),
         "substrat_co2": calc_substrate_co2(data, helping_values, all_options),
         "jungpflanzen_substrat_co2": calc_young_plants_substrate_co2(data, helping_values, all_options),
@@ -51,7 +50,6 @@ def calc_co2_footprint(data):
         "rispenbuegel_co2": calc_panicle_hanger_co2(data, helping_values, all_options),
         "verpackung_co2": calc_packaging_co2(data, helping_values, all_options),
         "sonstige_verbrauchsmaterialien_co2": calc_other_consumables_co2(data, helping_values, all_options),
-        "zusaetzlicher_machineneinsatz_co2": calc_additional_machineusage_co2(data, helping_values, all_options)
     }
     co2_footprint = sum(calculation_results.values())
     print("co2_footprint: " + str(co2_footprint))
@@ -251,7 +249,7 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
     stehwandmaterial= all_options.get(id=data["Stehwandmaterial"][0][0]).option_value
     bedachungsmaterial = all_options.get(id=data["Bedachungsmaterial"][0][0]).option_value
 
-    betonco2 = 0
+    beton_co2 = 0
     stahl = 0
     aluminium_co2 = 0
     lpde_co2 = 0
@@ -263,11 +261,11 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
         # Materials
         if data["GWHAlter"][0] <= 20:
             if norm_name == "Venlo":
-                betonco2 = helping_values["gh_size"] * 2.52032 * 0.1707 * (helping_values["culture_length_usage"])
+                beton_co2 = helping_values["gh_size"] * 2.52032 * 0.1707 * (helping_values["culture_length_usage"])
                 stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
                 aluminium_co2 = helping_values["gh_size"] * 0.125 * 14.365981 * (helping_values["culture_length_usage"])
             elif norm_name == "Deutsche Norm":
-                betonco2 = helping_values["gh_size"] * 2.52 * 0.1707 * (helping_values["culture_length_usage"])
+                beton_co2 = helping_values["gh_size"] * 2.52 * 0.1707 * (helping_values["culture_length_usage"])
                 stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
                 aluminium_co2 = helping_values["gh_size"] * 0.015 * 14.365981 * (helping_values["culture_length_usage"])
 
@@ -330,7 +328,6 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
                 stahl = helping_values["gh_size"] * 0.195 * 1.5641297 * (helping_values["culture_length_usage"])
     else:
         raise ValueError('No valid option for GWHArt has been selected')
-
 
     # Energieschirm
     energieschirm_co2 = 0
@@ -431,10 +428,10 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for ZusaetzlichesHeizsystem has been selected')
 
-    konstruktion_co2 = betonco2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2
-    gesamt_co2 = betonco2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2 + energieschirm_co2 + bodenabdeckung_co2 + produktionssystem_co2 + bewaesserung_co2 + heizsystem + zusaetzliches_heizsystem
+    konstruktion_co2 = beton_co2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2
+    gesamt_co2 = beton_co2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2 + energieschirm_co2 + bodenabdeckung_co2 + produktionssystem_co2 + bewaesserung_co2 + heizsystem + zusaetzliches_heizsystem
     print("Gewächhauskonstruktion CO2: +")
-    print("beton " + str(betonco2))
+    print("beton " + str(beton_co2))
     print("aluminium " + str(aluminium_co2))
     print("lpde " + str(lpde_co2))
     print("stehwand " + str(stehwand_co2))
@@ -752,36 +749,36 @@ def calc_psm_co2(data):
     return fungizide + insektizide
 
 
-def calc_nuetzlinge_co2(data, helping_values, all_options):
-    # Nuetzlinge
-    # TODO Korrekte Äquivalente einfügen
-    nuetzlinge_co2 = 0
-    if data["Nuetzlinge"] != default_option:
-        for option in data["Nuetzlinge"]:
-            nuetzlingeart = all_options.get(id=option[0]).option_value
-            menge = option[1]
-
-            if nuetzlingeart == "Hummeln":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 1
-            elif nuetzlingeart == "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 2
-            elif nuetzlingeart == "Macrolophus (oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 3
-            elif nuetzlingeart == "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 4
-            elif nuetzlingeart == "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 5
-            elif nuetzlingeart == "Gallmuecken (Aphidoletes, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 6
-            elif nuetzlingeart == "Florfliegen (Chrysoperla, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 7
-            elif nuetzlingeart == "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)":
-                nuetzlinge_co2 = nuetzlinge_co2 + menge * 8
-            else:
-                raise ValueError('No valid option for Nuetzlinge has been selected')
-
-    print("nuetzlinge_co2: " + str(nuetzlinge_co2))
-    return nuetzlinge_co2
+#def calc_nuetzlinge_co2(data, helping_values, all_options):
+#    # Nuetzlinge
+#    # TODO Korrekte Äquivalente einfügen
+#    nuetzlinge_co2 = 0
+#    if data["Nuetzlinge"] != default_option:
+#        for option in data["Nuetzlinge"]:
+#            nuetzlingeart = all_options.get(id=option[0]).option_value
+#            menge = option[1]
+#
+#            if nuetzlingeart == "Hummeln":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 1
+#            elif nuetzlingeart == "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 2
+#            elif nuetzlingeart == "Macrolophus (oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 3
+#            elif nuetzlingeart == "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 4
+#            elif nuetzlingeart == "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 5
+#            elif nuetzlingeart == "Gallmuecken (Aphidoletes, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 6
+#            elif nuetzlingeart == "Florfliegen (Chrysoperla, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 7
+#            elif nuetzlingeart == "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)":
+#                nuetzlinge_co2 = nuetzlinge_co2 + menge * 8
+#            else:
+#                raise ValueError('No valid option for Nuetzlinge has been selected')
+#
+#    print("nuetzlinge_co2: " + str(nuetzlinge_co2))
+#    return nuetzlinge_co2
 
 
 def calc_pflanzenbehaelter_co2(data, helping_values, all_options):
@@ -791,11 +788,13 @@ def calc_pflanzenbehaelter_co2(data, helping_values, all_options):
     growbags_co2 = 0
     kuebel_co2 = 0
     volumen = 0
+    kuebel_nutzdauer = data["Kuebel:Alter"][0]
+    if kuebel_nutzdauer <= 0:
+        kuebel_nutzdauer = 1
     if growbagskuebelverwendung == "Growbags":
         growbags_co2 = ((helping_values["row_length_total"]*0.2*2+helping_values["row_length_total"]*0.11*2+helping_values["row_length_total"]/1*2*(0.15*0.11))*0.186) * 2.78897
-    elif growbagskuebelverwendung == "Andere Kulturgefäße (Topf, Kübel)":
-        if data["Kuebel:Alter"][0] <= 10:
-            kuebel_co2 = ((0.03*data["Kuebel:VolumenProTopf"][0]-0.0214) / (data["Kuebel:JungpflanzenProTopf"][0]*helping_values["plant_count_total"]) / 10) * 2.88
+    elif growbagskuebelverwendung == "Andere Kulturgefaesse (Topf, Kuebel)":
+        kuebel_co2 = ((0.03*data["Kuebel:VolumenProTopf"][0]-0.0214) / (data["Kuebel:JungpflanzenProTopf"][0]*helping_values["plant_count_total"]) / 10) * 2.88 / kuebel_nutzdauer
     elif growbagskuebelverwendung == "nichts":
         growbags_co2 = 0  # nothing
     else:
@@ -845,27 +844,20 @@ def calc_substrate_co2(data, helping_values, all_options):
 
 def calc_young_plants_substrate_co2(data, helping_values, all_options):
     jungpflanzen_substratmaterial = all_options.get(id=data["Jungpflanzen:Substrat"][0][0]).option_value
-    jungpflanzenverwendung = all_options.get(id=data["Jungpflanzen:Zukauf"][0][0]).option_value
     junpflanzen_substrat_co2 = 0
     volumen = (0.1*0.1*0.1) * helping_values["plant_count_total"]
-    if jungpflanzenverwendung == "nein":
-        print("jungpflanzen_substrat_co2: " + str(junpflanzen_substrat_co2))
-        return junpflanzen_substrat_co2
-    elif jungpflanzenverwendung == "ja":
-        if jungpflanzen_substratmaterial == "Standardsubstrat":
-            junpflanzen_substrat_co2 = (volumen * 100)
-        elif jungpflanzen_substratmaterial == "Kokos":
-            junpflanzen_substrat_co2 = (volumen * 33.29)
-        elif jungpflanzen_substratmaterial == "Steinwolle":
-            junpflanzen_substrat_co2 = (volumen * 93.01)
-        elif jungpflanzen_substratmaterial == "Perlite":
-            junpflanzen_substrat_co2 = (volumen * 93.37)
-        elif jungpflanzen_substratmaterial == "Nachhaltiges Substrat":
-            junpflanzen_substrat_co2 = (volumen * 16.01)
-        else:
-            raise ValueError('No valid option for Jungpflanzen:Substrat has been selected')
+    if jungpflanzen_substratmaterial == "Standardsubstrat":
+        junpflanzen_substrat_co2 = (volumen * 100)
+    elif jungpflanzen_substratmaterial == "Kokos":
+        junpflanzen_substrat_co2 = (volumen * 33.29)
+    elif jungpflanzen_substratmaterial == "Steinwolle":
+        junpflanzen_substrat_co2 = (volumen * 93.01)
+    elif jungpflanzen_substratmaterial == "Perlite":
+        junpflanzen_substrat_co2 = (volumen * 93.37)
+    elif jungpflanzen_substratmaterial == "Nachhaltiges Substrat":
+        junpflanzen_substrat_co2 = (volumen * 16.01)
     else:
-        raise ValueError('No valid option for Jungpflanzen:Zukauf has been selected')
+        raise ValueError('No valid option for Jungpflanzen:Substrat has been selected')
 
     print("jungpflanzen_substrat_co2: " + str(junpflanzen_substrat_co2))
     return junpflanzen_substrat_co2
@@ -1010,22 +1002,22 @@ def calc_other_consumables_co2(data, helping_values, all_options):
     return sonstige_verbrauchsmaterialien_co2
 
 
-def calc_additional_machineusage_co2(data, helping_values, all_options):
-    # Zusaetzlicher Machineneinsatz
-    zusaetzlicher_maschineneinsatz_co2 = 0
-    # Since this field is optional it is possible, that the default value comes back
-    if data["ZusaetzlicherMaschineneinsatz"] != default_option:
-        for option in data["ZusaetzlicherMaschineneinsatz"]:
-            zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
-            verbrauch = option[1]
-            nutzdauer = option[3]
-            if zusaetzlicher_maschineneinsatzart == "Gabelstapler":
-                zusaetzlicher_maschineneinsatz_co2 = zusaetzlicher_maschineneinsatz_co2 + verbrauch * nutzdauer * 0.476534124
-            else:
-                raise ValueError('No valid option for ZusaetzlicherMaschineneinsatz has been selected')
-
-    print("zusaetzlicher_maschineneinsatz_co2: " + str(zusaetzlicher_maschineneinsatz_co2))
-    return zusaetzlicher_maschineneinsatz_co2
+#def calc_additional_machineusage_co2(data, helping_values, all_options):
+#    # Zusaetzlicher Machineneinsatz
+#    zusaetzlicher_maschineneinsatz_co2 = 0
+#    # Since this field is optional it is possible, that the default value comes back
+#    if data["ZusaetzlicherMaschineneinsatz"] != default_option:
+#        for option in data["ZusaetzlicherMaschineneinsatz"]:
+#            zusaetzlicher_maschineneinsatzart = all_options.get(id=option[0]).option_value
+#            verbrauch = option[1]
+#            nutzdauer = option[3]
+#            if zusaetzlicher_maschineneinsatzart == "Gabelstapler":
+#                zusaetzlicher_maschineneinsatz_co2 = zusaetzlicher_maschineneinsatz_co2 + verbrauch * nutzdauer * 0.476534124
+#            else:
+#                raise ValueError('No valid option for ZusaetzlicherMaschineneinsatz has been selected')
+#
+#    print("zusaetzlicher_maschineneinsatz_co2: " + str(zusaetzlicher_maschineneinsatz_co2))
+#    return zusaetzlicher_maschineneinsatz_co2
 
 
 

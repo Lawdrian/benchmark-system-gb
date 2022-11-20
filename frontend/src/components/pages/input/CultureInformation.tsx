@@ -47,7 +47,6 @@ export type CultureInformationState = {
     fleischPflanzenabstand: MeasureValue | null
     fleischTriebzahl: MeasureValue | null
     fleischErtragJahr: MeasureValue | null
-    Nutzflaeche: MeasureValue | null
     kulturBeginn: MeasureValue | null
     kulturEnde: MeasureValue | null
     nebenkultur: number | null

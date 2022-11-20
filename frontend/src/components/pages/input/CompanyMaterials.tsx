@@ -41,7 +41,7 @@ export type CompanyMaterialsState = {
     growbagsKuebelSubstrat: SelectionValue[]
     kuebelVolumenProTopf: MeasureValue | null
     kuebelJungpflanzenProTopf: MeasureValue | null
-    kuebelAlter: DateValue | null
+    kuebelAlter: MeasureValue | null
     schnur: number | null
     schnurMaterial: number | null
     schnurLaengeProTrieb: MeasureValue | null
@@ -60,7 +60,6 @@ export type CompanyMaterialsState = {
     verpackungsmaterial: SelectionValue[]
     anzahlNutzungenMehrwegsteigen: MeasureValue | null
     sonstVerbrauchsmaterialien: SelectionValue[]
-    zusaetzlicherMaschineneinsatz: SelectionValue[]
 
 
 }
@@ -123,17 +122,16 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         }
     }
 
-    const kuebelAnschaffungsjahrProps: DateInputProps = {
-        title: "Verwendungsdauer",
+    const kuebelNutzungsdauerProps: MeasureInputProps = {
+        title: "Nutzungsdauer",
         label: "Wie lange verwenden Sie das Gefäß durchschnittlich?",
-        datePickerProps: {
-            views: ['year'],
+        unitName: props.unitValues.measures["Kuebel:Alter"][0]?.values,
+        textFieldProps: {
             value: companyMaterials.kuebelAlter?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                kuebelAlter: {value:event,unit:props.unitValues.measures["Kuebel:Alter"][0].id}
-            }),
-            renderInput: () => <TextField/>
+                kuebelAlter: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:Alter"][0].id}
+            })
         }
     }
 
@@ -153,7 +151,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         showSecondChildren: value => {
-            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "Andere Kulturgefäße (Topf, Kübel)".toUpperCase());
+            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "Andere Kulturgefaesse (Topf, Kuebel)".toUpperCase());
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         firstChildren: (
@@ -168,7 +166,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
                     <MeasureInputField {...kuebelJungpflanzenProps}/>
                 </Grid>
                 <Grid item container xs={12} spacing={4}>
-                    <DateInputField {...kuebelAnschaffungsjahrProps} />
+                    <MeasureInputField {...kuebelNutzungsdauerProps} />
                 </Grid>
                 <Grid item container xs={12} spacing={4}>
                     <DynamicInputField {...growbagsKuebelSubstratProps}/>
@@ -438,7 +436,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         label: "Geben Sie sonstige Materialienverwendungen oder –verbräuche und deren Nutzungsdauern an, falls diese noch nicht erfasst wurden.",
         optional: true,
         textFieldProps: {},
-        textField2Props: {placeholder:"Jahre", label:"Wiederverwendung"},
+        textField2Props: {placeholder:"Jahre", label:"Nutzungsdauer"},
         selectProps: {
             lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien
         },
@@ -460,6 +458,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         initValues: props.values.sonstVerbrauchsmaterialien
     }
 
+    /*
     const zusaetzlicherMaschineneinsatzProps: DynamicInputProps = {
         title: "Zusätzlicher Maschineneinsatz",
         label: "Geben Sie Ihren zusaetzlichen Maschineneinsatz an, falls Sie welche verwenden.",
@@ -486,7 +485,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         }),
         initValues: props.values.zusaetzlicherMaschineneinsatz
     }
-
+    */
 
     return (
         <Grid container xs={12} spacing={8}>
@@ -549,9 +548,6 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             <SectionDivider title="Sonstiges"/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...sonstVerbrauchsmaterialienProps} />
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <DynamicInputField {...zusaetzlicherMaschineneinsatzProps} />
             </Grid>
             <Grid item container xs={12}>
                 <Grid item xs={12}>

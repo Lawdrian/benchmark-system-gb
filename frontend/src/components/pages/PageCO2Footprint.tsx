@@ -182,10 +182,16 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     <Tab label="Normiert" {...indexedTabProps(1)} />
                     <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
                     <Tab label="Benchmark" {...indexedTabProps(3)} />
-                    <Tab label="Optimierung" {...indexedTabProps(4)} />
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
+                    <p>
+                        Der Gesamtfußabdruck bildet den allgemeinen Fußabdruck der durch die Kultur und das entsprechende Kulturjahr verursacht wurde.
+                        Unterteilt ist dieser in unterscheidliche Emittentenkategorien. Zudem besteht die Möglichkeit einzelne Kategorien auszublenden um eine bessere Vergleichbarkeit & Darstellung der Kategorien zu gewährleisten.
+                        Dies ist insbesondere interessant, wenn Sie zu dem Haus Daten aus mehreren Jahren hinterlegt haben.
+                        Wenn Sie mit der Maus über die Kategorien in den einzelnen Säulen wischen, werden Ihnen weitere Informationen aus den entsprechenden Kategorien angezeigt.<br/>
+                        Wenn Sie auf den grünen Gewächshausnamen klicken, können Sie die Daten eines anderen Hauses abrufen. (falls hinterlegt)
+                    </p>
                     <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                                     currentIndex={curGreenHouseIndex}
                     />
@@ -197,9 +203,16 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     <SectionDivider
                         title={`CO2 Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length - 1]}`}
                     />
+                    <p>
+                        In der Tabelle können Sie die verschiedenen CO2-Fußabdruckfaktoren genauer betrachten.
+                    </p>
                     <FootprintTable footprintData={total[curGreenHouseIndex]} unit="kg CO2 Äq"/>
                 </TabPanel>
                 <TabPanel index={1} value={tab}>
+                    <p>
+                        Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
+                        Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
+                    </p>
                     {createFootprintPageHeader()}
                     {createFootprintProductionTypeHeader(normalizedkg)}
                     <FootprintPlotObject
@@ -209,6 +222,10 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     />
                 </TabPanel>
                 <TabPanel index={2} value={tab}>
+                    <p>
+                        Hier können Sie die spezifischen Fußabdrücke der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
+                        Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
+                    </p>
                     {createFootprintPageHeader()}
                     <FootprintPlotObject
                         title={("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
@@ -217,6 +234,9 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     />
                 </TabPanel>
                 <TabPanel index={3} value={tab}>
+                    <p>
+                        Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
+                    </p>
                     <>
                         {createFootprintPageHeader()}
                         {createFootprintProductionTypeHeader(benchmarkkg)}
@@ -226,9 +246,6 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                             data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                         />
                     </>
-                </TabPanel>
-                <TabPanel index={4} value={tab}>
-                    <CO2FootprintOptimization/>
                 </TabPanel>
             </div>
         )

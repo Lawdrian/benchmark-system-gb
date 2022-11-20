@@ -22,7 +22,6 @@ import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
 import CultureInformationInput, {CultureInformationState} from "./input/CultureInformation";
 import CompanyMaterialsInput, {CompanyMaterialsState} from "./input/CompanyMaterials";
 import EnergyConsumptionInput, {EnergyConsumptionState} from "./input/EnergyConsumption";
-import CultureManagementInput, {CultureManagementState} from "./input/CultureManagement";
 import {submitGreenhouseData} from "../../actions/submission";
 import {GreenhouseData} from "../../types/reduxTypes";
 import {useNavigate} from "react-router-dom";
@@ -56,7 +55,6 @@ export type SubpageProps = {
 export type DataToSubmit = {
     companyInformation: CompanyInformationState
     cultureInformation: CultureInformationState
-    cultureManagement: CultureManagementState
     energyConsumption: EnergyConsumptionState
     helpingMaterials: HelpingMaterialsState
     companyMaterials: CompanyMaterialsState
@@ -115,7 +113,6 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
     const {
         companyInformation,
         cultureInformation,
-        cultureManagement,
         energyConsumption,
         helpingMaterials,
         companyMaterials
@@ -143,6 +140,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
         PLZ: formatMeasureValue(companyInformation?.plz) ?? defaultValue,
         GWHFlaeche: formatMeasureValue(companyInformation?.gwhFlaeche) ?? defaultValue,
+        Nutzflaeche: formatMeasureValue(companyInformation?.nutzflaeche) ?? defaultValue,
         WaermeteilungFlaeche: formatMeasureValue(energyConsumption?.waermeteilungFlaeche) ?? defaultValue,
         GWHAlter: companyInformation?.gwhAlter ? calcAge(companyInformation?.gwhAlter.value) : defaultValue,
         AlterBedachungsmaterial: companyInformation?.bedachungsmaterialAlter ? calcAge(companyInformation?.bedachungsmaterialAlter.value) : defaultValue,
@@ -174,14 +172,10 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         FleischPflanzenabstandInDerReihe: formatMeasureValue(cultureInformation?.fleischPflanzenabstand) ?? defaultValue,
         FleischTriebzahl: formatMeasureValue(cultureInformation?.fleischTriebzahl) ?? defaultValue,
         FleischErtragJahr: formatMeasureValue(cultureInformation?.fleischErtragJahr) ?? defaultValue,
-        Nutzflaeche: formatMeasureValue(cultureInformation?.Nutzflaeche) ?? defaultValue,
         KulturBeginn: formatMeasureValue(cultureInformation?.kulturBeginn) ?? defaultValue,
         KulturEnde: formatMeasureValue(cultureInformation?.kulturEnde) ?? defaultValue,
         NebenkulturBeginn: formatMeasureValue(cultureInformation?.nebenkulturBeginn) ?? defaultValue,
         NebenkulturEnde: formatMeasureValue(cultureInformation?.nebenkulturEnde) ?? defaultValue,
-        MittlereSolltemperaturTag: formatMeasureValue(cultureManagement?.mittlereSolltemperaturTag) ?? defaultValue,
-        MittlereSolltemperaturNacht: formatMeasureValue(cultureManagement?.mittlereSolltemperaturNacht) ?? defaultValue,
-        Luftfeuchte: formatMeasureValue(cultureManagement?.luftfeuchte) ?? defaultValue,
         "BHKW:AnteilErdgas": formatMeasureValue(energyConsumption?.bhkwAnteilErdgas) ?? defaultValue,
         "BHKW:AnteilBiomethan": formatMeasureValue(energyConsumption?.bhkwAnteilBiomethan) ?? defaultValue,
         "Belichtung:Stromverbrauch": formatMeasureValue(energyConsumption?.belichtungsstromStromverbrauch) ?? defaultValue,
@@ -192,7 +186,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         InsektizideKg: formatMeasureValue({value: (helpingMaterials?.insektizideKg?.value??0)+100*(helpingMaterials.insektizideLiter?.value??0), unit: helpingMaterials?.insektizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
         "Kuebel:VolumenProTopf": formatMeasureValue(companyMaterials?.kuebelVolumenProTopf) ?? defaultValue,
         "Kuebel:JungpflanzenProTopf": formatMeasureValue(companyMaterials?.kuebelJungpflanzenProTopf) ?? defaultValue,
-        "Kuebel:Alter": companyMaterials?.kuebelAlter ? calcAge(companyMaterials?.kuebelAlter.value) : defaultValue,
+        "Kuebel:Alter": formatMeasureValue(companyMaterials?.kuebelAlter) ?? defaultValue,
         "SchnuereRankhilfen:Laenge": formatMeasureValue(companyMaterials?.schnurLaengeProTrieb) ?? defaultValue,
         "SchnuereRankhilfen:Wiederverwendung": formatMeasureValue(companyMaterials?.schnurWiederverwendung) ?? defaultValue,
         "Klipse:AnzahlProTrieb": formatMeasureValue(companyMaterials?.klipseAnzProTrieb) ?? defaultValue,
@@ -215,11 +209,9 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "100-150Gramm(Rispen)": cultureInformation?.rispen ? formatOptionValues(cultureInformation.rispen) : defaultOption,
         ">150Gramm(Fleisch)": cultureInformation?.fleisch ? formatOptionValues(cultureInformation.fleisch) : defaultOption,
         Nebenkultur: cultureInformation?.nebenkultur ? formatOptionValues(cultureInformation.nebenkultur) : defaultOption,
-        Entfeuchtung: cultureManagement?.entfeuchtung ? formatOptionValues(cultureManagement.entfeuchtung) : defaultOption,
-        Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : defaultOption,
+        Energietraeger: energyConsumption?.energietraeger[0].selectValue ? formatOptionValues(energyConsumption.energietraeger) : defaultOption,
         BHKW: energyConsumption?.bhkw ? formatOptionValues(energyConsumption.bhkw) : defaultOption,
-        Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : defaultOption,
-        Nuetzlinge: helpingMaterials?.nuetzlinge ? formatOptionValues(helpingMaterials.nuetzlinge) : defaultOption,
+        Stromherkunft: energyConsumption?.stromherkunft[0].selectValue ? formatOptionValues(energyConsumption.stromherkunft) : defaultOption,
         GrowbagsKuebel: companyMaterials?.growbagsKuebel ? formatOptionValues(companyMaterials.growbagsKuebel) : defaultOption,
         Schnur:companyMaterials?.schnur? formatOptionValues(companyMaterials.schnur) : defaultOption,
         Klipse:companyMaterials?.klipse ? formatOptionValues(companyMaterials.klipse) : defaultOption,
@@ -228,13 +220,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Jungpflanzen:Zukauf": companyMaterials?.jungpflanzenZukauf ? formatOptionValues(companyMaterials.jungpflanzenZukauf) : defaultOption,
         "CO2-Herkunft": helpingMaterials?.co2Herkunft[0].selectValue ? formatOptionValues(helpingMaterials.co2Herkunft) : defaultOption,
         "Duengemittel:VereinfachteAngabe": helpingMaterials?.duengemittelSimple[0].selectValue ? formatOptionValues(helpingMaterials.duengemittelSimple) : defaultOption,
-        "Duengemittel:DetaillierteAngabe": helpingMaterials?.duengemittelDetail ? formatOptionValues(helpingMaterials.duengemittelDetail) : defaultOption,
+        "Duengemittel:DetaillierteAngabe": helpingMaterials?.duengemittelDetail[0].selectValue ? formatOptionValues(helpingMaterials.duengemittelDetail) : defaultOption,
         "Jungpflanzen:Substrat": companyMaterials?.jungpflanzenSubstrat ? formatOptionValues(companyMaterials.jungpflanzenSubstrat) : defaultOption,
         "SchnuereRankhilfen:Material": companyMaterials?.schnurMaterial ? formatOptionValues(companyMaterials.schnurMaterial) : defaultOption,
-        Bodenabdeckung: companyInformation?.bodenabdeckung ? formatOptionValues(companyInformation.bodenabdeckung) : defaultOption,
-        SonstigeVerbrauchsmaterialien: companyMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(companyMaterials.sonstVerbrauchsmaterialien) : defaultOption,
-        Verpackungsmaterial: companyMaterials?.verpackungsmaterial ? formatOptionValues(companyMaterials.verpackungsmaterial) : defaultOption,
-        ZusaetzlicherMaschineneinsatz: companyMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(companyMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
+        Bodenabdeckung: companyInformation?.bodenabdeckung[0].selectValue ? formatOptionValues(companyInformation.bodenabdeckung) : defaultOption,
+        SonstigeVerbrauchsmaterialien: companyMaterials?.sonstVerbrauchsmaterialien[0].selectValue ? formatOptionValues(companyMaterials.sonstVerbrauchsmaterialien) : defaultOption,
+        Verpackungsmaterial: companyMaterials?.verpackungsmaterial[0].selectValue ? formatOptionValues(companyMaterials.verpackungsmaterial) : defaultOption,
         BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption,
         "Klipse:Material": companyMaterials?.klipseMaterial ? formatOptionValues(companyMaterials.klipseMaterial) : defaultOption,
         "Rispenbuegel:Material": companyMaterials?.rispenbuegelMaterial ? formatOptionValues(companyMaterials.rispenbuegelMaterial) : defaultOption,
@@ -260,7 +251,7 @@ const PageInputData = (props: InputDataProps) => {
     const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>(props.initialData)
     const [tab, setTab] = useState<number>(0)
     const paginationProps: InputPaginationButtonsProps = {
-        hasNext: () => tab < 5,
+        hasNext: () => tab < 4,
         hasPrevious: () => tab > 0,
         next: () => setTab(tab + 1),
         previous: () => setTab(tab - 1),
@@ -280,7 +271,6 @@ const PageInputData = (props: InputDataProps) => {
     //These functions are passed down to the subpages so that they can update the main state with their state
     const setCompanyInformation = (companyInformation: CompanyInformationState) => setDataToSubmit({...dataToSubmit, companyInformation})
     const setCultureInformation = (cultureInformation: CultureInformationState) => setDataToSubmit({...dataToSubmit, cultureInformation})
-    const setCultureManagement = (cultureManagement: CultureManagementState) => setDataToSubmit({...dataToSubmit, cultureManagement})
     const setEnergyConsumption = (energyConsumption: EnergyConsumptionState) => setDataToSubmit({...dataToSubmit, energyConsumption})
     const setHelpingMaterials = (helpingMaterials: HelpingMaterialsState) => setDataToSubmit({...dataToSubmit, helpingMaterials})
     const setCompanyMaterials = (companyMaterials: CompanyMaterialsState) => {
@@ -295,10 +285,9 @@ const PageInputData = (props: InputDataProps) => {
                   aria-label="tabs">
               <Tab label="Betriebsdaten" {...indexedTabProps(0)} />
               <Tab label="Kulturdaten" {...indexedTabProps(1)} />
-              <Tab label="Kulturführung" {...indexedTabProps(2)} />
-              <Tab label="Energieverbrauch" {...indexedTabProps(3)} />
-              <Tab label="Hilfsstoffe" {...indexedTabProps(4)} />
-              <Tab label="Betriebsstoffe" {...indexedTabProps(5)} />
+              <Tab label="Energieverbrauch" {...indexedTabProps(2)} />
+              <Tab label="Hilfsstoffe" {...indexedTabProps(3)} />
+              <Tab label="Betriebsstoffe" {...indexedTabProps(4)} />
             </Tabs>
 
             <TabPanel index={0} value={tab}>
@@ -308,15 +297,12 @@ const PageInputData = (props: InputDataProps) => {
                 <CultureInformationInput paginationProps={paginationProps} provideCultureInformation={setCultureInformation} values={dataToSubmit.cultureInformation}/>
             </TabPanel>
             <TabPanel index={2} value={tab}>
-                <CultureManagementInput paginationProps={paginationProps} provideCultureManagement={setCultureManagement} values={dataToSubmit.cultureManagement}/>
-            </TabPanel>
-            <TabPanel index={3} value={tab}>
                 <EnergyConsumptionInput paginationProps={paginationProps} provideEnergyConsumption={setEnergyConsumption} values={dataToSubmit.energyConsumption}/>
             </TabPanel>
-            <TabPanel index={4} value={tab}>
+            <TabPanel index={3} value={tab}>
                 <HelpingMaterialsInput paginationProps={paginationProps} provideHelpingMaterials={setHelpingMaterials} values={dataToSubmit.helpingMaterials}/>
             </TabPanel>
-            <TabPanel index={5} value={tab}>
+            <TabPanel index={4} value={tab}>
                 <CompanyMaterialsInput paginationProps={paginationProps} provideCompanyMaterials={setCompanyMaterials} values={dataToSubmit.companyMaterials}/>
             </TabPanel>
         </Box>
