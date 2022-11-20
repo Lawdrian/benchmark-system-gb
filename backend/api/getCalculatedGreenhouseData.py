@@ -57,15 +57,14 @@ class GetCalculatedGreenhouseData(APIView):
                 "konstruktion_co2",
                 "energieschirm_co2",
                 "bodenabdeckung_co2",
-                "kultursystem_co2",
-                "transportsystem_co2",
+                "produktionssystem_co2",
+                "heizsystem_co2",
                 "zusaetzliches_heizsystem_co2",
                 "energietraeger_co2",
                 "strom_co2",
                 "co2_zudosierung_co2",
                 "duengemittel_co2",
                 "psm_co2",
-                "nuetzlinge_co2",
                 "pflanzenbehaelter_co2",
                 "substrat_co2",
                 "jungpflanzen_substrat_co2",
@@ -76,7 +75,6 @@ class GetCalculatedGreenhouseData(APIView):
                 "bewaesserung_co2",
                 "verpackung_co2",
                 "sonstige_verbrauchsmaterialien_co2",
-                "zusaetzlicher_machineneinsatz_co2"
             ),
             water_footprint: 'water_usage'
         }
@@ -144,7 +142,7 @@ class GetCalculatedGreenhouseData(APIView):
                         normalizedkg_data_dict['label'] = data_set.date
                         normalizedm2_data_dict['label'] = data_set.date
 
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(
+                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(
                             data_set.id,
                             all_measurements)
                         total_ertrag = snack_ertrag+cocktail_ertrag+rispen_ertrag+fleisch_ertrag
@@ -179,10 +177,8 @@ class GetCalculatedGreenhouseData(APIView):
                     biologic = Selections.objects.filter(greenhouse_data_id=recent_dataset).filter(option_id=biologic_id)
                     if biologic.exists():
                         recent_dataset_is_biologic = True
-                        print("Aktuellster Datensatz ist Biologisch")
                     else:
                         recent_dataset_is_biologic = False
-                        print("Aktuellster Datensatz ist Konventionell")
 
                     # Retrieve the result_values of the high performer and append them to total_response_data (Using normalized data)
                     co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint_norm").id
@@ -191,7 +187,6 @@ class GetCalculatedGreenhouseData(APIView):
                     index = 0
                     high_performer_id = 1
                     while found_correct_high_performer is False and index < len(high_performers):
-                        print(high_performers[index].greenhouse_data_id)
                         high_performer_id = high_performers[index].greenhouse_data_id
                         high_performer_biologic = Selections.objects.filter(
                             greenhouse_data_id=high_performer_id).filter(option_id=biologic_id)
@@ -228,8 +223,8 @@ class GetCalculatedGreenhouseData(APIView):
                             benchmarkkg_greenhouse_dict['performer_productiontype'] = "Konventionell"
                             benchmarkm2_greenhouse_dict['performer_productiontype'] = "Konventionell"
 
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(high_performer_dataset[0].id,
-                                                                                                 all_measurements)
+                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(high_performer_dataset[0].id,
+                                                                                                  all_measurements)
                         total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
                         gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
@@ -264,10 +259,8 @@ class GetCalculatedGreenhouseData(APIView):
                                 greenhouse_data_id=low_performer_id).filter(option_id=conventional_id)
                             if recent_dataset_is_biologic and low_performer_biologic.exists():
                                 found_correct_low_performer = True
-                                print("Low Performer ist Biologisch")
                             elif recent_dataset_is_biologic is False and low_performer_conventional.exists():
                                 found_correct_low_performer = True
-                                print("Low Performer ist Konventionell")
 
                             index = index - 1
 
@@ -279,7 +272,7 @@ class GetCalculatedGreenhouseData(APIView):
                             low_performer_benchmarkkg_dict['label'] = "Worst Performer"
                             low_performer_benchmarkm2_dict['label'] = "Worst Performer"
 
-                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(low_performer_dataset[0].id, all_measurements)
+                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(low_performer_dataset[0].id, all_measurements)
 
                             total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
@@ -341,7 +334,8 @@ class GetCalculatedGreenhouseData(APIView):
                             .get(greenhouse_data_id=recent_dataset.id,
                                  measurement_id=fruit_reihenanzahl_id
                                  ).measure_value
-
+                    reihenabstand_id = Measurements.objects.get(measurement_name="Reihenabstand(Rinnenabstand)").id
+                    reihenabstand = Measures.objects.filter(greenhouse_data_id=recent_dataset.id, measurement_id=reihenabstand_id)[0].measure_value
                     for index, fruit in enumerate(fruitsizes):
                         fruitsizekg_data_dict = dict()
                         fruitsizem2_data_dict = dict()
@@ -353,10 +347,6 @@ class GetCalculatedGreenhouseData(APIView):
                                  measurement_id=fruit_reihenanzahl_id
                                  ).measure_value
                         fruit_pflanzenabstand_id = Measurements.objects.get(measurement_name=fruit+"PflanzenabstandInDerReihe")
-                        fruit_pflanzenabstand = Measures.objects \
-                            .get(greenhouse_data_id=recent_dataset.id,
-                                 measurement_id=fruit_pflanzenabstand_id
-                                 ).measure_value
 
                         fruit_ertrag_id = Measurements.objects.get(measurement_name=fruit + "ErtragJahr")
                         fruit_ertrag = Measures.objects \
@@ -371,7 +361,7 @@ class GetCalculatedGreenhouseData(APIView):
                                 .values('result_value')[0]['result_value']
                             if fruit_ertrag != 0.000:
                                 fruitsizekg_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / fruit_ertrag
-                                fruitsizem2_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*fruit_pflanzenabstand)
+                                fruitsizem2_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*reihenabstand)
                             else:
                                 fruitsizekg_data_dict[calculation_names[i]] = 0
                                 fruitsizem2_data_dict[calculation_names[i]] = 0
@@ -404,8 +394,7 @@ class GetCalculatedGreenhouseData(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-def getErtrag(greenhouse_data_id, all_measurements):
-
+def get_ertrag(greenhouse_data_id, all_measurements):
     snack_ertrag_id = all_measurements.get(measurement_name="SnackErtragJahr")
     snack_ertrag = Measures.objects \
         .get(greenhouse_data_id=greenhouse_data_id,
@@ -426,5 +415,4 @@ def getErtrag(greenhouse_data_id, all_measurements):
         .get(greenhouse_data_id=greenhouse_data_id,
              measurement_id=fleisch_ertrag_id
              ).measure_value
-
     return snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag

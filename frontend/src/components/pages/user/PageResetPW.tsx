@@ -33,8 +33,6 @@ const PageResetPW = ({isActivated, resetPW, loginUrl}: userActivationProps) => {
 
     const navigate = useNavigate()
 
-    console.log("UserActivation Page!")
-
     // Get the encoded user id and the activation token that was sent in the email out of the url params
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);

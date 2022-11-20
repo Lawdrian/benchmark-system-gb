@@ -1,18 +1,17 @@
-1,EinheitlicheWaermeversorgung
+1,Waermeversorgung
 2,GWHArt
 3,Bedachungsmaterial
 4,Stehwandmaterial
 5,EnergieschirmTyp
-6,Transportsystem
+6,Heizsystem
 7,Produktionstyp
-8,Kultursystem
+8,Produktionssystem
 9,ZusaetzlichesHeizsystemTyp
 10,10-30Gramm(Snack)
 11,30-100Gramm(Cocktail)
 12,100-150Gramm(Rispen)
 13,>150Gramm(Fleisch)
 14,Nebenkultur
-15,Entfeuchtung
 16,Energietraeger
 17,BHKW
 18,Stromherkunft
@@ -21,7 +20,6 @@
 21,CO2-Herkunft
 22,Duengemittel:VereinfachteAngabe
 23,Duengemittel:DetaillierteAngabe
-24,Nuetzlinge
 25,GrowbagsKuebel
 27,Substrat
 28,SchnuereRankhilfen:Material
@@ -33,7 +31,6 @@
 34,Jungpflanzen:Substrat
 35,Verpackungsmaterial
 36,SonstigeVerbrauchsmaterialien
-37,ZusaetzlicherMaschineneinsatz
 38,BelichtungsstromEinheit
 39,Klipse
 40,Rispenbuegel

@@ -47,7 +47,6 @@ export type CultureInformationState = {
     fleischPflanzenabstand: MeasureValue | null
     fleischTriebzahl: MeasureValue | null
     fleischErtragJahr: MeasureValue | null
-    kulturflaeche: MeasureValue | null
     kulturBeginn: MeasureValue | null
     kulturEnde: MeasureValue | null
     nebenkultur: number | null
@@ -66,7 +65,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     //Fruchtgröße: Snack
     const snackProps: SingleShowConditionalRadioInputProps = {
         title: "10 bis 30 Gramm (Snack)",
-        label: "Bauen Sie Tomaten der Größe 10 bis 30 Gramm (Snack) in Ihrem Gewächshaus an?",
+        label: "Kultivieren Sie Tomaten dieser Größe in dem zu berechnenden Haus?",
         radioGroupProps: {
             value: cultureInformation.snack,
             onChange: event => setCultureInformationState({
@@ -96,7 +95,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const snackPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
-        label: "Wie groß ist der Abstand zwischen den Pflanzen innerhalb einer Reihe?",
+        label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
         unitName: props.unitValues.measures.SnackPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackPflanzenabstand?.value,
@@ -108,8 +107,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const snackTriebzahlProps: MeasureInputProps = {
-        title: "Triebzahl",
-        label: "Wie viele Triebe hat eine Pflanze am Kulturende?",
+        title: "Triebanzahl pro Pflanze",
+        label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
         unitName: props.unitValues.measures.SnackTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackTriebzahl?.value,
@@ -121,8 +120,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const snackErtragJahrProps: MeasureInputProps = {
-        title: "Ertrag pro Jahr",
-        label: "Wie viel Ertrag erziehlen Sie mit dieser Fruchtgröße pro Jahr?",
+        title: "Jahresertrag",
+        label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
         unitName: props.unitValues.measures.SnackErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackErtragJahr?.value,
@@ -136,7 +135,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     //Fruchtgröße: Cocktail
     const cocktailProps: SingleShowConditionalRadioInputProps = {
         title: "30 bis 100 Gramm (Cocktail)",
-        label: "Bauen Sie Tomaten der Größe 30 birispen Gramm (Cocktail) in Ihrem Gewächshaus an?",
+        label: "Kultivieren Sie Tomaten dieser Größe in dem zu berechnenden Haus?",
         radioGroupProps: {
             value: cultureInformation.cocktail,
             onChange: event => setCultureInformationState({
@@ -166,7 +165,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const cocktailPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
-        label: "Wie groß ist der Abstand zwischen den Pflanzen innerhalb einer Reihe?",
+        label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
         unitName: props.unitValues.measures.CocktailPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailPflanzenabstand?.value,
@@ -178,8 +177,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const cocktailTriebzahlProps: MeasureInputProps = {
-        title: "Triebzahl",
-        label: "Wie viele Triebe hat eine Pflanze am Kulturende?",
+        title: "Triebanzahl pro Pflanze",
+        label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
         unitName: props.unitValues.measures.CocktailTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailTriebzahl?.value,
@@ -191,8 +190,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const cocktailErtragJahrProps: MeasureInputProps = {
-        title: "Ertrag pro Jahr",
-        label: "Wie viel Ertrag erziehlen Sie mit dieser Fruchtgröße pro Jahr?",
+        title: "Jahresertrag",
+        label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
         unitName: props.unitValues.measures.CocktailErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailErtragJahr?.value,
@@ -205,7 +204,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     //Fruchtgröße: Rispen
     const rispenProps: SingleShowConditionalRadioInputProps = {
         title: "100 bis 150 Gramm (Rispen)",
-        label: "Bauen Sie Tomaten der Größe 100 bis 150 Gramm (Rispen) in Ihrem Gewächshaus an?",
+        label: "Kultivieren Sie Tomaten dieser Größe in dem zu berechnenden Haus?",
         radioGroupProps: {
             value: cultureInformation.rispen,
             onChange: event => setCultureInformationState({
@@ -235,7 +234,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const rispenPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
-        label: "Wie groß ist der Abstand zwischen den Pflanzen innerhalb einer Reihe?",
+        label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
         unitName: props.unitValues.measures.RispenPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenPflanzenabstand?.value,
@@ -247,8 +246,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const rispenTriebzahlProps: MeasureInputProps = {
-        title: "Triebzahl",
-        label: "Wie viele Triebe hat eine Pflanze am Kulturende?",
+        title: "Triebanzahl pro Pflanze",
+        label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
         unitName: props.unitValues.measures.RispenTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenTriebzahl?.value,
@@ -260,8 +259,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const rispenErtragJahrProps: MeasureInputProps = {
-        title: "Ertrag pro Jahr",
-        label: "Wie viel Ertrag erziehlen Sie mit dieser Fruchtgröße pro Jahr?",
+        title: "Jahresertrag",
+        label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
         unitName: props.unitValues.measures.RispenErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenErtragJahr?.value,
@@ -275,7 +274,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     //Fruchtgröße: Flfleisch
     const fleischProps: SingleShowConditionalRadioInputProps = {
         title: ">150 Gramm (Fleisch)",
-        label: "Bauen Sie Tomaten der Größe >150 Gramm (Fleisch) in Ihrem Gewächshaus an?",
+        label: "Kultivieren Sie Tomaten dieser Größe in dem zu berechnenden Haus?",
         radioGroupProps: {
             value: cultureInformation.fleisch,
             onChange: event => setCultureInformationState({
@@ -305,7 +304,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const fleischPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
-        label: "Wie groß ist der Abstand zwischen den Pflanzen innerhalb einer Reihe?",
+        label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
         unitName: props.unitValues.measures.FleischPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischPflanzenabstand?.value,
@@ -317,8 +316,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const fleischTriebzahlProps: MeasureInputProps = {
-        title: "Triebzahl",
-        label: "Wie viele Triebe hat eine Pflanze am Kulturende?",
+        title: "Triebanzahl pro Pflanze",
+        label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
         unitName: props.unitValues.measures.FleischTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischTriebzahl?.value,
@@ -330,8 +329,8 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const fleischErtragJahrProps: MeasureInputProps = {
-        title: "Ertrag pro Jahr",
-        label: "Wie viel Ertrag erziehlen Sie mit dieser Fruchtgröße pro Jahr?",
+        title: "Jahresertrag",
+        label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
         unitName: props.unitValues.measures.FleischErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischErtragJahr?.value,
@@ -343,23 +342,9 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
 
-
-    const kulturflaecheProps: MeasureInputProps = {
-        title: "Kulturfläche",
-        label: "Auf welcher Fläche wird die genante Fruchtgröße in dem Gewächshaus kultiviert?",
-        unitName: props.unitValues.measures.Kulturflaeche[0]?.values,
-        textFieldProps: {
-            value: cultureInformation.kulturflaeche?.value,
-            onChange: event => setCultureInformationState({
-                ...cultureInformation,
-                kulturflaeche: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kulturflaeche[0].id}
-            })
-        }
-    }
-
     const kulturBeginnProps: MeasureInputProps = {
-        title: "Kultur Beginn",
-        label: "In welcher Kalenderwoche ist der Kulturbeginn (aufstellen der Jungpflanzen)",
+        title: "Kulturbeginn",
+        label: "In welcher Kalenderwoche werden die Jungpflanzen aufgestellt?",
         unitName: props.unitValues.measures.KulturBeginn[0]?.values,
         textFieldProps: {
             value: cultureInformation.kulturBeginn?.value,
@@ -379,7 +364,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     }
 
     const kulturEndeProps: MeasureInputProps = {
-        title: "Kultur Ende",
+        title: "Kulturende",
         label: "In welcher Kalenderwoche wird zuletzt geerntet?",
                 unitName: props.unitValues.measures.KulturEnde[0]?.values,
         textFieldProps: {
@@ -401,7 +386,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const nebenkulturProps: SingleShowConditionalRadioInputProps = {
         title: "Nebenkultur",
-        label: "Findet im selben Kulturjahr noch eine andere Nutzung des GWH außerhalb der gennanten Kulturdauer statt?",
+        label: "Findet bis zur Folgetomatenkultur noch eine andere Nutzung des GWH statt?",
         radioGroupProps: {
             value: cultureInformation.nebenkultur,
             onChange: event => setCultureInformationState({
@@ -418,7 +403,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     const nebenkulturBeginnProps: MeasureInputProps = {
         title: "Nebenkulturbeginn",
-        label: "In welcher Kalenderwoche ist der Nebenkulturbeginn (aufstellen der Jungpflanzen)?",
+        label: "In welcher Kalenderwoche beginnen Sie mit der Nebenkultur?",
         unitName: props.unitValues.measures.NebenkulturBeginn[0]?.values,
         textFieldProps: {
             value: cultureInformation.nebenkulturBeginn?.value,
@@ -460,7 +445,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
 
     return(
         <Grid container xs={12} spacing={8}>
-            <SectionDivider title="Fruchtgröße"/>
+            <SectionDivider title="Fruchtgrößen"/>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...snackProps}>
                     <Grid item container xs={12} spacing={4}>
@@ -509,13 +494,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
                     </Grid>
                 </SingleShowConditionalRadioInputField>
             </Grid>
-            <SectionDivider title=""/>
+            <SectionDivider title="Kulturdaten"/>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField  {...kulturflaecheProps}/>
                 <MeasureInputField {...kulturBeginnProps}/>
+                <MeasureInputField {...kulturEndeProps}/>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <MeasureInputField {...kulturEndeProps}/>
                 <SingleShowConditionalRadioInputField {...nebenkulturProps}>
                     <Grid item container xs={12} spacing={4}>
                         <MeasureInputField {...nebenkulturBeginnProps}/>

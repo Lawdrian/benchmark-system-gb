@@ -39,8 +39,6 @@
 39,Auswahl,39
 40,Auswahl,40
 41,Auswahl,41
-42,Auswahl,42
-43,Auswahl,43
 44,kWh,44
 45,m3,44
 47,kWh,45
@@ -118,14 +116,6 @@
 130,kg,105
 131,kg,106
 132,kg,107
-133,Anzahl,108
-134,Anzahl,109
-135,Anzahl,110
-136,Anzahl,111
-137,Anzahl,112
-138,Anzahl,113
-139,Anzahl,114
-140,Voelker,115
 142,Auswahl,117
 143,Auswahl,118
 144,Auswahl,119
@@ -167,7 +157,6 @@
 181,kg,156
 182,kg,157
 183,kg,158
-184,l/h,159
 185,Auswahl,160
 186,Auswahl,161
 188,Auswahl,163
@@ -177,10 +166,15 @@
 192,Jahre,167
 193,Jahre,168
 194,Jahre,169
-195,Auswahl,170
 196,Auswahl,171
 197,Auswahl,172
 198,Auswahl,173
 199,Auswahl,174
 200,Auswahl,175
 201,Auswahl,176
+202,Auswahl,177
+203,Auswahl,178
+204,Auswahl,179
+205, Auswahl,180
+206, Auswahl,181
+207, Auswahl,182

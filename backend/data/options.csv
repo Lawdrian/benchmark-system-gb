@@ -20,15 +20,15 @@
 20,doppelt,5
 21,"einfach, aluminisiert",5
 22,"doppelt, aluminisiert",5
-23,ja,6
-24,nein,6
+23,Transportsystem,6
+24,"Rohrheizung (hoch, niedrig, etc.)",6
 25,Konventionell,7
 26,Biologisch,7
 27,Boden,8
 28,Hydroponik offen,8
 29,Hydroponik geschlossen,8
-30,Vegetationsheizung,9
-31,Konvektionsheizung,9
+30,Transportsystem,9
+31,"Rohrheizung (hoch, niedrig, etc.)",9
 32,ja,10
 33,nein,10
 34,ja,11
@@ -39,8 +39,6 @@
 39,nein,13
 40,ja,14
 41,nein,14
-42,ja,15
-43,nein,15
 44,Erdgas,16
 45,Biogas,16
 46,Heizoel,16
@@ -105,16 +103,8 @@
 105,Mangansulfat,23
 106,Kupfersulfat,23
 107,Ammoniummolybdat,23
-108,"Erzwespe (Encasia, Eretmocerus, oder vergleichbares)",24
-109,Macrolophus (oder vergleichbares),24
-110,"Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)",24
-111,"Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)",24
-112,"Gallmuecken (Aphidoletes, oder vergleichbares)",24
-113,"Florfliegen (Chrysoperla, oder vergleichbares)",24
-114,"Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)",24
-115,Hummeln,24
 117,Growbags,25
-118,Kuebel,25
+118,"Andere Kulturgefaesse (Topf, Kuebel)",25
 119,nichts,25
 121,Standardsubstrat,27
 122,Kokos,27
@@ -152,7 +142,6 @@
 156,Kunststoff,36
 157,Holz,36
 158,Pappe,36
-159,Gabelstapler,37
 160,kWh,38
 161,Angaben,38
 163,ja,39
@@ -162,10 +151,15 @@
 167,Bodenfolie,32
 168,Bodengewebe,32
 169,Beton,32
-170,beides,9
 171,ja,41
 172,nein,41
 173,ja,42
 174,nein,42
 175,ja,43
 176,nein,43
+177,Konvektionsheizung,6
+178,Deckenlufterhitzer,6
+179,Keines,6
+180,Konvektionsheizung,9
+181,Deckenlufterhitzer,9
+182,Vegetationsheizung,9

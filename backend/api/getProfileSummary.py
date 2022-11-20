@@ -40,9 +40,7 @@ class GetProfileSummary(APIView):
                     }
                 ]
         """
-
         user_id = self.request.user.id
-        user_id = 1
         if user_id is None:
             return Response({'Bad Request': 'No valid user!'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -50,7 +48,6 @@ class GetProfileSummary(APIView):
 
         # Retrieve all greenhouses of a specific user
         greenhouses = Greenhouses.objects.filter(user_id=user_id)
-
         response_data = []
         if greenhouses.exists():
 

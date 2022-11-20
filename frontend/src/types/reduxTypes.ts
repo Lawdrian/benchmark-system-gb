@@ -250,7 +250,6 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: string
-    GWHGesamtflaeche: string
     GWHFlaeche: string
     WaermeteilungFlaeche: string
     GWHAlter: string
@@ -264,8 +263,8 @@ export type GreenhouseData = {
     Scheibenlaenge: string
     "Reihenabstand(Rinnenabstand)": string
     Vorwegbreite: string
-    AlterTransportsystem: string
-    AlterKultursystem: string
+    AlterHeizsystem: string
+    AlterProduktionssystem: string
     AlterZusaetzlichesHeizsystem: string
     SnackReihenanzahl: string
     SnackPflanzenabstandInDerReihe: string
@@ -283,14 +282,11 @@ export type GreenhouseData = {
     FleischPflanzenabstandInDerReihe: string
     FleischTriebzahl: string
     FleischErtragJahr: string
-    Kulturflaeche: string
+    Nutzflaeche: string
     KulturBeginn: string
     KulturEnde: string
     NebenkulturBeginn: string
     NebenkulturEnde: string
-    MittlereSolltemperaturTag: string
-    MittlereSolltemperaturNacht: string
-    Luftfeuchte: string
     "BHKW:AnteilErdgas": string
     "BHKW:AnteilBiomethan": string
     "Belichtung:Stromverbrauch": string
@@ -311,15 +307,15 @@ export type GreenhouseData = {
     "Rispenbuegel:Wiederverwendung": string
     "Jungpflanzen:Distanz": string
     "Verpackungsmaterial:AnzahlMehrwegsteigen": string
-    EinheitlicheWaermeversorgung: string
+    Waermeversorgung: string
     GWHArt: string
     Bedachungsmaterial: string
     Stehwandmaterial: string
     Energieschirm: string
     EnergieschirmTyp: string
-    Transportsystem: string
+    Heizsystem: string
     Produktionstyp: string
-    Kultursystem: string
+    Produktionssystem: string
     ZusaetzlichesHeizsystem: string
     ZusaetzlichesHeizsystemTyp: string
     "10-30Gramm(Snack)": string
@@ -327,7 +323,6 @@ export type GreenhouseData = {
     "100-150Gramm(Rispen)": string
     ">150Gramm(Fleisch)": string
     Nebenkultur: string
-    Entfeuchtung: string
     Energietraeger: string
     BHKW: string
     Stromherkunft: string
@@ -336,7 +331,6 @@ export type GreenhouseData = {
     "CO2-Herkunft": string
     "Duengemittel:VereinfachteAngabe": string
     "Duengemittel:DetaillierteAngabe": string
-    Nuetzlinge: string
     GrowbagsKuebel: string
     Substrat: string
     "SchnuereRankhilfen:Material": string
@@ -350,6 +344,5 @@ export type GreenhouseData = {
     "Jungpflanzen:Substrat": string
     Verpackungsmaterial: string
     SonstigeVerbrauchsmaterialien: string
-    ZusaetzlicherMaschineneinsatz: string
     BelichtungsstromEinheit: string
 }

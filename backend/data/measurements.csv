@@ -1,5 +1,4 @@
 1,PLZ
-2,GWHGesamtflaeche
 3,GWHFlaeche
 4,WaermeteilungFlaeche
 5,GWHAlter
@@ -13,8 +12,8 @@
 13,Scheibenlaenge
 14,Reihenabstand(Rinnenabstand)
 15,Vorwegbreite
-16,AlterTransportsystem
-17,AlterKultursystem
+16,AlterHeizsystem
+17,AlterProduktionssystem
 18,AlterZusaetzlichesHeizsystem
 19,SnackReihenanzahl
 20,SnackPflanzenabstandInDerReihe
@@ -32,14 +31,11 @@
 32,FleischPflanzenabstandInDerReihe
 33,FleischTriebzahl
 34,FleischErtragJahr
-35,Kulturflaeche
+35,Nutzflaeche
 36,KulturBeginn
 37,KulturEnde
 38,NebenkulturBeginn
 39,NebenkulturEnde
-40,MittlereSolltemperaturTag
-41,MittlereSolltemperaturNacht
-42,Luftfeuchte
 44,BHKW:AnteilErdgas
 45,BHKW:AnteilBiomethan
 48,Belichtung:Stromverbrauch

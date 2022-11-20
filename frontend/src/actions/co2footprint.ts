@@ -43,15 +43,14 @@ type RawCO2Dataset = {
     konstruktion_co2: number
     energieschirm_co2: number
     bodenabdeckung_co2: number
-    kultursystem_co2: number
-    transportsystem_co2: number
+    produktionssystem_co2: number
+    heizsystem_co2: number
     zusaetzliches_heizsystem_co2: number
     energietraeger_co2: number
     strom_co2: number
     co2_zudosierung_co2: number
     duengemittel_co2: number
     psm_co2: number
-    nuetzlinge_co2: number
     pflanzenbehaelter_co2: number
     substrat_co2: number
     jungpflanzen_substrat_co2: number
@@ -63,7 +62,6 @@ type RawCO2Dataset = {
     verpackung_co2: number
     sonstige_verbrauchsmaterialien_co2: number
     transport_co2: number
-    zusaetzlicher_machineneinsatz_co2: number
 }
 
 /**
@@ -136,8 +134,9 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                             dataset.konstruktion_co2 +
                             dataset.energieschirm_co2 +
                             dataset.bodenabdeckung_co2 +
-                            dataset.kultursystem_co2 +
-                            dataset.transportsystem_co2 +
+                            dataset.produktionssystem_co2 +
+                            dataset.bewaesserung_co2 +
+                            dataset.heizsystem_co2 +
                             dataset.zusaetzliches_heizsystem_co2
                     ),
                     backgroundColor: "rgba(24, 24, 24, 0.3)",
@@ -145,8 +144,9 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         { "name": "Konstruktion", "value": dataset.konstruktion_co2},
                         { "name": "Energieschirm", "value": dataset.energieschirm_co2},
                         { "name": "Bodenabdeckung", "value": dataset.bodenabdeckung_co2},
-                        { "name": "Kultursystem", "value": dataset.kultursystem_co2},
-                        { "name": "Transportsystem", "value": dataset.transportsystem_co2},
+                        { "name": "Produktionssystem", "value": dataset.produktionssystem_co2},
+                        { "name": "Bewässerung", "value": dataset.bewaesserung_co2},
+                        { "name": "Heizsystem", "value": dataset.heizsystem_co2},
                         { "name": "Zusätzliches Heizsystem", "value": dataset.zusaetzliches_heizsystem_co2},
                     ]),
                     optimization: [],
@@ -177,15 +177,13 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                     data: greenhouse.greenhouseDatasets.map(dataset =>
                         dataset.co2_zudosierung_co2 +
                         dataset.duengemittel_co2 +
-                        dataset.psm_co2 +
-                        dataset.nuetzlinge_co2
+                        dataset.psm_co2
                     ),
                     backgroundColor: "rgba(37,239,6,0.7)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "CO2 Zudosierung", "value": dataset.co2_zudosierung_co2},
                         { "name": "Düngemittel", "value": dataset.duengemittel_co2},
-                        { "name": "Pflanzenschutzmittel", "value": dataset.psm_co2},
-                        { "name": "Nützlinge", "value": dataset.nuetzlinge_co2},
+                        { "name": "Pflanzenschutzmittel", "value": dataset.psm_co2}
                     ]),
                     optimization: [],
                     climateData: []
@@ -200,10 +198,8 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         dataset.schnuere_co2 +
                         dataset.klipse_co2 +
                         dataset.rispenbuegel_co2 +
-                        dataset.bewaesserung_co2 +
                         dataset.verpackung_co2 +
-                        dataset.sonstige_verbrauchsmaterialien_co2 +
-                        dataset.zusaetzlicher_machineneinsatz_co2
+                        dataset.sonstige_verbrauchsmaterialien_co2
                     ),
                     backgroundColor: "rgba(91,6,239,0.7)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
@@ -214,10 +210,8 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         { "name": "Schnüre", "value": dataset.schnuere_co2},
                         { "name": "Klipse", "value": dataset.klipse_co2},
                         { "name": "Rispenbügel", "value": dataset.rispenbuegel_co2},
-                        { "name": "Bewässerung", "value": dataset.bewaesserung_co2},
                         { "name": "Verpackung", "value": dataset.verpackung_co2},
                         { "name": "Sonstige Verbrauchsmaterialien", "value": dataset.sonstige_verbrauchsmaterialien_co2},
-                        { "name": "Produktion", "value": dataset.zusaetzlicher_machineneinsatz_co2}
                     ])
                 },]
             }
@@ -247,16 +241,16 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
             konstruktion[i] = greenhouse.greenhouseDatasets[i].konstruktion_co2 +
                 greenhouse.greenhouseDatasets[i].energieschirm_co2 +
                 greenhouse.greenhouseDatasets[i].bodenabdeckung_co2 +
-                greenhouse.greenhouseDatasets[i].kultursystem_co2 +
-                greenhouse.greenhouseDatasets[i].transportsystem_co2 +
+                greenhouse.greenhouseDatasets[i].produktionssystem_co2 +
+                greenhouse.greenhouseDatasets[i].bewaesserung_co2 +
+                greenhouse.greenhouseDatasets[i].heizsystem_co2 +
                 greenhouse.greenhouseDatasets[i].zusaetzliches_heizsystem_co2
 
             waermetraeger[i] = greenhouse.greenhouseDatasets[i].energietraeger_co2
             strom[i] = greenhouse.greenhouseDatasets[i].strom_co2
             hilfsstoffe[i] = greenhouse.greenhouseDatasets[i].co2_zudosierung_co2 +
                 greenhouse.greenhouseDatasets[i].duengemittel_co2 +
-                greenhouse.greenhouseDatasets[i].psm_co2 +
-                greenhouse.greenhouseDatasets[i].nuetzlinge_co2
+                greenhouse.greenhouseDatasets[i].psm_co2
             betriebsstoffe[i] = greenhouse.greenhouseDatasets[i].pflanzenbehaelter_co2 +
                 greenhouse.greenhouseDatasets[i].substrat_co2 +
                 greenhouse.greenhouseDatasets[i].jungpflanzen_substrat_co2 +
@@ -264,10 +258,8 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
                 greenhouse.greenhouseDatasets[i].schnuere_co2 +
                 greenhouse.greenhouseDatasets[i].klipse_co2 +
                 greenhouse.greenhouseDatasets[i].rispenbuegel_co2 +
-                greenhouse.greenhouseDatasets[i].bewaesserung_co2 +
                 greenhouse.greenhouseDatasets[i].verpackung_co2 +
-                greenhouse.greenhouseDatasets[i].sonstige_verbrauchsmaterialien_co2 +
-                greenhouse.greenhouseDatasets[i].zusaetzlicher_machineneinsatz_co2
+                greenhouse.greenhouseDatasets[i].sonstige_verbrauchsmaterialien_co2
         }
 
 

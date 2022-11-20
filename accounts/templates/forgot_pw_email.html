@@ -1,5 +1,39 @@
-    {% autoescape off %}
-    Hallo {{ user.profile.company_name }},
-    Bitte klicken Sie auf den Link um Ihr Passwort zurückzusetzen,
-    http://{{ domain }}/resetpw?uid={{ uid }}&token={{ token }}
-    {% endautoescape %}
+
+    <html>
+        <body>
+        <p>
+            Guten Tag, <br/>
+            Bitte klicken Sie auf den unterstehenden Link. Ihr <b>Passwort</b> wird damit <b>zurückgesetzt</b> und Sie können dies neu festlegen. <br/>
+            <br/>
+            <a href="http://{{ domain }}/resetpw?uid={{ uid }}&token={{ token }}">Um Ihr Passwort zurückzusetzen, klicken Sie bitte hier.</a><br/>
+            <br/>
+            Sollten Sie diesen Link nicht anklicken, werden keine Änderungen an Ihrem Account vorgenommen.<br/>
+            Falls es sich bei dieser Passwortzurücksetzung um ein Versehen handelt, oder die Anfrage nicht von Ihnen beantragt wurde, müssen Sie nicht reagieren und können diese Mail ignorieren.<br/>
+            Sie werden diesbezüglich keine weiteren E-Mails von uns erhalten.<br/>
+            <br/>
+            Mit freundlichen Grüßen,<br/>
+            Ihr Benchmark-Team.
+        </p>
+        </body>
+        <footer style="font-size: 10px">
+            <br/>
+            <br/>
+            <br/>
+            <br/>
+            <p>
+                Impressum<br/>
+                Benchmark Tool<br/>
+                Hauptstraße 1<br/>
+                50667 Köln<br/>
+                Fon: +49 (0) 221 - 12 34 56 - 0<br/>
+                Fax: +49 (0) 221 - 12 34 56 - 1<br/>
+                E-Mail: info@benchmark-tool.de<br/>
+                Web: http://www.benchmark-tool.de<br/>
+                ---------------------------------------------------------------------------<br/>
+                Benchmark Tool e.V.<br/>
+                Geschäftsführer: Max Mustermann<br/>
+                Vorstand: Dr. jur. Stefanie Musterfrau(Vorsitzende), Heinz Muster (stv. Vorsitzender), Markus Beispiel,<br/>
+                Stefan Example, Beatrice Beispielhaft Vereinsregister: Amtsgericht Köln, VR 123456 Sitz des Vereins: Köln<br/>
+            </p>
+        </footer>
+    </html>

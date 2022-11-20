@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -27,25 +27,41 @@ class RegisterAPI(generics.GenericAPIView):
 
         # to get the domain of the current site
         current_site = get_current_site(request)
-        mail_subject = 'Activation link has been sent to your email id'
-        message = render_to_string('acc_active_email.html', {
+        mail_subject = 'Benchmark-Tool Account registrieren'
+        html_content = render_to_string('acc_active_email.html', {
             'user': user,
             'domain': current_site.domain,
             'uid': urlsafe_base64_encode(force_bytes(user.id)),
             'token': account_activation_token.make_token(user),
         })
         to_email = user.email
-        email = EmailMessage(
-            mail_subject, message, settings.DEFAULT_FROM_EMAIL, [to_email]
+        email = EmailMultiAlternatives(
+            mail_subject, html_content, settings.DEFAULT_FROM_EMAIL, [to_email]
         )
-        email.send()
+        email.content_subtype = 'html'
+        email.mixed_subtype = 'related'
+
+        #img_path = str(pathlib.Path(__file__).parent.resolve()) + '/templates/logo.png'
+        #img_name = 'logo.png'
+        #print(img_path)
+
+        #with open(img_path, 'rb') as f:
+        #    image = MIMEImage(f.read(), _subtype="png")
+        #    email.attach(image)
+        #    image.add_header('Content-ID', "<{}>".format(img_name))  # Setting content ID
+        #    print("<{}>".format(img_name))  # Testing content ID
+        #    #Add this in the html file
+        #    <head>
+        #       <img src="cid:logo.png" alt="Benchmark Logo">
+        #    </head>
+
+        email.send(fail_silently=False)
 
         return Response({
                 "user": UserSerializer(user,
                                        context=self.get_serializer_context()).data,
                 "token": AuthToken.objects.create(user)[1]
         })
-
 
 class ActivateAPI(APIView):
     """This API endpoint sends an account verification link to the users email.
@@ -85,17 +101,19 @@ class ForgotPWAPI(generics.GenericAPIView):
         current_site = get_current_site(request)
         User = get_user_model()
         user = User.objects.get(email=serializer.data['email'])
-        mail_subject = 'Passwort zurücksetzen'
-        message = render_to_string('forgot_pw_email.html', {
+        mail_subject = 'Benchmark-Tool Passwort zurücksetzen'
+        html_content = render_to_string('forgot_pw_email.html', {
             'user': user,
             'domain': current_site.domain,
             'uid': urlsafe_base64_encode(force_bytes(user.id)),
             'token': account_activation_token.make_token(user),
         })
         to_email = user.email
-        email = EmailMessage(
-            mail_subject, message, settings.DEFAULT_FROM_EMAIL, [to_email]
+        email = EmailMultiAlternatives(
+            mail_subject, html_content, settings.DEFAULT_FROM_EMAIL, [to_email]
         )
+        email.content_subtype = 'html'
+        email.mixed_subtype = 'related'
         email.send()
 
         return Response({

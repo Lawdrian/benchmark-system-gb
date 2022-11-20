@@ -70,7 +70,6 @@ class GetDatasets(APIView):
                         measure = Measures.objects \
                             .filter(greenhouse_data_id=greenhouse_data.id,
                                     measurement_id=measurement_id)[0]
-
                         temp_data_dict[measurement_names[i]] = "[" + str(measure.measure_value) + "," + str(measure.measure_unit.id) + "]"
 
                     # Retrieve all selections for a specific dataset and save them into the temp_data_dict

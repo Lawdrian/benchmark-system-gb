@@ -113,7 +113,10 @@ const PageProfile = ({deleteUser, user, profileData, loadProfile}: ProfileProps)
                             )
                         })}
                     </Grid>
-                    : undefined
+                    :
+                        <p>
+                            Es wurden noch keine Datensätze eingegeben.
+                        </p>
                 }
             </Grid>
         </Box>

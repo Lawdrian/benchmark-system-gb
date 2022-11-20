@@ -1,17 +1,26 @@
 import React, {useState} from "react";
 import {
     DateInputField,
-    DateInputProps, DateValue,
+    DateInputProps,
+    DateValue,
+    DynamicInputProps,
     MeasureInputField,
-    MeasureInputProps, MeasureValue,
+    MeasureInputProps,
+    MeasureValue,
     SelectionInputField,
     SelectionInputProps,
-    SingleShowConditionalRadioInputField, SingleShowConditionalRadioInputProps
+    SelectionRadioInputProps,
+    ConditionalSelectionInputProps,
+    SelectionValue,
+    SingleShowConditionalRadioInputField,
+    SingleShowConditionalRadioInputProps,
+    ConditionalSelectionInputField,
+    DynamicInputField
 } from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {Divider, TextField, Typography} from "@mui/material";
+import {Divider, Paper, TextField, Typography} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
@@ -34,10 +43,8 @@ export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
     plz: MeasureValue | null
-    gwhGesamtFlaeche: MeasureValue | null
-    einheitlicheWaermeversorgung: number | null
     gwhFlaeche: MeasureValue | null
-    waermeteilungFlaeche: MeasureValue | null
+    nutzflaeche: MeasureValue | null
     gwhArt: number | null
     gwhAlter: DateValue | null
     bedachungsmaterial: number | null
@@ -54,11 +61,13 @@ export type CompanyInformationState = {
     scheibenlaenge: MeasureValue | null
     reihenabstand: MeasureValue | null
     vorwegbreite: MeasureValue | null
-    produktionstyp: number | null
-    kultursystem: number | null
-    kultursystemAlter: DateValue | null
-    transportsystem: number | null
-    transportsystemAlter: DateValue | null
+    bodenabdeckung: SelectionValue[]
+    produktionsweise: number | null
+    produktionssystem: number | null
+    produktionssystemAlter: DateValue | null
+    heizsystem: number | null
+    heizsystemAlter: DateValue | null
+    bewaesserArt: number | null,
     zusaetzlichesHeizsystem: number | null
     zusaetzlichesHeizsystemTyp: number | null
     zusaetzlichesHeizsystemAlter: DateValue | null
@@ -74,8 +83,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
 
     const datumProps: DateInputProps = {
-        title: "Datum",
-        label: "Von wann sind diese Daten?",
+        title: "Datensatzzeitraum",
+        label: "Auf welchen Zeitraum beziehen sich die Daten?",
         datePickerProps: {
             value: companyInformation.datum,
             views: ['year'],
@@ -89,7 +98,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     const plzProps: MeasureInputProps = {
         title: "Postleitzahl",
-        label: "Postleitzahl (zur Wetterdatenbestimmung)",
+        label: "Zur Bestimmung der regionalen Wasserverfügbarkeit",
         unitName: props.unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
             placeholder: "Postleitzahl",
@@ -109,53 +118,23 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const gwhGesamtFlaecheProps: MeasureInputProps = {
-        title: "Gewächshaus Gesamtfläche",
-        label: "Die gesamte Fläche des Gewächshauses",
-        unitName: props.unitValues.measures.GWHGesamtflaeche[0]?.values,
-        textFieldProps: {
-            value: companyInformation.gwhGesamtFlaeche?.value,
+    const produktionsweiseProps: SelectionInputProps = {
+        title: "Produktionsweise",
+        label: "Auf welche Weise produzieren Sie?",
+        selectProps: {
+            value: companyInformation.produktionsweise,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhGesamtFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHGesamtflaeche[0].id}
-            })
+                produktionsweise: parseFloat(event.target.value)
+            }),
+            lookupValues: props.lookupValues.Produktionstyp
         }
     }
 
-    const einheitlicheWaermeversorgungProps: SingleShowConditionalRadioInputProps = {
-        title: "Einheitliche Wärmeversorgung",
-        label: "Ist die Wärmeversorgung Einheitlich?",
-        radioGroupProps: {
-            value: companyInformation.einheitlicheWaermeversorgung,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                einheitlicheWaermeversorgung: parseFloat(event.target.value)
-            })
-        },
-        radioButtonValues: props.lookupValues.EinheitlicheWaermeversorgung,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.EinheitlicheWaermeversorgung.filter(option => option.values.toUpperCase() == "NEIN");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const waermeteilungFlaecheProps: MeasureInputProps = {
-        title: "Wärmeverteilung Fläche",
-        label: "Wie viel Fläche ist Wärmeverteilt?",
-        unitName: "m2",
-        textFieldProps: {
-            value: companyInformation.waermeteilungFlaeche?.value,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.WaermeteilungFlaeche[0].id}
-            })
-        }
-    }
-
-    const gwhFlaecheProps: MeasureInputProps = {
-        title: "Gewächshaus Fläche",
-        label: "Wie groß ist die Fläche eines Hauses?",
-        unitName: "m2",
+    const gwhflaecheProps: MeasureInputProps = {
+        title: "Gewächshausfläche",
+        label: "Gesamtfläche des zu berechnenden Hauses",
+        unitName: props.unitValues.measures.GWHFlaeche[0]?.values,
         textFieldProps: {
             value: companyInformation.gwhFlaeche?.value,
             onChange: event => setCompanyInformationState({
@@ -165,9 +144,22 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
+    const nutzflaecheProps: MeasureInputProps = {
+        title: "Nutzfläche",
+        label: "Effektiv genutzte/bestellte Fläche des Hauses",
+        unitName: props.unitValues.measures.Nutzflaeche[0]?.values,
+        textFieldProps: {
+            value: companyInformation.nutzflaeche?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                nutzflaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.Nutzflaeche[0].id}
+            })
+        }
+    }
+
     const gwhArtProps: SelectionInputProps = {
-        title: "Gewächshaus Art",
-        label: "Bauart des Gewächshauses",
+        title: "Bauart",
+        label: "Typ der GWH-Bauart",
         selectProps: {
             lookupValues: props.lookupValues.GWHArt,
             value: companyInformation.gwhArt,
@@ -179,8 +171,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     }
 
     const gwhAlterProps: DateInputProps = {
-        title: "Gewächshaus Alter",
-        label: "Wann wurde das Gewächshaus gebaut?",
+        title: "Baujahr",
+        label: "In welchem Jahr wurde das Gewächhaus gebaut?",
         datePickerProps: {
             views: ['year'],
             value: companyInformation.gwhAlter?.value,
@@ -206,8 +198,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     }
 
     const bedachungsmaterialAlterProps: DateInputProps = {
-        title: "Alter Bedachungsmaterial",
-        label: "Seit wann nutzen Sie das Bedachungsmaterial?",
+        title: "Anschaffungsjahr Bedachung",
+        label: "Eindeckungsjahr des momentanen Bedachungsmaterials",
         datePickerProps: {
             views: ['year'],
             value: companyInformation.bedachungsmaterialAlter?.value,
@@ -233,8 +225,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     }
 
     const stehwandmaterialAlterProps: DateInputProps = {
-        title: "Alter Stehwandmaterial",
-        label: "Seit wann nutzen Sie das Stehwandmaterial?",
+        title: "Anschaffungsjahr Stehwand",
+        label: "In welchem Jahr wurde das momentane Stehwandmaterial angebracht?",
         datePickerProps: {
             views: ['year'],
             value: companyInformation.stehwandmaterialAlter?.value,
@@ -246,55 +238,9 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const energieschirmProps: SingleShowConditionalRadioInputProps = {
-        title: "Energieschirm",
-        label: "Verwenden Sie einen Energieschirm?",
-        radioGroupProps: {
-            value: companyInformation.energieschirm,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                energieschirm: parseFloat(event.target.value)
-            })
-        },
-        radioButtonValues: props.lookupValues.Energieschirm,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.Energieschirm.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-
-
-    const energieschirmTypProps: SelectionInputProps = {
-        title: "Typ",
-        label: "Welchen Typ von Energieschirm verwenden Sie?",
-        selectProps: {
-            lookupValues: props.lookupValues.EnergieschirmTyp,
-            value: companyInformation.energieschirmTyp,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                energieschirmTyp: parseFloat(event.target.value)
-            })
-        }
-    }
-
-    const energieschirmAlterProps: DateInputProps = {
-        title: "Alter Energieschirm",
-        label: "Seit wann nutzen Sie den Energieschirm?",
-        datePickerProps: {
-            views: ['year'],
-            value: companyInformation.energieschirmAlter?.value,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                energieschirmAlter: {value:event,unit:props.unitValues.measures.AlterEnergieschirm[0].id}
-            }),
-            renderInput: () => <TextField/>
-        }
-    }
-
     const stehwandhoeheProps: MeasureInputProps = {
         title: "Stehwandhöhe",
-        label: "Höhe der Stehwände",
+        label: "Höhe der Stehwände ab Fundament",
         unitName: "Meter",
         textFieldProps: {
             value: companyInformation.stehwandhoehe?.value,
@@ -358,8 +304,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     }
 
     const reihenabstandProps: MeasureInputProps = {
-        title: "Reihenabstand (Rinnenabstand)",
-        label: "Wie groß ist der Abstand zwischen den Reihen (Reihenmitte zu Reihenmitte)",
+        title: "Reihenabstand",
+        label: "Wie groß ist der Abstand zwischen den Kulturreihen? (Reihenmitte zu Reihenmitte)",
          unitName: props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0]?.values,
         textFieldProps: {
             value: companyInformation.reihenabstand?.value,
@@ -383,81 +329,156 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         }
     }
 
-    const transportsystemProps: SingleShowConditionalRadioInputProps = {
-        title: "Transportsystem",
-        label: "Verwenden Sie ein Transportsystem? (Buisrail oder vergleichbares)",
+    const bodenabdeckungProps: DynamicInputProps = {
+        title: "Bodenabdeckung",
+        label: "Welche Bodenabdeckungen werden verwendet? Wie lang ist die erwartete Nutzungsdauer?",
+        optional: true,
+        textFieldProps: {label:"Nutzungsdauer"},
+        selectProps: {
+            lookupValues: props.lookupValues.Bodenabdeckung
+        },
+        unitSelectProps: {
+            lookupValues: props.lookupValues.Bodenabdeckung,
+            unitValues:  props.unitValues,
+            optionGroup: "Bodenabdeckung"
+        },
+        onValueChange: values => setCompanyInformationState({
+            ...companyInformation,
+            bodenabdeckung: values.map(value => {
+                return {
+                    selectValue: value.selectValue,
+                    textFieldValue:value.textFieldValue,
+                    textField2Value:value.textField2Value
+                }
+            })
+        }),
+        initValues: props.values.bodenabdeckung
+    }
+
+    const energieschirmProps: SingleShowConditionalRadioInputProps = {
+        title: "Wärmedämmschirm / Schattierung",
+        label: "Verwenden Sie einen entsprechenden Schirm?",
         radioGroupProps: {
-            value: companyInformation.transportsystem,
+            value: companyInformation.energieschirm,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                transportsystem: parseFloat(event.target.value)
+                energieschirm: parseFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Transportsystem,
+        radioButtonValues: props.lookupValues.Energieschirm,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Transportsystem.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = props.lookupValues.Energieschirm.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
 
-    const transportsystemAlterProps: DateInputProps = {
-        title: "Alter Transportsystem",
-        label: "Seit wann nutzen Sie das Transportsystem?",
-        datePickerProps: {
-            views: ['year'],
-            value: companyInformation.transportsystemAlter?.value,
+    const energieschirmTypProps: SelectionInputProps = {
+        title: "Schirmbauart",
+        label: "Welche Art von Schirm/Schirmen wird verwendet?",
+        selectProps: {
+            lookupValues: props.lookupValues.EnergieschirmTyp,
+            value: companyInformation.energieschirmTyp,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                transportsystemAlter: {value:event,unit:props.unitValues.measures.AlterTransportsystem[0].id}
+                energieschirmTyp: parseFloat(event.target.value)
+            })
+        }
+    }
+
+    const energieschirmAlterProps: DateInputProps = {
+        title: "Anschaffungsjahr Schirm",
+        label: "In welchem Jahr wurde der momentane Schirm angebracht?",
+        datePickerProps: {
+            views: ['year'],
+            value: companyInformation.energieschirmAlter?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                energieschirmAlter: {value:event,unit:props.unitValues.measures.AlterEnergieschirm[0].id}
             }),
             renderInput: () => <TextField/>
         }
     }
 
 
-    const produktionstypProps: SelectionInputProps = {
-        title: "Produktionstyp",
-        label: "Auf welche Weise produzieren Sie?",
+    const produktionssystemProps: ConditionalSelectionInputProps = {
+        title: "Produktionssystem",
+        label: "Welches System wird zur Kultivierung verwendet?",
         selectProps: {
-            value: companyInformation.produktionstyp,
+            value: companyInformation.produktionssystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                produktionstyp: parseFloat(event.target.value)
+                produktionssystem: parseFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues.Produktionstyp
+            lookupValues: props.lookupValues.Produktionssystem
+        },
+        hideChildren: value => {
+            let wrongOption = props.lookupValues.Produktionssystem.filter(option => option.values.toUpperCase() == "BODEN");
+            return wrongOption.length > 0 && wrongOption[0].id == value
         }
     }
 
-    const kultursystemProps: SelectionInputProps = {
-        title: "Kultursystem",
-        label: "Welches Kultursystem wird verwendet?",
-        selectProps: {
-            value: companyInformation.kultursystem,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                kultursystem: parseFloat(event.target.value)
-            }),
-            lookupValues: props.lookupValues.Kultursystem
-        }
-    }
-
-    const kultursystemAlterProps: DateInputProps = {
-        title: "Alter Kultursystem",
-        label: "Wie alt ist das Hydroponiksystem?",
+    const produktionssystemAlterProps: DateInputProps = {
+        title: "Anschaffungsjahr Produktionssystem",
+        label: "Wann wurde das momentane System installiert? (Bei Produktion im Boden nicht zutreffend)",
         datePickerProps: {
             views: ['year'],
-            value: companyInformation.kultursystemAlter?.value,
+            value: companyInformation.produktionssystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                kultursystemAlter: {value:event,unit:props.unitValues.measures.AlterKultursystem[0].id}
+                produktionssystemAlter: {value:event,unit:props.unitValues.measures.AlterProduktionssystem[0].id}
+            }),
+            renderInput: () => <TextField/>
+        }
+    }
+
+    const bewaesserArtProps: SelectionInputProps = {
+        title: "Bewässerungssystem",
+        label: "Welches Bewässerungssystem wird verwendet?",
+        selectProps: {
+            value: companyInformation.bewaesserArt,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                bewaesserArt: parseFloat(event.target.value)
+            }),
+            lookupValues: props.lookupValues.Bewaesserungsart
+        }
+    }
+    
+    const heizsystemProps: ConditionalSelectionInputProps = {
+        title: "Hauptsystem zur Wärmeverteilung",
+        label: "Welches System nutzen Sie primär zur Wärmeverteilung?",
+        selectProps: {
+            lookupValues: props.lookupValues.Heizsystem,
+            value: companyInformation.heizsystem,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                heizsystem: parseFloat(event.target.value)
+            }),
+        },
+        hideChildren: value => {
+            let trueOptions = props.lookupValues.Heizsystem.filter(option => option.values.toUpperCase() == "KEINES");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+
+    }
+
+    const heizsystemAlterProps: DateInputProps = {
+        title: "Anschaffungsjahr Heizsystem",
+        label: "Wann wurde das momentane System installiert?",
+        datePickerProps: {
+            views: ['year'],
+            value: companyInformation.heizsystemAlter?.value,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                heizsystemAlter: {value:event,unit:props.unitValues.measures.AlterHeizsystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
     }
 
     const zusaetzlichesHeizsystemProps: SingleShowConditionalRadioInputProps = {
-        title: "Zusätzliches Heizsystem",
-        label: "Verwenden Sie ein zusätzliches Heizsystem?",
+        title: "Sekundäres System zur Wärmeverteilung",
+        label: "Verwenden Sie ein weiteres Heizsystem neben dem Hauptsystem?",
         radioGroupProps: {
             value: companyInformation.zusaetzlichesHeizsystem,
             onChange: event => setCompanyInformationState({
@@ -474,7 +495,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     const zusaetzlichesHeizsystemTypProps: SelectionInputProps = {
         title: "Typ",
-        label: "Welches zusätzliche Heizsystem wird verwendet?",
+        label: "Welches zusätzliche System verwenden Sie?",
         selectProps: {
             lookupValues: props.lookupValues.ZusaetzlichesHeizsystemTyp,
             value: companyInformation.zusaetzlichesHeizsystemTyp,
@@ -486,8 +507,8 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     }
 
     const zusaetzlichesHeizsystemAlterProps: DateInputProps = {
-        title: "Alter zusätzliches Heizsystem",
-        label: "Wie alt ist das zusätzliche Heizsystem?",
+        title: "Anschaffungsjahr sekundäres Heizsystem",
+        label: "Wann wurde das momentane System installiert?",
         datePickerProps: {
             views: ['year'],
             value: companyInformation.zusaetzlichesHeizsystemAlter?.value,
@@ -501,22 +522,23 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
 
     return (
         <Grid container xs={12} spacing={8}>
-            <Grid container item direction="column" xs={12} sx={{marginTop:5}}>
-                <Typography variant="h4">{"Gewächshaus: " + companyInformation.gewaechshausName}</Typography>
-                <Divider sx={{ borderBottomWidth: 3, bgcolor: "black"  }}/>
+            <Grid container item xs={12} sx={{marginTop:5}}>
+                <Paper sx={{p:2}}>
+                    Im Folgenden können Sie die Daten für Ihre Tomatenkultur eingeben. Bei der Dateneingabe ist es wichtig, dass Sie sich auf die Daten eines spezifischen Gewächshauses, oder Gewächshausabteils beziehen. Somit werden Ungenauigkeiten bei der Berechnung der CO2- und H2O-Footprints vermieden.
+                </Paper>
             </Grid>
+            <SectionDivider title="Allgemeine Daten"/>
             <Grid item container xs={12}  spacing={4}>
                 <DateInputField {...datumProps} />
                 <MeasureInputField {...plzProps} />
             </Grid>
+            <Grid item container xs={12}  spacing={4}>
+                <SelectionInputField {...produktionsweiseProps} />
+            </Grid>
+            <SectionDivider title="Gewächshauskonstruktion"/>
             <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...einheitlicheWaermeversorgungProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureInputField {...waermeteilungFlaecheProps} />
-                    </Grid>
-                </SingleShowConditionalRadioInputField>
-                <MeasureInputField {...gwhGesamtFlaecheProps} />
-                <MeasureInputField {...gwhFlaecheProps} />
+                <MeasureInputField {...gwhflaecheProps} />
+                <MeasureInputField {...nutzflaecheProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...gwhArtProps} />
@@ -530,15 +552,6 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 <SelectionInputField {...stehwandmaterialProps} />
                 <DateInputField {...stehwandmaterialAlterProps} />
             </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...energieschirmProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <SelectionInputField {...energieschirmTypProps} />
-                    <DateInputField {...energieschirmAlterProps} />
-                    </Grid>
-                </SingleShowConditionalRadioInputField>
-            </Grid>
-            <SectionDivider title="Gewächshaus Konstruktion"/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...stehwandhoeheProps} />
                 <MeasureInputField {...laengeProps} />
@@ -554,21 +567,27 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...vorwegbreiteProps} />
             </Grid>
-            <SectionDivider title=""/>
             <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...transportsystemProps}>
+                <DynamicInputField {...bodenabdeckungProps} />
+            </Grid>
+            <SectionDivider title="Ausstattungskomponenten"/>
+            <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...energieschirmProps}>
                     <Grid item container xs={12} spacing={4}>
-                        <DateInputField {...transportsystemAlterProps} />
+                        <SelectionInputField {...energieschirmTypProps} />
+                        <DateInputField {...energieschirmAlterProps} />
                     </Grid>
                 </SingleShowConditionalRadioInputField>
             </Grid>
+            <ConditionalSelectionInputField {...produktionssystemProps}>
+                <DateInputField {...produktionssystemAlterProps}/>
+            </ConditionalSelectionInputField>
             <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...produktionstypProps} />
+                <SelectionInputField {...bewaesserArtProps} />
             </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <SelectionInputField {...kultursystemProps} />
-                <DateInputField {...kultursystemAlterProps} />
-            </Grid>
+            <ConditionalSelectionInputField {...heizsystemProps}>
+                <DateInputField {...heizsystemAlterProps}/>
+            </ConditionalSelectionInputField>
             <Grid item container xs={12} spacing={4}>
                 <SingleShowConditionalRadioInputField {...zusaetzlichesHeizsystemProps}>
                     <Grid item container xs={12} spacing={4}>

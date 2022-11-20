@@ -69,10 +69,8 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             gewaechshausName: null,
             datum: new Date(Date.now()),
             plz: {value: null, unit: null},
-            gwhGesamtFlaeche: {value: null, unit: null},
-            einheitlicheWaermeversorgung: null,
             gwhFlaeche: {value: null, unit: null},
-            waermeteilungFlaeche: {value: null, unit: null},
+            nutzflaeche: {value: null, unit: null},
             gwhArt: null,
             gwhAlter: {value: null, unit: null},
             bedachungsmaterial: null,
@@ -89,11 +87,13 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             scheibenlaenge: {value: null, unit: null},
             reihenabstand: {value: null, unit: null},
             vorwegbreite: {value: null, unit: null},
-            transportsystem: null,
-            transportsystemAlter: {value:null,unit: null},
-            produktionstyp: null,
-            kultursystem: null,
-            kultursystemAlter: {value: null, unit: null},
+            bodenabdeckung: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            heizsystem: null,
+            heizsystemAlter: {value:null,unit: null},
+            produktionsweise: null,
+            produktionssystem: null,
+            produktionssystemAlter: {value: null, unit: null},
+            bewaesserArt: null,
             zusaetzlichesHeizsystem: null,
             zusaetzlichesHeizsystemTyp: null,
             zusaetzlichesHeizsystemAlter: {value: null,unit: null},
@@ -119,20 +119,15 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             fleischPflanzenabstand: {value: null, unit: null},
             fleischTriebzahl: {value: null, unit: null},
             fleischErtragJahr: {value: null, unit: null},
-            kulturflaeche: {value: null, unit: null},
             kulturBeginn: {value: null, unit: null},
             kulturEnde: {value: null, unit: null},
             nebenkultur: null,
             nebenkulturBeginn: {value: null, unit: null},
             nebenkulturEnde: {value: null, unit: null},
         },
-        cultureManagement: {
-            mittlereSolltemperaturTag: {value: null,unit: null},
-            mittlereSolltemperaturNacht: {value: null,unit: null},
-            entfeuchtung: null,
-            luftfeuchte: {value: null,unit: null},
-        },
         energyConsumption: {
+            waermeversorgung: null,
+            waermeteilungFlaeche: {value: null, unit: null},
             energietraeger: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             bhkw: null,
             bhkwAnteilErdgas: {value: null, unit: null},
@@ -146,7 +141,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             belichtungsstromAnschlussleistung: {value: null, unit: null},
             belichtungsstromLaufzeitJahr: {value: null, unit: null},
         },
-        consumableItems: {
+        helpingMaterials: {
             co2Herkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             duengemittelSimple: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             duengemittelDetail: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
@@ -154,9 +149,8 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             insektizideKg: {value: null, unit: null},
             fungizideLiter: {value: null, unit: null},
             insektizideLiter: {value: null, unit: null},
-            nuetzlinge: [{selectValue: null, textFieldValue: { value: null, unit: null}}]
         },
-        consumableMaterials: {
+        companyMaterials: {
             growbagsKuebel: null,
             growbagsKuebelSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
             kuebelVolumenProTopf: {value: null, unit: null},
@@ -174,15 +168,12 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             rispenbuegelMaterial: null,
             rispenbuegelAnzProTrieb: {value: null, unit: null},
             rispenbuegelWiederverwendung: {value: null, unit: null},
-            bewaesserArt: null,
-            bodenabdeckung: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             jungpflanzenZukauf: null,
             jungpflanzenDistanz: {value: null, unit: null},
             jungpflanzenSubstrat: null,
             verpackungsmaterial: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
             anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
             sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
-            zusaetzlicherMaschineneinsatz: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}]
         }
     }
 
@@ -241,6 +232,9 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
 
     const parseDateTuple = (tuple:string) => {
         const age = JSON.parse(tuple)
+        if (age[0] == 0) {
+            return {value: null, unit: null}
+        }
         const today = new Date()
         return {value: new Date(today.getFullYear() - age[0], today.getMonth(), today.getDay()), unit: age[1]}
     }
@@ -274,10 +268,8 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     gewaechshausName: getGreenhouseName(initialDataset.greenhouse_name)[1],
                     datum: new Date(Date.now()),
                     plz: parseMeasureTuple(initialDataset.PLZ),
-                    gwhGesamtFlaeche: parseMeasureTuple(initialDataset.GWHGesamtflaeche),
-                    einheitlicheWaermeversorgung: parseSelectionTuple(initialDataset.EinheitlicheWaermeversorgung) ?? inputFieldData.consumableItems.co2Herkunft,
                     gwhFlaeche: parseMeasureTuple(initialDataset.GWHFlaeche),
-                    waermeteilungFlaeche: parseMeasureTuple(initialDataset.WaermeteilungFlaeche),
+                    nutzflaeche: parseMeasureTuple(initialDataset.Nutzflaeche),
                     gwhArt: parseSelectionTuple(initialDataset.GWHArt) ?? inputFieldData.companyInformation.gwhArt,
                     gwhAlter: parseDateTuple(initialDataset.GWHAlter),
                     bedachungsmaterial: parseSelectionTuple(initialDataset.Bedachungsmaterial) ?? inputFieldData.companyInformation.bedachungsmaterial,
@@ -294,11 +286,13 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     scheibenlaenge: parseMeasureTuple(initialDataset.Scheibenlaenge),
                     reihenabstand: parseMeasureTuple(initialDataset["Reihenabstand(Rinnenabstand)"]),
                     vorwegbreite: parseMeasureTuple(initialDataset.Vorwegbreite),
-                    transportsystem: parseSelectionTuple(initialDataset.Transportsystem) ?? inputFieldData.companyInformation.transportsystem,
-                    transportsystemAlter: parseDateTuple(initialDataset.AlterTransportsystem),
-                    produktionstyp: parseSelectionTuple(initialDataset.Produktionstyp) ?? inputFieldData.consumableItems.co2Herkunft,
-                    kultursystem: parseSelectionTuple(initialDataset.Kultursystem) ?? inputFieldData.consumableItems.co2Herkunft,
-                    kultursystemAlter: parseDateTuple(initialDataset.AlterKultursystem),
+                    bodenabdeckung: parseSelectionTuple(initialDataset.Bodenabdeckung) ?? inputFieldData.companyInformation.bodenabdeckung,
+                    heizsystem: parseSelectionTuple(initialDataset.Heizsystem) ?? inputFieldData.companyInformation.heizsystem,
+                    heizsystemAlter: parseDateTuple(initialDataset.AlterHeizsystem),
+                    produktionsweise: parseSelectionTuple(initialDataset.Produktionstyp) ?? inputFieldData.companyInformation.produktionsweise,
+                    produktionssystem: parseSelectionTuple(initialDataset.Produktionssystem) ?? inputFieldData.companyInformation.produktionssystem,
+                    produktionssystemAlter: parseDateTuple(initialDataset.AlterProduktionssystem),
+                    bewaesserArt: parseSelectionTuple(initialDataset.Bewaesserungsart) ?? inputFieldData.companyInformation.bewaesserArt,
                     zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystem,
                     zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystemTyp,
                     zusaetzlichesHeizsystemAlter: parseDateTuple(initialDataset.AlterZusaetzlichesHeizsystem),
@@ -324,20 +318,15 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     fleischPflanzenabstand: parseMeasureTuple(initialDataset.FleischPflanzenabstandInDerReihe),
                     fleischTriebzahl: parseMeasureTuple(initialDataset.FleischTriebzahl),
                     fleischErtragJahr: parseMeasureTuple(initialDataset.FleischErtragJahr),
-                    kulturflaeche: parseMeasureTuple(initialDataset.Kulturflaeche),
                     kulturBeginn: parseMeasureTuple(initialDataset.KulturBeginn),
                     kulturEnde: parseMeasureTuple(initialDataset.KulturEnde),
                     nebenkultur: parseSelectionTuple(initialDataset.Nebenkultur) ?? inputFieldData.cultureInformation.nebenkultur,
                     nebenkulturBeginn: parseMeasureTuple(initialDataset.NebenkulturBeginn),
                     nebenkulturEnde: parseMeasureTuple(initialDataset.NebenkulturEnde),
                 },
-                cultureManagement: {
-                    mittlereSolltemperaturTag: parseMeasureTuple(initialDataset.MittlereSolltemperaturTag),
-                    mittlereSolltemperaturNacht: parseMeasureTuple(initialDataset.MittlereSolltemperaturNacht),
-                    entfeuchtung: parseSelectionTuple(initialDataset.Entfeuchtung) ?? inputFieldData.cultureManagement.entfeuchtung,
-                    luftfeuchte: parseMeasureTuple(initialDataset.Luftfeuchte),
-                },
                 energyConsumption: {
+                    waermeversorgung: parseSelectionTuple(initialDataset.Waermeversorgung) ?? inputFieldData.energyConsumption.waermeversorgung,
+                    waermeteilungFlaeche: parseMeasureTuple(initialDataset.WaermeteilungFlaeche),
                     energietraeger: parseSelectionTuple(initialDataset.Energietraeger) ?? inputFieldData.energyConsumption.energietraeger,
                     bhkw: parseSelectionTuple(initialDataset.BHKW) ?? inputFieldData.energyConsumption.bhkw,
                     bhkwAnteilErdgas: parseMeasureTuple(initialDataset["BHKW:AnteilErdgas"]),
@@ -351,43 +340,39 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     belichtungsstromAnschlussleistung: parseMeasureTuple(initialDataset["Belichtung:AnschlussleistungProLampe"]),
                     belichtungsstromLaufzeitJahr: parseMeasureTuple(initialDataset["Belichtung:LaufzeitProJahr"]),
                 },
-                consumableItems: {
-                    co2Herkunft: parseSelectionTuple(initialDataset["CO2-Herkunft"]) ?? inputFieldData.consumableItems.co2Herkunft,
-                    duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]) ?? inputFieldData.consumableItems.duengemittelSimple,
-                    duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]) ?? inputFieldData.consumableItems.duengemittelDetail,
+                helpingMaterials: {
+                    co2Herkunft: parseSelectionTuple(initialDataset["CO2-Herkunft"]) ?? inputFieldData.helpingMaterials.co2Herkunft,
+                    duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelSimple,
+                    duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelDetail,
                     fungizideKg: parseMeasureTuple(initialDataset.FungizideKg),
                     insektizideKg: parseMeasureTuple(initialDataset.InsektizideKg),
                     fungizideLiter: {value: null, unit: null},
                     insektizideLiter: {value: null, unit: null},
-                    nuetzlinge: parseSelectionTuple(initialDataset.Nuetzlinge) ?? inputFieldData.consumableItems.nuetzlinge,
                 },
-                consumableMaterials: {
-                    growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel) ?? inputFieldData.consumableMaterials.growbagsKuebel,
-                    growbagsKuebelSubstrat: parseSelectionTuple(initialDataset.Substrat) ?? inputFieldData.consumableMaterials.growbagsKuebelSubstrat,
+                companyMaterials: {
+                    growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel) ?? inputFieldData.companyMaterials.growbagsKuebel,
+                    growbagsKuebelSubstrat: parseSelectionTuple(initialDataset.Substrat) ?? inputFieldData.companyMaterials.growbagsKuebelSubstrat,
                     kuebelVolumenProTopf: parseMeasureTuple(initialDataset["Kuebel:VolumenProTopf"]),
                     kuebelJungpflanzenProTopf: parseMeasureTuple(initialDataset["Kuebel:JungpflanzenProTopf"]),
-                    kuebelAlter: parseDateTuple(initialDataset["Kuebel:Alter"]),
-                    schnur: parseSelectionTuple(initialDataset.Schnur) ?? inputFieldData.consumableMaterials.schnur,
-                    schnurMaterial: parseSelectionTuple(initialDataset["SchnuereRankhilfen:Material"]) ?? inputFieldData.consumableMaterials.schnurMaterial,
+                    kuebelAlter: parseMeasureTuple(initialDataset["Kuebel:Alter"]),
+                    schnur: parseSelectionTuple(initialDataset.Schnur) ?? inputFieldData.companyMaterials.schnur,
+                    schnurMaterial: parseSelectionTuple(initialDataset["SchnuereRankhilfen:Material"]) ?? inputFieldData.companyMaterials.schnurMaterial,
                     schnurLaengeProTrieb: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Laenge"]),
                     schnurWiederverwendung: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Wiederverwendung"]),
-                    klipse: parseSelectionTuple(initialDataset.Klipse) ?? inputFieldData.consumableMaterials.klipse,
-                    klipseMaterial: parseSelectionTuple(initialDataset["Klipse:Material"]) ?? inputFieldData.consumableMaterials.klipseMaterial,
+                    klipse: parseSelectionTuple(initialDataset.Klipse) ?? inputFieldData.companyMaterials.klipse,
+                    klipseMaterial: parseSelectionTuple(initialDataset["Klipse:Material"]) ?? inputFieldData.companyMaterials.klipseMaterial,
                     klipseAnzProTrieb: parseMeasureTuple(initialDataset["Klipse:AnzahlProTrieb"]),
                     klipseWiederverwendung: parseMeasureTuple(initialDataset["Klipse:Wiederverwendung"]),
-                    rispenbuegel: parseSelectionTuple(initialDataset.Rispenbuegel) ?? inputFieldData.consumableMaterials.rispenbuegel,
-                    rispenbuegelMaterial: parseSelectionTuple(initialDataset["Rispenbuegel:Material"]) ?? inputFieldData.consumableMaterials.rispenbuegelMaterial,
+                    rispenbuegel: parseSelectionTuple(initialDataset.Rispenbuegel) ?? inputFieldData.companyMaterials.rispenbuegel,
+                    rispenbuegelMaterial: parseSelectionTuple(initialDataset["Rispenbuegel:Material"]) ?? inputFieldData.companyMaterials.rispenbuegelMaterial,
                     rispenbuegelAnzProTrieb: parseMeasureTuple(initialDataset["Rispenbuegel:AnzahlProTrieb"]),
                     rispenbuegelWiederverwendung: parseMeasureTuple(initialDataset["Rispenbuegel:Wiederverwendung"]),
-                    bewaesserArt: parseSelectionTuple(initialDataset.Bewaesserungsart) ?? inputFieldData.consumableMaterials.bewaesserArt,
-                    bodenabdeckung: parseSelectionTuple(initialDataset.Bodenabdeckung) ?? inputFieldData.consumableMaterials.bodenabdeckung,
-                    jungpflanzenZukauf: parseSelectionTuple(initialDataset["Jungpflanzen:Zukauf"]) ?? inputFieldData.consumableMaterials.jungpflanzenZukauf,
+                    jungpflanzenZukauf: parseSelectionTuple(initialDataset["Jungpflanzen:Zukauf"]) ?? inputFieldData.companyMaterials.jungpflanzenZukauf,
                     jungpflanzenDistanz: parseMeasureTuple(initialDataset["Jungpflanzen:Distanz"]),
-                    jungpflanzenSubstrat: parseSelectionTuple(initialDataset["Jungpflanzen:Substrat"]) ?? inputFieldData.consumableMaterials.jungpflanzenSubstrat,
-                    verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial) ?? inputFieldData.consumableMaterials.verpackungsmaterial,
+                    jungpflanzenSubstrat: parseSelectionTuple(initialDataset["Jungpflanzen:Substrat"]) ?? inputFieldData.companyMaterials.jungpflanzenSubstrat,
+                    verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial) ?? inputFieldData.companyMaterials.verpackungsmaterial,
                     anzahlNutzungenMehrwegsteigen: parseMeasureTuple(initialDataset["Verpackungsmaterial:AnzahlMehrwegsteigen"]),
-                    sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien) ?? inputFieldData.consumableMaterials.sonstVerbrauchsmaterialien,
-                    zusaetzlicherMaschineneinsatz: parseSelectionTuple(initialDataset.ZusaetzlicherMaschineneinsatz) ?? inputFieldData.consumableMaterials.zusaetzlicherMaschineneinsatz,
+                    sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien) ?? inputFieldData.companyMaterials.sonstVerbrauchsmaterialien,
                 }
             })
             setPageStatus(PageStatus.OldGH)
@@ -453,6 +438,16 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                             <Typography component="h1" variant="h5">
                                 Neuen Datensatz anlegen
                             </Typography>
+                        </Grid>
+                        <Grid container item alignItems={"center"} justifyContent={"center"}  xs={12}>
+                            <Grid item xs={8}>
+                                <p>
+                                    Sie haben den ersten Schritt getätigt um einen neuen Datensatz anzulegen. Nun haben Sie zwei Optionen zur Auswahl.
+                                    Entweder Sie legen einen komplett neuen Datensatz an (bei Erstnutzung oder Hinzufügen eines weiteren Gewächshauses), oder Sie wählen ein bestehendes/ bereits hinterlegtes Haus aus und nehmen Änderungen am Datensatz vor.
+                                    Dies ist besonders sinnvoll, wenn Sie für ein bestehendes Haus ein weiteres Kulturjahr hinterlegen wollen um die Veränderungen der Fußabdrücke über die Jahre betrachten zu wollen.
+                                    In diesem Fall ändern Sie im Datensatz bspw. das Kulturjahr, bauliche Änderungen, Erträge, Verbräuche und so weiter.
+                                </p>
+                            </Grid>
                         </Grid>
                         <Grid container direction={"row"} xs={12} sx={{pt:8}} alignItems="center" justifyContent="center" >
                             <Grid item container xs={4} alignItems="center" justifyContent="center" sx={{pr:4}} spacing={1}>

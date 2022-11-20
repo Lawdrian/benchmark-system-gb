@@ -10,6 +10,7 @@
 import React from 'react';
 import InvertColorsIcon from '@mui/icons-material/InvertColors';
 import Co2Icon from '@mui/icons-material/Co2';
+import HomeIcon from '@mui/icons-material/Home';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
@@ -43,14 +44,15 @@ export const pageConfig: PageConfig = {
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
         .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
+        .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PageWaterFootprint/>, "water-footprint")
-        .withHeaderTitle("Water Footprint - Berechnung des Wasserverbrauchs")
-        .includeInDrawer(<InvertColorsIcon/>, "Water Footprint")
+        .withHeaderTitle("H2O Footprint - Berechnung des Wasserverbrauchs")
+        .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PageC02Footprint/>, "co2-footprint")
         .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
-        .includeInDrawer(<Co2Icon/>, "CO2 Footprint")
+        .includeInDrawer(<Co2Icon/>, "CO2 Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")
         .withHeaderTitle("Eingabe der Gewächshausdaten")

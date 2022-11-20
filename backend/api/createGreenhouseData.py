@@ -116,11 +116,15 @@ class CreateGreenhouseData(APIView):
             except ValueError:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
+                else:
+                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
                 return Response({'Calculation Error': 'Invalid input data!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             except IndexError:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
+                else:
+                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
                 return Response({'Calculation Error': 'Invalid input data!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
@@ -168,11 +172,15 @@ class CreateGreenhouseData(APIView):
             except ValueError:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
+                else:
+                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
                 return Response({'Save Error': 'Invalid input data!'},
                                 status=status.HTTP_400_BAD_REQUEST)
             except IndexError:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
+                else:
+                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
                 return Response({'Save Error': 'Invalid input data!'},
                                 status=status.HTTP_400_BAD_REQUEST)
 

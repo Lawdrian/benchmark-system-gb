@@ -3,7 +3,7 @@
 
 """
 from backend.models import OptionUnits, MeasurementUnits, Options, Measurements
-from backend.utils import defaultOption
+from backend.utils import default_option
 
 
 def standardize_units(data):
@@ -88,8 +88,8 @@ def standardize_units(data):
     #technisches CO2: m3*(0,00196*1000) = kg
     #direkte Gasverbrennung: m3*(0,00196*1000) = kg
     #eigenes BHKW: m3*(0,00196*1000) = kg !!!FALLS BHKW verwendet wird, dann Wert=0!!!
-    print(data["CO2-Herkunft"] != defaultOption)
-    if data["CO2-Herkunft"] != defaultOption:
+    print(data["CO2-Herkunft"] != default_option)
+    if data["CO2-Herkunft"] != default_option:
         for index, selected_option in enumerate(data["CO2-Herkunft"]):
             selected_option_value = all_options.filter(id=selected_option[0])[0].option_value
             kwh_co2herkunft_id = all_optionunits.filter(option_id=selected_option[0]).filter(unit_name="kg")[0].id

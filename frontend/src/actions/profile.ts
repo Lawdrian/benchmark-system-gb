@@ -25,11 +25,25 @@ export const loadProfile = (
     axios.get('/backend/get-profile-summary', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Profile response", response)
-            dispatch({
-                type: PROFILE_LOADED,
-                payload: mapProfileData(response.data)
-            })
-            successCB()
+            if (response.status == 200) {
+                dispatch({
+                    type: PROFILE_LOADED,
+                    payload: mapProfileData(response.data)
+                })
+                successCB()
+            }
+            else if (response.status == 204) {
+                dispatch({
+                    type: PROFILE_ERROR
+                })
+                errorCB()
+            }
+            else {
+                dispatch({
+                    type: PROFILE_ERROR
+                })
+                errorCB()
+            }
         })
         .catch((error) => {
             dispatch({

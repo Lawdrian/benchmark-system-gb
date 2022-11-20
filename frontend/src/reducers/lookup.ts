@@ -26,16 +26,16 @@ export type Option = {
  * A type to store the options for every option-group in the database
  */
 export type LookupValues = {
-    EinheitlicheWaermeversorgung: Option[]
+    Waermeversorgung: Option[]
     GWHArt: Option[]
     Bedachungsmaterial: Option[]
     Stehwandmaterial: Option[]
     AlterdesBedachungsmaterials: Option[]
     Energieschirm: Option[]
     EnergieschirmTyp: Option[]
-    Transportsystem: Option[]
+    Heizsystem: Option[]
     Produktionstyp: Option[]
-    Kultursystem: Option[]
+    Produktionssystem: Option[]
     AnzahlTriebe: Option[]
     ZusaetzlichesHeizsystem: Option[]
     ZusaetzlichesHeizsystemTyp: Option[]
@@ -80,7 +80,6 @@ export type LookupValues = {
 export type UnitValues = {
     measures: {
         PLZ: Option[]
-        GWHGesamtflaeche: Option[]
         GWHFlaeche: Option[]
         WaermeteilungFlaeche: Option[]
         GWHAlter: Option[]
@@ -94,8 +93,8 @@ export type UnitValues = {
         Scheibenlaenge: Option[]
         "Reihenabstand(Rinnenabstand)": Option[]
         Vorwegbreite: Option[]
-        AlterTransportsystem: Option[]
-        AlterKultursystem: Option[]
+        AlterHeizsystem: Option[]
+        AlterProduktionssystem: Option[]
         AlterZusaetzlichesHeizsystem: Option[]
         "SnackReihenanzahl": Option[]
         "SnackPflanzenabstandInDerReihe": Option[]
@@ -113,7 +112,7 @@ export type UnitValues = {
         "FleischPflanzenabstandInDerReihe": Option[]
         "FleischTriebzahl": Option[]
         "FleischErtragJahr": Option[]
-        Kulturflaeche: Option[]
+        Nutzflaeche: Option[]
         KulturBeginn: Option[]
         KulturEnde: Option[]
         NebenkulturBeginn: Option[]
@@ -145,7 +144,7 @@ export type UnitValues = {
         "Transport:Distanz": Option[]
     }
     selections: {
-        EinheitlicheWaermeversorgung: {
+        Waermeversorgung: {
             ja: Option[]
             nein: Option[]
         }
@@ -181,7 +180,7 @@ export type UnitValues = {
             "einfach,aluminisiert": Option[]
             "doppelt,aluminisiert": Option[]
         }
-        Transportsystem: {
+        Heizsystem: {
             "ja": Option[]
             "nein": Option[]
         }
@@ -189,7 +188,7 @@ export type UnitValues = {
             "Konventionell": Option[]
             "Biologisch": Option[]
         }
-        Kultursystem: {
+        Produktionssystem: {
             "Boden": Option[]
             "Hydroponikoffen": Option[]
             "Hydroponikgeschlossen": Option[]
@@ -426,16 +425,16 @@ export type LookupState = {
 const initialState: LookupState = {
     isLoading: false,
     lookupValues: {
-        EinheitlicheWaermeversorgung: [],
+        Waermeversorgung: [],
         GWHArt: [],
         Bedachungsmaterial: [],
         Stehwandmaterial: [],
         AlterdesBedachungsmaterials: [],
         Energieschirm: [],
         EnergieschirmTyp: [],
-        Transportsystem: [],
+        Heizsystem: [],
         Produktionstyp: [],
-        Kultursystem: [],
+        Produktionssystem: [],
         AnzahlTriebe: [],
         ZusaetzlichesHeizsystem: [],
         ZusaetzlichesHeizsystemTyp: [],
@@ -474,7 +473,6 @@ const initialState: LookupState = {
     unitValues: {
         measures: {
             PLZ: [],
-            GWHGesamtflaeche: [],
             GWHFlaeche: [],
             WaermeteilungFlaeche: [],
             GWHAlter: [],
@@ -488,8 +486,8 @@ const initialState: LookupState = {
             Scheibenlaenge: [],
             "Reihenabstand(Rinnenabstand)": [],
             Vorwegbreite: [],
-            AlterTransportsystem: [],
-            AlterKultursystem: [],
+            AlterHeizsystem: [],
+            AlterProduktionssystem: [],
             AlterZusaetzlichesHeizsystem: [],
             SnackReihenanzahl: [],
             SnackPflanzenabstandInDerReihe: [],
@@ -507,7 +505,7 @@ const initialState: LookupState = {
             FleischPflanzenabstandInDerReihe: [],
             FleischTriebzahl: [],
             FleischErtragJahr: [],
-            Kulturflaeche: [],
+            Nutzflaeche: [],
             KulturBeginn: [],
             KulturEnde: [],
             NebenkulturBeginn: [],
@@ -539,7 +537,7 @@ const initialState: LookupState = {
             "Transport:Distanz": [],
         },
         selections: {
-            EinheitlicheWaermeversorgung: {
+            Waermeversorgung: {
                 ja: [],
                 nein: [],
             },
@@ -575,7 +573,7 @@ const initialState: LookupState = {
                 "einfach,aluminisiert": [],
                 "doppelt,aluminisiert": [],
             },
-            Transportsystem: {
+            Heizsystem: {
                 "ja": [],
                 "nein": [],
             },
@@ -583,7 +581,7 @@ const initialState: LookupState = {
                 "Konventionell": [],
                 "Biologisch": [],
             },
-            Kultursystem: {
+            Produktionssystem: {
                 "Boden": [],
                 "Hydroponikoffen": [],
                 "Hydroponikgeschlossen": [],
