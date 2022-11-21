@@ -30,6 +30,8 @@ type EnergyConsumptionProps = ReduxProps & SubpageProps & {
 }
 
 export type EnergyConsumptionState = {
+    waermeversorgung: number | null
+    waermeteilungFlaeche: MeasureValue | null
     energietraeger: SelectionValue[]
     bhkw: number | null
     bhkwAnteilErdgas: MeasureValue | null
@@ -54,9 +56,39 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     // Properties of the input fields
+    const waermeversorgungProps: SingleShowConditionalRadioInputProps = {
+        title: "Geteilte Wärmeversorgung",
+        label: "Teilt sich das zu berechnende Haus die Wärmeversorgung mit anderen Häusern?",
+        radioGroupProps: {
+            value: energyConsumption.waermeversorgung,
+            onChange: event => setEnergyConsumptionState({
+                ...energyConsumption,
+                waermeversorgung: parseFloat(event.target.value)
+            })
+        },
+        radioButtonValues: props.lookupValues.Waermeversorgung,
+        showChildren: value => {
+            let trueOptions = props.lookupValues.Waermeversorgung.filter(option => option.values.toUpperCase() == "JA");
+            return trueOptions.length > 0 && trueOptions[0].id == value
+        }
+    }
+
+    const waermeteilungFlaecheProps: MeasureInputProps = {
+        title: "Gewächshausfläche mit gleicher Wärmeversorgung",
+        label: "Wie viel Fläche wird durch die selbe Wärmequelle insgesamt versorgt?",
+        unitName: "m2",
+        textFieldProps: {
+            value: energyConsumption.waermeteilungFlaeche?.value,
+            onChange: event => setEnergyConsumptionState({
+                ...energyConsumption,
+                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.WaermeteilungFlaeche[0].id}
+            })
+        }
+    }
+
     const energietraegerProps: DynamicInputProps = {
-        title: "Energieträger",
-        label: "Welche Mengen der verschiedenen Energieträger wurden in der Kulturdauer verbrauch, bzw. welche Wärmemengen wurden dadurch produziert (falls Daten vorhanden)?",
+        title: "Wärmebereitstellung / Energieträger",
+        label: "Welche Mengen der verschiedenen Energieträger wurden in der Kulturdauer verbraucht, bzw. welche Wärmemengen wurden dadurch produziert?",
         textFieldProps: {},
         selectProps: {
             lookupValues: props.lookupValues.Energietraeger
@@ -96,7 +128,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
 
     const bhkwAnteilErdgasProps: MeasureUnitInputProps = {
         title: "Anteil Erdgas",
-        label: "Wie groß ist der Erdgas Anteil mit dem Energie erzeugt wird?",
+        label: "Wie groß ist der Anteil an Erdgas, mit welchem Energie erzeugt wird?",
         textFieldProps: {
             value: energyConsumption.bhkwAnteilErdgas?.value,
             onChange: event => setEnergyConsumptionState({
@@ -116,7 +148,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
 
     const bhkwAnteilBiomethanProps: MeasureUnitInputProps = {
         title: "Anteil Biomethan",
-        label: "Wie groß ist der Biomethan Anteil mit dem Energie erzeugt wird?",
+        label: "Wie groß ist der Anteil an Biomethan, mit welchem Energie erzeugt wird?",
         textFieldProps: {
             value: energyConsumption.bhkwAnteilBiomethan?.value,
             onChange: event => setEnergyConsumptionState({
@@ -135,8 +167,8 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     const stromherkunftProps: DynamicInputProps = {
-        title: "Stromherkunft",
-        label: "Welche Stromart beziehen Sie und wieviel?",
+        title: "Strom: Herkunft und Mengen",
+        label: "Welchen Ursprung hat der Strom für das zu berechnende Haus und in welchen Mengen wird dieser für die Kulturdauer bezogen?",
         textFieldProps: {},
         selectProps: {
             lookupValues: props.lookupValues.Stromherkunft
@@ -176,7 +208,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
 
     const belichtungsstromProps: SingleShowConditionalRadioInputProps = {
         title: "Belichtungsstrom",
-        label: "Ist der Stromverbrauch der Belichtung im allgemeinen Stromverbrauch enthalten?",
+        label: "Ist der Stromverbrauch der Belichtung im zuvor genannten Stromverbrauch enthalten?",
         radioGroupProps: {
             value: energyConsumption.belichtungsstrom,
             onChange: event => setEnergyConsumptionState({
@@ -192,7 +224,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     const belichtungsstromVerbrauchProps: MeasureInputProps = {
-        title: "Stromverbrauch",
+        title: "Stromverbauch in kWh",
         label: "Stromverbrauch der Belichtung in Kilowattstunden",
         unitName: props.unitValues.measures["Belichtung:Stromverbrauch"][0]?.values,
         textFieldProps: {
@@ -205,8 +237,8 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     const belichtungsstromAnschlussleistungProps: MeasureInputProps = {
-        title: "Stromverbrauch Belichtung Anschlussleistung",
-        label: "Anschlussleistung pro Lampe",
+        title: "Anschlussleistung",
+        label: "Wie viel Watt hat eine der Lampen?",
         unitName: props.unitValues.measures["Belichtung:AnschlussleistungProLampe"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnschlussleistung?.value,
@@ -218,8 +250,8 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     const belichtungsstromAnzLampenProps: MeasureInputProps = {
-        title: "Stromverbrauch Belichtung Anzahl Lampen",
-        label: "Anzahl Lampen",
+        title: "Anzahl Lampen",
+        label: "Wie viele Lampen sind in dem zu berechnenden Haus installiert?",
         unitName: props.unitValues.measures["Belichtung:AnzahlLampen"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnzLampen?.value,
@@ -231,8 +263,8 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     }
 
     const belichtungsstromLaufzeitJahrProps: MeasureInputProps = {
-        title: "Stromverbrauch Belichtung Laufzeit Jahr",
-        label: "Laufzeit pro Jahr",
+        title: "Laufzeit pro Kulturjahr",
+        label: "Wie viele Stunden läuft die Belichtung im Kulturjahr?",
         unitName: props.unitValues.measures["Belichtung:LaufzeitProJahr"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromLaufzeitJahr?.value,
@@ -246,8 +278,8 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
 
 
     const belichtungsstromEinheitProps: SelectShowConditionalRadioInputProps = {
-        title: "Belichtungsstrom Verbrauch",
-        label: "Wollen Sie den Verbrauch in kWh angeben, oder Angaben über die Belichtung tätigen?",
+        title: "Ermittlung vom Belichtungsstrom",
+        label: "Liegt Ihnen der Belichtungsstromverbrauch in kWh vor, oder soll dieser durch weitere Angaben ermittelt werden?",
         radioGroupProps: {
             value: energyConsumption.belichtungsstromEinheit,
             onChange: event => setEnergyConsumptionState({
@@ -286,6 +318,13 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
 
         <Grid container xs={12} spacing={8}>
             <SectionDivider title="Wärmeenergie"/>
+            <Grid item container xs={12} spacing={4}>
+                <SingleShowConditionalRadioInputField {...waermeversorgungProps}>
+                    <Grid item container xs={12} spacing={4}>
+                        <MeasureInputField {...waermeteilungFlaecheProps} />
+                    </Grid>
+                </SingleShowConditionalRadioInputField>
+            </Grid>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...energietraegerProps}/>
             </Grid>

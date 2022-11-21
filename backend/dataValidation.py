@@ -34,30 +34,31 @@ def validate_greenhouse_data(data):
     # 2nd element are measurements that depend on conditional field
     # 3rd element are option_groups that depend on conditional field
     eventually_optional_fields = {
-        1: ("EinheitlicheWaermeversorgung", "NEIN", ["WaermeteilungFlaeche"], []),
-        2: ("Energieschirm", "Ja", ["AlterEnergieschirm"], ["EnergieschirmTyp"]),
-        3: ("ZusaetzlichesHeizsystem", "Ja", ["AlterZusaetzlichesHeizsystem"], ["ZusaetzlichesHeizsystemTyp"]),
-        4: ("10-30Gramm(Snack)", "JA", ["SnackReihenanzahl", "SnackPflanzenabstandInDerReihe", "SnackTriebzahl", "SnackErtragJahr"], []),
-        5: ("30-100Gramm(Cocktail)", "JA", ["CocktailReihenanzahl", "CocktailPflanzenabstandInDerReihe", "CocktailTriebzahl", "CocktailErtragJahr"], []),
-        6: ("100-150Gramm(Rispen)", "JA", ["RispenReihenanzahl", "RispenPflanzenabstandInDerReihe", "RispenTriebzahl", "RispenErtragJahr"], []),
-        7: (">150Gramm(Fleisch)", "JA", ["FleischReihenanzahl", "FleischPflanzenabstandInDerReihe", "FleischTriebzahl", "FleischErtragJahr"], []),
-        8: ("Transportsystem", "JA", ["AlterTransportsystem"], []),
-        9: ("Nebenkultur", "JA", ["NebenkulturBeginn", "NebenkulturEnde"], []),
-        10: ("Zusatzbelichtung", "JA", [], ["Belichtungsstrom"]),
-        11: ("Belichtungsstrom", "NEIN", [], ["BelichtungsstromEinheit"], []),
-        12: ("BelichtungsstromEinheit", "KWH", ["Belichtung:Stromverbrauch"], []),
-        13: ("BelichtungsstromEinheit", "ANGABEN", ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
-        14: ("GrowbagsKuebel", "GROWBAGS", [], ["Substrat"]),
-        15: ("GrowbagsKuebel", "KUEBEL", ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
-        16: ("Jungpflanzen:Zukauf", "JA", ["Jungpflanzen:Distanz"], ["Jungpflanzen:Substrat"]),
-        17: ("Schnur", "JA", ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
-        18: ("Klipse", "JA", ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
-        19: ("Rispenbuegel", "JA", ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"])
+        1: ("Waermeversorgung", ["JA"], ["WaermeteilungFlaeche"], []),
+        2: ("Energieschirm", ["Ja"], ["AlterEnergieschirm"], ["EnergieschirmTyp"]),
+        3: ("ZusaetzlichesHeizsystem", ["Ja"], ["AlterZusaetzlichesHeizsystem"], ["ZusaetzlichesHeizsystemTyp"]),
+        4: ("10-30Gramm(Snack)", ["JA"], ["SnackReihenanzahl", "SnackPflanzenabstandInDerReihe", "SnackTriebzahl", "SnackErtragJahr"], []),
+        5: ("30-100Gramm(Cocktail)", ["JA"], ["CocktailReihenanzahl", "CocktailPflanzenabstandInDerReihe", "CocktailTriebzahl", "CocktailErtragJahr"], []),
+        6: ("100-150Gramm(Rispen)", ["JA"], ["RispenReihenanzahl", "RispenPflanzenabstandInDerReihe", "RispenTriebzahl", "RispenErtragJahr"], []),
+        7: (">150Gramm(Fleisch)", ["JA"], ["FleischReihenanzahl", "FleischPflanzenabstandInDerReihe", "FleischTriebzahl", "FleischErtragJahr"], []),
+        8: ("Heizsystem", ["ROHRHEIZUNG (HOCH, NIEDRIG, ETC.)", "TRANSPORTSYSTEM", "DECKENLUFTERHITZER", "KONVEKTIONSHEIZUNG"], ["AlterHeizsystem"], []),
+        9: ("Nebenkultur", ["JA"], ["NebenkulturBeginn", "NebenkulturEnde"], []),
+        10: ("Zusatzbelichtung", ["JA"], [], ["Belichtungsstrom"]),
+        11: ("Belichtungsstrom", ["NEIN"], [], ["BelichtungsstromEinheit"], []),
+        12: ("BelichtungsstromEinheit", ["KWH"], ["Belichtung:Stromverbrauch"], []),
+        13: ("BelichtungsstromEinheit", ["ANGABEN"], ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
+        14: ("GrowbagsKuebel", ["GROWBAGS"], [], ["Substrat"]),
+        15: ("GrowbagsKuebel", ["Andere Kulturgefäße (Topf, Kübel)"], ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
+        16: ("Jungpflanzen:Zukauf", ["JA"], ["Jungpflanzen:Distanz"], []),
+        17: ("Schnur", ["JA"], ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
+        18: ("Klipse", ["JA"], ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
+        19: ("Rispenbuegel", ["JA"], ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"]),
+        20: ("Produktionssystem", ["HYDROPONIK OFFEN", "HYDROPONIK GESCHLOSSEN"], ["AlterProduktionssystem"], [])
     }
 
     for key, values in eventually_optional_fields.items():
         optiongroup = values[0]
-        condition = values[1]
+        conditions = values[1]
         measurements = values[2]
         optiongroups = values[3]
         # retrieve the selected option id for the current optiongroup
@@ -65,7 +66,11 @@ def validate_greenhouse_data(data):
         selected_option_value = all_options.filter(id=selected_option_id)[0].option_value
         print(selected_option_value)
         # compare the value with the conditional rule to see if the fields that depend on the optiongroup are mandatory
-        optiongroup_required = selected_option_value.upper() == condition
+        optiongroup_required = False
+        for condition in conditions:
+            if condition.upper() == selected_option_value.upper():
+                optiongroup_required = True
+
         #print(optiongroup_required)
 
         #print("not required")

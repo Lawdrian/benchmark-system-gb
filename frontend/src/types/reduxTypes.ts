@@ -250,7 +250,6 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: string
-    GWHGesamtflaeche: string
     GWHFlaeche: string
     WaermeteilungFlaeche: string
     GWHAlter: string
@@ -264,8 +263,8 @@ export type GreenhouseData = {
     Scheibenlaenge: string
     "Reihenabstand(Rinnenabstand)": string
     Vorwegbreite: string
-    AlterTransportsystem: string
-    AlterKultursystem: string
+    AlterHeizsystem: string
+    AlterProduktionssystem: string
     AlterZusaetzlichesHeizsystem: string
     SnackReihenanzahl: string
     SnackPflanzenabstandInDerReihe: string
@@ -283,7 +282,7 @@ export type GreenhouseData = {
     FleischPflanzenabstandInDerReihe: string
     FleischTriebzahl: string
     FleischErtragJahr: string
-    Kulturflaeche: string
+    Nutzflaeche: string
     KulturBeginn: string
     KulturEnde: string
     NebenkulturBeginn: string
@@ -311,15 +310,15 @@ export type GreenhouseData = {
     "Rispenbuegel:Wiederverwendung": string
     "Jungpflanzen:Distanz": string
     "Verpackungsmaterial:AnzahlMehrwegsteigen": string
-    EinheitlicheWaermeversorgung: string
+    Waermeversorgung: string
     GWHArt: string
     Bedachungsmaterial: string
     Stehwandmaterial: string
     Energieschirm: string
     EnergieschirmTyp: string
-    Transportsystem: string
+    Heizsystem: string
     Produktionstyp: string
-    Kultursystem: string
+    Produktionssystem: string
     ZusaetzlichesHeizsystem: string
     ZusaetzlichesHeizsystemTyp: string
     "10-30Gramm(Snack)": string

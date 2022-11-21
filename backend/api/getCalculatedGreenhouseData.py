@@ -57,8 +57,8 @@ class GetCalculatedGreenhouseData(APIView):
                 "konstruktion_co2",
                 "energieschirm_co2",
                 "bodenabdeckung_co2",
-                "kultursystem_co2",
-                "transportsystem_co2",
+                "produktionssystem_co2",
+                "heizsystem_co2",
                 "zusaetzliches_heizsystem_co2",
                 "energietraeger_co2",
                 "strom_co2",
@@ -144,7 +144,7 @@ class GetCalculatedGreenhouseData(APIView):
                         normalizedkg_data_dict['label'] = data_set.date
                         normalizedm2_data_dict['label'] = data_set.date
 
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(
+                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(
                             data_set.id,
                             all_measurements)
                         total_ertrag = snack_ertrag+cocktail_ertrag+rispen_ertrag+fleisch_ertrag
@@ -228,8 +228,8 @@ class GetCalculatedGreenhouseData(APIView):
                             benchmarkkg_greenhouse_dict['performer_productiontype'] = "Konventionell"
                             benchmarkm2_greenhouse_dict['performer_productiontype'] = "Konventionell"
 
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(high_performer_dataset[0].id,
-                                                                                                 all_measurements)
+                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(high_performer_dataset[0].id,
+                                                                                                  all_measurements)
                         total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
                         gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
@@ -279,7 +279,7 @@ class GetCalculatedGreenhouseData(APIView):
                             low_performer_benchmarkkg_dict['label'] = "Worst Performer"
                             low_performer_benchmarkm2_dict['label'] = "Worst Performer"
 
-                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = getErtrag(low_performer_dataset[0].id, all_measurements)
+                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(low_performer_dataset[0].id, all_measurements)
 
                             total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
@@ -401,8 +401,7 @@ class GetCalculatedGreenhouseData(APIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-def getErtrag(greenhouse_data_id, all_measurements):
-
+def get_ertrag(greenhouse_data_id, all_measurements):
     snack_ertrag_id = all_measurements.get(measurement_name="SnackErtragJahr")
     snack_ertrag = Measures.objects \
         .get(greenhouse_data_id=greenhouse_data_id,
@@ -423,5 +422,4 @@ def getErtrag(greenhouse_data_id, all_measurements):
         .get(greenhouse_data_id=greenhouse_data_id,
              measurement_id=fleisch_ertrag_id
              ).measure_value
-
     return snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag

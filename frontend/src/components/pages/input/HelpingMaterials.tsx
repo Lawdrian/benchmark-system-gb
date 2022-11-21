@@ -24,12 +24,12 @@ const connector = connect(mapStateToProps);
 
 type ReduxProps = ConnectedProps<typeof connector>
 
-type ConsumableItemsProps = ReduxProps & SubpageProps & {
-    provideItems: Function
-    values: ConsumableItemsState
+type HelpingMaterialsProps = ReduxProps & SubpageProps & {
+    provideHelpingMaterials: Function
+    values: HelpingMaterialsState
 }
 
-export type ConsumableItemsState = {
+export type HelpingMaterialsState = {
     co2Herkunft: SelectionValue[]
     duengemittelSimple: SelectionValue[]
     duengemittelDetail: SelectionValue[]
@@ -40,17 +40,17 @@ export type ConsumableItemsState = {
     nuetzlinge: SelectionValue[]
 }
 
-const ConsumableItemsInput = (props: ConsumableItemsProps) => {
-    const [consumableItems, setConsumableItems] = useState<ConsumableItemsState>(props.values)
+const HelpingMaterialsInput = (props: HelpingMaterialsProps) => {
+    const [helpingMaterials, setHelpingMaterials] = useState<HelpingMaterialsState>(props.values)
 
-    const setConsumableItemsState = (consumableItems: ConsumableItemsState) => {
-        setConsumableItems(consumableItems)
-        props.provideItems(consumableItems)
+    const setHelpingMaterialsState = (helpingMaterials: HelpingMaterialsState) => {
+        setHelpingMaterials(helpingMaterials)
+        props.provideHelpingMaterials(helpingMaterials)
     }
 
     const co2HerkunftProps: DynamicInputProps = {
-        title: "CO2 Zudosierung",
-        label: "Wie und wieviel CO2 führen Sie der Kultur hinzu?.",
+        title: "CO2-Zudosierung",
+        label: "Wie und in welcher Menge führen Sie der Kultur CO2 zu? (falls zutreffend)",
         optional: true,
         textFieldProps:{},
         selectProps: {
@@ -61,8 +61,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             unitValues: props.unitValues,
             optionGroup: "CO2-Herkunft"
         },
-        onValueChange: values => setConsumableItemsState({
-            ...consumableItems,
+        onValueChange: values => setHelpingMaterialsState({
+            ...helpingMaterials,
             co2Herkunft: values.map(value => {
                 return {
                     selectValue: value.selectValue, textFieldValue:value.textFieldValue
@@ -73,8 +73,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const duengemittelSimpleProps: DynamicInputProps = {
-        title: "Einfach",
-        label: "Verwendetes Düngemittel und Menge eintragen.",
+        title: "Vereinfachte Angaben",
+        label: "Tragen Sie die Mengen der verwendeten Düngemittel für das zu berechnende Haus ein. Die vereinfachte Angabe kann ggf. Ungenauigkeiten bei der Berechnung der Fußabdrücke führen.",
         optional: true,
         textFieldProps:{},
         selectProps: {
@@ -85,8 +85,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             unitValues:  props.unitValues,
             optionGroup: "Duengemittel:VereinfachteAngabe"
         },
-        onValueChange: values => setConsumableItemsState({
-            ...consumableItems,
+        onValueChange: values => setHelpingMaterialsState({
+            ...helpingMaterials,
             duengemittelSimple: values.map(value => {
                 return {
                     selectValue: value.selectValue, textFieldValue:value.textFieldValue
@@ -97,8 +97,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const duengemittelDetailProps: DynamicInputProps = {
-        title: "Detailliert",
-        label: "Verwendetes Düngemittel und Menge eintragen.",
+        title: "Detaillierte Angaben",
+        label: "Tragen Sie die Mengen der verwendeten Düngemittel für das zu berechnende Haus ein.",
         optional: true,
         selectProps: {
             lookupValues: props.lookupValues["Duengemittel:DetaillierteAngabe"]
@@ -109,8 +109,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
             optionGroup: "Duengemittel:DetaillierteAngabe"
         },
         textFieldProps: {},
-        onValueChange: values => setConsumableItemsState({
-            ...consumableItems,
+        onValueChange: values => setHelpingMaterialsState({
+            ...helpingMaterials,
             duengemittelDetail: values.map(value => {
                 return {
                     selectValue: value.selectValue, textFieldValue:value.textFieldValue
@@ -121,61 +121,62 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     }
 
     const fungizideKgProps: MeasureInputProps = {
-        title: "Angabe Kilogramm",
-        label: "Wieviele feste Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Fungizide und geben Sie diese in Kilogramm an.",
+        title: "Angabe Festmittel (kg)",
+        label: "Wie viele feste Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Fungizide und geben Sie diese in Kilogramm an.",
         optional: true,
         unitName: props.unitValues.measures.FungizideKg[0]?.values,
         textFieldProps: {
-            value: consumableItems.fungizideKg?.value,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
+            value: helpingMaterials.fungizideKg?.value,
+            onChange: event => setHelpingMaterialsState({
+                ...helpingMaterials,
                 fungizideKg: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FungizideKg[0]?.id}
             })
         },
     }
 
     const fungizideLiterProps: MeasureInputProps = {
-        title: "Angabe Liter",
-        label: "Wieviele flüssige Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssige Fungizide und geben Sie diese in Liter an.",
+        title: "Angabe Flüssigmittel (Liter)",
+        label: "Wie viele flüssige Fungizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssigen Fungizide und geben Sie diese in Liter an.",
         optional: true,
         unitName: "Liter",
         textFieldProps: {
-            value: consumableItems.fungizideLiter?.value,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
+            value: helpingMaterials.fungizideLiter?.value,
+            onChange: event => setHelpingMaterialsState({
+                ...helpingMaterials,
                 fungizideLiter: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FungizideKg[0].id}
             })
         },
     }
 
     const insektizideKgProps: MeasureInputProps = {
-        title: "Angabe Kilogramm",
-        label: "Wieviele feste Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Mittel und geben Sie diese in Kilogramm an.",
+        title: "Angabe Festmittel (kg)",
+        label: "Wie viele feste Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten festen Mittel und geben Sie diese in Kilogramm an.",
         optional: true,
         unitName: props.unitValues.measures.InsektizideKg[0]?.values,
         textFieldProps: {
-            value: consumableItems.insektizideKg?.value,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
+            value: helpingMaterials.insektizideKg?.value,
+            onChange: event => setHelpingMaterialsState({
+                ...helpingMaterials,
                 insektizideKg: {value:parseFloat(event.target.value),unit:props.unitValues.measures.InsektizideKg[0].id}
             })
         },
     }
 
     const insektizideLiterProps: MeasureInputProps = {
-        title: "Angabe Liter",
-        label: "Wieviele flüssige Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssigen Mittel und geben Sie diese in Liter an.",
+        title: "Angabe Flüssigmittel (Liter)",
+        label: "Wie viele flüssige Insektizide verwenden Sie in der eingetragenen Kulturdauer? Bitte addieren Sie alle verwendeten flüssigen Mittel und geben Sie diese in Liter an.",
         optional: true,
         unitName: "Liter",
         textFieldProps: {
-            value: consumableItems.insektizideLiter?.value,
-            onChange: event => setConsumableItemsState({
-                ...consumableItems,
+            value: helpingMaterials.insektizideLiter?.value,
+            onChange: event => setHelpingMaterialsState({
+                ...helpingMaterials,
                 insektizideLiter: {value:parseFloat(event.target.value),unit:props.unitValues.measures.InsektizideKg[0].id}
             })
         },
     }
 
+    /* // For now this Field won't be used, but might be added again in the future
     const nuetzlingeProps: DynamicInputProps = {
         title: "Nützlinge",
         label: "Welche und wieviele Nützlinge werden in der genannten Kulturdauer ausgebracht?",
@@ -186,8 +187,8 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         selectProps: {
             lookupValues: props.lookupValues.Nuetzlinge
         },
-        onValueChange: values => setConsumableItemsState({
-            ...consumableItems,
+        onValueChange: values => setHelpingMaterialsState({
+            ...helpingMaterials,
             nuetzlinge: values.map(value => {
                 return {
                     selectValue: value.selectValue, textFieldValue:value.textFieldValue, unitFieldValue: value.unitFieldValue
@@ -201,9 +202,11 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
         },
         initValues: props.values.nuetzlinge
     }
+    */
 
     return (
         <Grid container xs={12} spacing={8}>
+            <SectionDivider title={"CO2"}/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputField {...co2HerkunftProps} />
             </Grid>
@@ -224,10 +227,6 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
                 <MeasureInputField {...insektizideKgProps} />
                 <MeasureInputField {...insektizideLiterProps} />
             </Grid>
-            <SectionDivider title=""/>
-            <Grid item container xs={12} spacing={4}>
-                <DynamicInputField {...nuetzlingeProps} />
-            </Grid>
             <Grid item container xs={12} spacing={4}>
                <Grid item xs={12}>
                     <InputPaginationButtons {...props.paginationProps} />
@@ -237,4 +236,4 @@ const ConsumableItemsInput = (props: ConsumableItemsProps) => {
     );
 }
 
-export default connector(ConsumableItemsInput)
+export default connector(HelpingMaterialsInput)

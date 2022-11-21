@@ -13,34 +13,22 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import {connect, ConnectedProps} from "react-redux";
-import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
-import {submitGreenhouseData} from "../../actions/submission";
-import {RootState} from "../../store";
-import ConsumableMaterialsInput, {
-    ConsumableMaterialsState
-} from "./input/ConsumableMaterials";
-import ConsumableItemsInput, {
-    ConsumableItemsState
-} from "./input/ConsumableItems";
-import {Tab, Tabs} from "@mui/material";
-import EnergyConsumptionInput, {
-    EnergyConsumptionState
-} from "./input/EnergyConsumption";
-import CultureManagementInput, {
-    CultureManagementState
-} from "./input/CultureManagement";
-import CultureInformationInput, {
-    CultureInformationState
-} from "./input/CultureInformation";
-import CompanyInformationInput, {
-    CompanyInformationState
-} from "./input/CompanyInformation";
-import {GreenhouseData} from "../../types/reduxTypes";
-import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
 import {InputPaginationButtonsProps} from "../utils/inputPage/InputPaginationButtons";
-import {useNavigate} from "react-router-dom";
-import {format} from "date-fns";
 import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
+import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
+import HelpingMaterialsInput, {HelpingMaterialsState} from "./input/HelpingMaterials";
+import CompanyInformationInput, {CompanyInformationState} from "./input/CompanyInformation";
+import {MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
+import CultureInformationInput, {CultureInformationState} from "./input/CultureInformation";
+import CompanyMaterialsInput, {CompanyMaterialsState} from "./input/CompanyMaterials";
+import EnergyConsumptionInput, {EnergyConsumptionState} from "./input/EnergyConsumption";
+import CultureManagementInput, {CultureManagementState} from "./input/CultureManagement";
+import {submitGreenhouseData} from "../../actions/submission";
+import {GreenhouseData} from "../../types/reduxTypes";
+import {useNavigate} from "react-router-dom";
+import {Tab, Tabs} from "@mui/material";
+import {RootState} from "../../store";
+import {format} from "date-fns";
 
 const mapStateToProps = (state: RootState) => ({
     submission: state.submission,
@@ -70,8 +58,8 @@ export type DataToSubmit = {
     cultureInformation: CultureInformationState
     cultureManagement: CultureManagementState
     energyConsumption: EnergyConsumptionState
-    consumableItems: ConsumableItemsState
-    consumableMaterials: ConsumableMaterialsState
+    helpingMaterials: HelpingMaterialsState
+    companyMaterials: CompanyMaterialsState
 }
 
 const formatOptionValues = (values: SelectionValue[]|number): string => {
@@ -129,9 +117,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         cultureInformation,
         cultureManagement,
         energyConsumption,
-        consumableItems,
-        consumableMaterials
+        helpingMaterials,
+        companyMaterials
     } = dataToSubmit
+
+    const defaultValue = "(0,0)"
+    const defaultOption = "[(0,)]"
 
     const calcAge = (year?: Date | null) => {
         if(year!=null) {
@@ -140,11 +131,10 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
             if (age > 0) return `(${age},1)`
             else return "(1,1)"
         }
-        else return "(1,1)"
+        else return defaultValue
     }
 
-    const defaultValue = "(0,0)"
-    const defaultOption = "[(0,)]"
+
 
     // TODO: Implement a proper default value concept. Maybe get default value object from server?
     //submittionData maps the data from the dataToSubmit state so it can be used in the post request
@@ -152,9 +142,8 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
         PLZ: formatMeasureValue(companyInformation?.plz) ?? defaultValue,
-        GWHGesamtflaeche: formatMeasureValue(companyInformation?.gwhGesamtFlaeche) ?? defaultValue,
         GWHFlaeche: formatMeasureValue(companyInformation?.gwhFlaeche) ?? defaultValue,
-        WaermeteilungFlaeche: formatMeasureValue(companyInformation?.waermeteilungFlaeche) ?? defaultValue,
+        WaermeteilungFlaeche: formatMeasureValue(energyConsumption?.waermeteilungFlaeche) ?? defaultValue,
         GWHAlter: companyInformation?.gwhAlter ? calcAge(companyInformation?.gwhAlter.value) : defaultValue,
         AlterBedachungsmaterial: companyInformation?.bedachungsmaterialAlter ? calcAge(companyInformation?.bedachungsmaterialAlter.value) : defaultValue,
         AlterStehwandmaterial: companyInformation?.stehwandmaterialAlter ? calcAge(companyInformation?.stehwandmaterialAlter.value) : defaultValue,
@@ -166,8 +155,8 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Scheibenlaenge: formatMeasureValue(companyInformation?.scheibenlaenge) ?? defaultValue,
         "Reihenabstand(Rinnenabstand)": formatMeasureValue(companyInformation?.reihenabstand) ?? defaultValue,
         Vorwegbreite: formatMeasureValue(companyInformation?.vorwegbreite) ?? defaultValue,
-        AlterTransportsystem: companyInformation?.transportsystemAlter ? calcAge(companyInformation?.transportsystemAlter.value): defaultValue,
-        AlterKultursystem: companyInformation?.kultursystemAlter ? calcAge(companyInformation?.kultursystemAlter.value) : defaultValue,
+        AlterHeizsystem: companyInformation?.heizsystemAlter ? calcAge(companyInformation?.heizsystemAlter.value): defaultValue,
+        AlterProduktionssystem: companyInformation?.produktionssystemAlter ? calcAge(companyInformation?.produktionssystemAlter.value) : defaultValue,
         AlterZusaetzlichesHeizsystem: companyInformation?.zusaetzlichesHeizsystemAlter ? calcAge(companyInformation?.zusaetzlichesHeizsystemAlter.value) : defaultValue,
         SnackReihenanzahl: formatMeasureValue(cultureInformation?.snackReihenanzahl) ?? defaultValue,
         SnackPflanzenabstandInDerReihe: formatMeasureValue(cultureInformation?.snackPflanzenabstand) ?? defaultValue,
@@ -185,7 +174,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         FleischPflanzenabstandInDerReihe: formatMeasureValue(cultureInformation?.fleischPflanzenabstand) ?? defaultValue,
         FleischTriebzahl: formatMeasureValue(cultureInformation?.fleischTriebzahl) ?? defaultValue,
         FleischErtragJahr: formatMeasureValue(cultureInformation?.fleischErtragJahr) ?? defaultValue,
-        Kulturflaeche: formatMeasureValue(cultureInformation?.kulturflaeche) ?? defaultValue,
+        Nutzflaeche: formatMeasureValue(cultureInformation?.Nutzflaeche) ?? defaultValue,
         KulturBeginn: formatMeasureValue(cultureInformation?.kulturBeginn) ?? defaultValue,
         KulturEnde: formatMeasureValue(cultureInformation?.kulturEnde) ?? defaultValue,
         NebenkulturBeginn: formatMeasureValue(cultureInformation?.nebenkulturBeginn) ?? defaultValue,
@@ -199,27 +188,27 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Belichtung:AnzahlLampen": formatMeasureValue(energyConsumption?.belichtungsstromAnzLampen) ?? defaultValue,
         "Belichtung:AnschlussleistungProLampe": formatMeasureValue(energyConsumption?.belichtungsstromAnschlussleistung) ?? defaultValue,
         "Belichtung:LaufzeitProJahr": formatMeasureValue(energyConsumption?.belichtungsstromLaufzeitJahr) ?? defaultValue,
-        FungizideKg: formatMeasureValue({value: (consumableItems?.fungizideKg?.value??0)+100*(consumableItems.fungizideLiter?.value??0), unit: consumableItems?.fungizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
-        InsektizideKg: formatMeasureValue({value: (consumableItems?.insektizideKg?.value??0)+100*(consumableItems.insektizideLiter?.value??0), unit: consumableItems?.insektizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
-        "Kuebel:VolumenProTopf": formatMeasureValue(consumableMaterials?.kuebelVolumenProTopf) ?? defaultValue,
-        "Kuebel:JungpflanzenProTopf": formatMeasureValue(consumableMaterials?.kuebelJungpflanzenProTopf) ?? defaultValue,
-        "Kuebel:Alter": consumableMaterials?.kuebelAlter ? calcAge(consumableMaterials?.kuebelAlter.value) : defaultValue,
-        "SchnuereRankhilfen:Laenge": formatMeasureValue(consumableMaterials?.schnurLaengeProTrieb) ?? defaultValue,
-        "SchnuereRankhilfen:Wiederverwendung": formatMeasureValue(consumableMaterials?.schnurWiederverwendung) ?? defaultValue,
-        "Klipse:AnzahlProTrieb": formatMeasureValue(consumableMaterials?.klipseAnzProTrieb) ?? defaultValue,
-        "Klipse:Wiederverwendung": formatMeasureValue(consumableMaterials?.klipseWiederverwendung) ?? defaultValue,
-        "Rispenbuegel:AnzahlProTrieb": formatMeasureValue(consumableMaterials?.rispenbuegelAnzProTrieb) ?? defaultValue,
-        "Rispenbuegel:Wiederverwendung": formatMeasureValue(consumableMaterials?.rispenbuegelWiederverwendung) ?? defaultValue,
-        "Jungpflanzen:Distanz": formatMeasureValue(consumableMaterials?.jungpflanzenDistanz) ?? defaultValue,
-        "Verpackungsmaterial:AnzahlMehrwegsteigen": formatMeasureValue(consumableMaterials?.anzahlNutzungenMehrwegsteigen) ?? defaultValue,
-        EinheitlicheWaermeversorgung: companyInformation?.einheitlicheWaermeversorgung ? formatOptionValues(companyInformation.einheitlicheWaermeversorgung) : defaultOption,
+        FungizideKg: formatMeasureValue({value: (helpingMaterials?.fungizideKg?.value??0)+100*(helpingMaterials.fungizideLiter?.value??0), unit: helpingMaterials?.fungizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
+        InsektizideKg: formatMeasureValue({value: (helpingMaterials?.insektizideKg?.value??0)+100*(helpingMaterials.insektizideLiter?.value??0), unit: helpingMaterials?.insektizideKg?.unit??null}) ?? defaultValue, //The 100 is the factor to convert from liter to kg
+        "Kuebel:VolumenProTopf": formatMeasureValue(companyMaterials?.kuebelVolumenProTopf) ?? defaultValue,
+        "Kuebel:JungpflanzenProTopf": formatMeasureValue(companyMaterials?.kuebelJungpflanzenProTopf) ?? defaultValue,
+        "Kuebel:Alter": companyMaterials?.kuebelAlter ? calcAge(companyMaterials?.kuebelAlter.value) : defaultValue,
+        "SchnuereRankhilfen:Laenge": formatMeasureValue(companyMaterials?.schnurLaengeProTrieb) ?? defaultValue,
+        "SchnuereRankhilfen:Wiederverwendung": formatMeasureValue(companyMaterials?.schnurWiederverwendung) ?? defaultValue,
+        "Klipse:AnzahlProTrieb": formatMeasureValue(companyMaterials?.klipseAnzProTrieb) ?? defaultValue,
+        "Klipse:Wiederverwendung": formatMeasureValue(companyMaterials?.klipseWiederverwendung) ?? defaultValue,
+        "Rispenbuegel:AnzahlProTrieb": formatMeasureValue(companyMaterials?.rispenbuegelAnzProTrieb) ?? defaultValue,
+        "Rispenbuegel:Wiederverwendung": formatMeasureValue(companyMaterials?.rispenbuegelWiederverwendung) ?? defaultValue,
+        "Jungpflanzen:Distanz": formatMeasureValue(companyMaterials?.jungpflanzenDistanz) ?? defaultValue,
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": formatMeasureValue(companyMaterials?.anzahlNutzungenMehrwegsteigen) ?? defaultValue,
+        Waermeversorgung: energyConsumption?.waermeversorgung ? formatOptionValues(energyConsumption.waermeversorgung) : defaultOption,
         GWHArt: companyInformation?.gwhArt ? formatOptionValues(companyInformation.gwhArt) : defaultOption,
         Bedachungsmaterial: companyInformation?.bedachungsmaterial ? formatOptionValues(companyInformation.bedachungsmaterial) : defaultOption,
         Stehwandmaterial: companyInformation?.stehwandmaterial ? formatOptionValues(companyInformation.stehwandmaterial) : defaultOption,
         Energieschirm: companyInformation?.energieschirm ? formatOptionValues(companyInformation.energieschirm) : defaultOption,
-        Transportsystem: companyInformation?.transportsystem ? formatOptionValues(companyInformation.transportsystem) : defaultOption,
-        Produktionstyp: companyInformation?.produktionstyp ? formatOptionValues(companyInformation.produktionstyp) : defaultOption,
-        Kultursystem: companyInformation?.kultursystem ? formatOptionValues(companyInformation.kultursystem) : defaultOption,
+        Heizsystem: companyInformation?.heizsystem ? formatOptionValues(companyInformation.heizsystem) : defaultOption,
+        Produktionstyp: companyInformation?.produktionsweise ? formatOptionValues(companyInformation.produktionsweise) : defaultOption,
+        Produktionssystem: companyInformation?.produktionssystem ? formatOptionValues(companyInformation.produktionssystem) : defaultOption,
         ZusaetzlichesHeizsystem: companyInformation?.zusaetzlichesHeizsystem ? formatOptionValues(companyInformation.zusaetzlichesHeizsystem) : defaultOption,
         "10-30Gramm(Snack)": cultureInformation?.snack ? formatOptionValues(cultureInformation.snack) : defaultOption,
         "30-100Gramm(Cocktail)": cultureInformation?.cocktail ? formatOptionValues(cultureInformation.cocktail) : defaultOption,
@@ -230,26 +219,26 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Energietraeger: energyConsumption?.energietraeger ? formatOptionValues(energyConsumption.energietraeger) : defaultOption,
         BHKW: energyConsumption?.bhkw ? formatOptionValues(energyConsumption.bhkw) : defaultOption,
         Stromherkunft: energyConsumption?.stromherkunft ? formatOptionValues(energyConsumption.stromherkunft) : defaultOption,
-        Nuetzlinge: consumableItems?.nuetzlinge ? formatOptionValues(consumableItems.nuetzlinge) : defaultOption,
-        GrowbagsKuebel: consumableMaterials?.growbagsKuebel ? formatOptionValues(consumableMaterials.growbagsKuebel) : defaultOption,
-        Schnur:consumableMaterials?.schnur? formatOptionValues(consumableMaterials.schnur) : defaultOption,
-        Klipse:consumableMaterials?.klipse ? formatOptionValues(consumableMaterials.klipse) : defaultOption,
-        Rispenbuegel:consumableMaterials?.rispenbuegel ? formatOptionValues(consumableMaterials.rispenbuegel) : defaultOption,
-        Bewaesserungsart: consumableMaterials?.bewaesserArt ? formatOptionValues(consumableMaterials.bewaesserArt) : defaultOption,
-        "Jungpflanzen:Zukauf": consumableMaterials?.jungpflanzenZukauf ? formatOptionValues(consumableMaterials.jungpflanzenZukauf) : defaultOption,
-        "CO2-Herkunft": consumableItems?.co2Herkunft[0].selectValue ? formatOptionValues(consumableItems.co2Herkunft) : defaultOption,
-        "Duengemittel:VereinfachteAngabe": consumableItems?.duengemittelSimple[0].selectValue ? formatOptionValues(consumableItems.duengemittelSimple) : defaultOption,
-        "Duengemittel:DetaillierteAngabe": consumableItems?.duengemittelDetail ? formatOptionValues(consumableItems.duengemittelDetail) : defaultOption,
-        "Jungpflanzen:Substrat": consumableMaterials?.jungpflanzenSubstrat ? formatOptionValues(consumableMaterials.jungpflanzenSubstrat) : defaultOption,
-        "SchnuereRankhilfen:Material": consumableMaterials?.schnurMaterial ? formatOptionValues(consumableMaterials.schnurMaterial) : defaultOption,
-        Bodenabdeckung: consumableMaterials?.bodenabdeckung ? formatOptionValues(consumableMaterials.bodenabdeckung) : defaultOption,
-        SonstigeVerbrauchsmaterialien: consumableMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(consumableMaterials.sonstVerbrauchsmaterialien) : defaultOption,
-        Verpackungsmaterial: consumableMaterials?.verpackungsmaterial ? formatOptionValues(consumableMaterials.verpackungsmaterial) : defaultOption,
-        ZusaetzlicherMaschineneinsatz: consumableMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(consumableMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
+        Nuetzlinge: helpingMaterials?.nuetzlinge ? formatOptionValues(helpingMaterials.nuetzlinge) : defaultOption,
+        GrowbagsKuebel: companyMaterials?.growbagsKuebel ? formatOptionValues(companyMaterials.growbagsKuebel) : defaultOption,
+        Schnur:companyMaterials?.schnur? formatOptionValues(companyMaterials.schnur) : defaultOption,
+        Klipse:companyMaterials?.klipse ? formatOptionValues(companyMaterials.klipse) : defaultOption,
+        Rispenbuegel:companyMaterials?.rispenbuegel ? formatOptionValues(companyMaterials.rispenbuegel) : defaultOption,
+        Bewaesserungsart: companyInformation?.bewaesserArt ? formatOptionValues(companyInformation.bewaesserArt) : defaultOption,
+        "Jungpflanzen:Zukauf": companyMaterials?.jungpflanzenZukauf ? formatOptionValues(companyMaterials.jungpflanzenZukauf) : defaultOption,
+        "CO2-Herkunft": helpingMaterials?.co2Herkunft[0].selectValue ? formatOptionValues(helpingMaterials.co2Herkunft) : defaultOption,
+        "Duengemittel:VereinfachteAngabe": helpingMaterials?.duengemittelSimple[0].selectValue ? formatOptionValues(helpingMaterials.duengemittelSimple) : defaultOption,
+        "Duengemittel:DetaillierteAngabe": helpingMaterials?.duengemittelDetail ? formatOptionValues(helpingMaterials.duengemittelDetail) : defaultOption,
+        "Jungpflanzen:Substrat": companyMaterials?.jungpflanzenSubstrat ? formatOptionValues(companyMaterials.jungpflanzenSubstrat) : defaultOption,
+        "SchnuereRankhilfen:Material": companyMaterials?.schnurMaterial ? formatOptionValues(companyMaterials.schnurMaterial) : defaultOption,
+        Bodenabdeckung: companyInformation?.bodenabdeckung ? formatOptionValues(companyInformation.bodenabdeckung) : defaultOption,
+        SonstigeVerbrauchsmaterialien: companyMaterials?.sonstVerbrauchsmaterialien ? formatOptionValues(companyMaterials.sonstVerbrauchsmaterialien) : defaultOption,
+        Verpackungsmaterial: companyMaterials?.verpackungsmaterial ? formatOptionValues(companyMaterials.verpackungsmaterial) : defaultOption,
+        ZusaetzlicherMaschineneinsatz: companyMaterials?.zusaetzlicherMaschineneinsatz[0].selectValue ? formatOptionValues(companyMaterials.zusaetzlicherMaschineneinsatz) : defaultOption,
         BelichtungsstromEinheit: energyConsumption?.belichtungsstromEinheit ? formatOptionValues(energyConsumption.belichtungsstromEinheit) : defaultOption,
-        "Klipse:Material": consumableMaterials?.klipseMaterial ? formatOptionValues(consumableMaterials.klipseMaterial) : defaultOption,
-        "Rispenbuegel:Material": consumableMaterials?.rispenbuegelMaterial ? formatOptionValues(consumableMaterials.rispenbuegelMaterial) : defaultOption,
-        Substrat: consumableMaterials?.growbagsKuebelSubstrat && consumableMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(consumableMaterials.growbagsKuebelSubstrat) : defaultOption,
+        "Klipse:Material": companyMaterials?.klipseMaterial ? formatOptionValues(companyMaterials.klipseMaterial) : defaultOption,
+        "Rispenbuegel:Material": companyMaterials?.rispenbuegelMaterial ? formatOptionValues(companyMaterials.rispenbuegelMaterial) : defaultOption,
+        Substrat: companyMaterials?.growbagsKuebelSubstrat && companyMaterials?.growbagsKuebelSubstrat[0].selectValue != null ? formatOptionValues(companyMaterials.growbagsKuebelSubstrat) : defaultOption,
         Zusatzbelichtung: energyConsumption?.zusatzbelichtung ? formatOptionValues(energyConsumption.zusatzbelichtung) : defaultOption,
         Belichtungsstrom: energyConsumption?.belichtungsstrom ? formatOptionValues(energyConsumption.belichtungsstrom) : defaultOption,
         EnergieschirmTyp: companyInformation?.energieschirmTyp ? formatOptionValues(companyInformation.energieschirmTyp) : defaultOption,
@@ -293,9 +282,9 @@ const PageInputData = (props: InputDataProps) => {
     const setCultureInformation = (cultureInformation: CultureInformationState) => setDataToSubmit({...dataToSubmit, cultureInformation})
     const setCultureManagement = (cultureManagement: CultureManagementState) => setDataToSubmit({...dataToSubmit, cultureManagement})
     const setEnergyConsumption = (energyConsumption: EnergyConsumptionState) => setDataToSubmit({...dataToSubmit, energyConsumption})
-    const setConsumableItems = (consumableItems: ConsumableItemsState) => setDataToSubmit({...dataToSubmit, consumableItems})
-    const setConsumableMaterials = (consumableMaterials: ConsumableMaterialsState) => {
-        setDataToSubmit({...dataToSubmit, consumableMaterials})
+    const setHelpingMaterials = (helpingMaterials: HelpingMaterialsState) => setDataToSubmit({...dataToSubmit, helpingMaterials})
+    const setCompanyMaterials = (companyMaterials: CompanyMaterialsState) => {
+        setDataToSubmit({...dataToSubmit, companyMaterials})
     }
 
     return (
@@ -325,10 +314,10 @@ const PageInputData = (props: InputDataProps) => {
                 <EnergyConsumptionInput paginationProps={paginationProps} provideEnergyConsumption={setEnergyConsumption} values={dataToSubmit.energyConsumption}/>
             </TabPanel>
             <TabPanel index={4} value={tab}>
-                <ConsumableItemsInput paginationProps={paginationProps} provideItems={setConsumableItems} values={dataToSubmit.consumableItems}/>
+                <HelpingMaterialsInput paginationProps={paginationProps} provideHelpingMaterials={setHelpingMaterials} values={dataToSubmit.helpingMaterials}/>
             </TabPanel>
             <TabPanel index={5} value={tab}>
-                <ConsumableMaterialsInput paginationProps={paginationProps} provideConsumables={setConsumableMaterials} values={dataToSubmit.consumableMaterials}/>
+                <CompanyMaterialsInput paginationProps={paginationProps} provideCompanyMaterials={setCompanyMaterials} values={dataToSubmit.companyMaterials}/>
             </TabPanel>
         </Box>
     );

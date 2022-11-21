@@ -61,6 +61,10 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
         );
     }
 
+    const handleNextClick = () => {
+        props.next()
+    }
+
 
 
     return (
@@ -93,7 +97,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                         size="large"
                         disabled={!props.hasNext()}
                         endIcon={<NavigateNext/>}
-                        onClick={() => props.next()}
+                        onClick={handleNextClick}
                     >
                         Weiter
                     </Button>

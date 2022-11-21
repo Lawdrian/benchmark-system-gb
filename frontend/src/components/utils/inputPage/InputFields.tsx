@@ -233,6 +233,29 @@ export const SelectionAmountUnitInputField = (props: SelectionAmountUnitInputPro
         </SelectionBaseInputField>
     );
 }
+export type ConditionalSelectionInputProps = SelectionInputProps & {
+    hideChildren: (value: any) => boolean
+    children?: ReactNode
+}
+
+
+/**
+ * This component relies on the SelectionBaseInputField. It always shows the children, if not a specific option has been selected
+ *
+ * @param {ConditionalSelectionInputProps} props This Type contains the SelectionInputProps and multiple other ones:
+ *       <p><strong>hideChildren:</strong> Function, that determines which selected option will hide the children.</p>
+ *      <p><strong>children:</strong>Children, that will be rendered if the wrong selection hasn't been selected.</p>
+ * @return {ReactNode} One single show conditional component.
+ */
+export const ConditionalSelectionInputField = (props: ConditionalSelectionInputProps) => {
+    const {hideChildren, children, ...SelectionInputProps} = props
+   return (
+        <Grid item container xs={12} spacing={4}>
+                <SelectionBaseInputField {...SelectionInputProps}/>
+                {props.hideChildren(props.selectProps.value) ? undefined : children }
+        </Grid>
+   )
+}
 
 
 // SelectionRadioInput component

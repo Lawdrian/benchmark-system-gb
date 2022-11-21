@@ -1,8 +1,8 @@
 1,konstruktion_co2,kg co2
 2,energieschirm_co2,kg co2
 3,bodenabdeckung_co2,kg co2
-4,kultursystem_co2,kg co2
-5,transportsystem_co2,kg co2
+4,produktionssystem_co2,kg co2
+5,heizsystem_co2,kg co2
 6,zusaetzliches_heizsystem_co2,kg co2
 7,energietraeger_co2,kg co2
 8,strom_co2,kg co2

@@ -26,15 +26,16 @@ from .utils import default_value, default_option
 def calc_co2_footprint(data):
     all_options = Options.objects.all()
     helping_values = calc_helping_values(data, all_options)
-    konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, kultursystem_co2, transportsystem_co2,zusaetzliches_heizsystem_co2  = calc_greenhouse_construction_co2(data, helping_values, all_options)
+    konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserungsart_co2, heizsystem_co2, zusaetzliches_heizsystem_co2 = calc_greenhouse_construction_co2(data, helping_values, all_options)
 
     calculation_results = {
         "konstruktion_co2": konstruktion_co2,
         "energieschirm_co2": energieschirm_co2,
         "bodenabdeckung_co2": bodenabdeckung_co2,
-        "kultursystem_co2": kultursystem_co2,
-        "transportsystem_co2": transportsystem_co2,
+        "produktionssystem_co2": produktionssystem_co2,
+        "heizsystem_co2": heizsystem_co2,
         "zusaetzliches_heizsystem_co2": zusaetzliches_heizsystem_co2,
+        "bewaesserung_co2": bewaesserungsart_co2,
         "energietraeger_co2": calc_energy_source_co2(data, helping_values, all_options),
         "strom_co2": calc_electric_power_co2(data, helping_values, all_options),
         "co2_zudosierung_co2": calc_co2_added(data, helping_values, all_options),
@@ -48,7 +49,6 @@ def calc_co2_footprint(data):
         "schnuere_co2": calc_cords_co2(data, helping_values, all_options),
         "klipse_co2": calc_clips_co2(data, helping_values, all_options),
         "rispenbuegel_co2": calc_panicle_hanger_co2(data, helping_values, all_options),
-        "bewaesserung_co2": calc_irrigation_co2(data, helping_values, all_options),
         "verpackung_co2": calc_packaging_co2(data, helping_values, all_options),
         "sonstige_verbrauchsmaterialien_co2": calc_other_consumables_co2(data, helping_values, all_options),
         "zusaetzlicher_machineneinsatz_co2": calc_additional_machineusage_co2(data, helping_values, all_options)
@@ -210,7 +210,7 @@ def calc_gh_size(data):
 def calc_culture_size(data, gh_size):
     """Calculates the size of the culture
         """
-    if (data["Kulturflaeche"][0] > 0): return data["Kulturflaeche"][0]
+    if (data["Nutzflaeche"][0] > 0): return data["Nutzflaeche"][0]
     else:
         return gh_size-(data["Vorwegbreite"][0]*data["Breite"][0])
 
@@ -251,68 +251,68 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
     stehwandmaterial= all_options.get(id=data["Stehwandmaterial"][0][0]).option_value
     bedachungsmaterial = all_options.get(id=data["Bedachungsmaterial"][0][0]).option_value
 
-    beton = 0
+    betonco2 = 0
     stahl = 0
-    aluminium = 0
-    lpde = 0
-    stehwand = 0
-    bedachung = 0
+    aluminium_co2 = 0
+    lpde_co2 = 0
+    stehwand_co2 = 0
+    bedachung_co2 = 0
 
     # GWHart
     if norm_name == "Venlo" or norm_name == "Deutsche Norm":
         # Materials
         if data["GWHAlter"][0] <= 20:
             if norm_name == "Venlo":
-                beton = helping_values["gh_size"] * 2.52032 * 0.1707 * (helping_values["culture_length_usage"])
+                betonco2 = helping_values["gh_size"] * 2.52032 * 0.1707 * (helping_values["culture_length_usage"])
                 stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
-                aluminium = helping_values["gh_size"] * 0.125 * 14.365981 * (helping_values["culture_length_usage"])
+                aluminium_co2 = helping_values["gh_size"] * 0.125 * 14.365981 * (helping_values["culture_length_usage"])
             elif norm_name == "Deutsche Norm":
-                beton = helping_values["gh_size"] * 2.52 * 0.1707 * (helping_values["culture_length_usage"])
+                betonco2 = helping_values["gh_size"] * 2.52 * 0.1707 * (helping_values["culture_length_usage"])
                 stahl = helping_values["gh_size"] * 0.55 * 1.5641297 * (helping_values["culture_length_usage"])
-                aluminium = helping_values["gh_size"] * 0.015 * 14.365981 * (helping_values["culture_length_usage"])
+                aluminium_co2 = helping_values["gh_size"] * 0.015 * 14.365981 * (helping_values["culture_length_usage"])
 
         # Stehwand
         if stehwandmaterial == "Einfachglas":
             if data["AlterStehwandmaterial"][0] <= 15:
-                stehwand = helping_values["hull_size"]["wall"]*0.664*1.1*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*0.664*1.1*(helping_values["culture_length_usage"])
         elif stehwandmaterial == "Doppelglas":
             if data["AlterStehwandmaterial"][0] <= 15:
-                stehwand = helping_values["hull_size"]["wall"]*1.328*1.1*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*1.328*1.1*(helping_values["culture_length_usage"])
         elif stehwandmaterial == "Doppelstegplatte":
             if data["AlterStehwandmaterial"][0] <= 10:
-                stehwand = helping_values["hull_size"]["wall"]*0.17*1*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*0.17*1*(helping_values["culture_length_usage"])
         elif stehwandmaterial == "Dreifachstegplatte":
             if data["AlterStehwandmaterial"][0] <= 10:
-                stehwand = helping_values["hull_size"]["wall"]*0.27*1*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*0.27*1*(helping_values["culture_length_usage"])
         elif stehwandmaterial == "Einfachfolie":
             if data["AlterStehwandmaterial"][0] <= 5:
-                stehwand = helping_values["hull_size"]["wall"]*0.0374*2.78897*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*0.0374*2.78897*(helping_values["culture_length_usage"])
         elif stehwandmaterial == "Doppelfolie":
             if data["AlterStehwandmaterial"][0] <= 5:
-                stehwand = helping_values["hull_size"]["wall"]*0.0748*2.78897*(helping_values["culture_length_usage"])
+                stehwand_co2 = helping_values["hull_size"]["wall"]*0.0748*2.78897*(helping_values["culture_length_usage"])
         else:
             raise ValueError('No valid option for Stehwandmaterial has been selected')
 
         # Bedachung
         if bedachungsmaterial == "Einfachglas":
             if data["AlterBedachungsmaterial"][0] <= 15:
-                bedachung = helping_values["hull_size"]["wall"] * 0.664 * 1.1 * (helping_values["culture_length_usage"])
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 0.664 * 1.1 * (helping_values["culture_length_usage"])
         elif bedachungsmaterial == "Doppelglas":
             if data["AlterBedachungsmaterial"][0] <= 15:
-                bedachung = helping_values["hull_size"]["wall"] * 1.328 * 1.1 * (helping_values["culture_length_usage"])
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 1.328 * 1.1 * (helping_values["culture_length_usage"])
         elif bedachungsmaterial == "Doppelstegplatte":
             if data["AlterBedachungsmaterial"][0] <= 10:
-                bedachung = helping_values["hull_size"]["wall"] * 0.17 * 1 * (helping_values["culture_length_usage"])
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 0.17 * 1 * (helping_values["culture_length_usage"])
         elif bedachungsmaterial == "Dreifachstegplatte":
             if data["AlterBedachungsmaterial"][0] <= 10:
-                bedachung = helping_values["hull_size"]["wall"] * 0.27 * 1 * (helping_values["culture_length_usage"])
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 0.27 * 1 * (helping_values["culture_length_usage"])
         elif bedachungsmaterial == "Einfachfolie":
             if data["AlterBedachungsmaterial"][0] <= 5:
-                bedachung = helping_values["hull_size"]["wall"] * 0.0374 * 2.78897 * (
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 0.0374 * 2.78897 * (
                 helping_values["culture_length_usage"])
         elif bedachungsmaterial == "Doppelfolie":
             if data["AlterBedachungsmaterial"][0] <= 5:
-                bedachung = helping_values["hull_size"]["wall"] * 0.0748 * 2.78897 * (
+                bedachung_co2 = helping_values["hull_size"]["wall"] * 0.0748 * 2.78897 * (
                 helping_values["culture_length_usage"])
         else:
             raise ValueError('No valid option for Bedachungsmaterial has been selected')
@@ -333,100 +333,120 @@ def calc_greenhouse_construction_co2(data, helping_values, all_options):
 
 
     # Energieschirm
-    energieschirm = 0
+    energieschirm_co2 = 0
     energieschirmverwendung = all_options.get(id=data["Energieschirm"][0][0]).option_value
 
     if data["AlterEnergieschirm"][0] <= 10 and energieschirmverwendung == "ja":
         energieschirmmaterial = all_options.get(id=data["EnergieschirmTyp"][0][0]).option_value
         if energieschirmmaterial == "kein":
-            energieschirm = 0  # nothing
+            energieschirm_co2 = 0  # nothing
         elif energieschirmmaterial == "einfach":
-            energieschirm = helping_values["gh_size"] * 0.05 * 2.67 * (helping_values["culture_length_usage"])
+            energieschirm_co2 = helping_values["gh_size"] * 0.05 * 2.67 * (helping_values["culture_length_usage"])
         elif energieschirmmaterial == "doppelt":
-            energieschirm = helping_values["gh_size"] * 0.1 * 2.67 * (helping_values["culture_length_usage"])
+            energieschirm_co2 = helping_values["gh_size"] * 0.1 * 2.67 * (helping_values["culture_length_usage"])
         elif energieschirmmaterial == "einfach, aluminisiert":
-            energieschirm = helping_values["gh_size"] * 0.05 * 4.5168 * (helping_values["culture_length_usage"])
+            energieschirm_co2 = helping_values["gh_size"] * 0.05 * 4.5168 * (helping_values["culture_length_usage"])
         elif energieschirmmaterial == "doppelt, aluminisiert":
-            energieschirm = helping_values["gh_size"] * 0.1 * 4.5168 * (helping_values["culture_length_usage"])
+            energieschirm_co2 = helping_values["gh_size"] * 0.1 * 4.5168 * (helping_values["culture_length_usage"])
         else:
             raise ValueError('No valid option for Energieschirm has been selected')
 
     # Bodenabdeckung
-    bodenabdeckung = 0
+    bodenabdeckung_co2 = 0
     if data["Bodenabdeckung"] != default_option:
         for option in data["Bodenabdeckung"]:
             bodenabdeckungmaterial = all_options.get(id=option[0]).option_value
             nutzdauer = option[1]
             if bodenabdeckungmaterial == "Bodenfolie":
                 if nutzdauer <= 10:
-                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.01 * 2.67
+                    bodenabdeckung_co2 = bodenabdeckung_co2 + helping_values["culture_size"] * 0.01 * 2.67
             elif bodenabdeckungmaterial == "Bodengewebe":
                 if nutzdauer <= 10:
-                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 0.02 * 2.67
+                    bodenabdeckung_co2 = bodenabdeckung_co2 + helping_values["culture_size"] * 0.02 * 2.67
             elif bodenabdeckungmaterial == "Beton":
                 if nutzdauer <= 20:
-                    bodenabdeckung = bodenabdeckung + helping_values["culture_size"] * 2.52 * 0.1707
+                    bodenabdeckung_co2 = bodenabdeckung_co2 + helping_values["culture_size"] * 2.52 * 0.1707
             else:
                 raise ValueError('No valid option for Bodenabdeckung has been selected')
 
-
-    # Kultursystem
-    kultursystemtyp = all_options.get(id=data["Kultursystem"][0][0]).option_value
+    # Produktionssystem
+    produktionssystemtyp = all_options.get(id=data["Produktionssystem"][0][0]).option_value
     produktionstyp = all_options.get(id=data["Produktionstyp"][0][0]).option_value
-    kultursystem = 0
-    if data["AlterKultursystem"][0] <= 15:
-        if kultursystemtyp == "Boden" or produktionstyp == "Biologisch":  # Biologisch doesn't have Kultursystem
-            kultursystem = 0  # nothing
-        elif kultursystemtyp == "Hydroponik offen":
-            kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
-        elif kultursystemtyp == "Hydroponik geschlossen":
-            kultursystem = helping_values["row_length_total"] * 0.133333333 * 1.73
+    produktionssystem_co2 = 0
+    if data["AlterProduktionssystem"][0] <= 15:
+        if produktionssystemtyp == "Boden" or produktionstyp == "Biologisch":  # Biologisch doesn't have Produktionssystem
+            produktionssystem_co2 = 0  # nothing
+        elif produktionssystemtyp == "Hydroponik offen":
+            produktionssystem_co2 = helping_values["row_length_total"] * 0.133333333 * 1.73
+        elif produktionssystemtyp == "Hydroponik geschlossen":
+            produktionssystem_co2 = helping_values["row_length_total"] * 0.133333333 * 1.73
         else:
-            raise ValueError('No valid option for Kultursystem has been selected')
+            raise ValueError('No valid option for Produktionssystem has been selected')
 
-    # Transportsystem
-    transportsystemverwendung = all_options.get(id=data["Transportsystem"][0][0]).option_value
-    transportsystem = 0
+    # Bewässerungsart
+    bewaesserungmaterial = all_options.get(id=data["Bewaesserungsart"][0][0]).option_value
+    bewaesserung_co2 = 0
+    if bewaesserungmaterial == "Tropfschlaeuche":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 1.36 / 100) * 2.67) / 10
+    elif bewaesserungmaterial == "Bodenschsprenkler":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4 / 30) * 2.67) / 15
+    elif bewaesserungmaterial == "Handschlauch":
+        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4 / 30) * 2.67) / 15
+    else:
+        raise ValueError('No valid option for Bewaesserungsart has been selected')
 
-    if data["AlterTransportsystem"][0] <= 20:
-        if transportsystemverwendung == "nein":
-            transportsystem = 0  # nothing
-        elif transportsystemverwendung == "ja":
-            transportsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+    # Heizsystem
+    heizsystemtyp = all_options.get(id=data["Heizsystem"][0][0]).option_value
+    heizsystem = 0
+
+    if data["AlterHeizsystem"][0] <= 20:
+        if heizsystemtyp == "Transportsystem":
+            heizsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+        elif heizsystemtyp == "Rohrheizung (hoch, niedrig, etc.)":
+            heizsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+        elif heizsystemtyp == "Konvektionsheizung":
+            heizsystem = data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"])
+        elif heizsystemtyp == "Deckenlufterhitzer":
+            heizsystem = 0
+        elif heizsystemtyp == "Keines":
+            heizsystem = 0
         else:
-            raise ValueError('No valid option for Transportsystem has been selected')
+            raise ValueError('No valid option for Heizsystem has been selected')
 
     # Zusaetzliches Heizsystem
     zusaetzliches_heizsystem = 0
     zusaetzliches_heizsystemverwendung = all_options.get(id=data["ZusaetzlichesHeizsystem"][0][0]).option_value
-    print("zh" + str(zusaetzliches_heizsystemverwendung))
     if data["AlterZusaetzlichesHeizsystem"][0] <= 15 and zusaetzliches_heizsystemverwendung == "ja":
-        zusaetzliches_heizsystemmaterial = all_options.get(id=data["ZusaetzlichesHeizsystemTyp"][0][0]).option_value
-        print("zhv" + str(zusaetzliches_heizsystemmaterial))
-        if zusaetzliches_heizsystemmaterial == "Vegetationsheizung":
-            zusaetzliches_heizsystem = helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])
-        elif zusaetzliches_heizsystemmaterial == "Konvektionsheizung":
+        zusaetzliches_heizsystemtyp = all_options.get(id=data["ZusaetzlichesHeizsystemTyp"][0][0]).option_value
+        if zusaetzliches_heizsystemtyp == "Transportsystem":
+            zusaetzliches_heizsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+        elif heizsystemtyp == "Rohrheizung (hoch, niedrig, etc.)":
+            heizsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+        elif zusaetzliches_heizsystemtyp == "Konvektionsheizung":
             zusaetzliches_heizsystem = data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"])
-        elif zusaetzliches_heizsystemmaterial == "beides":
-            zusaetzliches_heizsystem = (helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])) + (data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * 1.5641297 * (helping_values["culture_length_usage"]))
+        elif zusaetzliches_heizsystemtyp == "Vegetationsheizung":
+            zusaetzliches_heizsystem = helping_values["row_length_total"] * 2 * 0.133333333 * 1.5641297 * (helping_values["culture_length_usage"])
+        elif heizsystemtyp == "Deckenlufterhitzer":
+            heizsystem = 0
         else:
             raise ValueError('No valid option for ZusaetzlichesHeizsystem has been selected')
 
-    konstruktion = beton + stahl + aluminium + lpde + stehwand + bedachung
-    gesamt_co2 = beton + stahl + aluminium + lpde + stehwand + bedachung + energieschirm + bodenabdeckung + kultursystem + transportsystem + zusaetzliches_heizsystem
+    konstruktion_co2 = betonco2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2
+    gesamt_co2 = betonco2 + stahl + aluminium_co2 + lpde_co2 + stehwand_co2 + bedachung_co2 + energieschirm_co2 + bodenabdeckung_co2 + produktionssystem_co2 + bewaesserung_co2 + heizsystem + zusaetzliches_heizsystem
     print("Gewächhauskonstruktion CO2: +")
-    print("beton " + str(beton))
-    print("aluminium " + str(aluminium))
-    print("lpde " + str(lpde))
-    print("stehwand " + str(stehwand))
-    print("bedachung " + str(bedachung))
-    print("energieschirm " + str(energieschirm))
-    print("bodenabdeckung " + str(bodenabdeckung))
-    print("kultursystem " + str(kultursystem))
-    print("transportsystem " + str(transportsystem))
+    print("beton " + str(betonco2))
+    print("aluminium " + str(aluminium_co2))
+    print("lpde " + str(lpde_co2))
+    print("stehwand " + str(stehwand_co2))
+    print("bedachung " + str(bedachung_co2))
+    print("energieschirm " + str(energieschirm_co2))
+    print("bodenabdeckung " + str(bodenabdeckung_co2))
+    print("produktionssystem " + str(produktionssystem_co2))
+    print("bewässerungsart " + str(bewaesserung_co2))
+    print("heizsystem " + str(heizsystem))
     print("zusaetzliches_heizsystem " + str(zusaetzliches_heizsystem))
     print("gwh-konstruktion: " + str(gesamt_co2))
-    return konstruktion, energieschirm, bodenabdeckung, kultursystem, transportsystem, zusaetzliches_heizsystem
+    return konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserung_co2, heizsystem, zusaetzliches_heizsystem
 
 
 
@@ -773,7 +793,7 @@ def calc_pflanzenbehaelter_co2(data, helping_values, all_options):
     volumen = 0
     if growbagskuebelverwendung == "Growbags":
         growbags_co2 = ((helping_values["row_length_total"]*0.2*2+helping_values["row_length_total"]*0.11*2+helping_values["row_length_total"]/1*2*(0.15*0.11))*0.186) * 2.78897
-    elif growbagskuebelverwendung == "Kuebel":
+    elif growbagskuebelverwendung == "Andere Kulturgefäße (Topf, Kübel)":
         if data["Kuebel:Alter"][0] <= 10:
             kuebel_co2 = ((0.03*data["Kuebel:VolumenProTopf"][0]-0.0214) / (data["Kuebel:JungpflanzenProTopf"][0]*helping_values["plant_count_total"]) / 10) * 2.88
     elif growbagskuebelverwendung == "nichts":
@@ -939,24 +959,6 @@ def calc_panicle_hanger_co2(data, helping_values, all_options):
 
     print("rispenbuegel_co2: " + str(rispenbuegel_co2))
     return rispenbuegel_co2
-
-
-def calc_irrigation_co2(data, helping_values, all_options):
-
-    bewaesserungmaterial = all_options.get(id=data["Bewaesserungsart"][0][0]).option_value
-    bewaesserung_co2 = 0
-
-    if bewaesserungmaterial == "Tropfschlaeuche":
-        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 1.36/100) * 2.67) / 10
-    elif bewaesserungmaterial == "Bodenschsprenkler":
-        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4/30) * 2.67) / 15
-    elif bewaesserungmaterial == "Handschlauch":
-        bewaesserung_co2 = (((helping_values["row_length_total"] + data["Breite"][0]) * 4/30) * 2.67) / 15
-    else:
-        raise ValueError('No valid option for Bewaesserungsart has been selected')
-
-    print("bewaesserung_co2: " + str(bewaesserung_co2))
-    return bewaesserung_co2
 
 
 def calc_packaging_co2(data, helping_values, all_options):
