@@ -34,20 +34,25 @@ export type InputPaginationButtonsProps = {
 const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
     const [showAlert, setShowAlert] = useState<boolean>(false)
     const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [errorMessage, setErrorMessage] = useState<string>("Ein Fehler ist aufgetreten. Bitte Versuchen Sie es erneut!")
     const navigate = useNavigate()
+    const scrollComponent = document.getElementById('scroll-box')
 
     const handleSubmitSuccess = () => {
         setTimeout(function(){
             setOpenDialog(false)
             navigate("../co2-footprint")
-        }, 2000);
+        }, 1000);
     }
 
-    const handleSubmitError = () => {
+    const handleSubmitError = (errorMessage: string) => {
         setTimeout(function(){
+            if (errorMessage != "") {
+                setErrorMessage(errorMessage)
+            }
             setOpenDialog(false)
             setShowAlert(true)
-        }, 2000);
+        }, 1000);
     }
 
     const submitErrorAlert = () => {
@@ -55,7 +60,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
             <Grid item xs={12}>
                 <Alert severity="error" onClose={() => setShowAlert(false)}>
                     <AlertTitle>Abschicken fehlgeschlagen</AlertTitle>
-                    Nicht alle Eingabefelder korrekt ausgefüllt!
+                    {errorMessage}
                 </Alert>
             </Grid>
         );
@@ -63,8 +68,13 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
 
     const handleNextClick = () => {
         props.next()
+        scrollComponent?.scrollTo(0,0)
     }
 
+    const handlePreviousClick = () => {
+        props.previous()
+        scrollComponent?.scrollTo(0,0)
+    }
 
 
     return (
@@ -86,7 +96,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                     size="large"
                     disabled={!props.hasPrevious()}
                     startIcon={<NavigateBefore />}
-                    onClick={() => props.previous()}
+                    onClick={handlePreviousClick}
                 >
                     Zurück
                 </Button>
@@ -107,7 +117,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
                         size="large"
                         disabled={false}
                         endIcon={<NavigateNext/>}
-                        onClick={() => props.submit(() => setOpenDialog(true), () => handleSubmitSuccess(), () => handleSubmitError())}
+                        onClick={() => props.submit(() => setOpenDialog(true), () => handleSubmitSuccess(), (errorMessage:string) => handleSubmitError(errorMessage))}
                     >
                         Abschicken
                     </Button>

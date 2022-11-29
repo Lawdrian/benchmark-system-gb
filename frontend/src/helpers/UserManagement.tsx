@@ -16,7 +16,7 @@ export const passwordsEqual = (password: string, cPassword: string): boolean => 
 }
 
 export const passwordsValid = (password: string, cPassword: string): boolean => {
-    return passwordsPresent(password, cPassword) && passwordsEqual(password, cPassword)
+    return password.length >= 8 && passwordsPresent(password, cPassword) && passwordsEqual(password, cPassword)
 }
 
 export const companyValid = (company: string): boolean => {
@@ -83,6 +83,8 @@ export const getMailHelperText = (email: string, emailUnique: boolean = true) =>
 export const getPasswordHelperText = (password: string, cPassword: string, confirm: boolean) => {
     if ((isEmpty(password) && !confirm) || (isEmpty(cPassword) && confirm)) {
         return getRequiredHelperText()
+    } else if(password.length < 8) {
+        return "Ihr Passwort muss mindestens 8 Zeichen lang sein"
     } else if (!passwordsPresent(password, cPassword)) {
         return
     } else if (!passwordsValid(password, cPassword)) {

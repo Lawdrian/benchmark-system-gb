@@ -6,7 +6,7 @@
 import {
     RESET_DATA,
     SUBMISSION_ERROR,
-    SUBMISSION_INPROGRESS,
+    SUBMISSION_INPROGRESS, SUBMISSION_RESET,
     SUBMISSION_SUCCESS
 } from "../types/reduxTypes";
 
@@ -57,6 +57,7 @@ export default function (state: SubmissionState = initialState, action: any): Su
                 inProgress: false,
                 successful: false
             }
+        case SUBMISSION_RESET:
         case RESET_DATA:
             return initialState
         default:

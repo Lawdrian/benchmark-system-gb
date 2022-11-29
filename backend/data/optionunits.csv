@@ -54,8 +54,8 @@
 58,kg,49
 59,kWh,50
 60,kWh,51
-61,Auswahl,52
-62,Auswahl,53
+61,kWh,52
+62,m3,52
 63,kWh,54
 65,kWh,55
 67,kWh,56
@@ -175,6 +175,8 @@
 202,Auswahl,177
 203,Auswahl,178
 204,Auswahl,179
-205, Auswahl,180
-206, Auswahl,181
-207, Auswahl,182
+205,Auswahl,180
+206,Auswahl,181
+207,Auswahl,182
+208,kWh,53
+209,m3,53

@@ -50,6 +50,10 @@ def standardize_units(data):
                 new_value = data["Energietraeger"][index][1]*4.17
             elif(selected_option_value=="Hackschnitzel"):
                 new_value = data["Energietraeger"][index][1]*3.5
+            elif(selected_option_value=="BHKW Biomethan"):
+                new_value = data["Energietraeger"][index][1]*10.4/1.1268
+            elif(selected_option_value=="BHKW Erdgas"):
+                new_value = data["Energietraeger"][index][1]*10.4/1.1268
             else:
                 new_value = (0, 0, 0)
 
@@ -57,32 +61,6 @@ def standardize_units(data):
             values_list[1] = round(new_value, 0)
             values_list[2] = kwh_energietraeger_id
             data["Energietraeger"][index] = tuple(values_list)
-
-    # BHKW Erdgas in kWh umrechnen (Einheit kann auch % sein. Dann Anteil von Gesamt nehmen!!!)
-    # Anteil Erdgas: m3*10,4/1,1268 = kWh
-    # calculating the correct value in kWh
-    bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilErdgas")[0].id
-    kwh_bhkw_erdgas_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
-    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilErdgas"][1])[0].unit_name
-
-    if(selected_unit_name != "kWh"):
-        # change value and unit from m3 to kWh
-        new_value = data["BHKW:AnteilErdgas"][0]*10.4/1.1268
-        data["BHKW:AnteilErdgas"] = (new_value, kwh_bhkw_erdgas_id)
-
-
-    # BHKW Biomethan in kWh umrechnen (Einheit kann auch % sein. Dann Anteil von Gesamt nehmen!!!)
-    #Anteil Biomethan: m3*10,4/1,1268 = kWh
-    # calculating the correct value in kWh
-    bhkw_id = all_measurements.filter(measurement_name="BHKW:AnteilBiomethan")[0].id
-    kwh_bhkw_biomethan_id = all_measurementunits.filter(measurement_id=bhkw_id).filter(unit_name="kWh")[0].id
-    selected_unit_name = all_measurementunits.filter(id=data["BHKW:AnteilBiomethan"][1])[0].unit_name
-    if (selected_unit_name != "kWh"):
-        # change value and unit from m3 to kWh
-        new_value = data["BHKW:AnteilBiomethan"][0] * 10.4 / 1.1268
-        print(data["BHKW:AnteilBiomethan"])
-        data["BHKW:AnteilBiomethan"] = (new_value, kwh_bhkw_biomethan_id)
-    print(data["BHKW:AnteilBiomethan"])
 
     # Co2-Zudosierung ist in kg gewollt
     #technisches CO2: m3*(0,00196*1000) = kg

@@ -38,8 +38,13 @@ class ListOfTuples(serializers.Field):
                     False: input_string does not match the format.
         """
         tupel_regex = "\(\s*\d+((((\s*,\s*\d+(\.\d+)?){2,3})?)|(\s*,\s*))\s*\)"
+        tuple1_regex = "\(\s*\d+(|(\s*,\s*))\s*\)"
+        tuple2_regex = "\(\s*\d+((\s*,\s*\d+(\.\d+)?){2}){1}\s*\)"
+        tuple3_regex = "\(\s*\d+((\s*,\s*\d+(\.\d+)?){3}){1}\s*\)"
         pattern = re.compile(
-            "\s*\[\s*(" + tupel_regex + "\s*,\s*)*" + tupel_regex + "\s*\]\s*"
+            "(" + "\s*\[\s*(" + tuple1_regex + "\s*,\s*)*" + tuple1_regex + "\s*\]\s*" + ")" "|" +
+            "(" + "\s*\[\s*(" + tuple2_regex + "\s*,\s*)*" + tuple2_regex + "\s*\]\s*" + ")" "|" +
+            "(" + "\s*\[\s*(" + tuple3_regex + "\s*,\s*)*" + tuple3_regex + "\s*\]\s*" + ")"
         )
         return bool(pattern.match(input_string))
 

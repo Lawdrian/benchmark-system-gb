@@ -3,10 +3,10 @@
 
 """
 from backend.models import Measurements, Options, OptionGroups
-from backend.utils import default_value, default_option
+from backend.utils import default_value, default_option, generic_error_message, input_error_message
 
 
-def validate_greenhouse_data(data):
+def validate_mandatory_fields(data):
     """Function that checks if every mandatory input field has been filled out. Fields that depend on a conditional
         field that hasn't been selected can have a default value.
 
@@ -16,8 +16,8 @@ def validate_greenhouse_data(data):
         Returns:
             boolean: true = valid date; false = invalid data
     """
-    print("Data")
-    print(data)
+
+
 
 
     # Retrieve all measurements, optiongroups and options from the database
@@ -47,8 +47,8 @@ def validate_greenhouse_data(data):
         11: ("Belichtungsstrom", ["NEIN"], [], ["BelichtungsstromEinheit"], []),
         12: ("BelichtungsstromEinheit", ["KWH"], ["Belichtung:Stromverbrauch"], []),
         13: ("BelichtungsstromEinheit", ["ANGABEN"], ["Belichtung:LaufzeitProJahr", "Belichtung:AnzahlLampen", "Belichtung:AnschlussleistungProLampe"], []),
-        14: ("GrowbagsKuebel", ["GROWBAGS"], [], ["Substrat"]),
-        15: ("GrowbagsKuebel", ["Andere Kulturgefaesse (Topf, Kuebel)"], ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], ["Substrat"]),
+        14: ("GrowbagsKuebel", ["GROWBAGS", "Andere Kulturgefaesse (Topf, Kuebel)"], [], ["Substrat"]),
+        15: ("GrowbagsKuebel", ["Andere Kulturgefaesse (Topf, Kuebel)"], ["Kuebel:VolumenProTopf", "Kuebel:JungpflanzenProTopf", "Kuebel:Alter"], []),
         16: ("Jungpflanzen:Zukauf", ["JA"], ["Jungpflanzen:Distanz"], []),
         17: ("Schnur", ["JA"], ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
         18: ("Klipse", ["JA"], ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
@@ -64,7 +64,6 @@ def validate_greenhouse_data(data):
         # retrieve the selected option id for the current optiongroup
         selected_option_id = data[optiongroup][0][0]
         selected_option_value = all_options.filter(id=selected_option_id)[0].option_value
-        print(selected_option_value)
         # compare the value with the conditional rule to see if the fields that depend on the optiongroup are mandatory
         optiongroup_required = False
         for condition in conditions:
@@ -89,6 +88,7 @@ def validate_greenhouse_data(data):
                         del mandatory_optiongroups[not_required_optiongroup]
                     except KeyError:
                         print("Optiongroup " + str(not_required_optiongroup) + " has already been deleted or doesn't exist")
+                        return False, generic_error_message
 
     # This place is for manually deleting always optional fields out of the mandatory lists
     del mandatory_optiongroups["SonstigeVerbrauchsmaterialien"]
@@ -97,25 +97,11 @@ def validate_greenhouse_data(data):
     del mandatory_optiongroups["Duengemittel:DetaillierteAngabe"]
     del mandatory_optiongroups["Verpackungsmaterial"]
     del mandatory_optiongroups["Bodenabdeckung"]
-    del mandatory_measurements["BHKW:AnteilErdgas"]
-    del mandatory_measurements["BHKW:AnteilBiomethan"]
     del mandatory_measurements["FungizideKg"]
+    del mandatory_measurements["FungizideLiter"]
     del mandatory_measurements["InsektizideKg"]
+    del mandatory_measurements["InsektizideLiter"]
     del mandatory_measurements["Verpackungsmaterial:AnzahlMehrwegsteigen"]
-
-    # check if at least one fruitclass has been selected
-    fruit_class_fields = ["10-30Gramm(Snack)", "30-100Gramm(Cocktail)", "100-150Gramm(Rispen)", ">150Gramm(Fleisch)"]
-    fruit_class_selected = False
-    for fruit_class in fruit_class_fields:
-        if all_options.get(id=data[fruit_class][0][0]).option_value == "ja":
-            fruit_class_selected = True
-        # Delete fruit class out of mandatory fields, because it should be allowed to not select the radio button at all.
-        del mandatory_optiongroups[fruit_class]
-
-    if fruit_class_selected==False:
-        print("Error: No fruit class has been selected")
-        return False
-
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():
@@ -124,14 +110,26 @@ def validate_greenhouse_data(data):
         #print(data[value.measurement_name] == default_value)
         if data[value.measurement_name] == default_value:
             print("Error: Mandatory measurement field " + value.measurement_name + " has default value!")
-            return False
+            return False, input_error_message
 
+    print("Mandatory Optiongroup check")
     # check if any element in the mandatory_optiongroups list has a default value
     for name, value in mandatory_optiongroups.items():
-        #print(str(data[value.option_group_name]))
-        #print(type(data[value.option_group_name]))
-        if str(data[value.option_group_name]) == default_option:
+        # print(data[value.option_group_name]==default_option)
+        # print(type(data[value.option_group_name]))
+        if data[value.option_group_name] == default_option:
             print("Error: Mandatory option group " + value.option_group_name + " has default value!")
-            return False
+            return False, input_error_message
 
-    return True
+    # Check if at least one fruitclass has been selected
+    fruit_class_fields = ["10-30Gramm(Snack)", "30-100Gramm(Cocktail)", "100-150Gramm(Rispen)", ">150Gramm(Fleisch)"]
+    fruit_class_selected = False
+    for fruit_class in fruit_class_fields:
+        if all_options.get(id=data[fruit_class][0][0]).option_value == "ja":
+            fruit_class_selected = True
+
+    if not fruit_class_selected:
+        print("Error: No fruit class has been selected")
+        return False, "Es wurde keine Fruchtklasse ausgewählt. Bitte wählen Sie mindestens eine Fruchtklasse aus."
+
+    return True, ""

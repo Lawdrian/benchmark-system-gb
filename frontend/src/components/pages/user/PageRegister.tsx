@@ -10,7 +10,14 @@ import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
 import {register} from "../../../actions/auth";
-import {Dialog, DialogContent, DialogContentText, DialogTitle, InputAdornment} from "@mui/material";
+import {
+    Alert, AlertTitle,
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Snackbar,
+} from "@mui/material";
 import {RootState} from "../../../store";
 import {
     companyValid,
@@ -31,23 +38,31 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type RegisterProps = ReduxProps & {
     loginUrl: string
+    dataInfoUrl: string
 }
 
-const PageRegister = ({register, loginUrl}: RegisterProps) => {
+const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
     const [cPassword, setCPassword] = useState<string>("")
     const [company, setCompany] = useState<string>("")
     const [tries, setTries] = useState<number>(0)
     const [openDialog, setOpenDialog] = useState<boolean>(false)
+    const [openCookieSnackBar, setOpenCookieSnackBar] = useState<boolean>(true)
+    const [cookieConsent, setCookieConsent] = useState<boolean>(false)
     const [emailIsUnique, setEmailIsUnique] = useState<boolean>(true)
-
+    const [showAlert, setShowAlert] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const handleRegistration = (event: any) => {
         event.preventDefault();
         if (inputValid(company, email, password, cPassword)) {
-            register(email, email, password, company, () => setOpenDialog(true), () => setEmailIsUnique(false))
+            if (cookieConsent) {
+                register(email, email, password, company, () => setOpenDialog(true), () => setEmailIsUnique(false))
+            }
+            else {
+                setShowAlert(true)
+            }
         }
         setTries(tries + 1)
     }
@@ -65,6 +80,23 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
     const hasTried = () => {
         return tries > 0
     }
+
+    const handleCookieClick = () => {
+        setCookieConsent(true)
+        setOpenCookieSnackBar(false)
+        setShowAlert(false)
+    }
+
+    const cookieErrorAlert = (
+        <Grid item xs={12}>
+            <Alert severity="error" onClose={() => setShowAlert(false)}>
+                <AlertTitle>Registrierung fehlgeschlagen</AlertTitle>
+                Sie müssen den Cookies zustimmen um das Benchmark-Tool verwenden zu können.
+            </Alert>
+        </Grid>
+    )
+
+
 
     return (
         <Container component="main" maxWidth="xs">
@@ -87,6 +119,15 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
                         <Typography component="h1" variant="h5">
                             Registrieren
                         </Typography>
+                    </Grid>
+                    <Grid item>
+                        <Snackbar
+                            open={openCookieSnackBar}
+                            anchorOrigin={{vertical: 'bottom',horizontal: 'center'}}
+                            onClose={() =>{}}
+                            message={"Es werden technisch notwendige Cookies verwendet."}
+                            action={<Button onClick={handleCookieClick}>Verstanden</Button>}
+                        />
                     </Grid>
                     <Grid item>
                             <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -132,7 +173,7 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
                                 required
                                 fullWidth
                                 name="password"
-                                label="Passwort"
+                                label="Passwort (mind 8. Zeichen)"
                                 type="password"
                                 id="password"
                                 autoComplete="current-password"
@@ -158,11 +199,16 @@ const PageRegister = ({register, loginUrl}: RegisterProps) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12}>
+                        <p>
+                            Wir verarbeiten Ihre Daten entsprechend unserer <Link to={dataInfoUrl}>Datenschutzhinweise</Link>
+                        </p>
+                    </Grid>
+                    {showAlert ? cookieErrorAlert : null}
+                    <Grid item xs={12}>
                         <Button
                             onClick={(event) => handleRegistration(event)}
                             fullWidth
                             variant="contained"
-                            sx={{mt: 3, mb: 2}}
                             color="primary"
                             disabled={hasTried() && (!inputValid(company, email, password, cPassword) || !emailIsUnique)}
                         >

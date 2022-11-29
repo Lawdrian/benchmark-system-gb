@@ -142,14 +142,14 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         KulturEnde: "(48,37)",
         NebenkulturBeginn: "(30,0)",
         NebenkulturEnde: "(1,0)",
-        "BHKW:AnteilErdgas": "(0,0)",
-        "BHKW:AnteilBiomethan": "(0,0)",
         "Belichtung:Stromverbrauch": "(10,51)",
         "Belichtung:AnzahlLampen": "(0,0)",
         "Belichtung:AnschlussleistungProLampe": "(0,0)",
         "Belichtung:LaufzeitProJahr": "(0,0)",
-        FungizideKg: "(803,55)",
-        InsektizideKg: "(504,57)",
+        FungizideKg: "(3,55)",
+        FungizideLiter: "(8,44)",
+        InsektizideKg: "(4,57)",
+        InsektizideLiter: "(5,45)",
         "Kuebel:VolumenProTopf": "(0,0)",
         "Kuebel:JungpflanzenProTopf": "(0,0)",
         "Kuebel:Alter": "(0,0)",
@@ -178,13 +178,12 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         ">150Gramm(Fleisch)": "[(39)]",
         Nebenkultur: "[(40)]",
         Energietraeger: "[(44,40000,45),(45,16000,48),(46,700,51)]",
-        BHKW: "[(53)]",
         Stromherkunft: "[(54,20000,63),(55,2400,65),(56,13,67)]",
         Zusatzbelichtung: "[(64)]",
         Belichtungsstrom: "[(67)]",
         "CO2-Herkunft": "[(68,60,88),(70,50,94)]",
-        "Duengemittel:VereinfachteAngabe": "[(71,10,96),(72,8,97),(73,3,98),(74,5,99),(75,4,100),(76,3,101),(77,2,102),(78,1,103),(79,88,104),(80,21,105),(81,2145,106)]",
-        "Duengemittel:DetaillierteAngabe": "[(82,3,107),(83,5,108),(84,8,109),(85,4,110),(86,5,111),(87,8,112),(89,5,114),(90,85,115),(91,5,116),(92,8,117),(93,44,118),(94,5,119),(95,8,120),(96,8,121),(97,5,122),(98,54,123),(99,4,124),(100,55,125),(101,8,126),(102,5,127),(103,4,128),(104,4,129),(105,5,130),(106,54,131),(107,4,132)]",
+        "Duengemittel:VereinfachteAngabe": "[(71,10,96),(81,8,106),(79,3,104),(76,5,101),(74,4,99),(72,3,97),(77,2,102),(73,1,98),(75,88,100),(80,21,105),(78,2145,103)]",
+        "Duengemittel:DetaillierteAngabe": "[(83,3,108),(93,5,118),(87,8,112),(86,4,111),(92,5,117),(94,8,119),(85,5,110),(89,85,114),(90,5,115),(97,8,122),(101,44,126),(103,5,128),(107,8,132),(88,8,113),(84,5,109),(104,54,129),(106,4,131),(105,55,130),(95,8,120),(98,5,123),(99,4,124),(91,4,116),(100,5,125),(96,54,121),(82,4,107)]",
         GrowbagsKuebel: "[(117)]",
         Substrat: "[(124,5,149)]",
         Schnur: "[(175)]",
@@ -206,7 +205,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     const testSuccess = () => { return {successful: true, loading: false} }
     const testFailed = () => { return {successful: false, loading: false} }
 
-    props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
+    //props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
     props.submitGreenhouseData(testData,
         () => {
             props.loadCO2Footprint(

@@ -11,7 +11,9 @@ def create_co2optimization_data(dataset):
         "Biogas":0.06785,
         "Geothermie(oberflaechennah)":0.0348,
         "Hackschnitzel":0.025,
-        "Tiefengeothermie":0.00633
+        "Tiefengeothermie":0.00633,
+        "BHKW Biomethan":0.06785,
+        "BHKW Erdgas":0.252,
     }
 
     # energyconsumption

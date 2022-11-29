@@ -91,7 +91,7 @@ const PageResetPW = ({isActivated, resetPW, loginUrl}: userActivationProps) => {
                             required
                             fullWidth
                             name="password"
-                            label="Passwort"
+                            label="Passwort (mind. 8 Zeichen)"
                             type="password"
                             id="password"
                             autoComplete="current-password"
