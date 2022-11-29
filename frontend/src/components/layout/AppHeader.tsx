@@ -9,6 +9,7 @@ import { SharedDrawerProps } from "../../types/SharedLayoutTypes";
 import StyledAppBar from "../styled/StyledAppBar";
 import { AuthenticationState } from "../../reducers/auth";
 import { logout } from "../../actions/auth";
+import {Button} from "@mui/material";
 
 const mapStateToProps = (state: { auth: AuthenticationState }) => ({
     auth: state.auth
@@ -58,9 +59,9 @@ const AppHeader = (
                 >
                     {title}
                 </Typography>
-                <IconButton color="inherit" onClick={logout}>
-                    <AccountCircle />
-                </IconButton>
+                <Button color="inherit" onClick={logout}>
+                    Ausloggen
+                </Button>
             </Toolbar>
         </StyledAppBar>
     );

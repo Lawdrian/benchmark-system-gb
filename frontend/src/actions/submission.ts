@@ -11,7 +11,7 @@
 import {
     GreenhouseData,
     SUBMISSION_ERROR,
-    SUBMISSION_INPROGRESS,
+    SUBMISSION_INPROGRESS, SUBMISSION_RESET,
     SUBMISSION_SUCCESS
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
@@ -58,7 +58,11 @@ export const submitGreenhouseData = (
                 dispatch({
                     type: SUBMISSION_ERROR
                 })
-                errorCB()
+                errorCB(error.response.data["Message"])
             })
             .finally(() => callback())
     }
+
+export const resetSubmissionState = () => (dispatch: AppDispatch) =>{
+            dispatch({type: SUBMISSION_RESET})
+}

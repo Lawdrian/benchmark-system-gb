@@ -3,11 +3,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .. import algorithms
-from ..dataValidation import validate_greenhouse_data
+from ..dataValidation import validate_mandatory_fields
 from ..models import GreenhouseData, Measurements, Measures, Selections, \
     OptionGroups, Greenhouses, Calculations, Results, MeasurementUnits
 from ..serializers import InputDataSerializer
 from ..standardizeUnits import standardize_units
+from ..utils import generic_error_message, input_error_message
 
 
 class CreateGreenhouseData(APIView):
@@ -55,23 +56,29 @@ class CreateGreenhouseData(APIView):
 
         user_id = self.request.user.id
         if user_id is None:
-            return Response({'Bad Request': 'No valid user!'},
+            return Response({'Error': 'No valid user!', 'Message': generic_error_message},
                             status=status.HTTP_400_BAD_REQUEST)
 
         if not self.request.session.exists(self.request.session.session_key):
             self.request.session.create()
 
-        print("Post Begin!!!")
+        print("SUBMISSION BEGIN")
 
+        print("Format check")
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            print("IsVALID!!!")
-            # Validate that every required field has been filled out with not a default value
-            if validate_greenhouse_data(data=serializer.data) is False:
-                return Response({'Bad Request': 'Not all mandatory fields have been filled out!'},
-                                status=status.HTTP_400_BAD_REQUEST)
+            print("Format valid")
 
+            # Validate that every required field has been filled out with not a default value
+            print("Mandatory check")
+            valid_mandatory_fields, mandatory_error_message = validate_mandatory_fields(data=serializer.data)
+            if valid_mandatory_fields is False:
+                return Response({'Error': 'Mandatory error!', 'Message': mandatory_error_message},
+                                status=status.HTTP_400_BAD_REQUEST)
+            print("Mandatory valid")
+            print("Standardize data")
             standardized_data = standardize_units(serializer.data)
+            print("Standardize success")
             # Does the given greenhouse already exist?
             greenhouse = Greenhouses.objects.filter(
                 user_id=user_id,
@@ -104,6 +111,7 @@ class CreateGreenhouseData(APIView):
             # Calculate co2 footprint and save it in Results table in db
             try:
                 # calculate co2 footprint
+                print("Calculation begin")
                 calculation_result = algorithms.calc_co2_footprint(standardized_data)
                 calculation_variables = Calculations.objects.in_bulk(
                     field_name='calculation_name')
@@ -113,23 +121,19 @@ class CreateGreenhouseData(APIView):
                         result_value=round(value, 0),
                         calculation_id=calculation_variables[variable].id,
                     ).save()
-            except ValueError:
+                print("Calculation success")
+            except:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
                 else:
                     GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
-                return Response({'Calculation Error': 'Invalid input data!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            except IndexError:
-                if new_greenhouse:
-                    Greenhouses.objects.filter(id=greenhouse.id).delete()
-                else:
-                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
-                return Response({'Calculation Error': 'Invalid input data!'},
+                print("Calculation error!")
+                return Response({'Error': 'Calculation error!', 'Message': generic_error_message},
                                 status=status.HTTP_400_BAD_REQUEST)
 
             # Save input data in Measures and Selection tables in db
             try:
+                print("Save greenhouse data begin")
                 # retrieve 'Measurements' table as dict to map measurement_name to
                 # measurement_id
                 measurements = Measurements.objects.in_bulk(
@@ -167,22 +171,17 @@ class CreateGreenhouseData(APIView):
                                 selection_unit_id=selection_unit,
                                 value2=value2
                             ).save()
-
+                print("Save greenhouse data success")
                 return Response(request.data, status=status.HTTP_201_CREATED)
-            except ValueError:
+            except:
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
                 else:
                     GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
-                return Response({'Save Error': 'Invalid input data!'},
-                                status=status.HTTP_400_BAD_REQUEST)
-            except IndexError:
-                if new_greenhouse:
-                    Greenhouses.objects.filter(id=greenhouse.id).delete()
-                else:
-                    GreenhouseData.objects.filter(id=greenhouse_data.id).delete()
-                return Response({'Save Error': 'Invalid input data!'},
+                print("Save error: Invalid input data")
+                return Response({'Message': generic_error_message},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors,
+        print(serializer.errors)
+        return Response({"Error": serializer.errors, "Message": input_error_message},
                         status=status.HTTP_400_BAD_REQUEST)

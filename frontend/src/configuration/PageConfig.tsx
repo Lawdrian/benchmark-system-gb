@@ -30,6 +30,7 @@ import PageUserActivation from "../components/pages/user/PageUserActivation";
 import PageForgotPW from "../components/pages/user/PageForgotPW";
 import PageResetPW from "../components/pages/user/PageResetPW";
 import PagePreInputData from "../components/pages/PagePreInputData";
+import PageDataInformation from "../components/pages/PageDataInformation";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
@@ -37,6 +38,7 @@ export const pageConfig: PageConfig = {
     userActivationUrl: "/activate",
     forgotPWUrl: "/forgotpw",
     resetPWUrl: "resetpw",
+    dataInfoUrl: "/information",
     homeUrl: "/",
     proceedUrl: "", // TODO: Still necessary?!
 }
@@ -46,6 +48,10 @@ const pageDefinitions: Array<Page> = [
         .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
+    generatePage(<PagePreInputData/>, "input-data")
+        .withHeaderTitle("Eingabe der Gewächshausdaten")
+        .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Input)
+        .finalize(),
     generatePage(<PageWaterFootprint/>, "water-footprint")
         .withHeaderTitle("H2O Footprint - Berechnung des Wasserverbrauchs")
         .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
@@ -53,10 +59,6 @@ const pageDefinitions: Array<Page> = [
     generatePage(<PageC02Footprint/>, "co2-footprint")
         .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
         .includeInDrawer(<Co2Icon/>, "CO2 Footprint", Section.Diagrams)
-        .finalize(),
-    generatePage(<PagePreInputData/>, "input-data")
-        .withHeaderTitle("Eingabe der Gewächshausdaten")
-        .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Profile)
         .finalize(),
     generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")
@@ -81,6 +83,7 @@ const pageDefinitions: Array<Page> = [
     generatePage(
         <PageRegister
             loginUrl={pageConfig.loginUrl}
+            dataInfoUrl={pageConfig.dataInfoUrl}
         />, pageConfig.registerUrl, false)
         .finalize(),
     generatePage(
@@ -93,13 +96,16 @@ const pageDefinitions: Array<Page> = [
             loginUrl={pageConfig.loginUrl}
         />, pageConfig.forgotPWUrl, false)
     .finalize(),
-        generatePage(
+    generatePage(
         <PageResetPW
             loginUrl={pageConfig.loginUrl}
         />, pageConfig.resetPWUrl, false)
     .finalize(),
+    generatePage(
+        <PageDataInformation
+        />, pageConfig.dataInfoUrl, false)
+    .finalize(),
     generatePage(<EndpointTest/>, "ep-test")
-        .withHeaderTitle("Endpoint Test für Backend-API")
         .finalize()
 ];
 

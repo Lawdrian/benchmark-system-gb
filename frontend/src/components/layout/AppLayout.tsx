@@ -41,6 +41,7 @@ const AppLayout = (
             />
             <Box
                 component="main"
+                id="scroll-box"
                 sx={{
                     backgroundColor: (theme) =>
                         theme.palette.mode === 'light'

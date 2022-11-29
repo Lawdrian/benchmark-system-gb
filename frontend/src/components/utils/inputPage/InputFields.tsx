@@ -33,7 +33,13 @@ import FormLabel from '@mui/material/FormLabel';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from "@mui/material/IconButton";
-import {Option} from "../../../reducers/lookup";
+import {Option, UnitValues} from "../../../reducers/lookup";
+import {
+    findOptionUnitId, isEmptyDynamicInputField,
+    parseToFloat,
+    showDynamicMeasureInputError,
+    showDynamicSelectInputError
+} from "../../../helpers/InputHelpers";
 
 type InputFieldProps = {
     title: string
@@ -72,7 +78,6 @@ export type SelectionValue = {
     selectValue: number | null
     textFieldValue: MeasureValue
     textField2Value?: number | null
-    unitFieldValue?: number | null
 }
 
 export type DateValue = {
@@ -100,6 +105,7 @@ export const MeasureInputField = (props: MeasureInputProps) => {
             <TextField
                 type="number"
                 placeholder='Menge'
+                inputProps={{min:1}}
                 InputProps={{
                     endAdornment: <InputAdornment position="end">{props.unitName??""}</InputAdornment>,
                 }}
@@ -143,6 +149,7 @@ export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
 
 export type DateInputProps = InputFieldProps & {
     datePickerProps: DesktopDatePickerProps<any, any>
+    showError: boolean
 }
 
 export const DateInputField = (props: DateInputProps) => {
@@ -153,7 +160,7 @@ export const DateInputField = (props: DateInputProps) => {
                 <DesktopDatePicker
                     maxDate={new Date()}
                     { ...props.datePickerProps }
-                    renderInput={(params) => <TextField {...params} />}
+                    renderInput={(params) => <TextField {...params} error={props.showError} />}
                 />
             </LocalizationProvider>
         </BaseInputField>
@@ -286,29 +293,39 @@ export type DynamicInputValue = {
     selectValue: number | null
     textFieldValue: MeasureValue
     textField2Value?: number | null
-    unitFieldValue?: number | null
 }
 
 type DynamicInputState = DynamicInputValue[]
 
-export type DynamicInputProps = InputFieldProps & {
+type BaseDynamicInputProps = InputFieldProps & {
     selectProps: DynamicSelectProps<any>
     textFieldProps: TextFieldProps
     onValueChange: (values: DynamicInputState) => void
     textField2Props?: TextFieldProps
-    unitSelectProps?: DynamicUnitSelectParentProps<any>
     initValues: SelectionValue[]
+    submissionSuccess?: boolean | null
+}
+export type DynamicInputProps = BaseDynamicInputProps & {
+    unitProps: UnitProps
+}
+
+type UnitProps = {
+    unitName: string,
+    unitValues: UnitValues,
+    optionGroup: string,
 }
 
 /**
  * This component is used for <strong>multi select inputs</strong>. It has one selection field and one text intput field. With a plus
  * button a new input section will be shown and with the minus button it can be deleted.
  *
- * @param {DynamicInputField} props This Type contains the InputFieldProps and multiple other ones:
+ * @param {DynamicInputUnitSelectField} props This Type contains the InputFieldProps and multiple other ones:
  *       <p><strong>selectProps:</strong> lookupValues need to be specified in there for the selection field.</p>
  *      <p><strong>textFieldProps:</strong> No required props, can be included for styling the text input field.</p>
  *      <p><strong>onValueChange:</strong> Save the values of both the selection and text input field in the parent state.</p>
  *      <p><strong>initValues:</strong> Initialize the component with these values from the parent state.</p>
+ *      <p><strong>submissionSuccess:</strong> Boolean that shows if the input submission was a success or failure. If this prop is passed, an error will be shown upon submission if the field hasn't been filled out.</p>
+ *      <p><strong>unitProps:</strong> Contains required props to display the unit name and find the unit id of the selected option.</p>
  * @return {ReactNode} One dynamic input field.
  */
 export const DynamicInputField = (props: DynamicInputProps) => {
@@ -335,7 +352,7 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                             <Grid item xs={2}>
                                 <IconButton onClick={event => {
                                     const maxId = Math.max(...values.map(value => value.id))
-                                    setValues([...values, {id: maxId+1, selectValue: null, textFieldValue: {...value.textFieldValue, value: null}}])
+                                    setValues([...values, {id: maxId+1, selectValue: null, textFieldValue: {value: null, unit: null}}])
                                     props.onValueChange(values.slice())
                                 }} size="large" color="primary" >
                                     <AddIcon />
@@ -359,7 +376,12 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                         <DynamicSelect {...props.selectProps}
                                             onChange={(event) => {
                                                 let idx = values.indexOf(value)
-                                                values[idx] = {...value, selectValue: parseInt(event.target.value),textFieldValue:{value:null,unit:null}}
+                                                values[idx] = {...value, selectValue: parseInt(event.target.value),textFieldValue:{...value.textFieldValue, unit:findOptionUnitId(
+                                                    parseInt(event.target.value),
+                                                    props.unitProps.optionGroup,
+                                                    props.selectProps.lookupValues,
+                                                    props.unitProps.unitValues
+                                                )}}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
                                             }}
@@ -367,6 +389,132 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                             fullWidth
                                             labelId="amount-select-label"
                                             label="Auswahl"
+                                            error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicSelectInputError(value.selectValue, props.submissionSuccess??true)}
+                                        />
+                                    </FormControl>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs>
+                                <Paper>
+                                    <TextField
+                                        label="Menge"
+                                        {...props.textFieldProps}
+                                        InputProps={{endAdornment: <InputAdornment position="end">{props.unitProps.unitName??""}</InputAdornment>}}
+                                        onChange={(event) => {
+                                            let idx = values.indexOf(value)
+                                            values[idx] = {...value, textFieldValue: {...value.textFieldValue, value: parseToFloat(event.target.value)}}
+                                            setValues(values.slice())
+                                            props.onValueChange(values.slice())
+                                        }}
+                                        value={value.textFieldValue.value}
+                                        fullWidth
+                                        type="number"
+                                        error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicMeasureInputError(value.textFieldValue,props.submissionSuccess??true)}
+                                    />
+                                </Paper>
+                            </Grid>
+                            {props.textField2Props ?
+                                <Grid item xs>
+                                    <Paper>
+                                        <TextField {...props.textField2Props}
+                                            onChange={(event) => {
+                                                let idx = values.indexOf(value)
+                                                values[idx] = {...value, textField2Value: parseToFloat(event.target.value)}
+                                                setValues(values.slice())
+                                                props.onValueChange(values.slice())
+                                            }}
+                                            value={value.textField2Value}
+                                            fullWidth
+                                            type="number"
+                                           error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicSelectInputError(value.textField2Value ?? null, props.submissionSuccess??true)}
+                                        />
+                                    </Paper>
+                                </Grid>
+                            : undefined}
+                        </Grid>
+                    </>
+                )
+            }
+        )}
+        </>
+    )
+}
+
+
+export type DynamicInputUnitSelectProps = BaseDynamicInputProps & {
+    unitSelectProps: DynamicUnitSelectParentProps<any>
+}
+
+/**
+ * This component is used for <strong>multi select inputs</strong>. It has one selection field,one text intput field and one select field for unit selection. With a plus
+ * button a new input section will be shown and with the minus button it can be deleted.
+ *
+ * @param {DynamicInputUnitSelectField} props This Type contains the InputFieldProps and multiple other ones:
+ *       <p><strong>selectProps:</strong> lookupValues need to be specified in there for the selection field.</p>
+ *      <p><strong>textFieldProps:</strong> No required props, can be included for styling the text input field.</p>
+ *      <p><strong>onValueChange:</strong> Save the values of both the selection and text input field in the parent state.</p>
+ *      <p><strong>initValues:</strong> Initialize the component with these values from the parent state.</p>
+ *      <p><strong>submissionSuccess:</strong> Boolean that shows if the input submission was a success or failure. If this prop is passed, an error will be shown upon submission if the field hasn't been filled out.</p>
+ *      <p><strong>unitSelectProps:</strong> Contains the required props to display a unit select field where one can select a unit. For that the optiongroup, the lookupvalues for that group and all unitValues are needed.</p>
+ * @return {ReactNode} One dynamic input field.
+ */
+export const DynamicInputUnitSelectField = (props: DynamicInputUnitSelectProps) => {
+    let dynInitValues = [];
+    for (let i = 0; i < props.initValues.length; i++) {
+        dynInitValues.push({...props.initValues[i], id: i})
+    }
+    const [values, setValues] = useState<DynamicInputState>(dynInitValues)
+    return(
+            <>
+                <Grid container item direction="column" xs={12}>
+                    <Grid sx={{p:1}} item xs={12} component={Paper}>
+                        {props.optional ?
+                            <Typography variant="h6" color={optionalColor}> {props.title} (optional) </Typography> :
+                            <Typography variant="h6"> {props.title} </Typography>
+                        }
+                        <Typography paragraph={true}> {props.label} </Typography>
+                    </Grid>
+                </Grid>
+                {values.map(value => {
+                return (
+                    <>
+                        <Grid container item xs={12} spacing={8}>
+                            <Grid item xs={2}>
+                                <IconButton onClick={event => {
+                                    const maxId = Math.max(...values.map(value => value.id))
+                                    setValues([...values, {id: maxId+1, selectValue: null, textFieldValue: {value: null, unit: null}}])
+                                    props.onValueChange(values.slice())
+                                }} size="large" color="primary" >
+                                    <AddIcon />
+                                </IconButton>
+                                <IconButton onClick={(event) => {
+                                        let idx = values.indexOf(value)
+                                        values.splice(idx,1)
+                                        setValues(values.slice())
+                                        props.onValueChange(values.slice())
+                                    }}
+                                    disabled={values.length <= 1}
+                                    size="large" color="primary"
+                                >
+                                    <RemoveIcon />
+                                </IconButton>
+                            </Grid>
+                            <Grid item xs>
+                                <Paper>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="amount-select-label">Auswahl</InputLabel>
+                                        <DynamicSelect {...props.selectProps}
+                                            onChange={(event) => {
+                                                let idx = values.indexOf(value)
+                                                values[idx] = {...value, selectValue: parseInt(event.target.value),textFieldValue:{...value.textFieldValue, unit:null}}
+                                                setValues(values.slice())
+                                                props.onValueChange(values.slice())
+                                            }}
+                                            value={value.selectValue}
+                                            fullWidth
+                                            labelId="amount-select-label"
+                                            label="Auswahl"
+                                            error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicSelectInputError(value.selectValue, props.submissionSuccess??true)}
                                         />
                                     </FormControl>
                                 </Paper>
@@ -378,25 +526,25 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                         {...props.textFieldProps}
                                         onChange={(event) => {
                                             let idx = values.indexOf(value)
-                                            values[idx] = {...value, textFieldValue: {...value.textFieldValue, value: parseInt(event.target.value)}}
+                                            values[idx] = {...value, textFieldValue: {...value.textFieldValue, value: parseToFloat(event.target.value)}}
                                             setValues(values.slice())
                                             props.onValueChange(values.slice())
                                         }}
                                         value={value.textFieldValue.value}
                                         fullWidth
                                         type="number"
+                                        error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicMeasureInputError(value.textFieldValue,props.submissionSuccess??true)}
                                     />
                                 </Paper>
                             </Grid>
-                            {props.unitSelectProps ?
-                                <Grid item xs>
+                            <Grid item xs>
                                 <Paper>
                                     <FormControl fullWidth>
                                         <InputLabel id="unit-select-label">Einheit</InputLabel>
                                         <DynamicUnitSelect {...props.unitSelectProps} allValues={values} activeValue={value}
                                             onChange={(event) => {
                                                 let idx = values.indexOf(value)
-                                                values[idx] = {...value, textFieldValue: {value: value.textFieldValue.value, unit: parseInt(event.target.value)}}
+                                                values[idx] = {...value, textFieldValue: {...value.textFieldValue, unit: parseInt(event.target.value)}}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
                                             }}
@@ -404,23 +552,25 @@ export const DynamicInputField = (props: DynamicInputProps) => {
                                             fullWidth
                                             labelId="unit-select-label"
                                             label="Einheit"
+                                            error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicSelectInputError(value.textFieldValue.unit, props.submissionSuccess??true)}
                                         />
                                     </FormControl>
                                 </Paper>
-                            </Grid> : undefined}
+                            </Grid>
                             {props.textField2Props ?
                                 <Grid item xs>
                                     <Paper>
                                         <TextField {...props.textField2Props}
                                             onChange={(event) => {
                                                 let idx = values.indexOf(value)
-                                                values[idx] = {...value, textField2Value: parseInt(event.target.value)}
+                                                values[idx] = {...value, textField2Value: parseToFloat(event.target.value)}
                                                 setValues(values.slice())
                                                 props.onValueChange(values.slice())
                                             }}
                                             value={value.textField2Value}
                                             fullWidth
                                             type="number"
+                                           error={(props.optional && isEmptyDynamicInputField(values[0])) ? false: showDynamicSelectInputError(value.textField2Value ?? null, props.submissionSuccess??true)}
                                         />
                                     </Paper>
                                 </Grid>

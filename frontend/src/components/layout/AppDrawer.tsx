@@ -9,6 +9,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import StyledDrawer from "../styled/StyledDrawer";
 import { DrawerListItem, SharedDrawerProps } from "../../types/SharedLayoutTypes";
 import { Section } from "../../types/PageConfigTypes";
+import Logo from "../../images/logo_small.png"
 
 type DrawerProps = SharedDrawerProps & {
     listItems: DrawerListItem[]
@@ -41,6 +42,7 @@ const AppDrawer = (
     }: DrawerProps
 ) => {
     const homeSection = listItems.filter(item => item.section == Section.Home);
+    const inputSection = listItems.filter(item => item.section == Section.Input);
     const diagramSection = listItems.filter(item => item.section == Section.Diagrams);
     const profileSection = listItems.filter(item => item.section == Section.Profile);
     const fReadingSection = listItems.filter(item => item.section == Section.FurtherReading);
@@ -53,8 +55,11 @@ const AppDrawer = (
                     alignItems: 'center',
                     justifyContent: 'flex-end',
                     px: [1],
+                    ml: 4,
+                    mb: 1
                 }}
             >
+                <img src={Logo}></img>
                 <IconButton onClick={toggleDrawer}>
                     <ChevronLeftIcon />
                 </IconButton>
@@ -63,6 +68,8 @@ const AppDrawer = (
             <List component="nav">
                 {generateNodes(homeSection)}
                 {homeSection.length && diagramSection.length ? getSectionDivider() : undefined}
+                {generateNodes(inputSection)}
+                {inputSection.length && diagramSection.length ? getSectionDivider() : undefined}
                 {generateNodes(diagramSection)}
                 {diagramSection.length && profileSection.length ? getSectionDivider() : undefined}
                 {generateNodes(profileSection)}

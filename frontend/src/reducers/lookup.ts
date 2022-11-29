@@ -120,15 +120,14 @@ export type UnitValues = {
         MittlereSolltemperaturTag: Option[]
         MittlereSolltemperaturNacht: Option[]
         Luftfeuchte: Option[]
-        "BHKW:Menge": Option[]
-        "BHKW:AnteilErdgas": Option[]
-        "BHKW:AnteilBiomethan": Option[]
         "Belichtung:Stromverbrauch": Option[]
         "Belichtung:AnzahlLampen": Option[]
         "Belichtung:AnschlussleistungProLampe": Option[]
         "Belichtung:LaufzeitProJahr": Option[]
         FungizideKg: Option[]
+        FungizideLiter: Option[]
         InsektizideKg: Option[]
+        InsektizideLiter: Option[]
         "Kuebel:VolumenProTopf": Option[]
         "Kuebel:JungpflanzenProTopf": Option[]
         "Kuebel:Alter": Option[]
@@ -235,10 +234,6 @@ export type UnitValues = {
             "Biogas": Option[]
             "Geothermie(oberflaechennah)": Option[]
             Tiefengheothermie: Option[]
-        }
-        BHKW: {
-            ja: Option[]
-            nein: Option[]
         }
         Stromherkunft: {
             "DeutscherStrommix": Option[]
@@ -513,15 +508,14 @@ const initialState: LookupState = {
             MittlereSolltemperaturTag: [],
             MittlereSolltemperaturNacht: [],
             Luftfeuchte: [],
-            "BHKW:Menge": [],
-            "BHKW:AnteilErdgas": [],
-            "BHKW:AnteilBiomethan": [],
             "Belichtung:Stromverbrauch": [],
             "Belichtung:AnzahlLampen": [],
             "Belichtung:AnschlussleistungProLampe": [],
             "Belichtung:LaufzeitProJahr": [],
             FungizideKg: [],
+            FungizideLiter: [],
             InsektizideKg: [],
+            InsektizideLiter: [],
             "Kuebel:VolumenProTopf": [],
             "Kuebel:JungpflanzenProTopf": [],
             "Kuebel:Alter": [],
@@ -628,10 +622,6 @@ const initialState: LookupState = {
                 "Biogas": [],
                 "Geothermie(oberflaechennah)": [],
                 Tiefengheothermie: [],
-            },
-            BHKW: {
-                ja: [],
-                nein: [],
             },
             Stromherkunft: {
                 "DeutscherStrommix": [],

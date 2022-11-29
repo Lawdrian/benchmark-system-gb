@@ -11,6 +11,7 @@ import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
+import {parseToFloat} from "../../../helpers/InputHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -23,6 +24,8 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type CultureInformationProps = ReduxProps & SubpageProps & {
     provideCultureInformation: Function
+    showMeasureInputError: Function
+    showSelectInputError: Function
     values: CultureInformationState
 }
 
@@ -54,12 +57,12 @@ export type CultureInformationState = {
     nebenkulturEnde: MeasureValue | null
 }
 
-const CultureInformationInput = (props: CultureInformationProps) => {
-    const [cultureInformation, setCultureInformation] = useState<CultureInformationState>(props.values)
+const CultureInformationInput = ({values, provideCultureInformation, paginationProps, lookupValues, unitValues, showSelectInputError, showMeasureInputError}: CultureInformationProps) => {
+    const [cultureInformation, setCultureInformation] = useState<CultureInformationState>(values)
 
     const setCultureInformationState = (cultureInformation: CultureInformationState) => {
         setCultureInformation(cultureInformation)
-        props.provideCultureInformation(cultureInformation)
+        provideCultureInformation(cultureInformation)
     }
 
     //Fruchtgröße: Snack
@@ -70,12 +73,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.snack,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snack: parseFloat(event.target.value)
+                snack: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues["10-30Gramm(Snack)"],
+        radioButtonValues: lookupValues["10-30Gramm(Snack)"],
         showChildren: value => {
-            let trueOptions = props.lookupValues["10-30Gramm(Snack)"].filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues["10-30Gramm(Snack)"].filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -83,52 +86,56 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const snackReihenanzahlProps: MeasureInputProps = {
         title: "Reihenanzahl",
         label: "Wie viele Reihen dieser Größe bauen Sie an?",
-        unitName: props.unitValues.measures.SnackReihenanzahl[0]?.values,
+        unitName: unitValues.measures.SnackReihenanzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackReihenanzahl[0].id}
-            })
+                snackReihenanzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.SnackReihenanzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.snackReihenanzahl)
         }
     }
 
     const snackPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
         label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
-        unitName: props.unitValues.measures.SnackPflanzenabstandInDerReihe[0]?.values,
+        unitName: unitValues.measures.SnackPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackPflanzenabstandInDerReihe[0].id}
-            })
+                snackPflanzenabstand: {value:parseToFloat(event.target.value),unit:unitValues.measures.SnackPflanzenabstandInDerReihe[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.snackPflanzenabstand)
         }
     }
 
     const snackTriebzahlProps: MeasureInputProps = {
         title: "Triebanzahl pro Pflanze",
         label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
-        unitName: props.unitValues.measures.SnackTriebzahl[0]?.values,
+        unitName: unitValues.measures.SnackTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackTriebzahl[0].id}
-            })
+                snackTriebzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.SnackTriebzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.snackTriebzahl)
         }
     }
 
     const snackErtragJahrProps: MeasureInputProps = {
         title: "Jahresertrag",
         label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
-        unitName: props.unitValues.measures.SnackErtragJahr[0]?.values,
+        unitName: unitValues.measures.SnackErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.snackErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                snackErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.SnackErtragJahr[0].id}
-            })
+                snackErtragJahr: {value:parseToFloat(event.target.value),unit:unitValues.measures.SnackErtragJahr[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.snackErtragJahr)
         }
     }
 
@@ -140,12 +147,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.cocktail,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktail: parseFloat(event.target.value)
+                cocktail: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues["30-100Gramm(Cocktail)"],
+        radioButtonValues: lookupValues["30-100Gramm(Cocktail)"],
         showChildren: value => {
-            let trueOptions = props.lookupValues["30-100Gramm(Cocktail)"].filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues["30-100Gramm(Cocktail)"].filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -153,52 +160,56 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const cocktailReihenanzahlProps: MeasureInputProps = {
         title: "Reihenanzahl",
         label: "Wie viele Reihen dieser Größe bauen Sie an?",
-        unitName: props.unitValues.measures.CocktailReihenanzahl[0]?.values,
+        unitName: unitValues.measures.CocktailReihenanzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailReihenanzahl[0].id}
-            })
+                cocktailReihenanzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.CocktailReihenanzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.cocktailReihenanzahl)
         }
     }
 
     const cocktailPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
         label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
-        unitName: props.unitValues.measures.CocktailPflanzenabstandInDerReihe[0]?.values,
+        unitName: unitValues.measures.CocktailPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailPflanzenabstandInDerReihe[0].id}
-            })
+                cocktailPflanzenabstand: {value:parseToFloat(event.target.value),unit:unitValues.measures.CocktailPflanzenabstandInDerReihe[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.cocktailPflanzenabstand)
         }
     }
 
     const cocktailTriebzahlProps: MeasureInputProps = {
         title: "Triebanzahl pro Pflanze",
         label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
-        unitName: props.unitValues.measures.CocktailTriebzahl[0]?.values,
+        unitName: unitValues.measures.CocktailTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailTriebzahl[0].id}
-            })
+                cocktailTriebzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.CocktailTriebzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.cocktailTriebzahl)
         }
     }
 
     const cocktailErtragJahrProps: MeasureInputProps = {
         title: "Jahresertrag",
         label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
-        unitName: props.unitValues.measures.CocktailErtragJahr[0]?.values,
+        unitName: unitValues.measures.CocktailErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.cocktailErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                cocktailErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.CocktailErtragJahr[0].id}
-            })
+                cocktailErtragJahr: {value:parseToFloat(event.target.value),unit:unitValues.measures.CocktailErtragJahr[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.cocktailErtragJahr)
         }
     }
     //Fruchtgröße: Rispen
@@ -209,12 +220,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.rispen,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispen: parseFloat(event.target.value)
+                rispen: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues["100-150Gramm(Rispen)"],
+        radioButtonValues: lookupValues["100-150Gramm(Rispen)"],
         showChildren: value => {
-            let trueOptions = props.lookupValues["100-150Gramm(Rispen)"].filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues["100-150Gramm(Rispen)"].filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -222,52 +233,56 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const rispenReihenanzahlProps: MeasureInputProps = {
         title: "Reihenanzahl",
         label: "Wie viele Reihen dieser Größe bauen Sie an?",
-        unitName: props.unitValues.measures.RispenReihenanzahl[0]?.values,
+        unitName: unitValues.measures.RispenReihenanzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenReihenanzahl[0].id}
-            })
+                rispenReihenanzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.RispenReihenanzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.rispenReihenanzahl)
         }
     }
 
     const rispenPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
         label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
-        unitName: props.unitValues.measures.RispenPflanzenabstandInDerReihe[0]?.values,
+        unitName: unitValues.measures.RispenPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenPflanzenabstandInDerReihe[0].id}
-            })
+                rispenPflanzenabstand: {value:parseToFloat(event.target.value),unit:unitValues.measures.RispenPflanzenabstandInDerReihe[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.rispenPflanzenabstand)
         }
     }
 
     const rispenTriebzahlProps: MeasureInputProps = {
         title: "Triebanzahl pro Pflanze",
         label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
-        unitName: props.unitValues.measures.RispenTriebzahl[0]?.values,
+        unitName: unitValues.measures.RispenTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenTriebzahl[0].id}
-            })
+                rispenTriebzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.RispenTriebzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.rispenTriebzahl)
         }
     }
 
     const rispenErtragJahrProps: MeasureInputProps = {
         title: "Jahresertrag",
         label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
-        unitName: props.unitValues.measures.RispenErtragJahr[0]?.values,
+        unitName: unitValues.measures.RispenErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.rispenErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                rispenErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.RispenErtragJahr[0].id}
-            })
+                rispenErtragJahr: {value:parseToFloat(event.target.value),unit:unitValues.measures.RispenErtragJahr[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.rispenErtragJahr)
         }
     }
 
@@ -279,12 +294,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.fleisch,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleisch: parseFloat(event.target.value)
+                fleisch: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues[">150Gramm(Fleisch)"],
+        radioButtonValues: lookupValues[">150Gramm(Fleisch)"],
         showChildren: value => {
-            let trueOptions = props.lookupValues[">150Gramm(Fleisch)"].filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues[">150Gramm(Fleisch)"].filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -292,52 +307,56 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const fleischReihenanzahlProps: MeasureInputProps = {
         title: "Reihenanzahl",
         label: "Wie viele Reihen dieser Größe bauen Sie an?",
-        unitName: props.unitValues.measures.FleischReihenanzahl[0]?.values,
+        unitName: unitValues.measures.FleischReihenanzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischReihenanzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischReihenanzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischReihenanzahl[0].id}
-            })
+                fleischReihenanzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.FleischReihenanzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.fleischReihenanzahl)
         }
     }
 
     const fleischPflanzenabstandProps: MeasureInputProps = {
         title: "Pflanzenabstand in der Reihe",
         label: "Wie groß ist der Abstand von Pflanze zu Pflanze innerhalb einer Reihe?",
-        unitName: props.unitValues.measures.FleischPflanzenabstandInDerReihe[0]?.values,
+        unitName: unitValues.measures.FleischPflanzenabstandInDerReihe[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischPflanzenabstand?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischPflanzenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischPflanzenabstandInDerReihe[0].id}
-            })
+                fleischPflanzenabstand: {value:parseToFloat(event.target.value),unit:unitValues.measures.FleischPflanzenabstandInDerReihe[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.fleischPflanzenabstand)
         }
     }
 
     const fleischTriebzahlProps: MeasureInputProps = {
         title: "Triebanzahl pro Pflanze",
         label: "Wie viele Triebe hat eine Pflanze zu Kulturende?",
-        unitName: props.unitValues.measures.FleischTriebzahl[0]?.values,
+        unitName: unitValues.measures.FleischTriebzahl[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischTriebzahl?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischTriebzahl: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischTriebzahl[0].id}
-            })
+                fleischTriebzahl: {value:parseToFloat(event.target.value),unit:unitValues.measures.FleischTriebzahl[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.fleischTriebzahl)
         }
     }
 
     const fleischErtragJahrProps: MeasureInputProps = {
         title: "Jahresertrag",
         label: "Wie hoch ist der Ertrag der Sorte in dem zu berechnenden Kulturjahr?",
-        unitName: props.unitValues.measures.FleischErtragJahr[0]?.values,
+        unitName: unitValues.measures.FleischErtragJahr[0]?.values,
         textFieldProps: {
             value: cultureInformation.fleischErtragJahr?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                fleischErtragJahr: {value:parseFloat(event.target.value),unit:props.unitValues.measures.FleischErtragJahr[0].id}
-            })
+                fleischErtragJahr: {value:parseToFloat(event.target.value),unit:unitValues.measures.FleischErtragJahr[0].id}
+            }),
+            error: showMeasureInputError(cultureInformation.fleischErtragJahr)
         }
     }
 
@@ -345,42 +364,36 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const kulturBeginnProps: MeasureInputProps = {
         title: "Kulturbeginn",
         label: "In welcher Kalenderwoche werden die Jungpflanzen aufgestellt?",
-        unitName: props.unitValues.measures.KulturBeginn[0]?.values,
+        unitName: unitValues.measures.KulturBeginn[0]?.values,
         textFieldProps: {
             value: cultureInformation.kulturBeginn?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturBeginn[0].id}
+               kulturBeginn: {value:parseToFloat(event.target.value),unit:unitValues.measures.KulturBeginn[0].id}
             }),
             inputProps: { min: 1, max: 52 },
             helperText: cultureInformation.kulturBeginn?.value ? (
                 cultureInformation.kulturBeginn?.value > 52 ||
                 cultureInformation.kulturBeginn?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
-            error: cultureInformation.kulturBeginn?.value ? (
-                cultureInformation.kulturBeginn?.value > 52 ||
-                cultureInformation.kulturBeginn?.value < 1
-            ) : false
+            error: showMeasureInputError(cultureInformation.kulturBeginn)
         }
     }
 
     const kulturEndeProps: MeasureInputProps = {
         title: "Kulturende",
         label: "In welcher Kalenderwoche wird zuletzt geerntet?",
-                unitName: props.unitValues.measures.KulturEnde[0]?.values,
+                unitName: unitValues.measures.KulturEnde[0]?.values,
         textFieldProps: {
             value: cultureInformation.kulturEnde?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               kulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.KulturEnde[0].id}
+               kulturEnde: {value:parseToFloat(event.target.value),unit:unitValues.measures.KulturEnde[0].id}
             }),
             inputProps: { min: 1, max: 52 },
             helperText: cultureInformation.kulturEnde?.value ? (
                 cultureInformation.kulturEnde?.value > 52 ||
                 cultureInformation.kulturEnde?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
-            error: cultureInformation.kulturEnde?.value ? (
-                cultureInformation.kulturEnde?.value > 52 ||
-                cultureInformation.kulturEnde?.value < 1
-            ) : false
+            error: showMeasureInputError(cultureInformation.kulturEnde)
         }
     }
 
@@ -391,12 +404,12 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             value: cultureInformation.nebenkultur,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-                nebenkultur: parseFloat(event.target.value)
+                nebenkultur: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Nebenkultur,
+        radioButtonValues: lookupValues.Nebenkultur,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Nebenkultur.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Nebenkultur.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -404,42 +417,36 @@ const CultureInformationInput = (props: CultureInformationProps) => {
     const nebenkulturBeginnProps: MeasureInputProps = {
         title: "Nebenkulturbeginn",
         label: "In welcher Kalenderwoche beginnen Sie mit der Nebenkultur?",
-        unitName: props.unitValues.measures.NebenkulturBeginn[0]?.values,
+        unitName: unitValues.measures.NebenkulturBeginn[0]?.values,
         textFieldProps: {
             value: cultureInformation.nebenkulturBeginn?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               nebenkulturBeginn: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturBeginn[0].id}
+               nebenkulturBeginn: {value:parseToFloat(event.target.value),unit:unitValues.measures.NebenkulturBeginn[0].id}
             }),
             inputProps: { min: 1, max: 52 },
             helperText: cultureInformation.nebenkulturBeginn?.value ? (
                 cultureInformation.nebenkulturBeginn?.value > 52 ||
                 cultureInformation.nebenkulturBeginn?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
-            error: cultureInformation.nebenkulturBeginn?.value ? (
-                cultureInformation.nebenkulturBeginn?.value > 52 ||
-                cultureInformation.nebenkulturBeginn?.value < 1
-            ) : false
+            error: showMeasureInputError(cultureInformation.nebenkulturBeginn)
         }
     }
 
     const nebenkulturEndeProps: MeasureInputProps = {
         title: "Nebenkulturende",
         label: "In welcher Kalenderwoche wird zuletzt geerntet?",
-        unitName: props.unitValues.measures.NebenkulturEnde[0]?.values,
+        unitName: unitValues.measures.NebenkulturEnde[0]?.values,
         textFieldProps: {
             value: cultureInformation.nebenkulturEnde?.value,
             onChange: event => setCultureInformationState({
                 ...cultureInformation,
-               nebenkulturEnde: {value:parseFloat(event.target.value),unit:props.unitValues.measures.NebenkulturEnde[0].id}
+               nebenkulturEnde: {value:parseToFloat(event.target.value),unit:unitValues.measures.NebenkulturEnde[0].id}
             }),
             inputProps: { min: 1, max: 52 },
             helperText: cultureInformation.nebenkulturEnde?.value ? (
                 cultureInformation.nebenkulturEnde?.value > 52 ||
                 cultureInformation.nebenkulturEnde?.value < 1) ? "Geben Sie eine valide Kalenderwoche an!": undefined : undefined,
-            error: cultureInformation.nebenkulturEnde?.value ? (
-                cultureInformation.nebenkulturEnde?.value > 52 ||
-                cultureInformation.nebenkulturEnde?.value < 1
-            ) : false
+            error: showMeasureInputError(cultureInformation.nebenkulturEnde)
         }
     }
 
@@ -509,7 +516,7 @@ const CultureInformationInput = (props: CultureInformationProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>
-                    <InputPaginationButtons {...props.paginationProps} />
+                    <InputPaginationButtons {...paginationProps} />
                 </Grid>
             </Grid>
         </Grid>

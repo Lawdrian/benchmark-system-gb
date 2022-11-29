@@ -2,8 +2,10 @@ import React, {useState} from "react";
 import {
     DynamicInputField,
     DynamicInputProps,
+    DynamicInputUnitSelectField,
+    DynamicInputUnitSelectProps,
     MeasureInputField,
-    MeasureInputProps, MeasureUnitInputField, MeasureUnitInputProps, MeasureValue,
+    MeasureInputProps, MeasureValue,
     SelectionValue, SelectShowConditionalRadioInputField, SelectShowConditionalRadioInputProps,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps
@@ -14,10 +16,12 @@ import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
+import {parseToFloat} from "../../../helpers/InputHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
-    unitValues: state.lookup.unitValues
+    unitValues: state.lookup.unitValues,
+    submissionSuccess: state.submission.successful
 });
 
 const connector = connect(mapStateToProps);
@@ -26,6 +30,8 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type EnergyConsumptionProps = ReduxProps & SubpageProps & {
     provideEnergyConsumption: Function
+    showMeasureInputError: Function
+    showSelectInputError: Function
     values: EnergyConsumptionState
 }
 
@@ -33,9 +39,6 @@ export type EnergyConsumptionState = {
     waermeversorgung: number | null
     waermeteilungFlaeche: MeasureValue | null
     energietraeger: SelectionValue[]
-    bhkw: number | null
-    bhkwAnteilErdgas: MeasureValue | null
-    bhkwAnteilBiomethan: MeasureValue | null
     stromherkunft: SelectionValue[]
     zusatzbelichtung: number | null
     belichtungsstrom: number | null
@@ -46,12 +49,12 @@ export type EnergyConsumptionState = {
     belichtungsstromLaufzeitJahr: MeasureValue | null
 }
 
-const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
-    const [energyConsumption, setEnergyConsumption] = useState<EnergyConsumptionState>(props.values)
+const EnergyConsumptionInput = ({values, provideEnergyConsumption, paginationProps, lookupValues, submissionSuccess, unitValues, showSelectInputError, showMeasureInputError}: EnergyConsumptionProps) => {
+    const [energyConsumption, setEnergyConsumption] = useState<EnergyConsumptionState>(values)
 
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
         setEnergyConsumption(energyConsumption)
-        props.provideEnergyConsumption(energyConsumption)
+        provideEnergyConsumption(energyConsumption)
     }
 
     // Properties of the input fields
@@ -62,12 +65,12 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.waermeversorgung,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                waermeversorgung: parseFloat(event.target.value)
+                waermeversorgung: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Waermeversorgung,
+        radioButtonValues: lookupValues.Waermeversorgung,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Waermeversorgung.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Waermeversorgung.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -80,21 +83,23 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.waermeteilungFlaeche?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                waermeteilungFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.WaermeteilungFlaeche[0].id}
-            })
+                waermeteilungFlaeche: {value: parseToFloat(event.target.value),unit:unitValues.measures.WaermeteilungFlaeche[0].id}
+            }),
+            error: showMeasureInputError(energyConsumption.waermeteilungFlaeche)
         }
     }
 
-    const energietraegerProps: DynamicInputProps = {
+    const energietraegerProps: DynamicInputUnitSelectProps = {
         title: "Wärmebereitstellung / Energieträger",
         label: "Welche Mengen der verschiedenen Energieträger wurden in der Kulturdauer verbraucht, bzw. welche Wärmemengen wurden dadurch produziert?",
+        submissionSuccess: submissionSuccess,
         textFieldProps: {},
         selectProps: {
-            lookupValues: props.lookupValues.Energietraeger
+            lookupValues: lookupValues.Energietraeger
         },
         unitSelectProps: {
-            lookupValues: props.lookupValues.Energietraeger,
-            unitValues:  props.unitValues,
+            lookupValues: lookupValues.Energietraeger,
+            unitValues:  unitValues,
             optionGroup: "Energietraeger"
         },
         onValueChange: values => setEnergyConsumptionState({
@@ -105,77 +110,21 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                 }
             })
         }),
-        initValues: props.values.energietraeger
-    }
-
-    const bhkwProps: SingleShowConditionalRadioInputProps = {
-        title: "Blockheizkraftwerk",
-        label: "Verwenden Sie ein Blockheizkraftwerk zur Energieerzeugung?",
-        radioGroupProps: {
-            value: energyConsumption.bhkw,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkw: parseFloat(event.target.value)
-            })
-        },
-        radioButtonValues: props.lookupValues.BHKW,
-        showChildren: value => {
-            let trueOptions = props.lookupValues.BHKW.filter(option => option.values.toUpperCase() == "JA");
-            return trueOptions.length > 0 && trueOptions[0].id == value
-        }
-    }
-
-    const bhkwAnteilErdgasProps: MeasureUnitInputProps = {
-        title: "Anteil Erdgas",
-        label: "Wie groß ist der Anteil an Erdgas, mit welchem Energie erzeugt wird?",
-        textFieldProps: {
-            value: energyConsumption.bhkwAnteilErdgas?.value,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwAnteilErdgas: {value:parseFloat(event.target.value),unit:energyConsumption.bhkwAnteilErdgas?.unit??null}
-            })
-        },
-        selectProps: {
-            value: energyConsumption.bhkwAnteilErdgas?.unit,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwAnteilErdgas: {value:energyConsumption.bhkwAnteilErdgas?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures["BHKW:AnteilErdgas"]
-        }
-    }
-
-    const bhkwAnteilBiomethanProps: MeasureUnitInputProps = {
-        title: "Anteil Biomethan",
-        label: "Wie groß ist der Anteil an Biomethan, mit welchem Energie erzeugt wird?",
-        textFieldProps: {
-            value: energyConsumption.bhkwAnteilBiomethan?.value,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwAnteilBiomethan: {value:parseFloat(event.target.value),unit:energyConsumption.bhkwAnteilBiomethan?.unit??null}
-            })
-        },
-        selectProps: {
-            value: energyConsumption.bhkwAnteilBiomethan?.unit,
-            onChange: event => setEnergyConsumptionState({
-                ...energyConsumption,
-                bhkwAnteilBiomethan: {value:energyConsumption.bhkwAnteilBiomethan?.value?? null ,unit:parseFloat(event.target.value)}
-            }),
-            lookupValues: props.unitValues.measures["BHKW:AnteilBiomethan"]
-        }
+        initValues: values.energietraeger
     }
 
     const stromherkunftProps: DynamicInputProps = {
         title: "Strom: Herkunft und Mengen",
         label: "Welchen Ursprung hat der Strom für das zu berechnende Haus und in welchen Mengen wird dieser für die Kulturdauer bezogen?",
+        submissionSuccess: submissionSuccess,
         textFieldProps: {},
         selectProps: {
-            lookupValues: props.lookupValues.Stromherkunft
+            lookupValues: lookupValues.Stromherkunft
         },
-        unitSelectProps: {
-            lookupValues: props.lookupValues.Stromherkunft,
-            unitValues:  props.unitValues,
-            optionGroup: "Stromherkunft"
+        unitProps: {
+            unitName: unitValues.selections.Stromherkunft.Photovoltaik[0]?.values,
+            optionGroup: "Stromherkunft",
+            unitValues: unitValues
         },
         onValueChange: values => setEnergyConsumptionState({
             ...energyConsumption,
@@ -185,7 +134,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                 }
             })
         }),
-        initValues: props.values.stromherkunft
+        initValues: values.stromherkunft
     }
 
     const zusatzbelichtungProps: SingleShowConditionalRadioInputProps = {
@@ -195,12 +144,12 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.zusatzbelichtung,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                zusatzbelichtung: parseFloat(event.target.value)
+                zusatzbelichtung: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Zusatzbelichtung,
+        radioButtonValues: lookupValues.Zusatzbelichtung,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Zusatzbelichtung.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Zusatzbelichtung.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -212,12 +161,12 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstrom,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstrom: parseFloat(event.target.value)
+                belichtungsstrom: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Belichtungsstrom,
+        radioButtonValues: lookupValues.Belichtungsstrom,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Belichtungsstrom.filter(option => option.values.toUpperCase() == "NEIN");
+            let trueOptions = lookupValues.Belichtungsstrom.filter(option => option.values.toUpperCase() == "NEIN");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -225,52 +174,56 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
     const belichtungsstromVerbrauchProps: MeasureInputProps = {
         title: "Stromverbauch in kWh",
         label: "Stromverbrauch der Belichtung in Kilowattstunden",
-        unitName: props.unitValues.measures["Belichtung:Stromverbrauch"][0]?.values,
+        unitName: unitValues.measures["Belichtung:Stromverbrauch"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromStromverbrauch?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromStromverbrauch: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:Stromverbrauch"][0].id}
-            })
+                belichtungsstromStromverbrauch: {value: parseToFloat(event.target.value), unit:unitValues.measures["Belichtung:Stromverbrauch"][0].id}
+            }),
+            error: showMeasureInputError(energyConsumption.belichtungsstromStromverbrauch)
         }
     }
 
     const belichtungsstromAnschlussleistungProps: MeasureInputProps = {
         title: "Anschlussleistung",
         label: "Wie viel Watt hat eine der Lampen?",
-        unitName: props.unitValues.measures["Belichtung:AnschlussleistungProLampe"][0]?.values,
+        unitName: unitValues.measures["Belichtung:AnschlussleistungProLampe"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnschlussleistung?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnschlussleistung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Belichtung:AnschlussleistungProLampe"][0].id}
-            })
+                belichtungsstromAnschlussleistung: {value:parseToFloat(event.target.value),unit:unitValues.measures["Belichtung:AnschlussleistungProLampe"][0].id}
+            }),
+            error: showMeasureInputError(energyConsumption.belichtungsstromAnschlussleistung)
         }
     }
 
     const belichtungsstromAnzLampenProps: MeasureInputProps = {
         title: "Anzahl Lampen",
         label: "Wie viele Lampen sind in dem zu berechnenden Haus installiert?",
-        unitName: props.unitValues.measures["Belichtung:AnzahlLampen"][0]?.values,
+        unitName: unitValues.measures["Belichtung:AnzahlLampen"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromAnzLampen?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromAnzLampen: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Belichtung:AnzahlLampen"][0].id}
-            })
+                belichtungsstromAnzLampen: {value:parseToFloat(event.target.value),unit:unitValues.measures["Belichtung:AnzahlLampen"][0].id}
+            }),
+            error: showMeasureInputError(energyConsumption.belichtungsstromAnzLampen)
         }
     }
 
     const belichtungsstromLaufzeitJahrProps: MeasureInputProps = {
         title: "Laufzeit pro Kulturjahr",
         label: "Wie viele Stunden läuft die Belichtung im Kulturjahr?",
-        unitName: props.unitValues.measures["Belichtung:LaufzeitProJahr"][0]?.values,
+        unitName: unitValues.measures["Belichtung:LaufzeitProJahr"][0]?.values,
         textFieldProps: {
             value: energyConsumption.belichtungsstromLaufzeitJahr?.value,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromLaufzeitJahr: {value: parseFloat(event.target.value), unit:props.unitValues.measures["Belichtung:LaufzeitProJahr"][0].id}
-            })
+                belichtungsstromLaufzeitJahr: {value: parseToFloat(event.target.value), unit:unitValues.measures["Belichtung:LaufzeitProJahr"][0].id}
+            }),
+            error: showMeasureInputError(energyConsumption.belichtungsstromLaufzeitJahr)
         }
     }
 
@@ -283,16 +236,16 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             value: energyConsumption.belichtungsstromEinheit,
             onChange: event => setEnergyConsumptionState({
                 ...energyConsumption,
-                belichtungsstromEinheit: parseFloat(event.target.value)
+                belichtungsstromEinheit: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.BelichtungsstromEinheit,
+        radioButtonValues: lookupValues.BelichtungsstromEinheit,
         showFirstChildren: value => {
-            let trueOptions = props.lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "KWH");
+            let trueOptions = lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "KWH");
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         showSecondChildren: value => {
-                let trueOptions = props.lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "ANGABEN");
+                let trueOptions = lookupValues.BelichtungsstromEinheit.filter(option => option.values.toUpperCase() == "ANGABEN");
                 return trueOptions.length > 0 && trueOptions[0].id == value
         },
         firstChildren: (
@@ -325,15 +278,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
                 </SingleShowConditionalRadioInputField>
             </Grid>
             <Grid item container xs={12} spacing={4}>
-                <DynamicInputField {...energietraegerProps}/>
-            </Grid>
-            <Grid item container xs={12} spacing={4}>
-                <SingleShowConditionalRadioInputField {...bhkwProps}>
-                    <Grid item container xs={12} spacing={4}>
-                        <MeasureUnitInputField {...bhkwAnteilErdgasProps}/>
-                        <MeasureUnitInputField {...bhkwAnteilBiomethanProps}/>
-                    </Grid>
-                </SingleShowConditionalRadioInputField>
+                <DynamicInputUnitSelectField {...energietraegerProps}/>
             </Grid>
             <SectionDivider title="Stromverbrauch"/>
             <Grid item container xs={12} spacing={4}>
@@ -352,7 +297,7 @@ const EnergyConsumptionInput = (props: EnergyConsumptionProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>
-                    <InputPaginationButtons {...props.paginationProps} />
+                    <InputPaginationButtons {...paginationProps} />
                 </Grid>
             </Grid>
         </Grid>

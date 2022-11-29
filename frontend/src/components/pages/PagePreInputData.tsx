@@ -25,15 +25,22 @@ import DynamicSelect, {DynamicSelectProps} from "../utils/DynamicSelect";
 import {loadDatasets} from "../../actions/dataset";
 import {Option} from "../../reducers/lookup";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
+import {resetSubmissionState} from "../../actions/submission";
+import {loadLookupValues} from "../../actions/lookup";
+import {findOptionId} from "../../helpers/InputHelpers";
 
 
 
 const mapStateToProps = (state: RootState) => ({
-    dataset: state.dataset
+    dataset: state.dataset,
+    lookupValues: state.lookup.lookupValues,
+    isLoading: state.lookup.isLoading
 });
 
 const mapDispatchToProps = {
-    loadDatasets
+    loadDatasets,
+    loadLookupValues,
+    resetSubmissionState
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -43,9 +50,10 @@ type ReduxProps = ConnectedProps<typeof connector>
 type PreInputDataProps = ReduxProps & {
 }
 
-const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
+const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, isLoading, dataset, lookupValues}: PreInputDataProps) => {
     useEffect(() => {
         loadDatasets()
+        loadLookupValues()
     }, [])
 
     const [selectedGreenhouse, setSelectedGreenhouse] = useState<number | null>(null)
@@ -63,11 +71,10 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
     const getGreenhouseName = (greenhouse:string) => {
         return greenhouse.replaceAll("[","").replaceAll("]","").split(",")
    }
-
     const initialData: DataToSubmit = {
         companyInformation: {
             gewaechshausName: null,
-            datum: new Date(Date.now()),
+            datum: null,
             plz: {value: null, unit: null},
             gwhFlaeche: {value: null, unit: null},
             nutzflaeche: {value: null, unit: null},
@@ -80,23 +87,23 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             energieschirm: null,
             energieschirmTyp: null,
             energieschirmAlter: {value: null, unit: null},
-            stehwandhoehe: { value: null, unit: null},
+            stehwandhoehe: {value: null, unit: null},
             laenge: {value: null, unit: null},
             breite: {value: null, unit: null},
             kappenbreite: {value: null, unit: null},
             scheibenlaenge: {value: null, unit: null},
             reihenabstand: {value: null, unit: null},
             vorwegbreite: {value: null, unit: null},
-            bodenabdeckung: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            bodenabdeckung: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             heizsystem: null,
-            heizsystemAlter: {value:null,unit: null},
+            heizsystemAlter: {value: null, unit: null},
             produktionsweise: null,
             produktionssystem: null,
             produktionssystemAlter: {value: null, unit: null},
             bewaesserArt: null,
             zusaetzlichesHeizsystem: null,
             zusaetzlichesHeizsystemTyp: null,
-            zusaetzlichesHeizsystemAlter: {value: null,unit: null},
+            zusaetzlichesHeizsystemAlter: {value: null, unit: null},
         },
         cultureInformation: {
             snack: null,
@@ -128,11 +135,8 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
         energyConsumption: {
             waermeversorgung: null,
             waermeteilungFlaeche: {value: null, unit: null},
-            energietraeger: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            bhkw: null,
-            bhkwAnteilErdgas: {value: null, unit: null},
-            bhkwAnteilBiomethan: {value: null, unit: null},
-            stromherkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            energietraeger: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
+            stromherkunft: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             zusatzbelichtung: null,
             belichtungsstrom: null,
             belichtungsstromEinheit: null,
@@ -142,17 +146,21 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             belichtungsstromLaufzeitJahr: {value: null, unit: null},
         },
         helpingMaterials: {
-            co2Herkunft: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            duengemittelSimple: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
-            duengemittelDetail: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            co2Herkunft: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
+            duengemittelSimple: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
+            duengemittelDetail: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             fungizideKg: {value: null, unit: null},
-            insektizideKg: {value: null, unit: null},
             fungizideLiter: {value: null, unit: null},
+            insektizideKg: {value: null, unit: null},
             insektizideLiter: {value: null, unit: null},
         },
         companyMaterials: {
             growbagsKuebel: null,
-            growbagsKuebelSubstrat: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
+            growbagsKuebelSubstrat: [{
+                selectValue: null,
+                textFieldValue: {value: null, unit: null},
+                textField2Value: null
+            }],
             kuebelVolumenProTopf: {value: null, unit: null},
             kuebelJungpflanzenProTopf: {value: null, unit: null},
             kuebelAlter: {value: null, unit: null},
@@ -171,9 +179,13 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
             jungpflanzenZukauf: null,
             jungpflanzenDistanz: {value: null, unit: null},
             jungpflanzenSubstrat: null,
-            verpackungsmaterial: [{selectValue: null, textFieldValue: { value: null, unit: null}}],
+            verpackungsmaterial: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
-            sonstVerbrauchsmaterialien: [{selectValue: null, textFieldValue: { value: null, unit: null}, textField2Value: null}],
+            sonstVerbrauchsmaterialien: [{
+                selectValue: null,
+                textFieldValue: {value: null, unit: null},
+                textField2Value: null
+            }],
         }
     }
 
@@ -212,8 +224,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
         }
 
         if(selection[0].length == 1) {
-            let parsedSelection = selection[0][0]
-            return parsedSelection
+            return selection[0][0]
         }
         else if(selection[0].length == 3) {
             let parsedSelection: { selectValue: number, textFieldValue: { value: number, unit: number }}[] = []
@@ -328,9 +339,6 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     waermeversorgung: parseSelectionTuple(initialDataset.Waermeversorgung) ?? inputFieldData.energyConsumption.waermeversorgung,
                     waermeteilungFlaeche: parseMeasureTuple(initialDataset.WaermeteilungFlaeche),
                     energietraeger: parseSelectionTuple(initialDataset.Energietraeger) ?? inputFieldData.energyConsumption.energietraeger,
-                    bhkw: parseSelectionTuple(initialDataset.BHKW) ?? inputFieldData.energyConsumption.bhkw,
-                    bhkwAnteilErdgas: parseMeasureTuple(initialDataset["BHKW:AnteilErdgas"]),
-                    bhkwAnteilBiomethan: parseMeasureTuple(initialDataset["BHKW:AnteilBiomethan"]),
                     stromherkunft: parseSelectionTuple(initialDataset.Stromherkunft) ?? inputFieldData.energyConsumption.stromherkunft,
                     zusatzbelichtung: parseSelectionTuple(initialDataset.Zusatzbelichtung) ?? inputFieldData.energyConsumption.zusatzbelichtung,
                     belichtungsstrom: parseSelectionTuple(initialDataset.Belichtungsstrom) ?? inputFieldData.energyConsumption.belichtungsstrom,
@@ -345,9 +353,9 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelSimple,
                     duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelDetail,
                     fungizideKg: parseMeasureTuple(initialDataset.FungizideKg),
+                    fungizideLiter: parseMeasureTuple(initialDataset.FungizideLiter),
                     insektizideKg: parseMeasureTuple(initialDataset.InsektizideKg),
-                    fungizideLiter: {value: null, unit: null},
-                    insektizideLiter: {value: null, unit: null},
+                    insektizideLiter: parseMeasureTuple(initialDataset.InsektizideLiter),
                 },
                 companyMaterials: {
                     growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel) ?? inputFieldData.companyMaterials.growbagsKuebel,
@@ -375,6 +383,7 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
                     sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien) ?? inputFieldData.companyMaterials.sonstVerbrauchsmaterialien,
                 }
             })
+            resetSubmissionState()
             setPageStatus(PageStatus.OldGH)
         }
         setSelectTries(selectTries+1)
@@ -382,6 +391,38 @@ const PagePreInputData = ({loadDatasets, dataset}: PreInputDataProps) => {
 
     const renderEmptyInputPages = () => {
         if(inputFieldData.companyInformation.gewaechshausName != null && inputFieldData.companyInformation.gewaechshausName != "") {
+            resetSubmissionState()
+
+            if(!isLoading) {
+                setInputFieldData({...inputFieldData,
+                    companyInformation: {
+                        ...inputFieldData.companyInformation,
+                        energieschirm: findOptionId(lookupValues["Energieschirm"], "nein"),
+                        zusaetzlichesHeizsystem: findOptionId(lookupValues["ZusaetzlichesHeizsystem"], "nein")
+                    },
+                    cultureInformation: {
+                        ...inputFieldData.cultureInformation,
+                        snack: findOptionId(lookupValues["10-30Gramm(Snack)"], "nein"),
+                        cocktail: findOptionId(lookupValues["30-100Gramm(Cocktail)"], "nein"),
+                        rispen: findOptionId(lookupValues["100-150Gramm(Rispen)"], "nein"),
+                        fleisch: findOptionId(lookupValues[">150Gramm(Fleisch)"], "nein"),
+                        nebenkultur: findOptionId(lookupValues["Nebenkultur"], "nein"),
+                    },
+                    energyConsumption: {
+                        ...inputFieldData.energyConsumption,
+                        waermeversorgung: findOptionId(lookupValues["Waermeversorgung"], "nein"),
+                        zusatzbelichtung: findOptionId(lookupValues["Zusatzbelichtung"], "nein")
+                    },
+                    companyMaterials: {
+                        ...inputFieldData.companyMaterials,
+                        growbagsKuebel: findOptionId(lookupValues["GrowbagsKuebel"], "nichts"),
+                        schnur: findOptionId(lookupValues["Schnur"], "nein"),
+                        klipse: findOptionId(lookupValues["Klipse"], "nein"),
+                        rispenbuegel: findOptionId(lookupValues["Rispenbuegel"], "nein"),
+                        jungpflanzenZukauf: findOptionId(lookupValues["Jungpflanzen:Zukauf"], "nein")
+                    },
+                });
+            }
             setPageStatus(PageStatus.NewGH)
         }
         setNameTries(nameTries+1)

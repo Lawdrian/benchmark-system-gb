@@ -36,8 +36,8 @@
 37,KulturEnde
 38,NebenkulturBeginn
 39,NebenkulturEnde
-44,BHKW:AnteilErdgas
-45,BHKW:AnteilBiomethan
+44,FungizideLiter
+45,InsektizideLiter
 48,Belichtung:Stromverbrauch
 49,Belichtung:AnzahlLampen
 50,Belichtung:AnschlussleistungProLampe

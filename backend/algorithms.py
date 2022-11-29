@@ -18,8 +18,7 @@
 """
 import math
 
-from backend.models import Options, OptionUnits
-from backend.models import MeasurementUnits
+from backend.models import Options, OptionUnits, OptionGroups
 from .utils import default_value, default_option
 
 
@@ -64,6 +63,7 @@ def calc_co2_footprint(data):
 
     return calculation_results
 
+
 def calc_helping_values(data, all_options):
     """This function calculates various helping values needed for calculating the co2-footprint
             Args:
@@ -76,9 +76,9 @@ def calc_helping_values(data, all_options):
     if data["KulturEnde"][0] > data["KulturBeginn"][0]:
         culture_length = round(data["KulturEnde"][0]-data["KulturBeginn"][0], 0)
     else:
-        culture_length = (52 - round(data["KulturBeginn"][0]), 0) + round(data["KulturEnde"][0], 0)
+        culture_length = (52 - round(data["KulturBeginn"][0], 0)) + round(data["KulturEnde"][0], 0)
     if data["NebenkulturEnde"][0] > data["NebenkulturBeginn"][0]:
-        side_culture_length = round(data["NebenkulturBeginn"][0]-data["NebenkulturEnde"][0], 0)
+        side_culture_length = round(data["NebenkulturEnde"][0]-data["NebenkulturBeginn"][0], 0)
     elif data["NebenkulturBeginn"][0] != 0:
         side_culture_length = (52 - round(data["NebenkulturBeginn"][0], 0)) + round(data["NebenkulturEnde"][0], 0)
     else:
@@ -88,7 +88,6 @@ def calc_helping_values(data, all_options):
     energyconsumption_company = 0
     for option in data["Stromherkunft"]:
         energyconsumption_company = energyconsumption_company + option[1]
-
 
     energyconsumption_total = energyconsumption_company+energyconsumption_lighting
     #
@@ -117,7 +116,6 @@ def calc_helping_values(data, all_options):
         fleisch_count = data["FleischReihenanzahl"][0]*row_length/data["FleischPflanzenabstandInDerReihe"][0]
 
     plant_count_total = snack_count+cocktail_count+rispen_count+fleisch_count
-    #
     snack_shoots_count = snack_count*data["SnackTriebzahl"][0]
     cocktail_shoots_count = cocktail_count*data["CocktailTriebzahl"][0]
     rispen_shoots_count = rispen_count*data["RispenTriebzahl"][0]
@@ -126,6 +124,16 @@ def calc_helping_values(data, all_options):
     cord_length_total = data["SchnuereRankhilfen:Laenge"][0]*shoots_count_total
     clips_count_total = data["Klipse:AnzahlProTrieb"][0]*shoots_count_total
     panicle_hanger_count_total = rispen_shoots_count*data["Rispenbuegel:AnzahlProTrieb"][0] + fleisch_shoots_count * data["Rispenbuegel:AnzahlProTrieb"][0]
+
+    # Check if bhkw is used or not
+    energietraeger_id = OptionGroups.objects.get(option_group_name="Energietraeger").id
+    bhkw_erdgas_option = all_options.get(option_group=energietraeger_id, option_value="BHKW Erdgas").id
+    bhkw_biomethan_option = all_options.get(option_group=energietraeger_id, option_value="BHKW Biomethan").id
+    bhkw_usage = False
+    for option in data["Energietraeger"]:
+        if option[0] == bhkw_erdgas_option or option[0] == bhkw_biomethan_option:
+            bhkw_usage = True
+
 
     print("Helping Values:")
     print("culture_length: " + str(culture_length))
@@ -154,7 +162,7 @@ def calc_helping_values(data, all_options):
     print("cord_length_total: " + str(cord_length_total))
     print("clips_count_total: " + str(clips_count_total))
     print("panicle_hanger_count_total: " + str(panicle_hanger_count_total))
-
+    print("bhkw_usage: " + str(bhkw_usage))
     return {
         "culture_length": culture_length,
         "side_culture_length": side_culture_length,
@@ -181,7 +189,8 @@ def calc_helping_values(data, all_options):
         "shoots_count_total": shoots_count_total,
         "cord_length_total": cord_length_total,
         "clips_count_total": clips_count_total,
-        "panicle_hanger_count_total": panicle_hanger_count_total
+        "panicle_hanger_count_total": panicle_hanger_count_total,
+        "bhkw_usage": bhkw_usage
     }
 
 
@@ -484,24 +493,12 @@ def calc_energy_source_co2(data, helping_values, all_options):
             geothermie = menge * 0.0348
         elif energietraegertyp == "Tiefengeothermie":
             tiefengeothermie = menge * 0.00633
+        elif energietraegertyp == "BHKW Erdgas":
+            bhkwerdgas = menge * 0.252
+        elif energietraegertyp == "BHKW Biomethan":
+            bhkwbiomethan = menge * 0.06785
         else:
             raise ValueError('No valid option for Energietraeger has been selected')
-
-    # BHKW also counts to Energietraeger
-    bhkwverwendung = all_options.get(id=data["BHKW"][0][0]).option_value
-    if bhkwverwendung == "nein":
-        energietraeger = energietraeger  # nothing
-    elif bhkwverwendung == "ja":
-        bhkw_erdgas = data["BHKW:AnteilErdgas"]
-        bhkw_biomethan = data["BHKW:AnteilBiomethan"]
-        # Check if the values have the correct unit
-        if MeasurementUnits.objects.get(id=bhkw_erdgas[1]).unit_name != "kWh" or MeasurementUnits.objects.get(id=bhkw_biomethan[1]).unit_name != "kWh":
-            raise ValueError('BHKW value unit has not been converted to kWh!')
-        else:
-            bhkwerdgas = bhkw_erdgas[0] * 0.252
-            bhkwbiomethan = bhkw_biomethan[0] * 0.06785
-    else:
-        raise ValueError('No valid option for BHKW has been selected')
 
     energietraeger = energietraeger + erdgas + biogas + heizoel + steinkohle + braunkohle + hackschnitzel + geothermie + tiefengeothermie + bhkwerdgas + bhkwbiomethan
     print("energietraeger: " + str(energietraeger))
@@ -565,26 +562,16 @@ def calc_electric_power_co2(data, helping_values, all_options):
             tiefengeothermie_co2 = menge * 0.00633 * helping_values["culture_length_usage"]
             tiefengeothermie_anteil = menge / helping_values["energyconsumption_company"]
         elif stromtyp == "BHKW Biomethan":
-            bhkwerdgas_co2 = menge * 0.06785 * helping_values["culture_length_usage"]
-            bhkwerdgas_anteil = menge / helping_values["energyconsumption_company"]
-        elif stromtyp == "BHKW Erdgas":
-            bhkwbiomethan_co2 = menge * 0.252 * helping_values["culture_length_usage"]
+            bhkwbiomethan_co2 = menge * 0.06785 * helping_values["culture_length_usage"]
             bhkwbiomethan_anteil = menge / helping_values["energyconsumption_company"]
+        elif stromtyp == "BHKW Erdgas":
+            bhkwerdgas_co2 = menge * 0.252 * helping_values["culture_length_usage"]
+            bhkwerdgas_anteil = menge / helping_values["energyconsumption_company"]
         elif stromtyp == "Diesel":
             diesel_co2 = menge * 0.048675561 * helping_values["culture_length_usage"]
             diesel_anteil = menge / helping_values["energyconsumption_company"]
         else:
             raise ValueError('No valid option for Stromherkunft has been selected')
-
-        # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
-        # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-        # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-        for option in data["Energietraeger"]:
-            if all_options.get(id=option[0]).option_value == "Tiefengeothermie":
-                tiefengeothermie_co2 = 0
-        if all_options.get(id=data["BHKW"][0][0]).option_value == "ja":
-            bhkwerdgas_co2 = 0
-            bhkwbiomethan_co2 = 0
 
     strom_gesamt_co2 = deutscher_strommix_co2 + oekostrom_co2 + photovoltaik_co2 + windenergie_land_co2 + windenergie_see_co2 + wasserkraft_co2 + tiefengeothermie_co2 + bhkwerdgas_co2 + bhkwbiomethan_co2 + diesel_co2
     # Take Belichtung into account if it isn't already included in the calculation
@@ -599,19 +586,28 @@ def calc_electric_power_co2(data, helping_values, all_options):
         bhkwerdgas_co2 = bhkwerdgas_co2 + (helping_values["energyconsumption_lighting"] * bhkwerdgas_anteil * 0.06785)
         bhkwbiomethan_co2 = bhkwbiomethan_co2 + (helping_values["energyconsumption_lighting"] * bhkwbiomethan_anteil * 0.252)
         diesel_co2 = diesel_co2 + (helping_values["energyconsumption_lighting"] * diesel_anteil * 0.048675561)
-        strom_gesamt_co2 = deutscher_strommix_co2 + oekostrom_co2 + photovoltaik_co2 + windenergie_land_co2 + windenergie_see_co2 + wasserkraft_co2 + tiefengeothermie_co2 + bhkwerdgas_co2 + bhkwbiomethan_co2 + diesel_co2
-        print("deutscher_strommix_co2: " + str(deutscher_strommix_co2))
-        print("oekostrom_co2: " + str(oekostrom_co2))
-        print("photovoltaik_co2: " + str(photovoltaik_co2))
-        print("windenergie_land_co2: " + str(windenergie_land_co2))
-        print("windenergie_see_co2: " + str(windenergie_see_co2))
-        print("wasserkraft_co2: " + str(wasserkraft_co2))
-        print("tiefengeothermie_co2: " + str(tiefengeothermie_co2))
-        print("bhkwerdgas_co2: " + str(bhkwerdgas_co2))
-        print("bhkwbiomethan_co2: " + str(bhkwbiomethan_co2))
-        print("diesel_co2: " + str(diesel_co2))
 
+    # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
+    # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+    # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+    for option in data["Energietraeger"]:
+        if all_options.get(id=option[0]).option_value == "Tiefengeothermie":
+            tiefengeothermie_co2 = 0
+    if helping_values["bhkw_usage"]:
+        bhkwerdgas_co2 = 0
+        bhkwbiomethan_co2 = 0
 
+    print("deutscher_strommix_co2: " + str(deutscher_strommix_co2))
+    print("oekostrom_co2: " + str(oekostrom_co2))
+    print("photovoltaik_co2: " + str(photovoltaik_co2))
+    print("windenergie_land_co2: " + str(windenergie_land_co2))
+    print("windenergie_see_co2: " + str(windenergie_see_co2))
+    print("wasserkraft_co2: " + str(wasserkraft_co2))
+    print("tiefengeothermie_co2: " + str(tiefengeothermie_co2))
+    print("bhkwerdgas_co2: " + str(bhkwerdgas_co2))
+    print("bhkwbiomethan_co2: " + str(bhkwbiomethan_co2))
+    print("diesel_co2: " + str(diesel_co2))
+    strom_gesamt_co2 = deutscher_strommix_co2 + oekostrom_co2 + photovoltaik_co2 + windenergie_land_co2 + windenergie_see_co2 + wasserkraft_co2 + tiefengeothermie_co2 + bhkwerdgas_co2 + bhkwbiomethan_co2 + diesel_co2
     print("strom: " + str(strom_gesamt_co2))
     return strom_gesamt_co2
 
@@ -742,8 +738,8 @@ def calc_fertilizer_co2(data, helping_values, all_options):
 
 
 def calc_psm_co2(data):
-    fungizide = data["FungizideKg"][0] * 11
-    insektizide = data["InsektizideKg"][0] * 11
+    fungizide = (data["FungizideKg"][0] + (data["FungizideLiter"][0] * 100)) * 11
+    insektizide = (data["InsektizideKg"][0] + (data["InsektizideLiter"][0] * 100)) * 11
 
     print("psm: " + str(fungizide+insektizide))
     return fungizide + insektizide
@@ -794,7 +790,10 @@ def calc_pflanzenbehaelter_co2(data, helping_values, all_options):
     if growbagskuebelverwendung == "Growbags":
         growbags_co2 = ((helping_values["row_length_total"]*0.2*2+helping_values["row_length_total"]*0.11*2+helping_values["row_length_total"]/1*2*(0.15*0.11))*0.186) * 2.78897
     elif growbagskuebelverwendung == "Andere Kulturgefaesse (Topf, Kuebel)":
-        kuebel_co2 = ((0.03*data["Kuebel:VolumenProTopf"][0]-0.0214) / (data["Kuebel:JungpflanzenProTopf"][0]*helping_values["plant_count_total"]) / 10) * 2.88 / kuebel_nutzdauer
+        calc = (0.03 * data["Kuebel:VolumenProTopf"][0] - 0.0214)
+        if calc <= 0:
+            calc = 0.01
+        kuebel_co2 = (calc * helping_values["plant_count_total"]) / data["Kuebel:JungpflanzenProTopf"][0] * 2.88 / kuebel_nutzdauer
     elif growbagskuebelverwendung == "nichts":
         growbags_co2 = 0  # nothing
     else:
@@ -814,7 +813,7 @@ def calc_substrate_co2(data, helping_values, all_options):
     growbagskuebelverwendung = all_options.get(id=data["GrowbagsKuebel"][0][0]).option_value
     if growbagskuebelverwendung == "Growbags":
         volumen = helping_values["row_length_total"] * 2 * 0.11
-    elif growbagskuebelverwendung == "Kuebel":
+    elif growbagskuebelverwendung == "Andere Kulturgefaesse (Topf, Kuebel)":
         volumen = data["Kuebel:VolumenProTopf"][0]/data["Kuebel:JungpflanzenProTopf"][0] * helping_values["plant_count_total"]
     elif growbagskuebelverwendung == "nichts":
         print("substrat_co2: " + str(substrat_co2))
@@ -887,7 +886,7 @@ def calc_cords_co2(data, helping_values, all_options):
             schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
         elif schnuerematerial == "Zellulose":
             schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
-        elif schnuerematerial == "andere Nachhaltige/abbaubare Option Substrat":
+        elif schnuerematerial == "andere Nachhaltige/abbaubare Option":
             schnuere_co2 = ((helping_values["cord_length_total"] * 3/900) * 0.4) / nutzdauer
         elif schnuerematerial == "Bambusstab":
             schnuere_co2 = ((helping_values["cord_length_total"] * 0.32) * 1.2) / nutzdauer

@@ -3,19 +3,17 @@ import {
     DateInputField,
     DateInputProps,
     DateValue,
-    DynamicInputProps,
     MeasureInputField,
     MeasureInputProps,
     MeasureValue,
     SelectionInputField,
     SelectionInputProps,
-    SelectionRadioInputProps,
     ConditionalSelectionInputProps,
     SelectionValue,
     SingleShowConditionalRadioInputField,
     SingleShowConditionalRadioInputProps,
     ConditionalSelectionInputField,
-    DynamicInputField
+    DynamicInputField, DynamicInputProps
 } from "../../utils/inputPage/InputFields";
 import Grid from "@mui/material/Grid";
 import {RootState} from "../../../store";
@@ -24,10 +22,12 @@ import {Divider, Paper, TextField, Typography} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
 import {SectionDivider} from "../../utils/inputPage/layout";
+import {parseToFloat} from "../../../helpers/InputHelpers";
 
 const mapStateToProps = (state: RootState) => ({
-  lookupValues: state.lookup.lookupValues,
-  unitValues: state.lookup.unitValues
+    lookupValues: state.lookup.lookupValues,
+    unitValues: state.lookup.unitValues,
+    submissionSuccess: state.submission.successful
 });
 
 const connector = connect(mapStateToProps);
@@ -36,6 +36,9 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type CompanyInformationProps = ReduxProps & SubpageProps & {
     provideCompanyInformation: Function
+    showMeasureInputError: Function
+    showDateInputError: Function
+    showSelectInputError: Function
     values: CompanyInformationState
 }
 
@@ -73,18 +76,19 @@ export type CompanyInformationState = {
     zusaetzlichesHeizsystemAlter: DateValue | null
 }
 
-const CompanyInformationInput = (props: CompanyInformationProps) => {
-    const [companyInformation, setCompanyInformation] = useState<CompanyInformationState>(props.values)
+const CompanyInformationInput = ({values, provideCompanyInformation, paginationProps, lookupValues, submissionSuccess, unitValues, showDateInputError, showSelectInputError, showMeasureInputError}: CompanyInformationProps) => {
+    const [companyInformation, setCompanyInformation] = useState<CompanyInformationState>(values)
 
     const setCompanyInformationState = (companyInformation: CompanyInformationState) => {
         setCompanyInformation(companyInformation)
-        props.provideCompanyInformation(companyInformation)
+        provideCompanyInformation(companyInformation)
     }
 
 
     const datumProps: DateInputProps = {
         title: "Datensatzzeitraum",
         label: "Auf welchen Zeitraum beziehen sich die Daten?",
+        showError: (submissionSuccess!=null? !submissionSuccess && companyInformation.datum == null: false),
         datePickerProps: {
             value: companyInformation.datum,
             views: ['year'],
@@ -99,22 +103,19 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const plzProps: MeasureInputProps = {
         title: "Postleitzahl",
         label: "Zur Bestimmung der regionalen Wasserverfügbarkeit",
-        unitName: props.unitValues.measures.PLZ[0]?.values,
+        unitName: unitValues.measures.PLZ[0]?.values,
         textFieldProps: {
             placeholder: "Postleitzahl",
             value: companyInformation.plz?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                plz: {value: parseFloat(event.target.value),unit: props.unitValues.measures.PLZ[0].id}
+                plz: {value: parseToFloat(event.target.value),unit: unitValues.measures.PLZ[0].id}
             }),
             inputProps: { min: 11111, max: 99999 },
             helperText: companyInformation.plz?.value ? (
                 companyInformation.plz?.value > 99999 ||
                 companyInformation.plz?.value < 11111) ? "Geben Sie eine valide Postleitzahl an!": undefined : undefined,
-            error: companyInformation.plz?.value ? (
-                companyInformation.plz?.value > 99999 ||
-                companyInformation.plz?.value < 11111
-            ) : false
+            error: showMeasureInputError(companyInformation?.plz)
         }
     }
 
@@ -125,35 +126,38 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.produktionsweise,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                produktionsweise: parseFloat(event.target.value)
+                produktionsweise: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues.Produktionstyp
+            lookupValues: lookupValues.Produktionstyp,
+            error: showSelectInputError(companyInformation?.produktionsweise)
         }
     }
 
     const gwhflaecheProps: MeasureInputProps = {
         title: "Gewächshausfläche",
         label: "Gesamtfläche des zu berechnenden Hauses",
-        unitName: props.unitValues.measures.GWHFlaeche[0]?.values,
+        unitName: unitValues.measures.GWHFlaeche[0]?.values,
         textFieldProps: {
             value: companyInformation.gwhFlaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhFlaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.GWHFlaeche[0].id}
-            })
+                gwhFlaeche: {value: parseToFloat(event.target.value),unit:unitValues.measures.GWHFlaeche[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.gwhFlaeche)
         }
     }
 
     const nutzflaecheProps: MeasureInputProps = {
         title: "Nutzfläche",
         label: "Effektiv genutzte/bestellte Fläche des Hauses",
-        unitName: props.unitValues.measures.Nutzflaeche[0]?.values,
+        unitName: unitValues.measures.Nutzflaeche[0]?.values,
         textFieldProps: {
             value: companyInformation.nutzflaeche?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                nutzflaeche: {value: parseFloat(event.target.value),unit:props.unitValues.measures.Nutzflaeche[0].id}
-            })
+                nutzflaeche: {value: parseToFloat(event.target.value),unit:unitValues.measures.Nutzflaeche[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.nutzflaeche)
         }
     }
 
@@ -161,26 +165,28 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Bauart",
         label: "Typ der GWH-Bauart",
         selectProps: {
-            lookupValues: props.lookupValues.GWHArt,
+            lookupValues: lookupValues.GWHArt,
             value: companyInformation.gwhArt,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhArt: parseFloat(event.target.value)
-            })
+                gwhArt: parseToFloat(event.target.value)
+            }),
+            error: showSelectInputError(companyInformation?.gwhArt)
         },
     }
 
     const gwhAlterProps: DateInputProps = {
         title: "Baujahr",
         label: "In welchem Jahr wurde das Gewächhaus gebaut?",
+        showError: showDateInputError(companyInformation?.gwhAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.gwhAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                gwhAlter: {value:event,unit:props.unitValues.measures.GWHAlter[0].id}
+                gwhAlter: {value:event,unit:unitValues.measures.GWHAlter[0].id}
             }),
-            renderInput: () => <TextField/>
+            renderInput: () => <TextField />,
         }
     }
 
@@ -188,24 +194,26 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Bedachungsmaterial",
         label: "Aus welchem Material besteht die Bedachung?",
         selectProps: {
-            lookupValues: props.lookupValues.Bedachungsmaterial,
+            lookupValues: lookupValues.Bedachungsmaterial,
             value: companyInformation.bedachungsmaterial,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                bedachungsmaterial: parseFloat(event.target.value)
-            })
+                bedachungsmaterial: parseToFloat(event.target.value)
+            }),
+            error: showSelectInputError(companyInformation?.bedachungsmaterial)
         }
     }
 
     const bedachungsmaterialAlterProps: DateInputProps = {
         title: "Anschaffungsjahr Bedachung",
         label: "Eindeckungsjahr des momentanen Bedachungsmaterials",
+        showError: showDateInputError(companyInformation?.bedachungsmaterialAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.bedachungsmaterialAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                bedachungsmaterialAlter: {value:event,unit:companyInformation.bedachungsmaterialAlter?.unit??null}
+                bedachungsmaterialAlter: {value:event,unit:unitValues.measures.AlterBedachungsmaterial[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -215,24 +223,26 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Stehwandmaterial",
         label: "Aus welchem Material bestehen die Stehwände?",
         selectProps: {
-            lookupValues: props.lookupValues.Stehwandmaterial,
+            lookupValues: lookupValues.Stehwandmaterial,
             value: companyInformation.stehwandmaterial,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandmaterial: parseFloat(event.target.value)
-            })
+                stehwandmaterial: parseToFloat(event.target.value)
+            }),
+            error: showSelectInputError(companyInformation?.stehwandmaterial)
         }
     }
 
     const stehwandmaterialAlterProps: DateInputProps = {
         title: "Anschaffungsjahr Stehwand",
         label: "In welchem Jahr wurde das momentane Stehwandmaterial angebracht?",
+        showError: showDateInputError(companyInformation?.stehwandmaterialAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.stehwandmaterialAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandmaterialAlter: {value:event,unit:props.unitValues.measures.AlterStehwandmaterial[0].id}
+                stehwandmaterialAlter: {value:event,unit:unitValues.measures.AlterStehwandmaterial[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -246,86 +256,93 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.stehwandhoehe?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                stehwandhoehe: {value:parseFloat(event.target.value), unit: props.unitValues.measures.Stehwandhoehe[0].id}
-            })
+                stehwandhoehe: {value:parseToFloat(event.target.value), unit: unitValues.measures.Stehwandhoehe[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.stehwandhoehe)
         }
     }
 
     const laengeProps: MeasureInputProps = {
         title: "Länge",
         label: "Wie lang ist das Gewächshaus?",
-        unitName: props.unitValues.measures.Laenge[0]?.values,
+        unitName: unitValues.measures.Laenge[0]?.values,
         textFieldProps: {
             value: companyInformation.laenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                laenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Laenge[0].id}
-            })
+                laenge: {value:parseToFloat(event.target.value),unit:unitValues.measures.Laenge[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.laenge)
         }
     }
 
     const breiteProps: MeasureInputProps = {
         title: "Breite",
         label: "Wie breit ist das Gewächshaus?",
-        unitName: props.unitValues.measures.Breite[0]?.values,
+        unitName: unitValues.measures.Breite[0]?.values,
         textFieldProps: {
             value: companyInformation.breite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                breite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Breite[0].id}
-            })
+                breite: {value:parseToFloat(event.target.value),unit:unitValues.measures.Breite[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.breite)
         }
     }
 
     const kappenbreiteProps: MeasureInputProps = {
         title: "Kappenbreite",
-        label: "Wie viele Meter beträgt die Knappenbreite?",
-        unitName: props.unitValues.measures.Kappenbreite[0]?.values,
+        label: "Wie viele Meter beträgt die Kappenbreite?",
+        unitName: unitValues.measures.Kappenbreite[0]?.values,
         textFieldProps: {
             value: companyInformation.kappenbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                kappenbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Kappenbreite[0].id}
-            })
+                kappenbreite: {value:parseToFloat(event.target.value),unit:unitValues.measures.Kappenbreite[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.kappenbreite)
         }
     }
 
     const scheibenlaengeProps: MeasureInputProps = {
         title: "Scheibenlänge",
         label: "Wie lang sind die Scheiben der Bedachung?",
-        unitName: props.unitValues.measures.Scheibenlaenge[0]?.values,
+        unitName: unitValues.measures.Scheibenlaenge[0]?.values,
         textFieldProps: {
             value: companyInformation.scheibenlaenge?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                scheibenlaenge: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Scheibenlaenge[0].id}
-            })
+                scheibenlaenge: {value:parseToFloat(event.target.value),unit:unitValues.measures.Scheibenlaenge[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.scheibenlaenge)
         }
     }
 
     const reihenabstandProps: MeasureInputProps = {
         title: "Reihenabstand",
         label: "Wie groß ist der Abstand zwischen den Kulturreihen? (Reihenmitte zu Reihenmitte)",
-         unitName: props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0]?.values,
+         unitName: unitValues.measures["Reihenabstand(Rinnenabstand)"][0]?.values,
         textFieldProps: {
             value: companyInformation.reihenabstand?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                reihenabstand: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Reihenabstand(Rinnenabstand)"][0].id}
-            })
+                reihenabstand: {value:parseToFloat(event.target.value),unit:unitValues.measures["Reihenabstand(Rinnenabstand)"][0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.reihenabstand)
         }
     }
 
     const vorwegbreiteProps: MeasureInputProps = {
         title: "Vorwegbreite",
         label: "Wie breit ist der Vorweg?",
-        unitName: props.unitValues.measures.Vorwegbreite[0]?.values,
+        unitName: unitValues.measures.Vorwegbreite[0]?.values,
         textFieldProps: {
             value: companyInformation.vorwegbreite?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                vorwegbreite: {value:parseFloat(event.target.value),unit:props.unitValues.measures.Vorwegbreite[0].id}
-            })
+                vorwegbreite: {value:parseToFloat(event.target.value),unit:unitValues.measures.Vorwegbreite[0].id}
+            }),
+            error: showMeasureInputError(companyInformation?.vorwegbreite)
         }
     }
 
@@ -333,14 +350,15 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Bodenabdeckung",
         label: "Welche Bodenabdeckungen werden verwendet? Wie lang ist die erwartete Nutzungsdauer?",
         optional: true,
+        submissionSuccess: submissionSuccess,
+        unitProps: {
+            unitName: unitValues.selections.Bodenabdeckung.Beton[0]?.values,
+            unitValues:  unitValues,
+            optionGroup: "Bodenabdeckung"
+        },
         textFieldProps: {label:"Nutzungsdauer"},
         selectProps: {
-            lookupValues: props.lookupValues.Bodenabdeckung
-        },
-        unitSelectProps: {
-            lookupValues: props.lookupValues.Bodenabdeckung,
-            unitValues:  props.unitValues,
-            optionGroup: "Bodenabdeckung"
+            lookupValues: lookupValues.Bodenabdeckung
         },
         onValueChange: values => setCompanyInformationState({
             ...companyInformation,
@@ -352,7 +370,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
                 }
             })
         }),
-        initValues: props.values.bodenabdeckung
+        initValues: values.bodenabdeckung
     }
 
     const energieschirmProps: SingleShowConditionalRadioInputProps = {
@@ -362,12 +380,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.energieschirm,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                energieschirm: parseFloat(event.target.value)
+                energieschirm: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Energieschirm,
+        radioButtonValues: lookupValues.Energieschirm,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Energieschirm.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Energieschirm.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -376,24 +394,26 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Schirmbauart",
         label: "Welche Art von Schirm/Schirmen wird verwendet?",
         selectProps: {
-            lookupValues: props.lookupValues.EnergieschirmTyp,
+            lookupValues: lookupValues.EnergieschirmTyp,
             value: companyInformation.energieschirmTyp,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                energieschirmTyp: parseFloat(event.target.value)
-            })
+                energieschirmTyp: parseToFloat(event.target.value)
+            }),
+            error: showSelectInputError(companyInformation?.energieschirmTyp)
         }
     }
 
     const energieschirmAlterProps: DateInputProps = {
         title: "Anschaffungsjahr Schirm",
         label: "In welchem Jahr wurde der momentane Schirm angebracht?",
+        showError: showDateInputError(companyInformation?.energieschirmAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.energieschirmAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                energieschirmAlter: {value:event,unit:props.unitValues.measures.AlterEnergieschirm[0].id}
+                energieschirmAlter: {value:event,unit:unitValues.measures.AlterEnergieschirm[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -407,12 +427,13 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.produktionssystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                produktionssystem: parseFloat(event.target.value)
+                produktionssystem: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues.Produktionssystem
+            lookupValues: lookupValues.Produktionssystem,
+            error: showSelectInputError(companyInformation?.produktionssystem)
         },
         hideChildren: value => {
-            let wrongOption = props.lookupValues.Produktionssystem.filter(option => option.values.toUpperCase() == "BODEN");
+            let wrongOption = lookupValues.Produktionssystem.filter(option => option.values.toUpperCase() == "BODEN");
             return wrongOption.length > 0 && wrongOption[0].id == value
         }
     }
@@ -420,12 +441,13 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const produktionssystemAlterProps: DateInputProps = {
         title: "Anschaffungsjahr Produktionssystem",
         label: "Wann wurde das momentane System installiert? (Bei Produktion im Boden nicht zutreffend)",
+        showError: showDateInputError(companyInformation?.produktionssystemAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.produktionssystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                produktionssystemAlter: {value:event,unit:props.unitValues.measures.AlterProduktionssystem[0].id}
+                produktionssystemAlter: {value:event,unit:unitValues.measures.AlterProduktionssystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -438,9 +460,10 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.bewaesserArt,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                bewaesserArt: parseFloat(event.target.value)
+                bewaesserArt: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues.Bewaesserungsart
+            lookupValues: lookupValues.Bewaesserungsart,
+            error: showSelectInputError(companyInformation?.bewaesserArt)
         }
     }
     
@@ -448,15 +471,16 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Hauptsystem zur Wärmeverteilung",
         label: "Welches System nutzen Sie primär zur Wärmeverteilung?",
         selectProps: {
-            lookupValues: props.lookupValues.Heizsystem,
+            lookupValues: lookupValues.Heizsystem,
             value: companyInformation.heizsystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                heizsystem: parseFloat(event.target.value)
+                heizsystem: parseToFloat(event.target.value)
             }),
+            error: showSelectInputError(companyInformation?.heizsystem)
         },
         hideChildren: value => {
-            let trueOptions = props.lookupValues.Heizsystem.filter(option => option.values.toUpperCase() == "KEINES");
+            let trueOptions = lookupValues.Heizsystem.filter(option => option.values.toUpperCase() == "KEINES");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
 
@@ -465,12 +489,13 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
     const heizsystemAlterProps: DateInputProps = {
         title: "Anschaffungsjahr Heizsystem",
         label: "Wann wurde das momentane System installiert?",
+        showError: showDateInputError(companyInformation?.heizsystemAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.heizsystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                heizsystemAlter: {value:event,unit:props.unitValues.measures.AlterHeizsystem[0].id}
+                heizsystemAlter: {value:event,unit:unitValues.measures.AlterHeizsystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -483,12 +508,12 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             value: companyInformation.zusaetzlichesHeizsystem,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                zusaetzlichesHeizsystem: parseFloat(event.target.value)
-            })
+                zusaetzlichesHeizsystem: parseToFloat(event.target.value)
+            }),
         },
-        radioButtonValues: props.lookupValues.ZusaetzlichesHeizsystem,
+        radioButtonValues: lookupValues.ZusaetzlichesHeizsystem,
         showChildren: value => {
-            let trueOptions = props.lookupValues.ZusaetzlichesHeizsystem.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.ZusaetzlichesHeizsystem.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -497,24 +522,26 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
         title: "Typ",
         label: "Welches zusätzliche System verwenden Sie?",
         selectProps: {
-            lookupValues: props.lookupValues.ZusaetzlichesHeizsystemTyp,
+            lookupValues: lookupValues.ZusaetzlichesHeizsystemTyp,
             value: companyInformation.zusaetzlichesHeizsystemTyp,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                zusaetzlichesHeizsystemTyp: parseFloat(event.target.value)
+                zusaetzlichesHeizsystemTyp: parseToFloat(event.target.value)
             }),
+            error: showSelectInputError(companyInformation?.zusaetzlichesHeizsystemTyp)
         },
     }
 
     const zusaetzlichesHeizsystemAlterProps: DateInputProps = {
         title: "Anschaffungsjahr sekundäres Heizsystem",
         label: "Wann wurde das momentane System installiert?",
+        showError: showDateInputError(companyInformation?.zusaetzlichesHeizsystemAlter),
         datePickerProps: {
             views: ['year'],
             value: companyInformation.zusaetzlichesHeizsystemAlter?.value,
             onChange: event => setCompanyInformationState({
                 ...companyInformation,
-                zusaetzlichesHeizsystemAlter: {value:event,unit:props.unitValues.measures.AlterZusaetzlichesHeizsystem[0].id}
+                zusaetzlichesHeizsystemAlter: {value:event,unit:unitValues.measures.AlterZusaetzlichesHeizsystem[0].id}
             }),
             renderInput: () => <TextField/>
         }
@@ -598,7 +625,7 @@ const CompanyInformationInput = (props: CompanyInformationProps) => {
             </Grid>
             <Grid item container xs={12} spacing={4}>
                 <Grid item xs={12}>
-                    <InputPaginationButtons {...props.paginationProps} />
+                    <InputPaginationButtons {...paginationProps} />
                 </Grid>
             </Grid>
         </Grid>

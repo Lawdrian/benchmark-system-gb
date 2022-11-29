@@ -47,8 +47,8 @@
 49,Hackschnitzel,16
 50,Geothermie(oberflaechennah),16
 51,Tiefengeothermie,16
-52,ja,17
-53,nein,17
+52,BHKW Biomethan,16
+53,BHKW Erdgas,16
 54,Deutscher Strommix,18
 55,Oekostrom (Durschnitt Deutschland),18
 56,Photovoltaik,18
@@ -67,42 +67,42 @@
 69,direkte Gasverbrennung,21
 70,eigenes BHKW,21
 71,A/B Bag: Standardduengung,22
-72,Vinasse,22
-73,Pferdemist,22
-74,Kompost,22
-75,"Hornmehl, -griess, -spaene",22
-76,Blutmehl,22
+72,Blutmehl,22
+73,Gruenduengung,22
+74,"Hornmehl, -griess, -spaene",22
+75,Knochenmehl,22
+76,Kompost,22
 77,Mist,22
-78,Gruenduengung,22
-79,Knochenmehl,22
+78,org. Vollduenger,22
+79,Pferdemist,22
 80,Pflanzkali,22
-81,org. Vollduenger,22
-82,Ammoniumnitrat,23
-83,Kaliumnitrat (Kalisalpeter),23
-84,Calciumnitrat fluessig (Kalksalpeter),23
-85,Calciumnitrat fest,23
-86,"Kaliumcholird, KCL, muriate of potash",23
-87,Kaliumsulfat,23
-88,Monokaliumphosphat (Flory6),23
-89,Borax,23
-90,Eisen DDTPA 3%,23
-91,Eisen EDDHA 6 %,23
-92,25 % Cu Kupfersulfat,23
-93,32 % Mn Mangansulfat,23
-94,Natriummolybdat,23
-95,Zinksulfat,23
-96,Chlorbleichlauge,23
-97,Bittersalz,23
-98,Phosphorsaeure 75%,23
-99,Salpetersaeure 65%,23
-100,Salpetersaeure 38%,23
-101,Kalksalpeter,23
-102,Magnesiumnitrat,23
-103,Magnesiumsulfat,23
-104,Kalisilikat,23
-105,Mangansulfat,23
-106,Kupfersulfat,23
-107,Ammoniummolybdat,23
+81,Vinasse,22
+82,Ammoniummolybdat,23
+83,Ammoniumnitrat,23
+84,Bittersalz,23
+85,Borax,23
+86,Calciumnitrat fest,23
+87,Calciumnitrat fluessig (Kalksalpeter),23
+88,Chlorbleichlauge,23
+89,Eisen DDTPA 3%,23
+90,Eisen EDDHA 6 %,23
+91,Kalisilikat,23
+92,"Kaliumcholird, KCL, muriate of potash",23
+93,Kaliumnitrat (Kalisalpeter),23
+94,Kaliumsulfat,23
+95,Kalksalpeter,23
+96,Kupfersulfat,23
+97,25 % Cu Kupfersulfat,23
+98,Magnesiumnitrat,23
+99,Magnesiumsulfat,23
+100,Mangansulfat,23
+101,32 % Mn Mangansulfat,23
+102,Monokaliumphosphat (Flory6),23
+103,Natriummolybdat,23
+104,Phosphorsaeure 75%,23
+105,Salpetersaeure 38%,23
+106,Salpetersaeure 65%,23
+107,Zinksulfat,23
 117,Growbags,25
 118,"Andere Kulturgefaesse (Topf, Kuebel)",25
 119,nichts,25

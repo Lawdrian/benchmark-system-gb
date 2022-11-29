@@ -82,6 +82,8 @@ export const SUBMISSION_INPROGRESS = "SUBMISSION_INPROGRESS";
 export const SUBMISSION_SUCCESS = "SUBMISSION_SUCCESS";
 // Submission of data failed
 export const SUBMISSION_ERROR = "SUBMISSION_ERROR";
+// Reset submission state
+export const SUBMISSION_RESET = "SUBMISSION_RESET";
 // Set the lookup values-loading flag
 export const LOOKUP_LOADING = "LOOKUP_LOADING";
 // Loading of lookup values was successful
@@ -287,14 +289,14 @@ export type GreenhouseData = {
     KulturEnde: string
     NebenkulturBeginn: string
     NebenkulturEnde: string
-    "BHKW:AnteilErdgas": string
-    "BHKW:AnteilBiomethan": string
     "Belichtung:Stromverbrauch": string
     "Belichtung:AnzahlLampen": string
     "Belichtung:AnschlussleistungProLampe": string
     "Belichtung:LaufzeitProJahr": string
     FungizideKg: string
+    FungizideLiter: string
     InsektizideKg: string
+    InsektizideLiter: string
     "Kuebel:VolumenProTopf": string
     "Kuebel:JungpflanzenProTopf": string
     "Kuebel:Alter": string
@@ -324,7 +326,6 @@ export type GreenhouseData = {
     ">150Gramm(Fleisch)": string
     Nebenkultur: string
     Energietraeger: string
-    BHKW: string
     Stromherkunft: string
     Zusatzbelichtung: string
     Belichtungsstrom: string

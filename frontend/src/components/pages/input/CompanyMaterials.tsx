@@ -2,11 +2,7 @@
 import React, {useState} from "react";
 import Grid from "@mui/material/Grid";
 import {
-    DateInputField,
-    DateInputProps,
-    DateValue,
-    DynamicInputField,
-    DynamicInputProps,
+    DynamicInputField, DynamicInputProps,
     MeasureInputField,
     MeasureInputProps, MeasureValue,
     SelectionInputField,
@@ -19,12 +15,13 @@ import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../utils/inputPage/InputPaginationButtons";
-import {TextField} from "@mui/material";
 import {SectionDivider} from "../../utils/inputPage/layout";
+import {parseToFloat} from "../../../helpers/InputHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
     unitValues: state.lookup.unitValues,
+    submissionSuccess: state.submission.successful
 });
 
 const connector = connect(mapStateToProps);
@@ -33,6 +30,8 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type CompanyMaterialsProps = ReduxProps & SubpageProps & {
     provideCompanyMaterials: Function
+    showMeasureInputError: Function
+    showSelectInputError: Function
     values: CompanyMaterialsState
 }
 
@@ -64,26 +63,27 @@ export type CompanyMaterialsState = {
 
 }
 
-const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
-    const [companyMaterials, setCompanyMaterials] = useState<CompanyMaterialsState>(props.values)
+const CompanyMaterialsInput = ({values, provideCompanyMaterials, paginationProps, lookupValues, submissionSuccess, unitValues, showSelectInputError, showMeasureInputError}: CompanyMaterialsProps) => {
+    const [companyMaterials, setCompanyMaterials] = useState<CompanyMaterialsState>(values)
 
     const setCompanyMaterialsState = (companyMaterials: CompanyMaterialsState) => {
         setCompanyMaterials(companyMaterials)
-        props.provideCompanyMaterials(companyMaterials)
+        provideCompanyMaterials(companyMaterials)
     }
 
     // Properties of the input fields
     const growbagsKuebelSubstratProps: DynamicInputProps = {
         title: "Substratart & Nutzungsdauer",
         label: "Welches Substrat wird verwendet und wie lange?",
+        submissionSuccess: submissionSuccess,
+        unitProps: {
+            unitName: unitValues.selections.Substrat.Kokos[0]?.values,
+            optionGroup: "Substrat",
+            unitValues: unitValues
+        },
         textFieldProps: {label:"Nutzungsdauer"},
         selectProps: {
-            lookupValues: props.lookupValues.Substrat
-        },
-        unitSelectProps: {
-            lookupValues: props.lookupValues.Substrat,
-            unitValues:  props.unitValues,
-            optionGroup: "Substrat"
+            lookupValues: lookupValues.Substrat
         },
         onValueChange: values => setCompanyMaterialsState({
             ...companyMaterials,
@@ -93,45 +93,48 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
                 }
             })
         }),
-        initValues: props.values.growbagsKuebelSubstrat
+        initValues: values.growbagsKuebelSubstrat
     }
 
     const kuebelVolumenProps: MeasureInputProps = {
         title: "Gefäßvolumen",
         label: "Wie viel Liter hat ein Kulturgefäß?",
-        unitName: props.unitValues.measures["Kuebel:VolumenProTopf"][0]?.values,
+        unitName: unitValues.measures["Kuebel:VolumenProTopf"][0]?.values,
         textFieldProps: {
             value: companyMaterials.kuebelVolumenProTopf?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                kuebelVolumenProTopf: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:VolumenProTopf"][0].id}
-            })
+                kuebelVolumenProTopf: {value:parseToFloat(event.target.value),unit:unitValues.measures["Kuebel:VolumenProTopf"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.kuebelVolumenProTopf)
         }
     }
 
     const kuebelJungpflanzenProps: MeasureInputProps = {
         title: "Anzahl Pflanzen pro Gefäß",
         label: "Wie viele Jungpflanzen werden pro Topf ausgepflanzt?",
-        unitName: props.unitValues.measures["Kuebel:JungpflanzenProTopf"][0]?.values,
+        unitName: unitValues.measures["Kuebel:JungpflanzenProTopf"][0]?.values,
         textFieldProps: {
             value: companyMaterials.kuebelJungpflanzenProTopf?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                kuebelJungpflanzenProTopf: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:JungpflanzenProTopf"][0].id}
-            })
+                kuebelJungpflanzenProTopf: {value:parseToFloat(event.target.value),unit:unitValues.measures["Kuebel:JungpflanzenProTopf"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.kuebelJungpflanzenProTopf)
         }
     }
 
     const kuebelNutzungsdauerProps: MeasureInputProps = {
         title: "Nutzungsdauer",
         label: "Wie lange verwenden Sie das Gefäß durchschnittlich?",
-        unitName: props.unitValues.measures["Kuebel:Alter"][0]?.values,
+        unitName: unitValues.measures["Kuebel:Alter"][0]?.values,
         textFieldProps: {
             value: companyMaterials.kuebelAlter?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                kuebelAlter: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Kuebel:Alter"][0].id}
-            })
+                kuebelAlter: {value:parseToFloat(event.target.value),unit:unitValues.measures["Kuebel:Alter"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.kuebelAlter)
         }
     }
 
@@ -142,16 +145,16 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.growbagsKuebel,
             onChange: event => setCompanyMaterialsState({
                     ...companyMaterials,
-                    growbagsKuebel: parseFloat(event.target.value)
+                    growbagsKuebel: parseToFloat(event.target.value)
                 })
         },
-        radioButtonValues: props.lookupValues.GrowbagsKuebel,
+        radioButtonValues: lookupValues.GrowbagsKuebel,
         showFirstChildren: value => {
-            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "GROWBAGS");
+            let trueOptions = lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "GROWBAGS");
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         showSecondChildren: value => {
-            let trueOptions = props.lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "Andere Kulturgefaesse (Topf, Kuebel)".toUpperCase());
+            let trueOptions = lookupValues.GrowbagsKuebel.filter(option => option.values.toUpperCase() == "Andere Kulturgefaesse (Topf, Kuebel)".toUpperCase());
             return trueOptions.length > 0 && trueOptions[0].id == value
         },
         firstChildren: (
@@ -182,12 +185,12 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.schnur,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                schnur: parseFloat(event.target.value)
+                schnur: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Schnur,
+        radioButtonValues: lookupValues.Schnur,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Schnur.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Schnur.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -200,35 +203,38 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.schnurMaterial,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                schnurMaterial: parseFloat(event.target.value)
+                schnurMaterial: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues["SchnuereRankhilfen:Material"]
+            lookupValues: lookupValues["SchnuereRankhilfen:Material"],
+            error: showSelectInputError(companyMaterials.schnurMaterial)
         }
     }
 
     const schnurLaengeProps: MeasureInputProps = {
         title: "Länge",
         label: "Wie lang sind die Schnüre/Rankhilfen je Trieb?",
-        unitName: props.unitValues.measures["SchnuereRankhilfen:Laenge"][0]?.values,
+        unitName: unitValues.measures["SchnuereRankhilfen:Laenge"][0]?.values,
         textFieldProps: {
             value: companyMaterials.schnurLaengeProTrieb?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                schnurLaengeProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["SchnuereRankhilfen:Laenge"][0].id}
-            })
+                schnurLaengeProTrieb: {value:parseToFloat(event.target.value),unit:unitValues.measures["SchnuereRankhilfen:Laenge"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.schnurLaengeProTrieb)
         }
     }
 
     const schnurWiederverwendungProps: MeasureInputProps = {
         title: "Nutzungsdauer",
         label: "Wie lange werden diese wiederverwendet?",
-        unitName: props.unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0]?.values,
+        unitName: unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0]?.values,
         textFieldProps: {
             value: companyMaterials.schnurWiederverwendung?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                schnurWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0].id}
-            })
+                schnurWiederverwendung: {value:parseToFloat(event.target.value),unit:unitValues.measures["SchnuereRankhilfen:Wiederverwendung"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.schnurWiederverwendung)
         }
     }
 
@@ -239,12 +245,12 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.klipse,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                klipse: parseFloat(event.target.value)
+                klipse: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Klipse,
+        radioButtonValues: lookupValues.Klipse,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Klipse.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Klipse.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -257,35 +263,38 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.klipseMaterial,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                klipseMaterial: parseFloat(event.target.value)
+                klipseMaterial: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues["Klipse:Material"]
+            lookupValues: lookupValues["Klipse:Material"],
+            error: showSelectInputError(companyMaterials.klipseMaterial)
         },
     }
 
     const klipseAnzProTriebProps: MeasureInputProps = {
         title: "Anzahl pro Trieb",
         label: "Geben Sie die Anzahl der Klipse pro Trieb und Kulturjahr an.",
-        unitName: props.unitValues.measures["Klipse:AnzahlProTrieb"][0]?.values,
+        unitName: unitValues.measures["Klipse:AnzahlProTrieb"][0]?.values,
         textFieldProps: {
             value: companyMaterials.klipseAnzProTrieb?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                klipseAnzProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Klipse:AnzahlProTrieb"][0].id}
-            })
+                klipseAnzProTrieb: {value:parseToFloat(event.target.value),unit:unitValues.measures["Klipse:AnzahlProTrieb"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.klipseAnzProTrieb)
         }
     }
 
     const klipseWiederverwendungProps: MeasureInputProps = {
         title: "Nutzungsdauer",
         label: "Wie lange werden diese wiederverwendet?",
-        unitName: props.unitValues.measures["Klipse:Wiederverwendung"][0]?.values,
+        unitName: unitValues.measures["Klipse:Wiederverwendung"][0]?.values,
         textFieldProps: {
             value: companyMaterials.klipseWiederverwendung?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                klipseWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Klipse:Wiederverwendung"][0].id}
-            })
+                klipseWiederverwendung: {value:parseToFloat(event.target.value),unit:unitValues.measures["Klipse:Wiederverwendung"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.klipseWiederverwendung)
         }
     }
 
@@ -296,12 +305,12 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.rispenbuegel,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                rispenbuegel: parseFloat(event.target.value)
+                rispenbuegel: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues.Rispenbuegel,
+        radioButtonValues: lookupValues.Rispenbuegel,
         showChildren: value => {
-            let trueOptions = props.lookupValues.Rispenbuegel.filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues.Rispenbuegel.filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -314,35 +323,38 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.rispenbuegelMaterial,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                rispenbuegelMaterial: parseFloat(event.target.value)
+                rispenbuegelMaterial: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues["Rispenbuegel:Material"]
+            lookupValues: lookupValues["Rispenbuegel:Material"],
+            error: showSelectInputError(companyMaterials.rispenbuegelMaterial)
         },
     }
 
     const rispenbuegelAnzProTriebProps: MeasureInputProps = {
         title: "Anzahl pro Trieb",
         label: "Geben Sie die Anzahl der Bügel pro Trieb und Kulturjahr an.",
-        unitName: props.unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0]?.values,
+        unitName: unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0]?.values,
         textFieldProps: {
             value: companyMaterials.rispenbuegelAnzProTrieb?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                rispenbuegelAnzProTrieb: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0].id}
-            })
+                rispenbuegelAnzProTrieb: {value:parseToFloat(event.target.value),unit:unitValues.measures["Rispenbuegel:AnzahlProTrieb"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.rispenbuegelAnzProTrieb)
         }
     }
 
     const rispenbuegelWiederverwendungProps: MeasureInputProps = {
         title: "Nutzungsdauer",
         label: "Wie lange werden diese wiederverwendet?",
-        unitName: props.unitValues.measures["Rispenbuegel:Wiederverwendung"][0]?.values,
+        unitName: unitValues.measures["Rispenbuegel:Wiederverwendung"][0]?.values,
         textFieldProps: {
             value: companyMaterials.rispenbuegelWiederverwendung?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                rispenbuegelWiederverwendung: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Rispenbuegel:Wiederverwendung"][0].id}
-            })
+                rispenbuegelWiederverwendung: {value:parseToFloat(event.target.value),unit:unitValues.measures["Rispenbuegel:Wiederverwendung"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.rispenbuegelWiederverwendung)
         }
     }
 
@@ -353,12 +365,12 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.jungpflanzenZukauf,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                jungpflanzenZukauf: parseFloat(event.target.value)
+                jungpflanzenZukauf: parseToFloat(event.target.value)
             })
         },
-        radioButtonValues: props.lookupValues["Jungpflanzen:Zukauf"],
+        radioButtonValues: lookupValues["Jungpflanzen:Zukauf"],
         showChildren: value => {
-            let trueOptions = props.lookupValues["Jungpflanzen:Zukauf"].filter(option => option.values.toUpperCase() == "JA");
+            let trueOptions = lookupValues["Jungpflanzen:Zukauf"].filter(option => option.values.toUpperCase() == "JA");
             return trueOptions.length > 0 && trueOptions[0].id == value
         }
     }
@@ -366,13 +378,14 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
     const jungpflanzenDistanzProps: MeasureInputProps = {
         title: "Entfernung",
         label: "Wie weit ist der Transport zu Ihnen?",
-        unitName: props.unitValues.measures["Jungpflanzen:Distanz"][0]?.values,
+        unitName: unitValues.measures["Jungpflanzen:Distanz"][0]?.values,
         textFieldProps: {
             value: companyMaterials.jungpflanzenDistanz?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                jungpflanzenDistanz: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Jungpflanzen:Distanz"][0].id}
-            })
+                jungpflanzenDistanz: {value:parseToFloat(event.target.value),unit:unitValues.measures["Jungpflanzen:Distanz"][0].id}
+            }),
+            error: showMeasureInputError(companyMaterials.jungpflanzenDistanz)
         }
     }
 
@@ -383,9 +396,10 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             value: companyMaterials.jungpflanzenSubstrat,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                jungpflanzenSubstrat: parseFloat(event.target.value)
+                jungpflanzenSubstrat: parseToFloat(event.target.value)
             }),
-            lookupValues: props.lookupValues["Jungpflanzen:Substrat"]
+            lookupValues: lookupValues["Jungpflanzen:Substrat"],
+            error: showSelectInputError(companyMaterials.jungpflanzenSubstrat)
         }
     }
 
@@ -395,14 +409,15 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         title: "Verpackungsmaterial",
         label: "Welches Material wird für die Verpackung der Ware in dem entsprechenden Haus verwendet?",
         optional: true,
+        submissionSuccess: submissionSuccess,
         textFieldProps: {},
         selectProps: {
-            lookupValues: props.lookupValues.Verpackungsmaterial
+            lookupValues: lookupValues.Verpackungsmaterial
         },
-        unitSelectProps: {
-            lookupValues: props.lookupValues.Verpackungsmaterial,
-            unitValues:  props.unitValues,
-            optionGroup: "Verpackungsmaterial"
+        unitProps: {
+            unitName: unitValues.selections.Verpackungsmaterial.Karton[0]?.values,
+            optionGroup: "Verpackungsmaterial",
+            unitValues: unitValues
         },
         onValueChange: values => setCompanyMaterialsState({
             ...companyMaterials,
@@ -414,19 +429,19 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
                 }
             })
         }),
-        initValues: props.values.verpackungsmaterial
+        initValues: values.verpackungsmaterial
     }
 
     const verpackungAnzahlNutzungenMehrwegsteigen: MeasureInputProps = {
         title: "Mehrwegsteigen",
         label: "Anzahl der individuellen Nutzungen von Mehrwegsteigen. (IFCO, EPS) Eine Nutzung beinhaltet das Befüllen mit Ware, das Ausliefern, sowie Zurückerhalten der Steige oder einer gleichwertigen Steige.",
         optional: true,
-        unitName: props.unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0]?.values,
+        unitName: unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0]?.values,
         textFieldProps: {
             value: companyMaterials.anzahlNutzungenMehrwegsteigen?.value,
             onChange: event => setCompanyMaterialsState({
                 ...companyMaterials,
-                anzahlNutzungenMehrwegsteigen: {value:parseFloat(event.target.value),unit:props.unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0].id}
+                anzahlNutzungenMehrwegsteigen: {value:parseToFloat(event.target.value),unit:unitValues.measures["Verpackungsmaterial:AnzahlMehrwegsteigen"][0].id}
             })
         }
     }
@@ -435,15 +450,16 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         title: "Sonstige Betriebsmittel",
         label: "Geben Sie sonstige Materialienverwendungen oder –verbräuche und deren Nutzungsdauern an, falls diese noch nicht erfasst wurden.",
         optional: true,
+        submissionSuccess: submissionSuccess,
         textFieldProps: {},
         textField2Props: {placeholder:"Jahre", label:"Nutzungsdauer"},
         selectProps: {
-            lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien
+            lookupValues: lookupValues.SonstigeVerbrauchsmaterialien
         },
-        unitSelectProps: {
-            lookupValues: props.lookupValues.SonstigeVerbrauchsmaterialien,
-            unitValues:  props.unitValues,
-            optionGroup: "SonstigeVerbrauchsmaterialien"
+        unitProps: {
+            unitName: unitValues.selections.SonstigeVerbrauchsmaterialien.Alluminium[0]?.values,
+            optionGroup: "SonstigeVerbrauchsmaterialien",
+            unitValues: unitValues
         },
         onValueChange: values => setCompanyMaterialsState({
             ...companyMaterials,
@@ -455,7 +471,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
                 }
             })
         }),
-        initValues: props.values.sonstVerbrauchsmaterialien
+        initValues: values.sonstVerbrauchsmaterialien
     }
 
     /*
@@ -466,11 +482,11 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
         textFieldProps: {},
         textField2Props: {placeholder:"h/a", label:"Nutzungsdauer"},
         selectProps: {
-            lookupValues: props.lookupValues.ZusaetzlicherMaschineneinsatz
+            lookupValues: lookupValues.ZusaetzlicherMaschineneinsatz
         },
         unitSelectProps: {
-            lookupValues: props.lookupValues.ZusaetzlicherMaschineneinsatz,
-            unitValues:  props.unitValues,
+            lookupValues: lookupValues.ZusaetzlicherMaschineneinsatz,
+            unitValues:  unitValues,
             optionGroup: "ZusaetzlicherMaschineneinsatz"
         },
         onValueChange: values => setCompanyMaterialsState({
@@ -483,7 +499,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
                 }
             })
         }),
-        initValues: props.values.zusaetzlicherMaschineneinsatz
+        initValues: values.zusaetzlicherMaschineneinsatz
     }
     */
 
@@ -551,7 +567,7 @@ const CompanyMaterialsInput = (props: CompanyMaterialsProps) => {
             </Grid>
             <Grid item container xs={12}>
                 <Grid item xs={12}>
-                    <InputPaginationButtons {...props.paginationProps} />
+                    <InputPaginationButtons {...paginationProps} />
                 </Grid>
             </Grid>
         </Grid>
