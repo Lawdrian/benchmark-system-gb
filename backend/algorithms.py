@@ -471,6 +471,9 @@ def calc_energy_source_co2(data, helping_values, all_options):
     tiefengeothermie = 0
     bhkwerdgas = 0
     bhkwbiomethan = 0
+
+    geteilte_waermeversorgung = all_options.get(id=data["Waermeversorgung"][0][0]).option_value
+
     for option in data["Energietraeger"]:
         # Check if the values have the correct unit
         if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
@@ -501,6 +504,10 @@ def calc_energy_source_co2(data, helping_values, all_options):
             raise ValueError('No valid option for Energietraeger has been selected')
 
     energietraeger = energietraeger + erdgas + biogas + heizoel + steinkohle + braunkohle + hackschnitzel + geothermie + tiefengeothermie + bhkwerdgas + bhkwbiomethan
+
+    if(geteilte_waermeversorgung=="ja"):
+        energietraeger = energietraeger * (data["GWHFlaeche"][0]/data["WaermeteilungFlaeche"][0])
+
     print("energietraeger: " + str(energietraeger))
     return energietraeger
 
