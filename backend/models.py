@@ -32,7 +32,7 @@ class Calculations(models.Model):
     It is part of the structure for direct user input.
     """
     calculation_name = models.CharField(max_length=50, unique=True, null=False)
-    unit_name = models.CharField(max_length=10, unique=False, null=False)
+    unit_name = models.CharField(max_length=20, unique=False, null=False)
 
 
 class Results(models.Model):
@@ -48,7 +48,7 @@ class Results(models.Model):
     calculation = models.ForeignKey("backend.Calculations", null=True,
                                     on_delete=models.SET_NULL)
 
-    result_value = models.DecimalField(max_digits=10, decimal_places=3)
+    result_value = models.DecimalField(max_digits=20, decimal_places=3)
 
 
 class Measurements(models.Model):
@@ -67,7 +67,7 @@ class MeasurementUnits(models.Model):
     """
     measurement = models.ForeignKey("backend.Measurements", null=False,
                                     on_delete=models.CASCADE)
-    unit_name = models.CharField(max_length=10, unique=False, null=False)
+    unit_name = models.CharField(max_length=20, unique=False, null=False)
 
 
 class Measures(models.Model):
@@ -84,7 +84,7 @@ class Measures(models.Model):
                                       on_delete=models.CASCADE)
     measure_unit = models.ForeignKey("backend.MeasurementUnits", null=True, on_delete=models.SET_NULL)
 
-    measure_value = models.DecimalField(max_digits=10, decimal_places=3)
+    measure_value = models.DecimalField(max_digits=20, decimal_places=3)
 
 
 class GreenhouseData(models.Model):
@@ -146,7 +146,7 @@ class OptionUnits(models.Model):
 
     option = models.ForeignKey("backend.Options", null=True, on_delete=models.SET_NULL)
 
-    unit_name = models.CharField(max_length=10, unique=False, null=False)
+    unit_name = models.CharField(max_length=20, unique=False, null=False)
 
 
 class Selections(models.Model):
@@ -161,11 +161,11 @@ class Selections(models.Model):
     option = models.ForeignKey("backend.Options", null=False,
                                      on_delete=models.CASCADE)
     
-    amount = models.DecimalField(max_digits=10, decimal_places=3, null=True)
+    amount = models.DecimalField(max_digits=20, decimal_places=3, null=True)
 
     selection_unit = models.ForeignKey("backend.OptionUnits", null=True, on_delete=models.SET_NULL)
 
-    value2 = models.DecimalField(max_digits=10, decimal_places=3, null=True)
+    value2 = models.DecimalField(max_digits=20, decimal_places=3, null=True)
 
 
 

@@ -122,7 +122,8 @@ class CreateGreenhouseData(APIView):
                         calculation_id=calculation_variables[variable].id,
                     ).save()
                 print("Calculation success")
-            except:
+            except Exception as e:
+                print(type(e))
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
                 else:
@@ -173,7 +174,8 @@ class CreateGreenhouseData(APIView):
                             ).save()
                 print("Save greenhouse data success")
                 return Response(request.data, status=status.HTTP_201_CREATED)
-            except:
+            except Exception as e:
+                print(type(e))
                 if new_greenhouse:
                     Greenhouses.objects.filter(id=greenhouse.id).delete()
                 else:
