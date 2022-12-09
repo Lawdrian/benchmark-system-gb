@@ -241,7 +241,7 @@ export const SelectionAmountUnitInputField = (props: SelectionAmountUnitInputPro
     );
 }
 export type ConditionalSelectionInputProps = SelectionInputProps & {
-    hideChildren: (value: any) => boolean
+    showChildren: (value: any) => boolean
     children?: ReactNode
 }
 
@@ -255,11 +255,11 @@ export type ConditionalSelectionInputProps = SelectionInputProps & {
  * @return {ReactNode} One single show conditional component.
  */
 export const ConditionalSelectionInputField = (props: ConditionalSelectionInputProps) => {
-    const {hideChildren, children, ...SelectionInputProps} = props
+    const {showChildren, children, ...SelectionInputProps} = props
    return (
         <Grid item container xs={12} spacing={4}>
                 <SelectionBaseInputField {...SelectionInputProps}/>
-                {props.hideChildren(props.selectProps.value) ? undefined : children }
+                {props.showChildren(props.selectProps.value) ?  children : undefined}
         </Grid>
    )
 }

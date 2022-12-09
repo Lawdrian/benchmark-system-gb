@@ -28,6 +28,7 @@ import {useNavigate} from "react-router-dom";
 import {Tab, Tabs} from "@mui/material";
 import {RootState} from "../../store";
 import {format} from "date-fns";
+import WaterUsageInput, {WaterUsageState} from "./input/WaterUsage";
 
 const mapStateToProps = (state: RootState) => ({
     submission: state.submission,
@@ -56,6 +57,7 @@ export type DataToSubmit = {
     companyInformation: CompanyInformationState
     cultureInformation: CultureInformationState
     energyConsumption: EnergyConsumptionState
+    waterUsage: WaterUsageState
     helpingMaterials: HelpingMaterialsState
     companyMaterials: CompanyMaterialsState
 }
@@ -133,6 +135,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         companyInformation,
         cultureInformation,
         energyConsumption,
+        waterUsage,
         helpingMaterials,
         companyMaterials
     } = dataToSubmit
@@ -187,10 +190,12 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Belichtung:AnzahlLampen": formatMeasureValue(energyConsumption?.belichtungsstromAnzLampen),
         "Belichtung:AnschlussleistungProLampe": formatMeasureValue(energyConsumption?.belichtungsstromAnschlussleistung),
         "Belichtung:LaufzeitProJahr": formatMeasureValue(energyConsumption?.belichtungsstromLaufzeitJahr),
-        FungizideKg: formatMeasureValue(helpingMaterials.fungizideKg),
-        FungizideLiter: formatMeasureValue(helpingMaterials.fungizideLiter),
-        InsektizideKg: formatMeasureValue(helpingMaterials.insektizideKg),
-        InsektizideLiter: formatMeasureValue(helpingMaterials.insektizideLiter),
+        VorlaufmengeGesamt: formatMeasureValue(waterUsage?.vorlaufmengeGesamt),
+        Restwasser: formatMeasureValue(waterUsage?.restwasser),
+        FungizideKg: formatMeasureValue(helpingMaterials?.fungizideKg),
+        FungizideLiter: formatMeasureValue(helpingMaterials?.fungizideLiter),
+        InsektizideKg: formatMeasureValue(helpingMaterials?.insektizideKg),
+        InsektizideLiter: formatMeasureValue(helpingMaterials?.insektizideLiter),
         "Kuebel:VolumenProTopf": formatMeasureValue(companyMaterials?.kuebelVolumenProTopf),
         "Kuebel:JungpflanzenProTopf": formatMeasureValue(companyMaterials?.kuebelJungpflanzenProTopf),
         "Kuebel:Alter": formatMeasureValue(companyMaterials?.kuebelAlter),
@@ -205,6 +210,8 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         // Selection input fields
         Waermeversorgung: formatOptionValue(energyConsumption.waermeversorgung),
         GWHArt: formatOptionValue(companyInformation.gwhArt),
+        Land: formatOptionValue(companyInformation.land),
+        Region: formatOptionValue(companyInformation.region),
         Bedachungsmaterial: formatOptionValue(companyInformation.bedachungsmaterial),
         Stehwandmaterial: formatOptionValue(companyInformation.stehwandmaterial),
         Energieschirm: formatOptionValue(companyInformation.energieschirm),
@@ -222,6 +229,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Zusatzbelichtung: formatOptionValue(energyConsumption.zusatzbelichtung),
         Belichtungsstrom: formatOptionValue(energyConsumption.belichtungsstrom),
         BelichtungsstromEinheit: formatOptionValue(energyConsumption.belichtungsstromEinheit),
+        VorlaufmengeAnteile: formatOptionValues(waterUsage.vorlaufmengeAnteile),
         GrowbagsKuebel: formatOptionValue(companyMaterials.growbagsKuebel),
         Schnur: formatOptionValue(companyMaterials.schnur),
         "SchnuereRankhilfen:Material": formatOptionValue(companyMaterials.schnurMaterial),
@@ -259,7 +267,7 @@ const PageInputData = (props: InputDataProps) => {
     const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>(props.initialData)
     const [tab, setTab] = useState<number>(0)
     const paginationProps: InputPaginationButtonsProps = {
-        hasNext: () => tab < 4,
+        hasNext: () => tab < 5,
         hasPrevious: () => tab > 0,
         next: () => setTab(tab + 1),
         previous: () => setTab(tab - 1),
@@ -298,6 +306,7 @@ const PageInputData = (props: InputDataProps) => {
     const setCompanyInformation = (companyInformation: CompanyInformationState) => setDataToSubmit({...dataToSubmit, companyInformation})
     const setCultureInformation = (cultureInformation: CultureInformationState) => setDataToSubmit({...dataToSubmit, cultureInformation})
     const setEnergyConsumption = (energyConsumption: EnergyConsumptionState) => setDataToSubmit({...dataToSubmit, energyConsumption})
+    const setWaterUsage = (waterUsage: WaterUsageState) => setDataToSubmit({...dataToSubmit, waterUsage})
     const setHelpingMaterials = (helpingMaterials: HelpingMaterialsState) => setDataToSubmit({...dataToSubmit, helpingMaterials})
     const setCompanyMaterials = (companyMaterials: CompanyMaterialsState) => {
         setDataToSubmit({...dataToSubmit, companyMaterials})
@@ -312,8 +321,9 @@ const PageInputData = (props: InputDataProps) => {
               <Tab label="Betriebsdaten" {...indexedTabProps(0)} />
               <Tab label="Kulturdaten" {...indexedTabProps(1)} />
               <Tab label="Energieverbrauch" {...indexedTabProps(2)} />
-              <Tab label="Hilfsstoffe" {...indexedTabProps(3)} />
-              <Tab label="Betriebsstoffe" {...indexedTabProps(4)} />
+              <Tab label="Wasserverbrauch" {...indexedTabProps(3)} />
+              <Tab label="Hilfsstoffe" {...indexedTabProps(4)} />
+              <Tab label="Betriebsstoffe" {...indexedTabProps(5)} />
             </Tabs>
 
             <TabPanel index={0} value={tab}>
@@ -326,9 +336,12 @@ const PageInputData = (props: InputDataProps) => {
                 <EnergyConsumptionInput paginationProps={paginationProps} provideEnergyConsumption={setEnergyConsumption} values={dataToSubmit.energyConsumption} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
             <TabPanel index={3} value={tab}>
-                <HelpingMaterialsInput paginationProps={paginationProps} provideHelpingMaterials={setHelpingMaterials} values={dataToSubmit.helpingMaterials}/>
+                <WaterUsageInput paginationProps={paginationProps} provideWaterUsage={setWaterUsage} values={dataToSubmit.waterUsage} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
             <TabPanel index={4} value={tab}>
+                <HelpingMaterialsInput paginationProps={paginationProps} provideHelpingMaterials={setHelpingMaterials} values={dataToSubmit.helpingMaterials}/>
+            </TabPanel>
+            <TabPanel index={5} value={tab}>
                 <CompanyMaterialsInput paginationProps={paginationProps} provideCompanyMaterials={setCompanyMaterials} values={dataToSubmit.companyMaterials} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
         </Box>

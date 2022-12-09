@@ -46,6 +46,8 @@ export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
     plz: MeasureValue | null
+    land: number | null
+    region: number | null
     gwhFlaeche: MeasureValue | null
     nutzflaeche: MeasureValue | null
     gwhArt: number | null
@@ -116,6 +118,39 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
                 companyInformation.plz?.value > 99999 ||
                 companyInformation.plz?.value < 11111) ? "Geben Sie eine valide Postleitzahl an!": undefined : undefined,
             error: showMeasureInputError(companyInformation?.plz)
+        }
+    }
+
+    const landProps: ConditionalSelectionInputProps = {
+        title: "Land",
+        label: "In welchem Land steht das Gewächshaus?",
+        selectProps: {
+            value: companyInformation.land,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                land: parseToFloat(event.target.value)
+            }),
+            lookupValues: lookupValues.Land,
+            error: showSelectInputError(companyInformation?.land)
+        },
+        showChildren: value => {
+            let trueOption = lookupValues.Land.filter(option => option.values.toUpperCase() == "GERMANY");
+            return trueOption.length > 0 && trueOption[0].id == value
+        }
+    }
+
+
+    const regionProps: SelectionInputProps = {
+        title: "Bundesland",
+        label: "In welchem Bundesland steht das Gewächshaus?",
+        selectProps: {
+            value: companyInformation.region,
+            onChange: event => setCompanyInformationState({
+                ...companyInformation,
+                region: parseToFloat(event.target.value)
+            }),
+            lookupValues: lookupValues.Region,
+            error: showSelectInputError(companyInformation?.region)
         }
     }
 
@@ -432,9 +467,9 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
             lookupValues: lookupValues.Produktionssystem,
             error: showSelectInputError(companyInformation?.produktionssystem)
         },
-        hideChildren: value => {
+        showChildren: value => {
             let wrongOption = lookupValues.Produktionssystem.filter(option => option.values.toUpperCase() == "BODEN");
-            return wrongOption.length > 0 && wrongOption[0].id == value
+            return wrongOption.length > 0 && wrongOption[0].id != value
         }
     }
 
@@ -479,9 +514,9 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
             }),
             error: showSelectInputError(companyInformation?.heizsystem)
         },
-        hideChildren: value => {
-            let trueOptions = lookupValues.Heizsystem.filter(option => option.values.toUpperCase() == "KEINES");
-            return trueOptions.length > 0 && trueOptions[0].id == value
+        showChildren: value => {
+            let wrongOption = lookupValues.Heizsystem.filter(option => option.values.toUpperCase() == "KEINES");
+            return wrongOption.length > 0 && wrongOption[0].id != value
         }
 
     }
@@ -562,6 +597,9 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...produktionsweiseProps} />
             </Grid>
+            <ConditionalSelectionInputField {...landProps}>
+                <SelectionInputField {...regionProps}/>
+            </ConditionalSelectionInputField>
             <SectionDivider title="Gewächshauskonstruktion"/>
             <Grid item container xs={12} spacing={4}>
                 <MeasureInputField {...gwhflaecheProps} />

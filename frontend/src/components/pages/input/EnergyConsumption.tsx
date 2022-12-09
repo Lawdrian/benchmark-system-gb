@@ -301,8 +301,6 @@ const EnergyConsumptionInput = ({values, provideEnergyConsumption, paginationPro
                 </Grid>
             </Grid>
         </Grid>
-
-
     )
 
 }

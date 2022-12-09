@@ -53,7 +53,8 @@ def validate_mandatory_fields(data):
         17: ("Schnur", ["JA"], ["SchnuereRankhilfen:Laenge", "SchnuereRankhilfen:Wiederverwendung"], ["SchnuereRankhilfen:Material"]),
         18: ("Klipse", ["JA"], ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
         19: ("Rispenbuegel", ["JA"], ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"]),
-        20: ("Produktionssystem", ["HYDROPONIK OFFEN", "HYDROPONIK GESCHLOSSEN"], ["AlterProduktionssystem"], [])
+        20: ("Produktionssystem", ["HYDROPONIK OFFEN", "HYDROPONIK GESCHLOSSEN"], ["AlterProduktionssystem"], []),
+        21: ("Land", ["GERMANY"], [], ["Region"])
     }
 
     for key, values in eventually_optional_fields.items():

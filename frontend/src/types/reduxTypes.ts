@@ -252,6 +252,8 @@ export type GreenhouseData = {
     greenhouse_name: string
     date: string
     PLZ: string
+    Land: string
+    Region: string
     GWHFlaeche: string
     WaermeteilungFlaeche: string
     GWHAlter: string
@@ -329,6 +331,9 @@ export type GreenhouseData = {
     Stromherkunft: string
     Zusatzbelichtung: string
     Belichtungsstrom: string
+    VorlaufmengeGesamt: string
+    VorlaufmengeAnteile: string
+    Restwasser: string
     "CO2-Herkunft": string
     "Duengemittel:VereinfachteAngabe": string
     "Duengemittel:DetaillierteAngabe": string
