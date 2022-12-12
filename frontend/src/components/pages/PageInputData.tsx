@@ -47,6 +47,8 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type InputDataProps = ReduxProps & {
     initialData : DataToSubmit
+    mode: InputMode
+    datasetId?: number
 }
 
 export type SubpageProps = {
@@ -65,6 +67,10 @@ export type DataToSubmit = {
 export const defaultValue = "(0,0)"
 export const defaultOption = "[(0,)]"
 
+export enum InputMode {
+    create,
+    update
+}
 
 
 const formatOptionValue = (value: number|null): string => {
@@ -280,7 +286,9 @@ const PageInputData = (props: InputDataProps) => {
                 () => {handleSubmitSuccess()},
                 (errorMessage: string) => {
                     handleSubmitError(errorMessage)
-                }
+                },
+                props.mode,
+                props.datasetId
             )
 
         }

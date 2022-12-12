@@ -15,12 +15,14 @@ from .api.getDatasets import GetDatasets
 from .api.getGreenhouseData import GetGreenhouseData
 from .api.getOptionGroupValues import GetOptionGroupValues
 from .api.getUnitValues import GetUnitValues
+from .api.updateGreenhouseData import UpdateGreenhouseData
 from backend.api.getWeatherData import GetWeatherData
 
 urlpatterns = [
     path('get-calculated-data', GetCalculatedGreenhouseData.as_view()),
     path('get-data', GetGreenhouseData.as_view()),
     path('create-greenhouse-data', CreateGreenhouseData.as_view()),
+    path('update-greenhouse-data', UpdateGreenhouseData.as_view()),
     path('get-weather', GetWeatherData.as_view()),
     path('get-lookup-values', GetOptionGroupValues.as_view()),
     path('get-unit-values', GetUnitValues.as_view()),

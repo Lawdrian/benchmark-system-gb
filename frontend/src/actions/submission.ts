@@ -9,14 +9,17 @@
  * #############################################################################
  */
 import {
+    DATASET_RESET,
     GreenhouseData,
     SUBMISSION_ERROR,
-    SUBMISSION_INPROGRESS, SUBMISSION_RESET,
+    SUBMISSION_INPROGRESS,
+    SUBMISSION_RESET,
     SUBMISSION_SUCCESS
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
+import {InputMode} from "../components/pages/PageInputData";
 
 /**
  * Submit a dataset of type {@link GreenhouseData} to the server
@@ -30,29 +33,40 @@ export const submitGreenhouseData = (
     withAuth: boolean = true,
     inProgressCB: Function = () => { /* NOOP */ },
     successCB: Function = () => { /* NOOP */ },
-    errorCB: Function = () => { /* NOOP */ }
+    errorCB: Function = () => { /* NOOP */ },
+    mode: InputMode,
+    datasetId?: number
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
         dispatch({type: SUBMISSION_INPROGRESS})
         inProgressCB();
 
         // Create the request headers
-        const config = withAuth ? tokenConfig(getState) : {
+        let config = withAuth ? tokenConfig(getState) : {
             headers: {
                 'Content-Type': 'application/json',
             },
         };
-
+        let url = "/backend/create-greenhouse-data"
+        // If a dataset should be updated instead of creating a new one, then the id of the dataset
+        // needs to be sent in the header and a different endpoint needs to be called.
+        if (mode == InputMode.update && datasetId) {
+            config.headers = {...config.headers, datasetId: datasetId}
+            url = "/backend/update-greenhouse-data"
+        }
         // Create the request body
         const body = JSON.stringify(data);
 
         // Send the post request to the server
-        axios.post("/backend/create-greenhouse-data", body, config)
+        axios.post(url, body, config)
             .then((response) => {
                 //console.log("CO2 Response", response)
                 dispatch({
                     type: SUBMISSION_SUCCESS
                 })
-            successCB()
+                successCB()
+                dispatch({
+                    type: DATASET_RESET
+                })
             })
             .catch((error) => {// TODO: Proper Error handling
                 dispatch({

@@ -102,6 +102,8 @@ export const DATASET_LOADING = "DATASET_LOADING";
 export const DATASET_LOADED = "DATASET_LOADED";
 // Loading of dataset failed
 export const DATASET_ERROR = "DATASET_ERROR";
+// Reset dataset state
+export const DATASET_RESET = "DATASET_RESET";
 // Set the profile-loading flag
 export const PROFILE_LOADING = "PROFILE_LOADING";
 // Loading of profile data was successful
@@ -138,9 +140,11 @@ export type ProfileData = {
  * The Metadata of one dataset
  */
 export type DatasetSummary = {
+    "greenhouseId": number
+    "datasetId": number
     "label": string,
-    "co2_footprint": number,
-    "h2o_footprint": number
+    "co2Footprint": number,
+    "h2oFootprint": number
 }
 
 
@@ -240,6 +244,16 @@ export type WeatherData = {
     precipitation_height: string
     temperature_air_mean_200: string
     sunshine_duration: string
+}
+
+
+export type DatasetData = {
+    greenhouse_specs: string
+    greenhouse_datasets: GreenhouseDataId[]
+}
+
+export type GreenhouseDataId = GreenhouseData & {
+    greenhouse_data_id: string
 }
 
 /**

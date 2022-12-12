@@ -73,7 +73,7 @@ def standardize_units(data):
                     new_value = data["CO2-Herkunft"][index][1]*data["GWHFlaeche"][0]  # No differentiation is needed since all three options have the same conversion formula
 
 
-                values_list = list(data["VorlaufmengeAnteile"][index])
+                values_list = list(data["CO2-Herkunft"][index])
                 values_list[1] = round(new_value, 2)
                 values_list[2] = kwh_co2herkunft_id
                 data["CO2-Herkunft"][index] = tuple(values_list)

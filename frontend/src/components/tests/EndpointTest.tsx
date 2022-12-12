@@ -20,6 +20,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
+import {InputMode} from "../pages/PageInputData";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -351,7 +352,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
     props.submitGreenhouseData(testData2,
@@ -386,7 +388,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withoutAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
     props.loadLookupValues(
