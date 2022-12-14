@@ -1,82 +1,186 @@
 """
-    This module provides algorithms for calculating footprints and benchmark.
+    This file provides algorithms for calculating footprints and benchmark.
 
-  The main and only function right now is calc_co2_footprint(data) which 
-  calculates the co2-footprint for a greenhouse-dataset. Specifications of the 
+  The main and only function right now is calc_footprints(data) which
+  calculates the co2-footprint and h2o-footprint for a greenhouse-dataset. Specifications of the
   structure for variable data can be found in views.py.
-  Other functions of this module should not be called directly.
+  Other functions of this file should not be called directly.
   
-  The general structure of this modules functions contains a main calculation
+  The general structure of this files functions contains a main calculation
   function that calls multiple other calculation functions which return their
   respective value after evaluating the given data.
   Then the main calculation function returns a dict of values.
-  Right now there is only dummy-data returned.
 
   Typical usage example:
 
-  co2_footprint = calc_co2_footprint(data)
+  footprint_data = calc_footprints(data)
 """
 import math
 
-from backend.models import Options, OptionUnits, OptionGroups
+from backend.models import Options, OptionUnits, OptionGroups, MeasurementUnits
 from .utils import default_value, default_option
 
 
-def calc_co2_footprint(data):
+def calc_footprints(data):
     all_options = Options.objects.all()
     helping_values = calc_helping_values(data, all_options)
-    konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserungsart_co2, heizsystem_co2, zusaetzliches_heizsystem_co2, \
+    konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserung_co2, heizsystem_co2, zusaetzliches_heizsystem_co2, \
     konstruktion_h2o, energieschirm_h2o, bodenabdeckung_h2o, produktionssystem_h2o, bewaesserung_h2o, heizsystem_h2o, zusaetzliches_heizsystem_h2o = calc_greenhouse_construction(data, helping_values, all_options)
     energietraeger_co2, energietraeger_h2o = calc_energy_source(data, helping_values, all_options)
     strom_co2, strom_h2o = calc_electric_power(data, helping_values, all_options)
+    brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o, restwasser_co2, restwasser_h2o = calc_water_usage(data, helping_values, all_options)
     co2_zudosierung_co2, co2_zudosierung_h2o = calc_co2_added(data, helping_values, all_options)
     duengemittel_co2, duengemittel_h2o = calc_fertilizer(data, helping_values, all_options)
     psm_co2, psm_h2o = calc_psm(data)
     pflanzenbehaelter_co2, pflanzenbehaelter_h2o = calc_pflanzenbehaelter(data, helping_values, all_options)
     substrat_co2, substrat_h2o = calc_substrate(data, helping_values, all_options)
-    junpflanzen_substrat_co2, junpflanzen_substrat_h2o = calc_young_plants_substrate(data, helping_values, all_options)
-    young_plants_transport_co2, young_plants_transport_h2o = calc_young_plants_transport(data, helping_values, all_options)
+    jungpflanzen_substrat_co2, jungpflanzen_substrat_h2o = calc_young_plants_substrate(data, helping_values, all_options)
+    jungpflanzen_transport_co2, jungpflanzen_transport_h2o = calc_young_plants_transport(data, helping_values, all_options)
     schnuere_co2, schnuere_h2o = calc_cords(data, helping_values, all_options)
     klipse_co2, klipse_h2o = calc_clips(data, helping_values, all_options)
     rispenbuegel_co2, rispenbuegel_h2o = calc_panicle_hanger(data, helping_values, all_options)
     verpackung_co2, verpackung_h2o = calc_packaging(data, helping_values, all_options)
     sonstige_verbrauchsmaterialien_co2, sonstige_verbrauchsmaterialien_h2o = calc_other_consumables(data, helping_values, all_options)
 
-    calculation_results = {
+    co2_results = {
         "konstruktion_co2": konstruktion_co2,
         "energieschirm_co2": energieschirm_co2,
         "bodenabdeckung_co2": bodenabdeckung_co2,
         "produktionssystem_co2": produktionssystem_co2,
         "heizsystem_co2": heizsystem_co2,
         "zusaetzliches_heizsystem_co2": zusaetzliches_heizsystem_co2,
-        "bewaesserung_co2": bewaesserungsart_co2,
+        "bewaesserung_co2": bewaesserung_co2,
         "energietraeger_co2": energietraeger_co2,
         "strom_co2": strom_co2,
+        "brunnenwasser_co2": brunnenwasser_co2,
+        "regenwasser_co2": regenwasser_co2,
+        "stadtwasser_co2": stadtwasser_co2,
+        "oberflaechenwasser_co2": oberflaechenwasser_co2,
+        "restwasser_co2": restwasser_co2,
         "co2_zudosierung_co2": co2_zudosierung_co2,
         "duengemittel_co2": duengemittel_co2,
         "psm_co2": psm_co2,
         "pflanzenbehaelter_co2": pflanzenbehaelter_co2,
         "substrat_co2": substrat_co2,
-        "jungpflanzen_substrat_co2": junpflanzen_substrat_co2,
-        "jungpflanzen_transport_co2": young_plants_transport_co2,
+        "jungpflanzen_substrat_co2": jungpflanzen_substrat_co2,
+        "jungpflanzen_transport_co2": jungpflanzen_transport_co2,
         "schnuere_co2": schnuere_co2,
         "klipse_co2": klipse_co2,
         "rispenbuegel_co2": rispenbuegel_co2,
-        "verpackung_co2": verpackung_co2 ,
+        "verpackung_co2": verpackung_co2,
         "sonstige_verbrauchsmaterialien_co2": sonstige_verbrauchsmaterialien_co2
     }
-    co2_footprint = sum(calculation_results.values())
+
+    co2_footprint = sum(co2_results.values())
     print("co2_footprint: " + str(co2_footprint))
 
-    calculation_results["co2_footprint"] = co2_footprint
-    calculation_results["co2_footprint_norm"] = co2_footprint / (
+    co2_results["co2_footprint"] = co2_footprint
+    co2_results["co2_footprint_norm_kg"] = co2_footprint / (
             data["SnackErtragJahr"][0] +
             data["CocktailErtragJahr"][0] +
             data["RispenErtragJahr"][0] +
             data["FleischErtragJahr"][0]
     )
+    co2_results["co2_footprint_norm_m2"] = co2_footprint / helping_values["gh_size"]
 
-    return calculation_results
+    h2o_results = {
+        "konstruktion_h2o": konstruktion_h2o,
+        "energieschirm_h2o": energieschirm_h2o,
+        "bodenabdeckung_h2o": bodenabdeckung_h2o,
+        "produktionssystem_h2o": produktionssystem_h2o,
+        "heizsystem_h2o": heizsystem_h2o,
+        "zusaetzliches_heizsystem_h2o": zusaetzliches_heizsystem_h2o,
+        "bewaesserung_h2o": bewaesserung_h2o,
+        "energietraeger_h2o": energietraeger_h2o,
+        "strom_h2o": strom_h2o,
+        "brunnenwasser_h2o": brunnenwasser_h2o,
+        "regenwasser_h2o": regenwasser_h2o,
+        "stadtwasser_h2o": stadtwasser_h2o,
+        "oberflaechenwasser_h2o": oberflaechenwasser_h2o,
+        "restwasser_h2o": restwasser_h2o,
+        "co2_zudosierung_h2o": co2_zudosierung_h2o,
+        "duengemittel_h2o": duengemittel_h2o,
+        "psm_h2o": psm_h2o,
+        "pflanzenbehaelter_h2o": pflanzenbehaelter_h2o,
+        "substrat_h2o": substrat_h2o,
+        "jungpflanzen_substrat_h2o": jungpflanzen_substrat_h2o,
+        "jungpflanzen_transport_h2o": jungpflanzen_transport_h2o,
+        "schnuere_h2o": schnuere_h2o,
+        "klipse_h2o": klipse_h2o,
+        "rispenbuegel_h2o": rispenbuegel_h2o,
+        "verpackung_h2o": verpackung_h2o,
+        "sonstige_verbrauchsmaterialien_h2o": sonstige_verbrauchsmaterialien_h2o
+    }
+
+    h2o_footprint = sum(h2o_results.values())
+    print("h2o_footprint: " + str(h2o_footprint))
+
+    h2o_results["h2o_footprint"] = h2o_footprint
+    h2o_results["h2o_footprint_norm_kg"] = h2o_footprint / (
+            data["SnackErtragJahr"][0] +
+            data["CocktailErtragJahr"][0] +
+            data["RispenErtragJahr"][0] +
+            data["FleischErtragJahr"][0]
+    )
+    h2o_results["h2o_footprint_norm_m2"] = h2o_footprint / helping_values["gh_size"]
+
+    """
+    calculation_results = {
+        "konstruktion_co2": konstruktion_co2,
+        "konstruktion_h2o": konstruktion_h2o,
+        "energieschirm_co2": energieschirm_co2,
+        "energieschirm_h2o": energieschirm_h2o,
+        "bodenabdeckung_co2": bodenabdeckung_co2,
+        "bodenabdeckung_h2o": bodenabdeckung_h2o,
+        "produktionssystem_co2": produktionssystem_co2,
+        "produktionssystem_h2o": produktionssystem_h2o,
+        "bewaesserung_co2": bewaesserung_co2,
+        "bewaesserung_h2o": bewaesserung_h2o,
+        "heizsystem_co2": heizsystem_co2,
+        "heizsystem_h2o": heizsystem_h2o,
+        "zusaetzliches_heizsystem_co2": zusaetzliches_heizsystem_co2,
+        "zusaetzliches_heizsystem_h2o": zusaetzliches_heizsystem_h2o,
+        "energietraeger_co2": energietraeger_co2,
+        "energietraeger_h2o": energietraeger_h2o,
+        "strom_co2": strom_co2,
+        "strom_h2o": strom_h2o,
+        "brunnenwasser_co2": brunnenwasser_co2,
+        "brunnenwasser_h2o": brunnenwasser_h2o,
+        "regenwasser_co2": regenwasser_co2,
+        "regenwasser_h2o": regenwasser_h2o,
+        "stadtwasser_co2": stadtwasser_co2,
+        "stadtwasser_h2o": stadtwasser_h2o,
+        "oberflaechenwasser_co2": oberflaechenwasser_co2,
+        "oberflaechenwasser_h2o": oberflaechenwasser_h2o,
+        "restwasser_co2": restwasser_co2,
+        "restwasser_h2o": restwasser_h2o,
+        "co2_zudosierung_co2": co2_zudosierung_co2,
+        "co2_zudosierung_h2o": co2_zudosierung_h2o,
+        "duengemittel_co2": duengemittel_co2,
+        "duengemittel_h2o": duengemittel_h2o,
+        "psm_co2": psm_co2,
+        "psm_h2o": psm_h2o,
+        "pflanzenbehaelter_co2": pflanzenbehaelter_co2,
+        "pflanzenbehaelter_h2o": pflanzenbehaelter_h2o,
+        "substrat_co2": substrat_co2,
+        "substrat_h2o": substrat_h2o,
+        "jungpflanzen_substrat_co2": jungpflanzen_substrat_co2,
+        "jungpflanzen_substrat_h2o": jungpflanzen_substrat_h2o,
+        "jungpflanzen_transport_co2": jungpflanzen_transport_co2,
+        "jungpflanzen_transport_h2o": jungpflanzen_transport_h2o,
+        "schnuere_co2": schnuere_co2,
+        "schnuere_h2o": schnuere_h2o,
+        "klipse_co2": klipse_co2,
+        "klipse_h2o": klipse_h2o,
+        "rispenbuegel_co2": rispenbuegel_co2,
+        "rispenbuegel_h2o": rispenbuegel_h2o,
+        "verpackung_co2": verpackung_co2,
+        "verpackung_h2o": verpackung_h2o,
+        "sonstige_verbrauchsmaterialien_co2": sonstige_verbrauchsmaterialien_co2,
+        "sonstige_verbrauchsmaterialien_h2o": sonstige_verbrauchsmaterialien_h2o
+    }
+    """
+    return co2_results | h2o_results
 
 
 def calc_helping_values(data, all_options):
@@ -785,6 +889,56 @@ def calc_electric_power(data, helping_values, all_options):
     print("strom_h2o: " + str(strom_gesamt_h2o))
     return strom_gesamt_co2, strom_gesamt_h2o
 
+def calc_water_usage(data, helping_values, all_options):
+    brunnenwasser_co2 = 0
+    brunnenwasser_h2o = 0
+    regenwasser_co2 = 0
+    regenwasser_h2o = 0
+    stadtwasser_co2 = 0
+    stadtwasser_h2o = 0
+    oberflaechenwasser_co2 = 0
+    oberflaechenwasser_h2o = 0
+
+    if (data["VorlaufmengeAnteile"] != default_option):
+        for option in data["VorlaufmengeAnteile"]:
+            # Check if the values have the correct unit
+            if OptionUnits.objects.get(id=option[2]).unit_name != "Liter":
+                raise ValueError('VorlaufmengeAnteile value unit has not been converted to Liter!')
+
+            vorlaufmengetyp = all_options.get(id=option[0]).option_value
+            menge = option[1]
+            if vorlaufmengetyp == "Brunnenwasser":
+                brunnenwasser_co2 = brunnenwasser_co2 + menge * 1
+                brunnenwasser_h2o = brunnenwasser_h2o + menge * 1
+            elif vorlaufmengetyp == "Regenwasser":
+                regenwasser_co2 = regenwasser_co2 + menge * 1
+                regenwasser_h2o = regenwasser_h2o + menge * 1
+            elif vorlaufmengetyp == "Stadtwasser":
+                stadtwasser_co2 = stadtwasser_co2 + menge * 1
+                stadtwasser_h2o = stadtwasser_h2o + menge * 1
+            elif vorlaufmengetyp == "Oberflaechenwasser":
+                oberflaechenwasser_co2 = oberflaechenwasser_co2 + menge * 1
+                oberflaechenwasser_h2o = oberflaechenwasser_h2o + menge * 1
+            else:
+                raise ValueError('No valid option for VorlaufmengeAnteile has been selected')
+    if MeasurementUnits.objects.get(id=data["Restwasser"][1]).unit_name != "Liter":
+        raise ValueError('Restwasser value unit has not been converted to Liter!')
+    restwasser_co2 = data["Restwasser"][0] * 1
+    restwasser_h2o = data["Restwasser"][0] * 1
+
+
+    print("brunnenwasser_co2: " + str(brunnenwasser_co2))
+    print("brunnenwasser_h2o: " + str(brunnenwasser_h2o))
+    print("regenwasser_co2: " + str(regenwasser_co2))
+    print("regenwasser_h2o: " + str(regenwasser_h2o))
+    print("stadtwasser_co2: " + str(stadtwasser_co2))
+    print("stadtwasser_h2o: " + str(stadtwasser_h2o))
+    print("oberflaechenwasser_co2: " + str(oberflaechenwasser_co2))
+    print("oberflaechenwasser_h2o: " + str(oberflaechenwasser_h2o))
+    print("restwasser_co2: " + str(restwasser_co2))
+    print("restwasser_h2o: " + str(restwasser_h2o))
+    return brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o, restwasser_co2, restwasser_h2o
+
 
 def calc_co2_added(data, helping_values, all_options):
 
@@ -1112,19 +1266,19 @@ def calc_young_plants_substrate(data, helping_values, all_options):
 
 
 def calc_young_plants_transport(data, helping_values, all_options):
-    young_plants_transport_co2 = 0
-    young_plants_transport_h2o = 0
+    jungpflanzen_transport_co2 = 0
+    jungpflanzen_transport_h2o = 0
 
     if data["Jungpflanzen:Distanz"] == default_value:
         pass
     else:
         young_plants_transport = helping_values["plant_count_total"] / 1056 * 0.5 * data["Jungpflanzen:Distanz"][0]
-        young_plants_transport_co2 = young_plants_transport * 0.112
-        young_plants_transport_h2o = young_plants_transport * 0.112
+        jungpflanzen_transport_co2 = young_plants_transport * 0.112
+        jungpflanzen_transport_h2o = young_plants_transport * 0.112
 
-    print("young_plants_transport_co2: ", young_plants_transport_co2)
-    print("young_plants_transport_h2o: ", young_plants_transport_h2o)
-    return young_plants_transport_co2, young_plants_transport_h2o
+    print("jungpflanzen_transport_co2: ", jungpflanzen_transport_co2)
+    print("jungpflanzen_transport_h2o: ", jungpflanzen_transport_h2o)
+    return jungpflanzen_transport_co2, jungpflanzen_transport_h2o
 
 
 def calc_cords(data, helping_values, all_options):

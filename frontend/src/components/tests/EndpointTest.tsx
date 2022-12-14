@@ -10,7 +10,6 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {submitGreenhouseData} from "../../actions/submission";
 import {loadWaterBenchmark} from "../../actions/waterbenchmark";
-import {loadWaterFootprint} from "../../actions/waterfootprint";
 import {loadWeatherData} from "../../actions/weather";
 import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
@@ -21,12 +20,13 @@ import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
 import {InputMode} from "../pages/PageInputData";
+import {loadH2OFootprint} from "../../actions/h2ofootprint";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
     co2: state.co2,
-    water: state.water,
+    water: state.h2o,
     benchmark: state.benchmark,
     weather: state.weather,
     submission: state.submission,
@@ -36,7 +36,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
     loadCO2Footprint,
     loadWaterBenchmark,
-    loadWaterFootprint,
+    loadH2OFootprint,
     loadWeatherData,
     submitGreenhouseData,
     resetData,
@@ -299,7 +299,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         Restwasser: "(400,78)",
         Stehwandmaterial: "[(15)]",
         Stromherkunft: "[(61,250000,77)]",
-        VorlaufmengeAnteile: "[(347,200,211),(348,400,213),(349,60,218)]",
+        VorlaufmengeAnteile: "[(347,20,211),(348,40000,213),(349,10,217),(350,30000,219)]",
         Substrat: "[(123,1,148)]",
         Verpackungsmaterial: "[(151,50123,176),(152,6265,177)]",
         "Verpackungsmaterial:AnzahlMehrwegsteigen": "(0,0)",

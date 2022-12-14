@@ -7,8 +7,8 @@ from ..models import GreenhouseData, Measurements, Measures, Selections, \
     Options, Greenhouses, Calculations, Results
 
 
-class GetCalculatedGreenhouseData(APIView):
-    """API endpoint for retrieving calculated GreenhouseData out of the results table
+class GetCalculatedH2OFootprint(APIView):
+    """API endpoint for retrieving calculated h2o-footprint out of the results table
     """
 
     permission_classes = [
@@ -16,23 +16,33 @@ class GetCalculatedGreenhouseData(APIView):
     ]
 
     def get(self, request, format=None):
-        """Get request that returns the calculated data which got requested.
-            Either
-                - co2FootprintData
-                - waterUsageData
-                - benchmarkData
+        """Get request that returns the calculated h2o-footprint which got requested.
 
         Args:
-            request : Query parameter dataType
+            request :
 
         Returns:
-            json: The calculated data requested
+            json: [
+                    total_response_data: [],
+                    normalizedkg_response_data: [],
+                    normalizedm2_response_data: [],
+                    fruitsizekg_response_data: [],
+                    fruitsizem2_response_data: [],
+                    scarcity_indexkg_response_data: [],
+                    scarcity_indexm2_response_data: [],
+                    benchmarkkg_response_data: [],
+                    benchmarkm2_response_data: [],
+                    optimization_response_data: [],
+            ]
         """
+        print("Get calculated h2o-footprint start")
         total_response_data = []
         normalizedkg_response_data = []
         normalizedm2_response_data = []
         fruitsizekg_response_data = []
         fruitsizem2_response_data = []
+        scarcity_indexkg_response_data = []
+        scarcity_indexm2_response_data = []
         benchmarkkg_response_data = []
         benchmarkm2_response_data = []
         optimization_response_data = []
@@ -42,51 +52,41 @@ class GetCalculatedGreenhouseData(APIView):
         if user_id is None:
             return Response({'Bad Request': 'No valid user!'},
                             status=status.HTTP_400_BAD_REQUEST)
-        # data_type is needed for selecting the correct data to return
-        data_type = request.GET.get('dataType', None)
 
-        if data_type is None:
-            return Response({'Bad Request': 'Query Parameter missing'},
-                            status=status.HTTP_400_BAD_REQUEST)
+        h2o_footprint_names = [
+            "konstruktion_h2o",
+            "energieschirm_h2o",
+            "bodenabdeckung_h2o",
+            "produktionssystem_h2o",
+            "bewaesserung_h2o",
+            "heizsystem_h2o",
+            "zusaetzliches_heizsystem_h2o",
+            "energietraeger_h2o",
+            "strom_h2o",
+            "brunnenwasser_h2o",
+            "regenwasser_h2o",
+            "stadtwasser_h2o",
+            "oberflaechenwasser_h2o",
+            "restwasser_h2o",
+            "co2_zudosierung_h2o",
+            "duengemittel_h2o",
+            "psm_h2o",
+            "pflanzenbehaelter_h2o",
+            "substrat_h2o",
+            "jungpflanzen_substrat_h2o",
+            "jungpflanzen_transport_h2o",
+            "schnuere_h2o",
+            "klipse_h2o",
+            "rispenbuegel_h2o",
+            "verpackung_h2o",
+            "sonstige_verbrauchsmaterialien_h2o",
+        ]
 
-        # map the requested datatype to the correct calculation_names in the calculations table
-        co2_footprint = 'co2FootprintData'
-        water_footprint = 'waterUsageData'
-        map_data_type = {
-            co2_footprint: (
-                "konstruktion_co2",
-                "energieschirm_co2",
-                "bodenabdeckung_co2",
-                "produktionssystem_co2",
-                "heizsystem_co2",
-                "zusaetzliches_heizsystem_co2",
-                "energietraeger_co2",
-                "strom_co2",
-                "co2_zudosierung_co2",
-                "duengemittel_co2",
-                "psm_co2",
-                "pflanzenbehaelter_co2",
-                "substrat_co2",
-                "jungpflanzen_substrat_co2",
-                "jungpflanzen_transport_co2",
-                "schnuere_co2",
-                "klipse_co2",
-                "rispenbuegel_co2",
-                "bewaesserung_co2",
-                "verpackung_co2",
-                "sonstige_verbrauchsmaterialien_co2",
-            ),
-            water_footprint: 'water_usage'
-        }
-        calculation_names = map_data_type.get(data_type, None)
-        if calculation_names is None:
-            return Response({'Bad Request': 'Wrong dataType'},
-                            status=status.HTTP_400_BAD_REQUEST)
 
         # Retrieve all calculations and the specific calculation_ids for the requested calculation_names
         calculations = Calculations.objects.in_bulk(
             field_name='calculation_name')
-        calculation_ids = [calculations[name] for name in calculation_names]
+        calculation_ids = [calculations[name] for name in h2o_footprint_names]
 
         all_measurements = Measurements.objects.all()
         print(all_measurements)
@@ -116,9 +116,7 @@ class GetCalculatedGreenhouseData(APIView):
             benchmarkkg_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
             benchmarkm2_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
             optimization_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
-            total_data_set_list = []
-            normalizedkg_data_set_list = []
-            normalizedm2_data_set_list = []
+
             benchmarkkg_data_set_list = []
             benchmarkm2_data_set_list = []
 
@@ -134,84 +132,23 @@ class GetCalculatedGreenhouseData(APIView):
 
                     recent_dataset = greenhouse_data[len(greenhouse_data)-1]
 
-                    for data_set in greenhouse_data:
-                        total_data_dict = dict()
-                        normalizedkg_data_dict = dict()
-                        normalizedm2_data_dict = dict()
-                        total_data_dict['label'] = data_set.date
-                        normalizedkg_data_dict['label'] = data_set.date
-                        normalizedm2_data_dict['label'] = data_set.date
-
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(
-                            data_set.id,
-                            all_measurements)
-                        total_ertrag = snack_ertrag+cocktail_ertrag+rispen_ertrag+fleisch_ertrag
-
-                        gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
-                        gh_size = Measures.objects \
-                            .get(greenhouse_data_id=data_set.id,
-                                 measurement_id=gh_size_id
-                                 ).measure_value
-
-                        for i, calculation_id in enumerate(calculation_ids):
-                            value = Results.objects \
-                                .filter(greenhouse_data_id=data_set.id,
-                                        calculation_id=calculation_id) \
-                                .values('result_value')[0]['result_value']
-
-                            total_data_dict[calculation_names[i]] = value
-                            normalizedkg_data_dict[calculation_names[i]] = value / total_ertrag
-                            normalizedm2_data_dict[calculation_names[i]] = value / gh_size
-
-                        total_data_set_list.append(total_data_dict)
-                        normalizedkg_data_set_list.append(normalizedkg_data_dict)
-                        normalizedm2_data_set_list.append(normalizedm2_data_dict)
-
+                    total_data_set_list, normalizedkg_data_set_list, normalizedm2_data_set_list = calc_total_and_normalized_data(greenhouse_data, all_measurements, calculation_ids, h2o_footprint_names)
                     # Append only the most recent dataset to the benchmarkkg_data_set_list
                     benchmarkkg_data_set_list.append(normalizedkg_data_set_list[len(normalizedkg_data_set_list)-1])
                     benchmarkm2_data_set_list.append(normalizedm2_data_set_list[len(normalizedm2_data_set_list)-1])
-                    # Check what production type the most recent dataset uses
-                    biologic_id = Options.objects.filter(option_value="Biologisch")[0]
-                    conventional_id = Options.objects.filter(option_value="Konventionell")[0]
 
-                    biologic = Selections.objects.filter(greenhouse_data_id=recent_dataset).filter(option_id=biologic_id)
-                    if biologic.exists():
-                        recent_dataset_is_biologic = True
-                    else:
-                        recent_dataset_is_biologic = False
+                    calculation_name = "h2o_footprint_norm_kg"
+                    best_performer_dataset, recent_dataset_is_biologic = find_performer_dataset(recent_dataset, calculation_name, True)
 
-                    # Retrieve the result_values of the high performer and append them to total_response_data (Using normalized data)
-                    co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint_norm").id
-                    found_correct_high_performer = False
-                    high_performers = Results.objects.filter(calculation_id=co2_footprint_id).order_by('result_value') # Sort from min to max
-                    index = 0
-                    high_performer_id = 1
-                    while found_correct_high_performer is False and index < len(high_performers):
-                        high_performer_id = high_performers[index].greenhouse_data_id
-                        high_performer_biologic = Selections.objects.filter(
-                            greenhouse_data_id=high_performer_id).filter(option_id=biologic_id)
-                        high_performer_conventional = Selections.objects.filter(
-                            greenhouse_data_id=high_performer_id).filter(option_id=conventional_id)
-                        if recent_dataset_is_biologic and high_performer_biologic.exists():
-                            found_correct_high_performer = True
-                            print("High Performer ist Biologisch")
-                        elif recent_dataset_is_biologic is False and high_performer_conventional.exists():
-                            found_correct_high_performer = True
-                            print("High Performer ist Konventionell")
-
-                        index = index + 1
-
-                    high_performer_dataset = GreenhouseData.objects.filter(id=high_performer_id)
-
-                    if high_performer_dataset.exists():
-                        high_performer_normalizedkg_dict = dict()
-                        high_performer_normalizedm2_dict = dict()
-                        high_performer_normalizedkg_dict['label'] = "Best Performer"
-                        high_performer_normalizedm2_dict['label'] = "Best Performer"
-                        normalizedkg_greenhouse_dict['performer_date'] = high_performer_dataset[0].date
-                        normalizedm2_greenhouse_dict['performer_date'] = high_performer_dataset[0].date
-                        benchmarkkg_greenhouse_dict['performer_date'] = high_performer_dataset[0].date
-                        benchmarkm2_greenhouse_dict['performer_date'] = high_performer_dataset[0].date
+                    if best_performer_dataset.exists():
+                        best_performer_normalizedkg_dict = dict()
+                        best_performer_normalizedm2_dict = dict()
+                        best_performer_normalizedkg_dict['label'] = "Best Performer"
+                        best_performer_normalizedm2_dict['label'] = "Best Performer"
+                        normalizedkg_greenhouse_dict['performer_date'] = best_performer_dataset[0].date
+                        normalizedm2_greenhouse_dict['performer_date'] = best_performer_dataset[0].date
+                        benchmarkkg_greenhouse_dict['performer_date'] = best_performer_dataset[0].date
+                        benchmarkm2_greenhouse_dict['performer_date'] = best_performer_dataset[0].date
                         if recent_dataset_is_biologic:
                             normalizedkg_greenhouse_dict['performer_productiontype'] = "Biologisch"
                             normalizedm2_greenhouse_dict['performer_productiontype'] = "Biologisch"
@@ -223,76 +160,60 @@ class GetCalculatedGreenhouseData(APIView):
                             benchmarkkg_greenhouse_dict['performer_productiontype'] = "Konventionell"
                             benchmarkm2_greenhouse_dict['performer_productiontype'] = "Konventionell"
 
-                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(high_performer_dataset[0].id,
+                        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(best_performer_dataset[0].id,
                                                                                                   all_measurements)
                         total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
                         gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
                         gh_size = Measures.objects \
-                            .get(greenhouse_data_id=high_performer_dataset[0].id,
+                            .get(greenhouse_data_id=best_performer_dataset[0].id,
                                  measurement_id=gh_size_id
                                  ).measure_value
 
                         for i, calculation_id in enumerate(calculation_ids):
                             value = Results.objects \
-                                .filter(greenhouse_data_id=high_performer_dataset[0].id,
+                                .filter(greenhouse_data_id=best_performer_dataset[0].id,
                                         calculation_id=calculation_id) \
                                 .values('result_value')[0]['result_value']
 
-                            high_performer_normalizedkg_dict[calculation_names[i]] = value / total_ertrag
-                            high_performer_normalizedm2_dict[calculation_names[i]] = value / gh_size
+                            best_performer_normalizedkg_dict[h2o_footprint_names[i]] = value / total_ertrag
+                            best_performer_normalizedm2_dict[h2o_footprint_names[i]] = value / gh_size
 
-                        normalizedkg_data_set_list.append(high_performer_normalizedkg_dict)
-                        normalizedm2_data_set_list.append(high_performer_normalizedm2_dict)
-                        benchmarkkg_data_set_list.append(high_performer_normalizedkg_dict)
-                        benchmarkm2_data_set_list.append(high_performer_normalizedm2_dict)
+                        normalizedkg_data_set_list.append(best_performer_normalizedkg_dict)
+                        normalizedm2_data_set_list.append(best_performer_normalizedm2_dict)
+                        benchmarkkg_data_set_list.append(best_performer_normalizedkg_dict)
+                        benchmarkm2_data_set_list.append(best_performer_normalizedm2_dict)
 
-                        # Benchmark Plot Data: Get low performer
-                        index = len(high_performers)-1
-                        low_performer_id = 1
-                        found_correct_low_performer = False
-                        while found_correct_low_performer is False and index >= 0:
-                            low_performer_id = high_performers[index].greenhouse_data_id
-                            low_performer_biologic = Selections.objects.filter(
-                                greenhouse_data_id=low_performer_id).filter(option_id=biologic_id)
-                            low_performer_conventional = Selections.objects.filter(
-                                greenhouse_data_id=low_performer_id).filter(option_id=conventional_id)
-                            if recent_dataset_is_biologic and low_performer_biologic.exists():
-                                found_correct_low_performer = True
-                            elif recent_dataset_is_biologic is False and low_performer_conventional.exists():
-                                found_correct_low_performer = True
+                        # Benchmark Plot Data: Get worst performer
+                        worst_performer_dataset, _ = find_performer_dataset(recent_dataset, calculation_name, False)
 
-                            index = index - 1
+                        if worst_performer_dataset.exists():
+                            worst_performer_benchmarkkg_dict = dict()
+                            worst_performer_benchmarkm2_dict = dict()
+                            worst_performer_benchmarkkg_dict['label'] = "Worst Performer"
+                            worst_performer_benchmarkm2_dict['label'] = "Worst Performer"
 
-                        low_performer_dataset = GreenhouseData.objects.filter(id=low_performer_id)
-
-                        if low_performer_dataset.exists():
-                            low_performer_benchmarkkg_dict = dict()
-                            low_performer_benchmarkm2_dict = dict()
-                            low_performer_benchmarkkg_dict['label'] = "Worst Performer"
-                            low_performer_benchmarkm2_dict['label'] = "Worst Performer"
-
-                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(low_performer_dataset[0].id, all_measurements)
+                            snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(worst_performer_dataset[0].id, all_measurements)
 
                             total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
 
                             gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
                             gh_size = Measures.objects \
-                                .get(greenhouse_data_id=high_performer_dataset[0].id,
+                                .get(greenhouse_data_id=best_performer_dataset[0].id,
                                      measurement_id=gh_size_id
                                      ).measure_value
 
                             for i, calculation_id in enumerate(calculation_ids):
                                 value = Results.objects \
-                                    .filter(greenhouse_data_id=low_performer_dataset[0].id,
+                                    .filter(greenhouse_data_id=worst_performer_dataset[0].id,
                                             calculation_id=calculation_id) \
                                     .values('result_value')[0]['result_value']
 
-                                low_performer_benchmarkkg_dict[calculation_names[i]] = value / total_ertrag
-                                low_performer_benchmarkm2_dict[calculation_names[i]] = value / gh_size
+                                worst_performer_benchmarkkg_dict[h2o_footprint_names[i]] = value / total_ertrag
+                                worst_performer_benchmarkm2_dict[h2o_footprint_names[i]] = value / gh_size
 
-                            benchmarkkg_data_set_list.append(low_performer_benchmarkkg_dict)
-                            benchmarkm2_data_set_list.append(low_performer_benchmarkm2_dict)
+                            benchmarkkg_data_set_list.append(worst_performer_benchmarkkg_dict)
+                            benchmarkm2_data_set_list.append(worst_performer_benchmarkm2_dict)
 
                     total_greenhouse_dict['greenhouseDatasets'] = total_data_set_list
                     normalizedkg_greenhouse_dict['greenhouseDatasets'] = normalizedkg_data_set_list
@@ -360,11 +281,11 @@ class GetCalculatedGreenhouseData(APIView):
                                         calculation_id=calculation_id) \
                                 .values('result_value')[0]['result_value']
                             if fruit_ertrag != 0.000:
-                                fruitsizekg_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / fruit_ertrag
-                                fruitsizem2_data_dict[calculation_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*reihenabstand)
+                                fruitsizekg_data_dict[h2o_footprint_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / fruit_ertrag
+                                fruitsizem2_data_dict[h2o_footprint_names[i]] = value * (fruit_reihenanzahl/total_reihenanzahl) / (fruit_reihenanzahl*row_length*reihenabstand)
                             else:
-                                fruitsizekg_data_dict[calculation_names[i]] = 0
-                                fruitsizem2_data_dict[calculation_names[i]] = 0
+                                fruitsizekg_data_dict[h2o_footprint_names[i]] = 0
+                                fruitsizem2_data_dict[h2o_footprint_names[i]] = 0
                         fruitsizekg_data_set_list.append(fruitsizekg_data_dict)
                         fruitsizem2_data_set_list.append(fruitsizem2_data_dict)
                     fruitsizekg_greenhouse_dict['greenhouseDatasets'] = fruitsizekg_data_set_list
@@ -373,13 +294,7 @@ class GetCalculatedGreenhouseData(APIView):
                     fruitsizem2_response_data.append(fruitsizem2_greenhouse_dict)
 
                     # Add optimization data
-                    if data_type == co2_footprint:
-                        optimization_response_data.append(co2Optimization.create_co2optimization_data(recent_dataset))
-                    elif data_type == water_footprint:
-                        print("shui")
-                    else:
-                        return Response({'No Content': 'Wrong data_type!'},
-                                        status=status.HTTP_204_NO_CONTENT)
+                    # optimization_response_data.append(co2Optimization.create_co2optimization_data(recent_dataset))
 
             except IndexError:
                 return Response({'No Content': 'No data for given parameters found'},
@@ -416,3 +331,109 @@ def get_ertrag(greenhouse_data_id, all_measurements):
              measurement_id=fleisch_ertrag_id
              ).measure_value
     return snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag
+
+
+def calc_total_and_normalized_data(greenhouse_data, all_measurements, calculation_ids, calculation_names):
+    """This function uses the footprint data, normalizes it and transforms it into dictionaries so that it can be processed
+        by the frontend. In total 3 lists of dictionaries are created:
+
+        Args:
+            greenhouse_data: All datasets of one greenhouse
+            all_measurements: All measurements saved in the database
+            calculation_ids: The ids of all calculation fields used
+            calculation_names: The names of all calculation fields used
+
+        Returns:
+             total_data_set_list, normalizedkg_data_set_list, normalizedm2_data_set_list
+
+    """
+    total_data_set_list = []
+    normalizedkg_data_set_list = []
+    normalizedm2_data_set_list = []
+    for data_set in greenhouse_data:
+
+        total_data_dict = dict()
+        normalizedkg_data_dict = dict()
+        normalizedm2_data_dict = dict()
+        total_data_dict['label'] = data_set.date
+        normalizedkg_data_dict['label'] = data_set.date
+        normalizedm2_data_dict['label'] = data_set.date
+
+        snack_ertrag, cocktail_ertrag, rispen_ertrag, fleisch_ertrag = get_ertrag(
+            data_set.id,
+            all_measurements)
+        total_ertrag = snack_ertrag + cocktail_ertrag + rispen_ertrag + fleisch_ertrag
+
+        gh_size_id = all_measurements.get(measurement_name="GWHFlaeche")
+        gh_size = Measures.objects \
+            .get(greenhouse_data_id=data_set.id,
+                 measurement_id=gh_size_id
+                 ).measure_value
+
+        for i, calculation_id in enumerate(calculation_ids):
+            value = Results.objects \
+                .filter(greenhouse_data_id=data_set.id,
+                        calculation_id=calculation_id) \
+                .values('result_value')[0]['result_value']
+
+            total_data_dict[calculation_names[i]] = value
+            normalizedkg_data_dict[calculation_names[i]] = value / total_ertrag
+            normalizedm2_data_dict[calculation_names[i]] = value / gh_size
+
+        total_data_set_list.append(total_data_dict)
+        normalizedkg_data_set_list.append(normalizedkg_data_dict)
+        normalizedm2_data_set_list.append(normalizedm2_data_dict)
+
+    return total_data_set_list, normalizedkg_data_set_list, normalizedm2_data_set_list
+
+
+def find_performer_dataset(dataset, calculation_name, is_best_performer):
+    """This function finds the dataset in the database with the lowest or highest normalized footprint using the same production
+        type as the provided dataset:
+
+        Args:
+            dataset: One dataset
+            calculation_name: The calculation field that will be used to determine the best performer
+            is_best_performer: Boolean, if true then the best_performer will be searched, if false the worst_performer will be searched.
+
+        Returns:
+            Dataset of the best performer in the database, Boolean (true if the production type is biologic)
+
+    """
+    # Check what production type the most recent dataset uses
+    biologic_id = Options.objects.filter(option_value="Biologisch")[0]
+    conventional_id = Options.objects.filter(option_value="Konventionell")[0]
+
+    biologic = Selections.objects.filter(greenhouse_data_id=dataset).filter(option_id=biologic_id)
+    if biologic.exists():
+        recent_dataset_is_biologic = True
+    else:
+        recent_dataset_is_biologic = False
+
+    # Retrieve the result_values of the high performer and append them to total_response_data (Using normalized data)
+    footprint_id = Calculations.objects.get(calculation_name=calculation_name).id
+    found_correct_performer = False
+    if is_best_performer:
+        result_value = 'result_value'  # Sort from min to max
+    else:
+        result_value = '-result_value'  # Sort from max to min
+
+    performers = Results.objects.filter(calculation_id=footprint_id).order_by(result_value)  # Sort from min to max
+    index = 0
+    performer_id = 1
+    while found_correct_performer is False and index < len(performers):
+        performer_id = performers[index].greenhouse_data_id
+        performer_biologic = Selections.objects.filter(
+            greenhouse_data_id=performer_id).filter(option_id=biologic_id)
+        performer_conventional = Selections.objects.filter(
+            greenhouse_data_id=performer_id).filter(option_id=conventional_id)
+        if recent_dataset_is_biologic and performer_biologic.exists():
+            found_correct_performer = True
+            print("Performer ist Biologisch")
+        elif recent_dataset_is_biologic is False and performer_conventional.exists():
+            found_correct_performer = True
+            print("High Performer ist Konventionell")
+
+        index = index + 1
+
+    return GreenhouseData.objects.filter(id=performer_id), recent_dataset_is_biologic

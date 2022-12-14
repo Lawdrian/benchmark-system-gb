@@ -92,7 +92,7 @@ class UpdateGreenhouseData(APIView):
                     try:
                         # calculate co2 footprint
                         print("Calculation begin")
-                        calculation_result = algorithms.calc_co2_footprint(standardized_data)
+                        calculation_result = algorithms.calc_footprints(standardized_data)
                         calculation_variables = Calculations.objects.in_bulk(
                             field_name='calculation_name')
                         print("Calc ok")

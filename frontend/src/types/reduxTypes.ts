@@ -59,11 +59,11 @@ export const CO2BM_LOADED = "CO2BM_LOADED";
 // Loading of co2-benchmark failed
 export const CO2BM_ERROR = "CO2BM_ERROR";
 // Set the waterfooprint-loading flag
-export const WATERFP_LOADING = "WATERFP_LOADING";
+export const H2OFP_LOADING = "H2OFP_LOADING";
 // Loading of waterfootprint was successful
-export const WATERFP_LOADED = "WATERFP_LOADED";
+export const H2OFP_LOADED = "H2OFP_LOADED";
 // Loading of waterfootprint failed
-export const WATERFP_ERROR = "WATERFP_ERROR";
+export const H2OFP_ERROR = "H2OFP_ERROR";
 // Set the waterbenchmark-loading flag
 export const WATERBM_LOADING = "WATERBM_LOADING";
 // Loading of waterbenchmark was successful

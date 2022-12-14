@@ -86,7 +86,7 @@ export const loadCO2Footprint = (
     loadingCB();
 
     // Send request
-    axios.get('/backend/get-calculated-data?dataType=co2FootprintData', withAuth ? tokenConfig(getState) : undefined)
+    axios.get('/backend/get-co2-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("CO2 Response", response)
             dispatch({
@@ -155,7 +155,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                     label: "Wärmeträger",
                     type: 'bar' as const,
                     data: greenhouse.greenhouseDatasets.map(dataset => dataset.energietraeger_co2),
-                    backgroundColor: "rgba(255, 0, 0, 0.8)",
+                    backgroundColor: "rgb(168,023,041)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "Wärmeträger", "value": dataset.energietraeger_co2}
                     ]),
@@ -165,7 +165,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                     label: "Strom",
                     type: 'bar' as const,
                     data: greenhouse.greenhouseDatasets.map(dataset => dataset.strom_co2),
-                    backgroundColor: "rgba(255,251,0,0.68)",
+                    backgroundColor: "rgb(255,221,0)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "Strom", "value": dataset.strom_co2}
                     ]),
@@ -179,7 +179,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         dataset.duengemittel_co2 +
                         dataset.psm_co2
                     ),
-                    backgroundColor: "rgba(37,239,6,0.7)",
+                    backgroundColor: "rgb(122,184,0)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "CO2 Zudosierung", "value": dataset.co2_zudosierung_co2},
                         { "name": "Düngemittel", "value": dataset.duengemittel_co2},
@@ -201,7 +201,7 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                         dataset.verpackung_co2 +
                         dataset.sonstige_verbrauchsmaterialien_co2
                     ),
-                    backgroundColor: "rgba(91,6,239,0.7)",
+                    backgroundColor: "rgb(161,087,103)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "Pflanzenbehälter", "value": dataset.pflanzenbehaelter_co2},
                         { "name": "Substrat", "value": dataset.substrat_co2},
