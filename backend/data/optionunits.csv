@@ -1,4 +1,4 @@
-0,default,0
+0,default,
 1,Auswahl,1
 2,Auswahl,2
 3,Auswahl,3
@@ -140,8 +140,6 @@
 164,Auswahl,139
 165,Auswahl,140
 166,Auswahl,141
-167,Auswahl,142
-168,Auswahl,143
 169,Auswahl,144
 170,Auswahl,145
 171,Auswahl,146
@@ -180,3 +178,15 @@
 207,Auswahl,182
 208,kWh,53
 209,m3,53
+210,Liter,347
+211,m3,347
+212,%,347
+213,Liter,348
+214,m3,348
+215,%,348
+216,Liter,349
+217,m3,349
+218,%,349
+219,Liter,350
+220,m3,350
+221,%,350

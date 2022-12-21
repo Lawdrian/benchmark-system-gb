@@ -27,14 +27,16 @@ class GetProfileSummary(APIView):
                         greenhouse_name: <greenhouse_name>,
                         data: [
                             {
+                                datasetId: <dataset-id>
                                 label: <label>,
-                                co2-footprint: <co2_footprint>,
-                                h2o-footrpint: <h2o-footprint>
+                                co2Footprint: <co2-footprint>,
+                                h2oFootrpint: <h2o-footprint>
                             },
                             {
+                                datasetId: <dataset-id>
                                 label: <label>,
-                                co2-footprint: <co2_footprint>,
-                                h2o-footrpint: <h2o-footprint>
+                                co2Footprint: <co2_footprint>,
+                                h2oFootrpint: <h2o-footprint>
                             }
                         ]
                     }
@@ -45,6 +47,7 @@ class GetProfileSummary(APIView):
             return Response({'Bad Request': 'No valid user!'},
                             status=status.HTTP_400_BAD_REQUEST)
         co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint")
+        h2o_footprint_id = Calculations.objects.get(calculation_name="h2o_footprint")
 
         # Retrieve all greenhouses of a specific user
         greenhouses = Greenhouses.objects.filter(user_id=user_id)
@@ -63,9 +66,11 @@ class GetProfileSummary(APIView):
                     greenhouse_data_list = []
                     for dataset in greenhouse_datasets:
                         dataset_dict = dict()
+                        dataset_dict["greenhouseId"] = greenhouse.id
+                        dataset_dict["datasetId"] = dataset.id
                         dataset_dict["label"] = dataset.date
-                        dataset_dict["co2_footprint"] = Results.objects.get(calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value
-                        dataset_dict["h2o_footprint"] = 0 #TODO implement real value
+                        dataset_dict["co2Footprint"] = round(Results.objects.get(calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
+                        dataset_dict["h2oFootprint"] = round(Results.objects.get(calculation_id=h2o_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
                         greenhouse_data_list.append(dataset_dict)
                     greenhouse_data["data"] = greenhouse_data_list
                 else:

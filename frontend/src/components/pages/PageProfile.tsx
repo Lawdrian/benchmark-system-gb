@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {
     Box,
-    Button, Card, CardContent,
+    Button, Card, CardActions, CardContent,
     Dialog, DialogActions,
     DialogContent,
     DialogContentText,
@@ -17,28 +17,80 @@ import {deleteUser} from "../../actions/auth";
 import {loadProfile} from "../../actions/profile";
 import {SectionDivider} from "../utils/inputPage/layout";
 import {DatasetSummary} from "../../types/reduxTypes";
+import {loadDatasets} from "../../actions/dataset";
+import {fillInputState, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
+import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
 
 const mapStateToProps = (state: RootState) => ({
+    dataset: state.dataset,
     user: state.auth.user,
     profileData: state.profile.profileData
 })
 
-const connector = connect(mapStateToProps, {deleteUser, loadProfile});
+const connector = connect(mapStateToProps, {deleteUser, loadProfile, loadDatasets});
 
 type ReduxProps = ConnectedProps<typeof connector>
 
 type ProfileProps = ReduxProps & {}
 
-const PageProfile = ({deleteUser, user, profileData, loadProfile}: ProfileProps) => {
+const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadDatasets}: ProfileProps) => {
     // Load profile data
     React.useEffect(() => {
         loadProfile()
+        if (!dataset.successful) {
+            loadDatasets()
+        }
     }, [])
     const [openDialog, setOpenDialog] = useState<boolean>(false)
-
+    const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(emptyDataset)
+    const [selectedDatasetId, setSelectedDatasetId] = useState<number>(0)
 
     const handleDelete = () => {
         deleteUser()
+    }
+
+
+    const handleDatasetUpdate = (greenhouseId: number, datasetId: number) => {
+
+        if (dataset.datasets != [] && dataset.datasets != "" && typeof dataset.datasets != "string") {
+            console.log(greenhouseId, datasetId)
+            const initialGreenhouse = dataset.datasets.filter(greenhouse => parseInt(parseStringToArray(greenhouse.greenhouse_specs)[0]) == greenhouseId)[0]
+            const initialDataset = initialGreenhouse.greenhouse_datasets.filter(dataset => parseInt(parseStringToArray(dataset.greenhouse_data_id)[0]) == datasetId)[0]
+            console.log(initialDataset)
+            setInputFieldData(fillInputState(initialDataset))
+            setSelectedDatasetId(datasetId)
+        }
+    }
+
+
+    const DatasetCard = (data: DatasetSummary) => {
+        return (
+            <Card sx={{minWidth: 100, maxWidth: 250}}>
+                <CardContent>
+                    <Typography sx={{mb: 1.5}} variant="h6" component="div">
+                        Jahr: {data.label}
+                    </Typography>
+                    <Typography sx={{textDecoration: 'underline'}} variant="subtitle1" component="div">
+                        Footprints
+                    </Typography>
+                    <Typography color="text.secondary">
+                        CO2: {data.co2Footprint} kg
+                    </Typography>
+                    <Typography  color="text.secondary">
+                        H2O: {data.h2oFootprint} Liter
+                    </Typography>
+                </CardContent>
+                <CardActions sx={{mb: 1.5}}>
+                        <Button onClick={() => handleDatasetUpdate(data.greenhouseId, data.datasetId)}>Ändern</Button>
+                </CardActions>
+            </Card>
+        );
+    }
+
+    if (inputFieldData != emptyDataset) {
+        return(
+            <PageInputData initialData={inputFieldData} mode={InputMode.update} datasetId={selectedDatasetId}/>
+        )
     }
 
     return (
@@ -124,26 +176,3 @@ const PageProfile = ({deleteUser, user, profileData, loadProfile}: ProfileProps)
 }
 
 export default connector(PageProfile);
-
-
-
-const DatasetCard = (data: DatasetSummary) => {
-    return (
-        <Card sx={{ minWidth: 100, maxWidth: 250 }}>
-            <CardContent>
-                <Typography sx={{ mb: 1.5 }} variant="h6" component="div">
-                    Jahr: {data.label}
-                </Typography>
-                <Typography sx={{textDecoration: 'underline'}} variant="subtitle1" component="div">
-                    Footprints
-                </Typography>
-                <Typography  color="text.secondary">
-                    CO2: {data.co2_footprint} kg
-                </Typography>
-                <Typography sx={{ mb: 1.5 }} color="text.secondary">
-                    H2O: {data.h2o_footprint} m3
-                </Typography>
-            </CardContent>
-        </Card>
-    );
-}

@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {connect, ConnectedProps} from "react-redux";
-import {RootState} from "../../store";
-import {loadCO2Footprint} from "../../actions/co2footprint";
-import {GreenhouseMenu} from "../utils/GreenhouseMenu";
+import {RootState} from "../../../store";
+import {loadCO2Footprint} from "../../../actions/co2footprint";
+import {GreenhouseMenu} from "../../utils/GreenhouseMenu";
 import {
     CircularProgress, Dialog,
     DialogContent,
@@ -10,13 +10,12 @@ import {
     FormControl, FormControlLabel, FormLabel, Grid,
     Radio, RadioGroup, Tab, Tabs, Typography,
 } from "@mui/material";
-import {GreenhouseBenchmark, GreenhouseFootprint} from "../../types/reduxTypes";
-import {SectionDivider} from "../utils/inputPage/layout";
-import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
-import BenchmarkPlotObject from "../utils/footprintPages/BenchmarkPlot";
-import FootprintPlotObject from "../utils/footprintPages/FootprintPlot";
-import {FootprintTable} from "../utils/footprintPages/FootprintTable";
-import {CO2FootprintOptimization} from "../utils/footprintPages/CO2FootprintOptimization";
+import {GreenhouseBenchmark, GreenhouseFootprint} from "../../../types/reduxTypes";
+import {SectionDivider} from "../../utils/inputPage/layout";
+import {indexedTabProps, TabPanel} from "../../../helpers/TabPanel";
+import BenchmarkPlotObject from "../../utils/footprintPages/BenchmarkPlot";
+import FootprintPlotObject from "../../utils/footprintPages/FootprintPlot";
+import {FootprintTable} from "../../utils/footprintPages/FootprintTable";
 
 
 const mapStateToProps = (state: RootState) => ({
@@ -60,11 +59,6 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     const [loadError, setLoadError] = useState<boolean>(false)
     const [loadSuccess, setLoadSuccess] = useState<boolean>(false)
 
-    enum NormalizedType {
-        kg = "kg",
-        m2 = "m2",
-    }
-
     const [tab, setTab] = useState<number>(0)
     const [normalizedType, setNormalizedType] = React.useState<NormalizedType>(NormalizedType.kg);
 
@@ -82,58 +76,6 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     const handleLoadError = () => {
         setOpenDialog(false)
         setLoadError(true)
-    }
-
-    const createFootprintPageHeader = () => {
-        return(
-             <Grid container>
-                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
-                        <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
-                            currentIndex={curGreenHouseIndex}
-                        />
-                    </Grid>
-            <Grid item xs alignItems={"flex-end"} justifyContent={"center"}>
-                        <FormControl sx={{
-                            flexDirection: "row",
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}>
-                          <FormLabel
-                          sx={{
-                            pr: 2
-                            }}>
-                              Normiert nach: </FormLabel>
-                          <RadioGroup
-                            row
-                            value={normalizedType}
-                            onChange={handleNormalizedTypeChange}
-                            name="radio-buttons-group"
-                          >
-                            <FormControlLabel value={NormalizedType.kg} control={<Radio />} label="kg" />
-                            <FormControlLabel value={NormalizedType.m2} control={<Radio />} label="m2" />
-                          </RadioGroup>
-                        </FormControl>
-                    </Grid>
-             </Grid>
-        )
-    }
-
-    const createFootprintProductionTypeHeader = (footprintData:GreenhouseFootprint[] | GreenhouseBenchmark[]) => {
-        return(
-            <Grid container direction={"row"} xs={12}>
-                <Grid item xs={6} alignItems={"center"} justifyContent={"center"}>
-                    <Typography variant={"h6"}>Datensatz Performer:</Typography>
-                </Grid>
-                <Grid item container xs={6} direction={"column"}>
-                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
-                        Produktionstyp = <b>{footprintData[curGreenHouseIndex].performerProductionType}</b>
-                    </Grid>
-                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
-                        Jahr = <b>{footprintData[curGreenHouseIndex].performerDate}</b>
-                    </Grid>
-                </Grid>
-            </Grid>
-        )
     }
 
     const selectNormalizedPlotData = (kgData:any,m2Data:any, normalizedType:NormalizedType) => {
@@ -197,7 +139,8 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     />
                     <FootprintPlotObject
                         title={("CO2-Footprint für " + greenhouses[curGreenHouseIndex])}
-                        unit={'kg'}
+                        yLabel={'CO2-Äquivalente [kg]'}
+                        tooltipLabel={"kg CO2-Äq."}
                         data={total[curGreenHouseIndex].data}
                     />
                     <SectionDivider
@@ -213,11 +156,12 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
                         Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
                     </p>
-                    {createFootprintPageHeader()}
-                    {createFootprintProductionTypeHeader(normalizedkg)}
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                    {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
                         title={("CO2-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
-                        unit={'kg'}
+                        yLabel={'CO2-Äquivalente [kg]'}
+                        tooltipLabel={"kg CO2-Äq."}
                         data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
@@ -226,10 +170,11 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Hier können Sie die spezifischen Fußabdrücke der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
                         Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
                     </p>
-                    {createFootprintPageHeader()}
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
                     <FootprintPlotObject
                         title={("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
-                        unit={'kg'}
+                        yLabel={'CO2-Äquivalente [kg]'}
+                        tooltipLabel={"kg CO2-Äq."}
                         data={selectNormalizedPlotData(fruitsizekg, fruitsizem2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
@@ -238,11 +183,12 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
                     </p>
                     <>
-                        {createFootprintPageHeader()}
-                        {createFootprintProductionTypeHeader(benchmarkkg)}
+                        {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                        {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
                             title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
-                            unit={'kg'}
+                            yLabel={'CO2-Äquivalente [kg]'}
+                            tooltipLabel={"kg CO2-Äq."}
                             data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                         />
                     </>
@@ -253,6 +199,62 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     else return <></>
 }
 
-
-
 export default connector(PageC02Footprint);
+
+
+    export enum NormalizedType {
+        kg = "kg",
+        m2 = "m2",
+    }
+
+    export const createFootprintPageHeader = (normalizedType:NormalizedType, greenhouses:string[], curGreenHouseIndex: number,  setCurGreenHouseIndex: (value:number) => void, handleNormalizedTypeChange: (event: React.ChangeEvent<HTMLInputElement>) => void) => {
+        return(
+             <Grid container>
+                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
+                        <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
+                            currentIndex={curGreenHouseIndex}
+                        />
+                    </Grid>
+            <Grid item xs alignItems={"flex-end"} justifyContent={"center"}>
+                        <FormControl sx={{
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                          <FormLabel
+                          sx={{
+                            pr: 2
+                            }}>
+                              Normiert nach: </FormLabel>
+                          <RadioGroup
+                            row
+                            value={normalizedType}
+                            onChange={handleNormalizedTypeChange}
+                            name="radio-buttons-group"
+                          >
+                            <FormControlLabel value={NormalizedType.kg} control={<Radio />} label="kg" />
+                            <FormControlLabel value={NormalizedType.m2} control={<Radio />} label="m2" />
+                          </RadioGroup>
+                        </FormControl>
+                    </Grid>
+             </Grid>
+        )
+    }
+
+    export const createFootprintProductionTypeHeader = (footprintData:GreenhouseFootprint[] | GreenhouseBenchmark[], curGreenHouseIndex: number) => {
+        return(
+            <Grid container direction={"row"} xs={12}>
+                <Grid item xs={6} alignItems={"center"} justifyContent={"center"}>
+                    <Typography variant={"h6"}>Datensatz Performer:</Typography>
+                </Grid>
+                <Grid item container xs={6} direction={"column"}>
+                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
+                        Produktionstyp = <b>{footprintData[curGreenHouseIndex].performerProductionType}</b>
+                    </Grid>
+                    <Grid item xs alignItems={"center"} justifyContent={"center"}>
+                        Jahr = <b>{footprintData[curGreenHouseIndex].performerDate}</b>
+                    </Grid>
+                </Grid>
+            </Grid>
+        )
+    }

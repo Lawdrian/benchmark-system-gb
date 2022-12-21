@@ -8,9 +8,9 @@
 """
 
 
-from django.db import OperationalError
-from rest_framework import serializers
 import re  # python standard library
+from django.db import DatabaseError
+from rest_framework import serializers
 from backend.models import Measurements, OptionGroups
 
 
@@ -175,7 +175,6 @@ class Tuple(serializers.Field):
 
         # Check the format [(),(),(),...] with a regex
         if not Tuple._check_format(data):
-            print("!")
             raise serializers.ValidationError({
                 'Passed string does not match format ' +
                 '(<float>,<int>)'
@@ -209,7 +208,7 @@ def _get_continuous_variables():
                 A python list of the names of all continuous variables
                 stored in the database.
     """
-    return Measurements.objects.values_list('measurement_name', flat=True)
+    return Measurements.objects.all()
 
 
 def _get_categorical_variables():
@@ -220,7 +219,7 @@ def _get_categorical_variables():
                 A python list of the names of all categorical variables
                 stored in the database.
     """
-    return OptionGroups.objects.values_list('option_group_name', flat=True)
+    return OptionGroups.objects.all()
 
 
 class InputDataSerializer(serializers.Serializer):
@@ -233,12 +232,12 @@ class InputDataSerializer(serializers.Serializer):
     try:
         # create a DecimalField for all continuous variables found in the database:
         for variable in _get_continuous_variables():
-            vars()[variable] = Tuple()
+            vars()[variable.measurement_name] = Tuple()
         # create a Field for all categorical variables found in the database (multi
         # selection with an optional float for each selection):
         for variable in _get_categorical_variables():
-            vars()[variable] = ListOfTuples()
-    except OperationalError:
+            vars()[variable.option_group_name] = ListOfTuples()
+    except DatabaseError:
         """
         This exception will be thrown when running "python manage.py makemigrations", 
         because the code will be already interpreted at this step in order to 

@@ -59,11 +59,13 @@ export const CO2BM_LOADED = "CO2BM_LOADED";
 // Loading of co2-benchmark failed
 export const CO2BM_ERROR = "CO2BM_ERROR";
 // Set the waterfooprint-loading flag
-export const WATERFP_LOADING = "WATERFP_LOADING";
+export const H2OFP_LOADING = "H2OFP_LOADING";
 // Loading of waterfootprint was successful
-export const WATERFP_LOADED = "WATERFP_LOADED";
+export const H2OFP_LOADED = "H2OFP_LOADED";
 // Loading of waterfootprint failed
-export const WATERFP_ERROR = "WATERFP_ERROR";
+export const H2OFP_ERROR = "H2OFP_ERROR";
+// Waterfootprint loaded, but no content;
+export const H2OFP_NO_CONTENT = "H2OFP_NO_CONTENT";
 // Set the waterbenchmark-loading flag
 export const WATERBM_LOADING = "WATERBM_LOADING";
 // Loading of waterbenchmark was successful
@@ -102,6 +104,8 @@ export const DATASET_LOADING = "DATASET_LOADING";
 export const DATASET_LOADED = "DATASET_LOADED";
 // Loading of dataset failed
 export const DATASET_ERROR = "DATASET_ERROR";
+// Reset dataset state
+export const DATASET_RESET = "DATASET_RESET";
 // Set the profile-loading flag
 export const PROFILE_LOADING = "PROFILE_LOADING";
 // Loading of profile data was successful
@@ -138,9 +142,11 @@ export type ProfileData = {
  * The Metadata of one dataset
  */
 export type DatasetSummary = {
+    "greenhouseId": number
+    "datasetId": number
     "label": string,
-    "co2_footprint": number,
-    "h2o_footprint": number
+    "co2Footprint": number,
+    "h2oFootprint": number
 }
 
 
@@ -242,6 +248,16 @@ export type WeatherData = {
     sunshine_duration: string
 }
 
+
+export type DatasetData = {
+    greenhouse_specs: string
+    greenhouse_datasets: GreenhouseDataId[]
+}
+
+export type GreenhouseDataId = GreenhouseData & {
+    greenhouse_data_id: string
+}
+
 /**
  * @type GreenhouseData
  *
@@ -251,7 +267,8 @@ export type WeatherData = {
 export type GreenhouseData = {
     greenhouse_name: string
     date: string
-    PLZ: string
+    Land: string
+    Region: string
     GWHFlaeche: string
     WaermeteilungFlaeche: string
     GWHAlter: string
@@ -329,6 +346,10 @@ export type GreenhouseData = {
     Stromherkunft: string
     Zusatzbelichtung: string
     Belichtungsstrom: string
+    WasserVerbrauch: string
+    VorlaufmengeGesamt: string
+    VorlaufmengeAnteile: string
+    Restwasser: string
     "CO2-Herkunft": string
     "Duengemittel:VereinfachteAngabe": string
     "Duengemittel:DetaillierteAngabe": string

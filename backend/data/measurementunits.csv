@@ -1,5 +1,4 @@
-0,default,0
-1,plz,1
+0,default,
 3,m2,3
 4,m2,4
 5,Jahre,5
@@ -56,4 +55,7 @@
 71,Jahre,65
 73,km,67
 74,Anzahl,68
-75,km,69
+75,Liter,69
+76,m3,69
+77,Liter,70
+78,m3,70

@@ -112,13 +112,13 @@ class CreateGreenhouseData(APIView):
             try:
                 # calculate co2 footprint
                 print("Calculation begin")
-                calculation_result = algorithms.calc_co2_footprint(standardized_data)
+                calculation_result = algorithms.calc_footprints(standardized_data)
                 calculation_variables = Calculations.objects.in_bulk(
                     field_name='calculation_name')
                 for variable, value in calculation_result.items():
                     Results(
                         greenhouse_data=greenhouse_data,
-                        result_value=round(value, 0),
+                        result_value=round(value, 2),
                         calculation_id=calculation_variables[variable].id,
                     ).save()
                 print("Calculation success")

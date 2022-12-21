@@ -3,10 +3,26 @@ import {Box, Container, Grid, Typography} from "@mui/material";
 
 import Overview_Project from '../../images/overview_project.png'
 import Overview_Plot from '../../images/overview_plot2.png'
+import {RootState} from "../../store";
+import {loadDatasets} from "../../actions/dataset";
+import {connect, ConnectedProps} from "react-redux";
 
-type HomepageProps = {
+type PageHomeProps =  ReduxProps & {}
 
+
+const mapStateToProps = (state: RootState) => ({
+    dataset: state.dataset
+});
+
+const mapDispatchToProps = {
+    loadDatasets,
 }
+
+const connector = connect(mapStateToProps, mapDispatchToProps);
+
+type ReduxProps = ConnectedProps<typeof connector>
+
+
 
 /**
  * #####################################################################
@@ -17,8 +33,14 @@ type HomepageProps = {
  * PageInputData.tsx
  *######################################################################
  */
-const PageHome = (props: HomepageProps) => {
+const PageHome = ({loadDatasets, dataset}: PageHomeProps) => {
 
+    // Preload datasets for profile page and pre input page
+    React.useEffect(() => {
+        if (!dataset.successful) {
+            loadDatasets()
+        }
+    }, [])
 
     return (
         <Container component="main" maxWidth="md">
@@ -114,4 +136,4 @@ const PageHome = (props: HomepageProps) => {
     )
 }
 
-export default PageHome;
+export default connector(PageHome);

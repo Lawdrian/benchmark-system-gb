@@ -17,7 +17,7 @@ import Button from "@mui/material/Button";
 import * as React from "react";
 import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
-import PageInputData, {DataToSubmit} from "./PageInputData";
+import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
 import {useEffect, useState} from "react";
 import FormControl from "@mui/material/FormControl";
 import {Divider, FormHelperText, InputLabel} from "@mui/material";
@@ -27,7 +27,7 @@ import {Option} from "../../reducers/lookup";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
 import {resetSubmissionState} from "../../actions/submission";
 import {loadLookupValues} from "../../actions/lookup";
-import {findOptionId} from "../../helpers/InputHelpers";
+import {fillInputState, findOptionId, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
 
 
 
@@ -52,7 +52,9 @@ type PreInputDataProps = ReduxProps & {
 
 const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, isLoading, dataset, lookupValues}: PreInputDataProps) => {
     useEffect(() => {
-        loadDatasets()
+        if (!dataset.successful) {
+            loadDatasets()
+        }
         loadLookupValues()
     }, [])
 
@@ -68,128 +70,10 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     const [nameTries, setNameTries] = useState<number>(0)
     const [selectTries, setSelectTries] = useState<number>(0)
 
-    const getGreenhouseName = (greenhouse:string) => {
-        return greenhouse.replaceAll("[","").replaceAll("]","").split(",")
-   }
-    const initialData: DataToSubmit = {
-        companyInformation: {
-            gewaechshausName: null,
-            datum: null,
-            plz: {value: null, unit: null},
-            gwhFlaeche: {value: null, unit: null},
-            nutzflaeche: {value: null, unit: null},
-            gwhArt: null,
-            gwhAlter: {value: null, unit: null},
-            bedachungsmaterial: null,
-            bedachungsmaterialAlter: {value: null, unit: null},
-            stehwandmaterial: null,
-            stehwandmaterialAlter: {value: null, unit: null},
-            energieschirm: null,
-            energieschirmTyp: null,
-            energieschirmAlter: {value: null, unit: null},
-            stehwandhoehe: {value: null, unit: null},
-            laenge: {value: null, unit: null},
-            breite: {value: null, unit: null},
-            kappenbreite: {value: null, unit: null},
-            scheibenlaenge: {value: null, unit: null},
-            reihenabstand: {value: null, unit: null},
-            vorwegbreite: {value: null, unit: null},
-            bodenabdeckung: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            heizsystem: null,
-            heizsystemAlter: {value: null, unit: null},
-            produktionsweise: null,
-            produktionssystem: null,
-            produktionssystemAlter: {value: null, unit: null},
-            bewaesserArt: null,
-            zusaetzlichesHeizsystem: null,
-            zusaetzlichesHeizsystemTyp: null,
-            zusaetzlichesHeizsystemAlter: {value: null, unit: null},
-        },
-        cultureInformation: {
-            snack: null,
-            snackReihenanzahl: {value: null, unit: null},
-            snackPflanzenabstand: {value: null, unit: null},
-            snackTriebzahl: {value: null, unit: null},
-            snackErtragJahr: {value: null, unit: null},
-            cocktail: null,
-            cocktailReihenanzahl: {value: null, unit: null},
-            cocktailPflanzenabstand: {value: null, unit: null},
-            cocktailTriebzahl: {value: null, unit: null},
-            cocktailErtragJahr: {value: null, unit: null},
-            rispen: null,
-            rispenReihenanzahl: {value: null, unit: null},
-            rispenPflanzenabstand: {value: null, unit: null},
-            rispenTriebzahl: {value: null, unit: null},
-            rispenErtragJahr: {value: null, unit: null},
-            fleisch: null,
-            fleischReihenanzahl: {value: null, unit: null},
-            fleischPflanzenabstand: {value: null, unit: null},
-            fleischTriebzahl: {value: null, unit: null},
-            fleischErtragJahr: {value: null, unit: null},
-            kulturBeginn: {value: null, unit: null},
-            kulturEnde: {value: null, unit: null},
-            nebenkultur: null,
-            nebenkulturBeginn: {value: null, unit: null},
-            nebenkulturEnde: {value: null, unit: null},
-        },
-        energyConsumption: {
-            waermeversorgung: null,
-            waermeteilungFlaeche: {value: null, unit: null},
-            energietraeger: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            stromherkunft: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            zusatzbelichtung: null,
-            belichtungsstrom: null,
-            belichtungsstromEinheit: null,
-            belichtungsstromStromverbrauch: {value: null, unit: null},
-            belichtungsstromAnzLampen: {value: null, unit: null},
-            belichtungsstromAnschlussleistung: {value: null, unit: null},
-            belichtungsstromLaufzeitJahr: {value: null, unit: null},
-        },
-        helpingMaterials: {
-            co2Herkunft: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            duengemittelSimple: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            duengemittelDetail: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            fungizideKg: {value: null, unit: null},
-            fungizideLiter: {value: null, unit: null},
-            insektizideKg: {value: null, unit: null},
-            insektizideLiter: {value: null, unit: null},
-        },
-        companyMaterials: {
-            growbagsKuebel: null,
-            growbagsKuebelSubstrat: [{
-                selectValue: null,
-                textFieldValue: {value: null, unit: null},
-                textField2Value: null
-            }],
-            kuebelVolumenProTopf: {value: null, unit: null},
-            kuebelJungpflanzenProTopf: {value: null, unit: null},
-            kuebelAlter: {value: null, unit: null},
-            schnur: null,
-            schnurMaterial: null,
-            schnurLaengeProTrieb: {value: null, unit: null},
-            schnurWiederverwendung: {value: null, unit: null},
-            klipse: null,
-            klipseMaterial: null,
-            klipseAnzProTrieb: {value: null, unit: null},
-            klipseWiederverwendung: {value: null, unit: null},
-            rispenbuegel: null,
-            rispenbuegelMaterial: null,
-            rispenbuegelAnzProTrieb: {value: null, unit: null},
-            rispenbuegelWiederverwendung: {value: null, unit: null},
-            jungpflanzenZukauf: null,
-            jungpflanzenDistanz: {value: null, unit: null},
-            jungpflanzenSubstrat: null,
-            verpackungsmaterial: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
-            anzahlNutzungenMehrwegsteigen: {value: null, unit: null},
-            sonstVerbrauchsmaterialien: [{
-                selectValue: null,
-                textFieldValue: {value: null, unit: null},
-                textField2Value: null
-            }],
-        }
-    }
 
-    const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(initialData)
+
+
+    const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(emptyDataset)
 
 
     const hasNameTried = () => {
@@ -201,63 +85,16 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     }
 
 
-    const parseMeasureTuple = (tuple:string) => {
-        const measure = JSON.parse(tuple)
-        if(measure[0] == [0.000,0]) {
-            return {value: null, unit: null}
-        }
-        return {value: measure[0], unit: measure[1]}
-    }
 
-    /**
-     * This function is used for parsing a selectionTuple to the correct data struct
-     *
-     * @param tuple:string The tuple that needs to be parsed
-     *
-     * @return {ReactNode} datastruct
-     */
-    const parseSelectionTuple = (tuple:string) => {
-        const selection = JSON.parse(tuple)
-
-        if(selection[0][0] == null) {
-            return null
-        }
-
-        if(selection[0].length == 1) {
-            return selection[0][0]
-        }
-        else if(selection[0].length == 3) {
-            let parsedSelection: { selectValue: number, textFieldValue: { value: number, unit: number }}[] = []
-            selection.forEach( (value: number[]) => {parsedSelection.push({selectValue: value[0], textFieldValue: { value: value[1], unit: value[2]}})});
-            return parsedSelection
-        }
-        else if(selection[0].length == 4) {
-            let parsedSelection: { selectValue: number, textFieldValue: { value: number, unit: number }, textField2Value: number }[] = []
-            selection.forEach( (value: number[]) => {parsedSelection.push({selectValue: value[0], textFieldValue: { value: value[1], unit: value[2]}, textField2Value: value[3]})});
-            return parsedSelection
-        }
-        else {
-            throw new Error("Selection Tuple has the wrong format!")
-        }
-    }
-
-    const parseDateTuple = (tuple:string) => {
-        const age = JSON.parse(tuple)
-        if (age[0] == 0) {
-            return {value: null, unit: null}
-        }
-        const today = new Date()
-        return {value: new Date(today.getFullYear() - age[0], today.getMonth(), today.getDay()), unit: age[1]}
-    }
 
     // Load the greenhouse dataset
     let lookupGreenhouses: Option[] = []
-    if(dataset.successful) {
+    if(dataset.datasets != []) {
         if(dataset.datasets != "" && typeof dataset.datasets != "string") {
-            const greenhouses = dataset.datasets.map(greenhouse => greenhouse.greenhouse_name)
+            const greenhouses = dataset.datasets.map(greenhouse => greenhouse.greenhouse_specs)
 
             greenhouses.forEach((greenhouse, index) => {
-                const currentGreenhouse = getGreenhouseName(greenhouse)
+                const currentGreenhouse = parseStringToArray(greenhouse)
                 lookupGreenhouses[index] = {id: parseInt(currentGreenhouse[0]), values: currentGreenhouse[1]}
             })
         }
@@ -266,127 +103,17 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         }
 
     }
-
     // Render the Inputpages with already filled out input fields.
     // The data for the input fields comes from the most recent dataset from the selected greenhouse
     const renderFilledInputPages = () => {
-
-        if(selectedGreenhouse != null && dataset.datasets != "" && typeof dataset.datasets != "string") {
-            const initialDataset = dataset.datasets.filter(value => parseInt(getGreenhouseName(value.greenhouse_name)[0]) == selectedGreenhouse)[0]
-
-            setInputFieldData({
-                companyInformation: {
-                    gewaechshausName: getGreenhouseName(initialDataset.greenhouse_name)[1],
-                    datum: new Date(Date.now()),
-                    plz: parseMeasureTuple(initialDataset.PLZ),
-                    gwhFlaeche: parseMeasureTuple(initialDataset.GWHFlaeche),
-                    nutzflaeche: parseMeasureTuple(initialDataset.Nutzflaeche),
-                    gwhArt: parseSelectionTuple(initialDataset.GWHArt) ?? inputFieldData.companyInformation.gwhArt,
-                    gwhAlter: parseDateTuple(initialDataset.GWHAlter),
-                    bedachungsmaterial: parseSelectionTuple(initialDataset.Bedachungsmaterial) ?? inputFieldData.companyInformation.bedachungsmaterial,
-                    bedachungsmaterialAlter: parseDateTuple(initialDataset.AlterBedachungsmaterial),
-                    stehwandmaterial: parseSelectionTuple(initialDataset.Stehwandmaterial) ?? inputFieldData.companyInformation.stehwandmaterial,
-                    stehwandmaterialAlter: parseDateTuple(initialDataset.AlterStehwandmaterial),
-                    energieschirm: parseSelectionTuple(initialDataset.Energieschirm) ?? inputFieldData.companyInformation.energieschirm,
-                    energieschirmTyp: parseSelectionTuple(initialDataset.EnergieschirmTyp) ?? inputFieldData.companyInformation.energieschirmTyp,
-                    energieschirmAlter: parseDateTuple(initialDataset.AlterEnergieschirm),
-                    stehwandhoehe: parseMeasureTuple(initialDataset.Stehwandhoehe),
-                    laenge: parseMeasureTuple(initialDataset.Laenge),
-                    breite: parseMeasureTuple(initialDataset.Breite),
-                    kappenbreite: parseMeasureTuple(initialDataset.Kappenbreite),
-                    scheibenlaenge: parseMeasureTuple(initialDataset.Scheibenlaenge),
-                    reihenabstand: parseMeasureTuple(initialDataset["Reihenabstand(Rinnenabstand)"]),
-                    vorwegbreite: parseMeasureTuple(initialDataset.Vorwegbreite),
-                    bodenabdeckung: parseSelectionTuple(initialDataset.Bodenabdeckung) ?? inputFieldData.companyInformation.bodenabdeckung,
-                    heizsystem: parseSelectionTuple(initialDataset.Heizsystem) ?? inputFieldData.companyInformation.heizsystem,
-                    heizsystemAlter: parseDateTuple(initialDataset.AlterHeizsystem),
-                    produktionsweise: parseSelectionTuple(initialDataset.Produktionstyp) ?? inputFieldData.companyInformation.produktionsweise,
-                    produktionssystem: parseSelectionTuple(initialDataset.Produktionssystem) ?? inputFieldData.companyInformation.produktionssystem,
-                    produktionssystemAlter: parseDateTuple(initialDataset.AlterProduktionssystem),
-                    bewaesserArt: parseSelectionTuple(initialDataset.Bewaesserungsart) ?? inputFieldData.companyInformation.bewaesserArt,
-                    zusaetzlichesHeizsystem: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystem) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystem,
-                    zusaetzlichesHeizsystemTyp: parseSelectionTuple(initialDataset.ZusaetzlichesHeizsystemTyp) ?? inputFieldData.companyInformation.zusaetzlichesHeizsystemTyp,
-                    zusaetzlichesHeizsystemAlter: parseDateTuple(initialDataset.AlterZusaetzlichesHeizsystem),
-                },
-                cultureInformation: {
-                    snack: parseSelectionTuple(initialDataset["10-30Gramm(Snack)"]) ?? inputFieldData.cultureInformation.snack,
-                    snackReihenanzahl: parseMeasureTuple(initialDataset.SnackReihenanzahl),
-                    snackPflanzenabstand: parseMeasureTuple(initialDataset.SnackPflanzenabstandInDerReihe),
-                    snackTriebzahl: parseMeasureTuple(initialDataset.SnackTriebzahl),
-                    snackErtragJahr: parseMeasureTuple(initialDataset.SnackErtragJahr),
-                    cocktail: parseSelectionTuple(initialDataset["30-100Gramm(Cocktail)"]) ?? inputFieldData.cultureInformation.cocktail,
-                    cocktailReihenanzahl: parseMeasureTuple(initialDataset.CocktailReihenanzahl),
-                    cocktailPflanzenabstand: parseMeasureTuple(initialDataset.CocktailPflanzenabstandInDerReihe),
-                    cocktailTriebzahl: parseMeasureTuple(initialDataset.CocktailTriebzahl),
-                    cocktailErtragJahr: parseMeasureTuple(initialDataset.CocktailErtragJahr),
-                    rispen: parseSelectionTuple(initialDataset["100-150Gramm(Rispen)"]) ?? inputFieldData.cultureInformation.rispen,
-                    rispenReihenanzahl: parseMeasureTuple(initialDataset.RispenReihenanzahl),
-                    rispenPflanzenabstand: parseMeasureTuple(initialDataset.RispenPflanzenabstandInDerReihe),
-                    rispenTriebzahl: parseMeasureTuple(initialDataset.RispenTriebzahl),
-                    rispenErtragJahr: parseMeasureTuple(initialDataset.RispenErtragJahr),
-                    fleisch: parseSelectionTuple(initialDataset[">150Gramm(Fleisch)"]) ?? inputFieldData.cultureInformation.fleisch,
-                    fleischReihenanzahl: parseMeasureTuple(initialDataset.FleischReihenanzahl),
-                    fleischPflanzenabstand: parseMeasureTuple(initialDataset.FleischPflanzenabstandInDerReihe),
-                    fleischTriebzahl: parseMeasureTuple(initialDataset.FleischTriebzahl),
-                    fleischErtragJahr: parseMeasureTuple(initialDataset.FleischErtragJahr),
-                    kulturBeginn: parseMeasureTuple(initialDataset.KulturBeginn),
-                    kulturEnde: parseMeasureTuple(initialDataset.KulturEnde),
-                    nebenkultur: parseSelectionTuple(initialDataset.Nebenkultur) ?? inputFieldData.cultureInformation.nebenkultur,
-                    nebenkulturBeginn: parseMeasureTuple(initialDataset.NebenkulturBeginn),
-                    nebenkulturEnde: parseMeasureTuple(initialDataset.NebenkulturEnde),
-                },
-                energyConsumption: {
-                    waermeversorgung: parseSelectionTuple(initialDataset.Waermeversorgung) ?? inputFieldData.energyConsumption.waermeversorgung,
-                    waermeteilungFlaeche: parseMeasureTuple(initialDataset.WaermeteilungFlaeche),
-                    energietraeger: parseSelectionTuple(initialDataset.Energietraeger) ?? inputFieldData.energyConsumption.energietraeger,
-                    stromherkunft: parseSelectionTuple(initialDataset.Stromherkunft) ?? inputFieldData.energyConsumption.stromherkunft,
-                    zusatzbelichtung: parseSelectionTuple(initialDataset.Zusatzbelichtung) ?? inputFieldData.energyConsumption.zusatzbelichtung,
-                    belichtungsstrom: parseSelectionTuple(initialDataset.Belichtungsstrom) ?? inputFieldData.energyConsumption.belichtungsstrom,
-                    belichtungsstromEinheit: parseSelectionTuple(initialDataset.BelichtungsstromEinheit) ?? inputFieldData.energyConsumption.belichtungsstromEinheit,
-                    belichtungsstromStromverbrauch: parseMeasureTuple(initialDataset["Belichtung:Stromverbrauch"]),
-                    belichtungsstromAnzLampen: parseMeasureTuple(initialDataset["Belichtung:AnzahlLampen"]),
-                    belichtungsstromAnschlussleistung: parseMeasureTuple(initialDataset["Belichtung:AnschlussleistungProLampe"]),
-                    belichtungsstromLaufzeitJahr: parseMeasureTuple(initialDataset["Belichtung:LaufzeitProJahr"]),
-                },
-                helpingMaterials: {
-                    co2Herkunft: parseSelectionTuple(initialDataset["CO2-Herkunft"]) ?? inputFieldData.helpingMaterials.co2Herkunft,
-                    duengemittelSimple: parseSelectionTuple(initialDataset["Duengemittel:VereinfachteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelSimple,
-                    duengemittelDetail: parseSelectionTuple(initialDataset["Duengemittel:DetaillierteAngabe"]) ?? inputFieldData.helpingMaterials.duengemittelDetail,
-                    fungizideKg: parseMeasureTuple(initialDataset.FungizideKg),
-                    fungizideLiter: parseMeasureTuple(initialDataset.FungizideLiter),
-                    insektizideKg: parseMeasureTuple(initialDataset.InsektizideKg),
-                    insektizideLiter: parseMeasureTuple(initialDataset.InsektizideLiter),
-                },
-                companyMaterials: {
-                    growbagsKuebel: parseSelectionTuple(initialDataset.GrowbagsKuebel) ?? inputFieldData.companyMaterials.growbagsKuebel,
-                    growbagsKuebelSubstrat: parseSelectionTuple(initialDataset.Substrat) ?? inputFieldData.companyMaterials.growbagsKuebelSubstrat,
-                    kuebelVolumenProTopf: parseMeasureTuple(initialDataset["Kuebel:VolumenProTopf"]),
-                    kuebelJungpflanzenProTopf: parseMeasureTuple(initialDataset["Kuebel:JungpflanzenProTopf"]),
-                    kuebelAlter: parseMeasureTuple(initialDataset["Kuebel:Alter"]),
-                    schnur: parseSelectionTuple(initialDataset.Schnur) ?? inputFieldData.companyMaterials.schnur,
-                    schnurMaterial: parseSelectionTuple(initialDataset["SchnuereRankhilfen:Material"]) ?? inputFieldData.companyMaterials.schnurMaterial,
-                    schnurLaengeProTrieb: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Laenge"]),
-                    schnurWiederverwendung: parseMeasureTuple(initialDataset["SchnuereRankhilfen:Wiederverwendung"]),
-                    klipse: parseSelectionTuple(initialDataset.Klipse) ?? inputFieldData.companyMaterials.klipse,
-                    klipseMaterial: parseSelectionTuple(initialDataset["Klipse:Material"]) ?? inputFieldData.companyMaterials.klipseMaterial,
-                    klipseAnzProTrieb: parseMeasureTuple(initialDataset["Klipse:AnzahlProTrieb"]),
-                    klipseWiederverwendung: parseMeasureTuple(initialDataset["Klipse:Wiederverwendung"]),
-                    rispenbuegel: parseSelectionTuple(initialDataset.Rispenbuegel) ?? inputFieldData.companyMaterials.rispenbuegel,
-                    rispenbuegelMaterial: parseSelectionTuple(initialDataset["Rispenbuegel:Material"]) ?? inputFieldData.companyMaterials.rispenbuegelMaterial,
-                    rispenbuegelAnzProTrieb: parseMeasureTuple(initialDataset["Rispenbuegel:AnzahlProTrieb"]),
-                    rispenbuegelWiederverwendung: parseMeasureTuple(initialDataset["Rispenbuegel:Wiederverwendung"]),
-                    jungpflanzenZukauf: parseSelectionTuple(initialDataset["Jungpflanzen:Zukauf"]) ?? inputFieldData.companyMaterials.jungpflanzenZukauf,
-                    jungpflanzenDistanz: parseMeasureTuple(initialDataset["Jungpflanzen:Distanz"]),
-                    jungpflanzenSubstrat: parseSelectionTuple(initialDataset["Jungpflanzen:Substrat"]) ?? inputFieldData.companyMaterials.jungpflanzenSubstrat,
-                    verpackungsmaterial: parseSelectionTuple(initialDataset.Verpackungsmaterial) ?? inputFieldData.companyMaterials.verpackungsmaterial,
-                    anzahlNutzungenMehrwegsteigen: parseMeasureTuple(initialDataset["Verpackungsmaterial:AnzahlMehrwegsteigen"]),
-                    sonstVerbrauchsmaterialien: parseSelectionTuple(initialDataset.SonstigeVerbrauchsmaterialien) ?? inputFieldData.companyMaterials.sonstVerbrauchsmaterialien,
-                }
-            })
+        if (selectedGreenhouse != null && dataset.datasets != "" && typeof dataset.datasets != "string") {
+            const initialDataset = dataset.datasets.filter(value => parseInt(parseStringToArray(value.greenhouse_specs)[0]) == selectedGreenhouse)[0]
+            // Set the state with the last created greenhouse data
+            setInputFieldData(fillInputState(initialDataset.greenhouse_datasets[initialDataset.greenhouse_datasets.length-1]))
             resetSubmissionState()
             setPageStatus(PageStatus.OldGH)
         }
-        setSelectTries(selectTries+1)
+        setSelectTries(selectTries + 1)
     }
 
     const renderEmptyInputPages = () => {
@@ -398,7 +125,8 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
                     companyInformation: {
                         ...inputFieldData.companyInformation,
                         energieschirm: findOptionId(lookupValues["Energieschirm"], "nein"),
-                        zusaetzlichesHeizsystem: findOptionId(lookupValues["ZusaetzlichesHeizsystem"], "nein")
+                        zusaetzlichesHeizsystem: findOptionId(lookupValues["ZusaetzlichesHeizsystem"], "nein"),
+                        land: findOptionId(lookupValues["Land"], "Germany")
                     },
                     cultureInformation: {
                         ...inputFieldData.cultureInformation,
@@ -412,6 +140,10 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
                         ...inputFieldData.energyConsumption,
                         waermeversorgung: findOptionId(lookupValues["Waermeversorgung"], "nein"),
                         zusatzbelichtung: findOptionId(lookupValues["Zusatzbelichtung"], "nein")
+                    },
+                    waterUsage: {
+                        ...inputFieldData.waterUsage,
+                        wasserVerbrauch: findOptionId(lookupValues["WasserVerbrauch"], "nein")
                     },
                     companyMaterials: {
                         ...inputFieldData.companyMaterials,
@@ -541,12 +273,12 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     else if(pageStatus == PageStatus.NewGH) {
         console.log("NEW initialData:")
         console.log(inputFieldData)
-        return <PageInputData initialData={inputFieldData}/>
+        return <PageInputData initialData={inputFieldData} mode={InputMode.create}/>
     }
     else if(pageStatus == PageStatus.OldGH) {
         console.log("OLD initialData:")
         console.log(inputFieldData)
-        return <PageInputData initialData={inputFieldData}/>
+        return <PageInputData initialData={inputFieldData} mode={InputMode.create}/>
     }
     else
         throw new Error('pageStatus is invalid!')

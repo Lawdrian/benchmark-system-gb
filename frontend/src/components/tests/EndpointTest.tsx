@@ -10,7 +10,6 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {submitGreenhouseData} from "../../actions/submission";
 import {loadWaterBenchmark} from "../../actions/waterbenchmark";
-import {loadWaterFootprint} from "../../actions/waterfootprint";
 import {loadWeatherData} from "../../actions/weather";
 import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
@@ -20,12 +19,14 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
+import {InputMode} from "../pages/PageInputData";
+import {loadH2OFootprint} from "../../actions/h2ofootprint";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
     co2: state.co2,
-    water: state.water,
+    water: state.h2o,
     benchmark: state.benchmark,
     weather: state.weather,
     submission: state.submission,
@@ -35,7 +36,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
     loadCO2Footprint,
     loadWaterBenchmark,
-    loadWaterFootprint,
+    loadH2OFootprint,
     loadWeatherData,
     submitGreenhouseData,
     resetData,
@@ -104,7 +105,6 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     let testData: GreenhouseData = {
         greenhouse_name: "Haus1",
         date: "2019-09-29",
-        PLZ: "(90427,1)",
         GWHFlaeche: "(5000,3)",
         Nutzflaeche: "(4800,35)",
         WaermeteilungFlaeche: "(0,0)",
@@ -146,6 +146,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Belichtung:AnzahlLampen": "(0,0)",
         "Belichtung:AnschlussleistungProLampe": "(0,0)",
         "Belichtung:LaufzeitProJahr": "(0,0)",
+        VorlaufmengeGesamt: "(3000,76)",
+        Restwasser: "(400,78)",
         FungizideKg: "(3,55)",
         FungizideLiter: "(8,44)",
         InsektizideKg: "(4,57)",
@@ -163,6 +165,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         "Verpackungsmaterial:AnzahlMehrwegsteigen": "(6000,74)",
         Waermeversorgung: "[(2)]",
         GWHArt: "[(3)]",
+        Land: "[(238)]",
+        Region: "[(352)]",
         Bedachungsmaterial: "[(6)]",
         Stehwandmaterial: "[(12)]",
         Energieschirm: "[(173)]",
@@ -181,6 +185,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         Stromherkunft: "[(54,20000,63),(55,2400,65),(56,13,67)]",
         Zusatzbelichtung: "[(64)]",
         Belichtungsstrom: "[(67)]",
+        WasserVerbrauch: "[(367)]",
+        VorlaufmengeAnteile: "[(347,200,211),(348,400,213),(349,60,218)]",
         "CO2-Herkunft": "[(68,60,88),(70,50,94)]",
         "Duengemittel:VereinfachteAngabe": "[(71,10,96),(81,8,106),(79,3,104),(76,5,101),(74,4,99),(72,3,97),(77,2,102),(73,1,98),(75,88,100),(80,21,105),(78,2145,103)]",
         "Duengemittel:DetaillierteAngabe": "[(83,3,108),(93,5,118),(87,8,112),(86,4,111),(92,5,117),(94,8,119),(85,5,110),(89,85,114),(90,5,115),(97,8,122),(101,44,126),(103,5,128),(107,8,132),(88,8,113),(84,5,109),(104,54,129),(106,4,131),(105,55,130),(95,8,120),(98,5,123),(99,4,124),(91,4,116),(100,5,125),(96,54,121),(82,4,107)]",
@@ -214,6 +220,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         AlterStehwandmaterial: "(8,7)",
         AlterZusaetzlichesHeizsystem: "(0,0)",
         Bedachungsmaterial: "[(6)]",
+        Land: "[(238)]",
+        Region: "[(352)]",
         "Belichtung:AnschlussleistungProLampe": "(0,0)",
         "Belichtung:AnzahlLampen": "(0,0)",
         "Belichtung:LaufzeitProJahr": "(0,0)",
@@ -264,7 +272,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         NebenkulturBeginn: "(0,0)",
         NebenkulturEnde: "(0,0)",
         Nutzflaeche: "(23656,35)",
-        PLZ: "(74632,1)",
+        WasserVerbrauch: "[(367)]",
         Produktionssystem: "[(29)]",
         Produktionstyp: "[(25)]",
         "Reihenabstand(Rinnenabstand)": "(1.6,14)",
@@ -287,8 +295,11 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         SnackTriebzahl: "(0,0)",
         SonstigeVerbrauchsmaterialien: "[(0,)]",
         Stehwandhoehe: "(5,9)",
+        VorlaufmengeGesamt: "(3000,76)",
+        Restwasser: "(4,78)",
         Stehwandmaterial: "[(15)]",
         Stromherkunft: "[(61,250000,77)]",
+        VorlaufmengeAnteile: "[(347,20,211),(348,40000,213),(349,10,217),(350,30000,219)]",
         Substrat: "[(123,1,148)]",
         Verpackungsmaterial: "[(151,50123,176),(152,6265,177)]",
         "Verpackungsmaterial:AnzahlMehrwegsteigen": "(0,0)",
@@ -341,7 +352,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
     props.submitGreenhouseData(testData2,
@@ -376,7 +388,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withoutAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
     props.loadLookupValues(

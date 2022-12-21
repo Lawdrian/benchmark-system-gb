@@ -12,18 +12,20 @@ ChartJS.register(...registerables, zoomPlugin);
  * Returns a Benchmark plot for the given data.
  *
  * @param {string} title The title of the plot
- * @param {string} unit The unit shown in the plot
+ * @param {string} yLabel The label shown at the y-axis in the plot
+ * @param {string} tooltipLabel The label shown after the amount in the tooltip section.
  * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
  * @return JSX.Element
  */
 
 type props = {
     title: string
-    unit: string
+    yLabel: string
+    tooltipLabel: string
     data: BenchmarkPlot
 }
 
-export default function BenchmarkPlotObject({title, unit, data}:props) {
+export default function BenchmarkPlotObject({title, yLabel, tooltipLabel, data}:props) {
 
     const chartRef = React.useRef<any>(null);
 
@@ -73,7 +75,7 @@ export default function BenchmarkPlotObject({title, unit, data}:props) {
                         let label =  " "
 
                         if (context.parsed.y !== null) {
-                            label += Math.round(context.parsed.y) + ' ' + unit + " CO2-Äq.";
+                            label += context.parsed.y.toFixed(2) + ' ' + tooltipLabel
                         }
                         return label;
                     }
@@ -102,7 +104,7 @@ export default function BenchmarkPlotObject({title, unit, data}:props) {
                 stacked: false,
                 title: {
                     display: true,
-                    text: 'CO2-Äquivalente [' + unit + ']',
+                    text: yLabel,
                     font: {
                         size: 16,
                     },

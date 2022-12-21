@@ -15,8 +15,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import PageWaterFootprint from "../components/pages/PageWaterFootprint";
-import PageC02Footprint from "../components/pages/PageCO2Footprint";
+import PageC02Footprint from "../components/pages/visualisation/PageCO2Footprint";
 import PageProfile from "../components/pages/PageProfile";
 import PageLogin from "../components/pages/user/PageLogin";
 import PageRegister from "../components/pages/user/PageRegister";
@@ -31,6 +30,7 @@ import PageForgotPW from "../components/pages/user/PageForgotPW";
 import PageResetPW from "../components/pages/user/PageResetPW";
 import PagePreInputData from "../components/pages/PagePreInputData";
 import PageDataInformation from "../components/pages/PageDataInformation";
+import PageH2OFootprint from "../components/pages/visualisation/PageH2OFootprint";
 
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
@@ -45,14 +45,14 @@ export const pageConfig: PageConfig = {
 
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
-        .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
+        .withHeaderTitle("Projekt PROSIBOR - Benchmark System für Gewächshausdaten")
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")
         .withHeaderTitle("Eingabe der Gewächshausdaten")
         .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Input)
         .finalize(),
-    generatePage(<PageWaterFootprint/>, "water-footprint")
+    generatePage(<PageH2OFootprint/>, "h2o-footprint")
         .withHeaderTitle("H2O Footprint - Berechnung des Wasserverbrauchs")
         .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
         .finalize(),

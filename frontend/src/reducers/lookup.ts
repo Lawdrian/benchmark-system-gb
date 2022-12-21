@@ -28,6 +28,8 @@ export type Option = {
 export type LookupValues = {
     Waermeversorgung: Option[]
     GWHArt: Option[]
+    Land: Option[]
+    Region: Option[]
     Bedachungsmaterial: Option[]
     Stehwandmaterial: Option[]
     AlterdesBedachungsmaterials: Option[]
@@ -50,6 +52,9 @@ export type LookupValues = {
     Stromherkunft: Option[]
     Zusatzbelichtung: Option[]
     Belichtungsstrom: Option[]
+    WasserVerbrauch: Option[]
+    VorlaufmengeAnteile: Option[]
+    Restwasser: Option[]
     "CO2-Herkunft": Option[]
     "Duengemittel:VereinfachteAngabe": Option[]
     "Duengemittel:DetaillierteAngabe": Option[]
@@ -79,7 +84,6 @@ export type LookupValues = {
  */
 export type UnitValues = {
     measures: {
-        PLZ: Option[]
         GWHFlaeche: Option[]
         WaermeteilungFlaeche: Option[]
         GWHAlter: Option[]
@@ -124,6 +128,8 @@ export type UnitValues = {
         "Belichtung:AnzahlLampen": Option[]
         "Belichtung:AnschlussleistungProLampe": Option[]
         "Belichtung:LaufzeitProJahr": Option[]
+        VorlaufmengeGesamt: Option[]
+        Restwasser: Option[]
         FungizideKg: Option[]
         FungizideLiter: Option[]
         InsektizideKg: Option[]
@@ -182,10 +188,6 @@ export type UnitValues = {
         Heizsystem: {
             "ja": Option[]
             "nein": Option[]
-        }
-        Produktionstyp: {
-            "Konventionell": Option[]
-            "Biologisch": Option[]
         }
         Produktionssystem: {
             "Boden": Option[]
@@ -255,6 +257,12 @@ export type UnitValues = {
         Belichtungsstrom: {
             "ja": Option[]
             "nein": Option[]
+        }
+        VorlaufmengeAnteile: {
+            "Brunnenwasser": Option[]
+            "Regenwasser": Option[]
+            "Stadtwasser": Option[]
+            "Oberflaechenwasser": Option[]
         }
         "CO2-Herkunft": {
             "technisches CO2": Option[]
@@ -422,6 +430,8 @@ const initialState: LookupState = {
     lookupValues: {
         Waermeversorgung: [],
         GWHArt: [],
+        Land: [],
+        Region: [],
         Bedachungsmaterial: [],
         Stehwandmaterial: [],
         AlterdesBedachungsmaterials: [],
@@ -444,6 +454,9 @@ const initialState: LookupState = {
         Stromherkunft: [],
         Zusatzbelichtung: [],
         Belichtungsstrom: [],
+        WasserVerbrauch: [],
+        VorlaufmengeAnteile: [],
+        Restwasser: [],
         "CO2-Herkunft": [],
         "Duengemittel:VereinfachteAngabe": [],
         "Duengemittel:DetaillierteAngabe": [],
@@ -467,7 +480,6 @@ const initialState: LookupState = {
     },
     unitValues: {
         measures: {
-            PLZ: [],
             GWHFlaeche: [],
             WaermeteilungFlaeche: [],
             GWHAlter: [],
@@ -512,6 +524,8 @@ const initialState: LookupState = {
             "Belichtung:AnzahlLampen": [],
             "Belichtung:AnschlussleistungProLampe": [],
             "Belichtung:LaufzeitProJahr": [],
+            VorlaufmengeGesamt: [],
+            Restwasser: [],
             FungizideKg: [],
             FungizideLiter: [],
             InsektizideKg: [],
@@ -570,10 +584,6 @@ const initialState: LookupState = {
             Heizsystem: {
                 "ja": [],
                 "nein": [],
-            },
-            Produktionstyp: {
-                "Konventionell": [],
-                "Biologisch": [],
             },
             Produktionssystem: {
                 "Boden": [],
@@ -643,6 +653,12 @@ const initialState: LookupState = {
             Belichtungsstrom: {
                 "ja": [],
                 "nein": [],
+            },
+            VorlaufmengeAnteile: {
+                "Brunnenwasser": [],
+                "Regenwasser": [],
+                "Stadtwasser": [],
+                "Oberflaechenwasser": [],
             },
             "CO2-Herkunft": {
                 "technisches CO2": [],

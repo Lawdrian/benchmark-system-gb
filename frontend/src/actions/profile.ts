@@ -1,8 +1,7 @@
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
-import {GreenhouseFootprint, PROFILE_ERROR, PROFILE_LOADED, PROFILE_LOADING, ProfileData} from "../types/reduxTypes";
-import {ProfileDataState} from "../reducers/profile";
+import {PROFILE_ERROR, PROFILE_LOADED, PROFILE_LOADING, ProfileData} from "../types/reduxTypes";
 import {formatLabel} from "./co2footprint";
 
 
@@ -67,9 +66,11 @@ const mapProfileData = (responseData: ProfileData[]): ProfileData[] => {
             greenhouse_name: greenhouse.greenhouse_name,
             data: greenhouse.data.map(dataset => {
                 return {
+                    greenhouseId: dataset.greenhouseId,
+                    datasetId: dataset.datasetId,
                     label: formatLabel(dataset.label ?? ""),
-                    co2_footprint: dataset.co2_footprint,
-                    h2o_footprint: dataset.h2o_footprint
+                    co2Footprint: dataset.co2Footprint,
+                    h2oFootprint: dataset.h2oFootprint
                 }
             })
         }

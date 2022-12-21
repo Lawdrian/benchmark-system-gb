@@ -6,7 +6,7 @@
 import {
     DATASET_ERROR,
     DATASET_LOADED,
-    DATASET_LOADING, GreenhouseData,
+    DATASET_LOADING, DATASET_RESET, DatasetData,
     RESET_DATA,
 } from "../types/reduxTypes";
 
@@ -22,7 +22,7 @@ import {
 export type DatasetState = {
     inProgress: boolean
     successful: boolean | null
-    datasets: GreenhouseData[] | string
+    datasets: DatasetData[] | string
 }
 
 
@@ -64,6 +64,7 @@ export default function (state: DatasetState = initialState, action: any): Datas
                 successful: false,
                 datasets: []
             }
+        case DATASET_RESET:
         case RESET_DATA:
             return initialState
         default:
