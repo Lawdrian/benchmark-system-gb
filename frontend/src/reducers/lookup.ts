@@ -52,7 +52,7 @@ export type LookupValues = {
     Stromherkunft: Option[]
     Zusatzbelichtung: Option[]
     Belichtungsstrom: Option[]
-    VorlaufmengeGesamt: Option[]
+    WasserVerbrauch: Option[]
     VorlaufmengeAnteile: Option[]
     Restwasser: Option[]
     "CO2-Herkunft": Option[]
@@ -84,7 +84,6 @@ export type LookupValues = {
  */
 export type UnitValues = {
     measures: {
-        PLZ: Option[]
         GWHFlaeche: Option[]
         WaermeteilungFlaeche: Option[]
         GWHAlter: Option[]
@@ -455,7 +454,7 @@ const initialState: LookupState = {
         Stromherkunft: [],
         Zusatzbelichtung: [],
         Belichtungsstrom: [],
-        VorlaufmengeGesamt: [],
+        WasserVerbrauch: [],
         VorlaufmengeAnteile: [],
         Restwasser: [],
         "CO2-Herkunft": [],
@@ -481,7 +480,6 @@ const initialState: LookupState = {
     },
     unitValues: {
         measures: {
-            PLZ: [],
             GWHFlaeche: [],
             WaermeteilungFlaeche: [],
             GWHAlter: [],

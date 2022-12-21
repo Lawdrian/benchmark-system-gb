@@ -23,6 +23,8 @@ const mapStateToProps = (state: RootState) => ({
     normalizedm2: state.h2o.normalizedm2,
     fruitsizekg: state.h2o.fruitsizekg,
     fruitsizem2: state.h2o.fruitsizem2,
+    directWaterkg: state.h2o.directWaterkg,
+    directWaterm2: state.h2o.directWaterm2,
     benchmarkkg: state.h2o.benchmarkkg,
     benchmarkm2: state.h2o.benchmarkm2
 });
@@ -43,18 +45,22 @@ type H2OFootprintProps = ReduxProps & {}
  * loadH2OFootprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
-const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, benchmarkkg, benchmarkm2, loadH2OFootprint}: H2OFootprintProps) => {
+const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, directWaterkg, directWaterm2, benchmarkkg, benchmarkm2, loadH2OFootprint}: H2OFootprintProps) => {
     // Load Water-Footprint data
     React.useEffect(() => {
-        loadH2OFootprint(true,
+        loadH2OFootprint(
+            true,
             () => setOpenDialog(true),
             () => handleLoadSuccess(),
-            () => handleLoadError())
+            () => handleLoadError(),
+            () => handleNoWaterData()
+        )
     }, [])
 
     const [openDialog, setOpenDialog] = useState<boolean>(false)
     const [loadError, setLoadError] = useState<boolean>(false)
     const [loadSuccess, setLoadSuccess] = useState<boolean>(false)
+    const [noWaterData, setNoWaterData] = useState<boolean>(false)
 
     const [tab, setTab] = useState<number>(0)
     const [normalizedType, setNormalizedType] = React.useState<NormalizedType>(NormalizedType.kg);
@@ -71,8 +77,15 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
 
     const handleLoadError = () => {
+        console.log("Watterrr")
         setOpenDialog(false)
         setLoadError(true)
+    }
+
+    const handleNoWaterData = () => {
+        console.log("Watter", noWaterData)
+        setOpenDialog(false)
+        setNoWaterData(true)
     }
 
 
@@ -111,6 +124,13 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
             Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus ein. <a
                 href="/input-data">hier</a> ein.</p>)
     }
+    else if(noWaterData) {
+        return (
+            <p> Sie haben keine Daten zu Ihrem Wasserverbrauch angegeben. <br/>
+                Deswegen können wir Ihnen keinen H2O-Footprint anzeigen.
+            </p>
+        )
+    }
     else if(loadSuccess) {
         return (
             <div id="h2o-footprint" className="page">
@@ -121,7 +141,8 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     <Tab label="Gesamt" {...indexedTabProps(0)} />
                     <Tab label="Normiert" {...indexedTabProps(1)} />
                     <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
-                    <Tab label="Benchmark" {...indexedTabProps(3)} />
+                    <Tab label="Direkter Wasserverbrauch" {...indexedTabProps(3)} />
+                    <Tab label="Benchmark" {...indexedTabProps(4)} />
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
@@ -155,7 +176,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
                     </p>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
-                    {createFootprintProductionTypeHeader(normalizedkg, curGreenHouseIndex)}
+                    {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
                         title={("H2O-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
                         yLabel={'H2O-Äquivalente [Liter]'}
@@ -178,11 +199,25 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 </TabPanel>
                 <TabPanel index={3} value={tab}>
                     <p>
+                        Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
+                        Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
+                    </p>
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                    {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
+                    <FootprintPlotObject
+                        title={("H2O-Footprint direkter Wasserverbrauch für " + greenhouses[curGreenHouseIndex])}
+                        yLabel={'H2O-Äquivalente [Liter]'}
+                        tooltipLabel={"Liter H2O-Äq."}
+                        data={selectNormalizedPlotData(directWaterkg, directWaterm2, normalizedType)[curGreenHouseIndex].data}
+                    />
+                </TabPanel>
+                <TabPanel index={4} value={tab}>
+                    <p>
                         Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
                     </p>
                     <>
                         {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
-                        {createFootprintProductionTypeHeader(normalizedkg, curGreenHouseIndex)}
+                        {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
                             title={"H2O-Benchmark für " + greenhouses[curGreenHouseIndex]}
                             yLabel={'H2O-Äquivalente [Liter]'}

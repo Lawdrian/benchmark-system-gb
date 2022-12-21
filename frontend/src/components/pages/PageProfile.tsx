@@ -77,7 +77,7 @@ const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadD
                         CO2: {data.co2Footprint} kg
                     </Typography>
                     <Typography  color="text.secondary">
-                        H2O: {data.h2oFootprint} m3
+                        H2O: {data.h2oFootprint} Liter
                     </Typography>
                 </CardContent>
                 <CardActions sx={{mb: 1.5}}>

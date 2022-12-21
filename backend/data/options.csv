@@ -1,4 +1,4 @@
-0,default,0
+0,default,
 1,ja,1
 2,nein,1
 3,Venlo,2
@@ -347,3 +347,5 @@
 364,Sachsen-Anhalt,46
 365,Schleswig-Holstein,46
 366,Thueringen,46
+367,ja,47
+368,nein,47

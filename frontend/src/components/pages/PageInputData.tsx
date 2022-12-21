@@ -80,7 +80,7 @@ const formatOptionValue = (value: number|null): string => {
 }
 
 const formatOptionValues = (values: SelectionValue[]): string => {
-    if (values[0].selectValue == null) return defaultOption
+    if (values[0].selectValue == null || values[0].textFieldValue.value == null) return defaultOption
 
     let formattedString = "["
 
@@ -154,7 +154,6 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         // Measure input fields
         greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
-        PLZ: formatMeasureValue(companyInformation?.plz),
         GWHFlaeche: formatMeasureValue(companyInformation?.gwhFlaeche),
         Nutzflaeche: formatMeasureValue(companyInformation?.nutzflaeche),
         WaermeteilungFlaeche: formatMeasureValue(energyConsumption?.waermeteilungFlaeche),
@@ -235,6 +234,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Zusatzbelichtung: formatOptionValue(energyConsumption.zusatzbelichtung),
         Belichtungsstrom: formatOptionValue(energyConsumption.belichtungsstrom),
         BelichtungsstromEinheit: formatOptionValue(energyConsumption.belichtungsstromEinheit),
+        WasserVerbrauch: formatOptionValue(waterUsage.wasserVerbrauch),
         VorlaufmengeAnteile: formatOptionValues(waterUsage.vorlaufmengeAnteile),
         GrowbagsKuebel: formatOptionValue(companyMaterials.growbagsKuebel),
         Schnur: formatOptionValue(companyMaterials.schnur),

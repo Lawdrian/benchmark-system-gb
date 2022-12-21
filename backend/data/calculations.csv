@@ -24,8 +24,6 @@
 24,stadtwasser_h2o,Liter h2o
 25,oberflaechenwasser_co2,kg co2
 26,oberflaechenwasser_h2o,Liter h2o
-27,restwasser_co2,kg co2
-28,restwasser_h2o,Liter h2o
 29,co2_zudosierung_co2,kg co2
 30,co2_zudosierung_h2o,Liter h2o
 31,duengemittel_co2,kg co2
@@ -51,8 +49,11 @@
 51,sonstige_verbrauchsmaterialien_co2,kg co2
 52,sonstige_verbrauchsmaterialien_h2o,Liter h2o
 53,co2_footprint,kg co2
-54,co2_footprint_norm_kg,kg co2/kg harvest
+54,co2_footprint_norm_kg,kg co2/kg Ertrag
 55,co2_footprint_norm_m2,kg co2/m2 gh
 56,h2o_footprint,Liter h2o
-57,h2o_footprint_norm_kg,Liter h2o/kg harvest
+57,h2o_footprint_norm_kg,Liter h2o/kg Ertrag
 58,h2o_footprint_norm_m2,Liter h2o/m2 gh
+59,direct_h2o_footprint, Liter h2o
+60,direct_h2o_footprint_norm_kg,Liter h2o/kg Ertrag
+61,direct_h2o_footprint_norm_m2,Liter/m2 gh

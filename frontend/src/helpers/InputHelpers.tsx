@@ -161,7 +161,6 @@ export const fillInputState = (initialDataset: GreenhouseData) => {
         companyInformation: {
             gewaechshausName: parseStringToArray(initialDataset.greenhouse_name)[0],
             datum: new Date(Date.now()),
-            plz: parseMeasureTuple(initialDataset.PLZ),
             land: parseSelectionTuple(initialDataset.Land) ?? null,
             region: parseSelectionTuple(initialDataset.Region) ?? null,
             gwhFlaeche: parseMeasureTuple(initialDataset.GWHFlaeche),
@@ -234,6 +233,7 @@ export const fillInputState = (initialDataset: GreenhouseData) => {
             belichtungsstromLaufzeitJahr: parseMeasureTuple(initialDataset["Belichtung:LaufzeitProJahr"]),
         },
         waterUsage: {
+            wasserVerbrauch: parseSelectionTuple(initialDataset.WasserVerbrauch),
             vorlaufmengeGesamt: parseMeasureTuple(initialDataset.VorlaufmengeGesamt),
             vorlaufmengeAnteile: parseSelectionTuple(initialDataset.VorlaufmengeAnteile) ?? [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             restwasser: parseMeasureTuple(initialDataset.Restwasser)
@@ -279,7 +279,6 @@ export const emptyDataset: DataToSubmit = {
         companyInformation: {
             gewaechshausName: null,
             datum: null,
-            plz: {value: null, unit: null},
             land: null,
             region: null,
             gwhFlaeche: {value: null, unit: null},
@@ -352,6 +351,7 @@ export const emptyDataset: DataToSubmit = {
             belichtungsstromLaufzeitJahr: {value: null, unit: null},
         },
         waterUsage: {
+            wasserVerbrauch: null,
             vorlaufmengeGesamt: {value: null, unit: null},
             vorlaufmengeAnteile: [{selectValue: null, textFieldValue: {value: null, unit: null}}],
             restwasser: {value: null, unit: null},

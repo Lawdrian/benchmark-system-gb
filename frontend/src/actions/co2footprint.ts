@@ -48,6 +48,10 @@ type RawCO2Dataset = {
     zusaetzliches_heizsystem_co2: number
     energietraeger_co2: number
     strom_co2: number
+    brunnenwasser_co2: number
+    regenwasser_co2: number
+    stadtwasser_co2: number
+    oberflaechenwasser_co2: number
     co2_zudosierung_co2: number
     duengemittel_co2: number
     psm_co2: number
@@ -177,13 +181,21 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
                     data: greenhouse.greenhouseDatasets.map(dataset =>
                         dataset.co2_zudosierung_co2 +
                         dataset.duengemittel_co2 +
-                        dataset.psm_co2
+                        dataset.psm_co2 +
+                        dataset.brunnenwasser_co2 +
+                        dataset.regenwasser_co2 +
+                        dataset.stadtwasser_co2 +
+                        dataset.oberflaechenwasser_co2
                     ),
                     backgroundColor: "rgb(122,184,0)",
                     splitData: greenhouse.greenhouseDatasets.map(dataset => [
                         { "name": "CO2 Zudosierung", "value": dataset.co2_zudosierung_co2},
                         { "name": "Düngemittel", "value": dataset.duengemittel_co2},
-                        { "name": "Pflanzenschutzmittel", "value": dataset.psm_co2}
+                        { "name": "Pflanzenschutzmittel", "value": dataset.psm_co2},
+                        { "name": "Brunnenwasser", "value": dataset.brunnenwasser_co2},
+                        { "name": "Regenwasser", "value": dataset.regenwasser_co2},
+                        { "name": "Stadtwasser", "value": dataset.stadtwasser_co2},
+                        { "name": "Oberflächenwasser", "value": dataset.oberflaechenwasser_co2},
                     ]),
                     optimization: [],
                     climateData: []

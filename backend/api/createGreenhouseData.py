@@ -118,7 +118,7 @@ class CreateGreenhouseData(APIView):
                 for variable, value in calculation_result.items():
                     Results(
                         greenhouse_data=greenhouse_data,
-                        result_value=round(value, 0),
+                        result_value=round(value, 2),
                         calculation_id=calculation_variables[variable].id,
                     ).save()
                 print("Calculation success")

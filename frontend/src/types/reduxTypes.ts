@@ -64,6 +64,8 @@ export const H2OFP_LOADING = "H2OFP_LOADING";
 export const H2OFP_LOADED = "H2OFP_LOADED";
 // Loading of waterfootprint failed
 export const H2OFP_ERROR = "H2OFP_ERROR";
+// Waterfootprint loaded, but no content;
+export const H2OFP_NO_CONTENT = "H2OFP_NO_CONTENT";
 // Set the waterbenchmark-loading flag
 export const WATERBM_LOADING = "WATERBM_LOADING";
 // Loading of waterbenchmark was successful
@@ -265,7 +267,6 @@ export type GreenhouseDataId = GreenhouseData & {
 export type GreenhouseData = {
     greenhouse_name: string
     date: string
-    PLZ: string
     Land: string
     Region: string
     GWHFlaeche: string
@@ -345,6 +346,7 @@ export type GreenhouseData = {
     Stromherkunft: string
     Zusatzbelichtung: string
     Belichtungsstrom: string
+    WasserVerbrauch: string
     VorlaufmengeGesamt: string
     VorlaufmengeAnteile: string
     Restwasser: string

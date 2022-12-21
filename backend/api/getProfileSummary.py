@@ -47,6 +47,7 @@ class GetProfileSummary(APIView):
             return Response({'Bad Request': 'No valid user!'},
                             status=status.HTTP_400_BAD_REQUEST)
         co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint")
+        h2o_footprint_id = Calculations.objects.get(calculation_name="h2o_footprint")
 
         # Retrieve all greenhouses of a specific user
         greenhouses = Greenhouses.objects.filter(user_id=user_id)
@@ -68,8 +69,8 @@ class GetProfileSummary(APIView):
                         dataset_dict["greenhouseId"] = greenhouse.id
                         dataset_dict["datasetId"] = dataset.id
                         dataset_dict["label"] = dataset.date
-                        dataset_dict["co2Footprint"] = Results.objects.get(calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value
-                        dataset_dict["h2oFootprint"] = 0 #TODO implement real value
+                        dataset_dict["co2Footprint"] = round(Results.objects.get(calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
+                        dataset_dict["h2oFootprint"] = round(Results.objects.get(calculation_id=h2o_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
                         greenhouse_data_list.append(dataset_dict)
                     greenhouse_data["data"] = greenhouse_data_list
                 else:

@@ -54,7 +54,8 @@ def validate_mandatory_fields(data):
         18: ("Klipse", ["JA"], ["Klipse:AnzahlProTrieb", "Klipse:Wiederverwendung"], ["Klipse:Material"]),
         19: ("Rispenbuegel", ["JA"], ["Rispenbuegel:AnzahlProTrieb", "Rispenbuegel:Wiederverwendung"], ["Rispenbuegel:Material"]),
         20: ("Produktionssystem", ["HYDROPONIK OFFEN", "HYDROPONIK GESCHLOSSEN"], ["AlterProduktionssystem"], []),
-        21: ("Land", ["GERMANY"], [], ["Region"])
+        21: ("Land", ["GERMANY"], [], ["Region"]),
+        22: ("WasserVerbrauch", ["JA"], ["VorlaufmengeGesamt"], ["VorlaufmengeAnteile"])  # Restwasser will always be optional
     }
 
     for key, values in eventually_optional_fields.items():
@@ -103,6 +104,7 @@ def validate_mandatory_fields(data):
     del mandatory_measurements["InsektizideKg"]
     del mandatory_measurements["InsektizideLiter"]
     del mandatory_measurements["Verpackungsmaterial:AnzahlMehrwegsteigen"]
+    del mandatory_measurements["Restwasser"]
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():

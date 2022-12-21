@@ -45,7 +45,7 @@ export const pageConfig: PageConfig = {
 
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
-        .withHeaderTitle("Projekt PROSIBUR - Benchmark System für Gewächshausdaten")
+        .withHeaderTitle("Projekt PROSIBOR - Benchmark System für Gewächshausdaten")
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")

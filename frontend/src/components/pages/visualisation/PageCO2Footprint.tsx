@@ -157,7 +157,7 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
                     </p>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
-                    {createFootprintProductionTypeHeader(normalizedkg, curGreenHouseIndex)}
+                    {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
                         title={("CO2-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
                         yLabel={'CO2-Äquivalente [kg]'}
@@ -184,7 +184,7 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                     </p>
                     <>
                         {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
-                        {createFootprintProductionTypeHeader(normalizedkg, curGreenHouseIndex)}
+                        {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
                             title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
                             yLabel={'CO2-Äquivalente [kg]'}

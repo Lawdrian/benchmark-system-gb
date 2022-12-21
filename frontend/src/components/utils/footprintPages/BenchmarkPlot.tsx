@@ -75,7 +75,7 @@ export default function BenchmarkPlotObject({title, yLabel, tooltipLabel, data}:
                         let label =  " "
 
                         if (context.parsed.y !== null) {
-                            label += Math.round(context.parsed.y) + ' ' + tooltipLabel
+                            label += context.parsed.y.toFixed(2) + ' ' + tooltipLabel
                         }
                         return label;
                     }

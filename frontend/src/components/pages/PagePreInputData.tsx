@@ -141,6 +141,10 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
                         waermeversorgung: findOptionId(lookupValues["Waermeversorgung"], "nein"),
                         zusatzbelichtung: findOptionId(lookupValues["Zusatzbelichtung"], "nein")
                     },
+                    waterUsage: {
+                        ...inputFieldData.waterUsage,
+                        wasserVerbrauch: findOptionId(lookupValues["WasserVerbrauch"], "nein")
+                    },
                     companyMaterials: {
                         ...inputFieldData.companyMaterials,
                         growbagsKuebel: findOptionId(lookupValues["GrowbagsKuebel"], "nichts"),

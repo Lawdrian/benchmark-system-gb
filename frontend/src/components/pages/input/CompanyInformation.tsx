@@ -45,7 +45,6 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
 export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
-    plz: MeasureValue | null
     land: number | null
     region: number | null
     gwhFlaeche: MeasureValue | null
@@ -99,25 +98,6 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
                 datum: event
             }),
             renderInput: () => <TextField/>
-        }
-    }
-
-    const plzProps: MeasureInputProps = {
-        title: "Postleitzahl",
-        label: "Zur Bestimmung der regionalen Wasserverfügbarkeit",
-        unitName: unitValues.measures.PLZ[0]?.values,
-        textFieldProps: {
-            placeholder: "Postleitzahl",
-            value: companyInformation.plz?.value,
-            onChange: event => setCompanyInformationState({
-                ...companyInformation,
-                plz: {value: parseToFloat(event.target.value),unit: unitValues.measures.PLZ[0].id}
-            }),
-            inputProps: { min: 11111, max: 99999 },
-            helperText: companyInformation.plz?.value ? (
-                companyInformation.plz?.value > 99999 ||
-                companyInformation.plz?.value < 11111) ? "Geben Sie eine valide Postleitzahl an!": undefined : undefined,
-            error: showMeasureInputError(companyInformation?.plz)
         }
     }
 
@@ -592,7 +572,6 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
             <SectionDivider title="Allgemeine Daten"/>
             <Grid item container xs={12}  spacing={4}>
                 <DateInputField {...datumProps} />
-                <MeasureInputField {...plzProps} />
             </Grid>
             <Grid item container xs={12}  spacing={4}>
                 <SelectionInputField {...produktionsweiseProps} />

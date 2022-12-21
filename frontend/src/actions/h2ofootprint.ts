@@ -14,7 +14,7 @@ import {
     GreenhouseFootprint,
     H2OFP_ERROR,
     H2OFP_LOADED,
-    H2OFP_LOADING
+    H2OFP_LOADING, H2OFP_NO_CONTENT
 } from "../types/reduxTypes";
 import axios from "axios";
 import {AppDispatch, ReduxStateHook} from "../store";
@@ -28,9 +28,6 @@ type RawGreenhouseH2ODataset = {
     performer_date?: string
     greenhouseDatasets: RawH2ODataset[]
 }
-
-
-
 
 /**
  * @type RawH2ODataset
@@ -52,7 +49,6 @@ type RawH2ODataset = {
     regenwasser_h2o: number
     stadtwasser_h2o: number
     oberflaechenwasser_h2o: number
-    restwasser_h2o: number
     co2_zudosierung_h2o: number
     duengemittel_h2o: number
     psm_h2o: number
@@ -69,12 +65,21 @@ type RawH2ODataset = {
     transport_h2o: number
 }
 
-/**
- * @type RawH2OData
- *
- * The structure of the http-response data, when fetching the h2o-footprint data.
- */
-type RawH2OData = RawGreenhouseH2ODataset[];
+type RawGreenhouseDirectH2ODataset = {
+    greenhouse_name: string
+    performer_productiontype?: string
+    performer_date?: string
+    greenhouseDatasets: RawDirectH2ODataset[]
+}
+
+type RawDirectH2ODataset = {
+    label: string
+    brunnenwasser_h2o: number
+    regenwasser_h2o: number
+    stadtwasser_h2o: number
+    oberflaechenwasser_h2o: number
+}
+
 
 /**
  * Loads the h2ofootprint data for the current user.
@@ -83,7 +88,8 @@ export const loadH2OFootprint = (
     withAuth: boolean = true,
     loadingCB: Function = () => { /* NOOP */ },
     successCB: Function = () => { /* NOOP */ },
-    errorCB: Function = () => { /* NOOP */ }
+    errorCB: Function = () => { /* NOOP */ },
+    noContentCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
     // User Loading
@@ -94,17 +100,27 @@ export const loadH2OFootprint = (
     axios.get('/backend/get-h2o-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("H2O Response", response)
-            dispatch({
-                type: H2OFP_LOADED,
-                payload1: toH2OFootprintPlot(response.data.total),
-                payload2: toH2OFootprintPlot(response.data.normalizedkg),
-                payload3: toH2OFootprintPlot(response.data.normalizedm2),
-                payload4: toH2OFootprintPlot(response.data.fruitsizekg),
-                payload5: toH2OFootprintPlot(response.data.fruitsizem2),
-                payload6: toH2OBenchmarkPlot(response.data.benchmarkkg),
-                payload7: toH2OBenchmarkPlot(response.data.benchmarkm2)
-            })
-            successCB()
+            if (response.status == 204) {
+                console.log("No Content")
+                dispatch({type: H2OFP_NO_CONTENT})
+                noContentCB()
+                console.log("Called")
+            }
+            else {
+                dispatch({
+                    type: H2OFP_LOADED,
+                    payload1: toH2OFootprintPlot(response.data.total),
+                    payload2: toH2OFootprintPlot(response.data.normalizedkg),
+                    payload3: toH2OFootprintPlot(response.data.normalizedm2),
+                    payload4: toH2OFootprintPlot(response.data.fruitsizekg),
+                    payload5: toH2OFootprintPlot(response.data.fruitsizem2),
+                    payload6: toDirectH2OFootprintPlot(response.data.directkg),
+                    payload7: toDirectH2OFootprintPlot(response.data.directm2),
+                    payload8: toH2OBenchmarkPlot(response.data.benchmarkkg),
+                    payload9: toH2OBenchmarkPlot(response.data.benchmarkm2)
+                })
+                successCB()
+            }
         })
         .catch((error) => {// TODO: Proper Error handling
             dispatch({
@@ -121,7 +137,7 @@ export const loadH2OFootprint = (
  *
  * @param responseData - The h2o-footprint data provided by the server
  */
-export const toH2OFootprintPlot = (responseData: RawH2OData): GreenhouseFootprint[] => {
+export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseFootprint[] => {
 
     return responseData.map(greenhouse => {
         return {
@@ -271,6 +287,78 @@ export const toH2OFootprintPlot = (responseData: RawH2OData): GreenhouseFootprin
         }
     });
 }
+/**
+ * Takes the raw h2o-footprint data (how it is provided by the server) and
+ * transforms it into a data structre, that chart.js can use to create a
+ * visualisation of the data.
+ *
+ * @param responseData - The h2o-footprint data provided by the server
+ */
+export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODataset[]): GreenhouseFootprint[] => {
+    console.log("toDirectH2O")
+    console.log(responseData)
+    return responseData.map(greenhouse => {
+        return {
+            greenhouse: greenhouse.greenhouse_name,
+            performerProductionType: greenhouse.performer_productiontype ?? "",
+            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
+            data: {
+                labels: greenhouse.greenhouseDatasets
+                    .map(dataset => dataset.label)
+                    .map(label => formatLabel(label)),
+                datasets: [{
+                    label: "Brunnenwasser",
+                    type: 'bar' as const,
+                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                        dataset.brunnenwasser_h2o
+                    ),
+                    backgroundColor: "rgb(040,086,162)",
+                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                        {"name": "Brunnenwasser", "value": dataset.brunnenwasser_h2o},
+                    ]),
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Regenwasser",
+                    type: 'bar' as const,
+                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                        dataset.regenwasser_h2o
+                    ),
+                    backgroundColor: "rgb(068,154,191)",
+                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                        {"name": "Regenwasser", "value": dataset.regenwasser_h2o},
+                    ]),
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Stadtwasser",
+                    type: 'bar' as const,
+                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                        dataset.stadtwasser_h2o
+                    ),
+                    backgroundColor: "rgb(135,194,228)",
+                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                        {"name": "Stadtwasser", "value": dataset.stadtwasser_h2o},
+                    ]),
+                    optimization: [],
+                    climateData: []
+                }, {
+                    label: "Oberflächenwasser",
+                    type: 'bar' as const,
+                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                        dataset.oberflaechenwasser_h2o
+                    ),
+                    backgroundColor: "rgb(100,149,237)",
+                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                        {"name": "Oberflächenwasser", "value": dataset.oberflaechenwasser_h2o},
+                    ]),
+                    optimization: [],
+                    climateData: []
+                }
+            ]}
+        }
+    });
+}
 
 
 /**
@@ -281,15 +369,16 @@ export const toH2OFootprintPlot = (responseData: RawH2OData): GreenhouseFootprin
  *
  * @param responseData - The h2o-benchmark data provided by the server
  */
-export const toH2OBenchmarkPlot = (responseData: RawH2OData): GreenhouseBenchmark[] => {
+export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseBenchmark[] => {
 
 
     return responseData.map(greenhouse => {
-        let konstruktion:number[] = []
-        let waermetraeger:number[] = []
-        let strom:number[] = []
-        let hilfsstoffe:number[] = []
-        let betriebsstoffe:number[] = []
+        let konstruktion: number[] = []
+        let waermetraeger: number[] = []
+        let strom: number[] = []
+        let wasserverbrauch: number[] = []
+        let hilfsstoffe: number[] = []
+        let betriebsstoffe: number[] = []
         for (let i in greenhouse.greenhouseDatasets) {
             konstruktion[i] = greenhouse.greenhouseDatasets[i].konstruktion_h2o +
                 greenhouse.greenhouseDatasets[i].energieschirm_h2o +
@@ -301,6 +390,10 @@ export const toH2OBenchmarkPlot = (responseData: RawH2OData): GreenhouseBenchmar
 
             waermetraeger[i] = greenhouse.greenhouseDatasets[i].energietraeger_h2o
             strom[i] = greenhouse.greenhouseDatasets[i].strom_h2o
+            wasserverbrauch[i] = greenhouse.greenhouseDatasets[i].brunnenwasser_h2o +
+                greenhouse.greenhouseDatasets[i].regenwasser_h2o +
+                greenhouse.greenhouseDatasets[i].stadtwasser_h2o +
+                greenhouse.greenhouseDatasets[i].oberflaechenwasser_h2o
             hilfsstoffe[i] = greenhouse.greenhouseDatasets[i].co2_zudosierung_h2o +
                 greenhouse.greenhouseDatasets[i].duengemittel_h2o +
                 greenhouse.greenhouseDatasets[i].psm_h2o
@@ -321,7 +414,7 @@ export const toH2OBenchmarkPlot = (responseData: RawH2OData): GreenhouseBenchmar
             performerProductionType: greenhouse.performer_productiontype ?? "",
             performerDate: formatLabel(greenhouse.performer_date ?? "") ,
             data: {
-                labels: ["Gwh Konstruktion", "Wärmeträger", "Strom", "Hilfsstoffe", "Betriebsstoffe"],
+                labels: ["Gwh Konstruktion", "Wärmeträger", "Strom", "Wasserverbrauch", "Hilfsstoffe", "Betriebsstoffe"],
                 datasets: [
                     {
                         label: formatLabel(greenhouse.greenhouseDatasets[1].label),
@@ -363,8 +456,7 @@ export const toH2OBenchmarkPlot = (responseData: RawH2OData): GreenhouseBenchmar
 
 export function formatLabel(label: string):string {
         try {
-            const formattedLabel = format(new Date(label), 'yyyy')
-            return formattedLabel
+            return format(new Date(label), 'yyyy')
 
         }
         catch(e) {

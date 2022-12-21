@@ -25,14 +25,41 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 
+class Greenhouses(models.Model):
+    """This class defines a django model to store the link between all stored
+    input data and the user the data belongs to.
+
+    It represents the actual data set.
+    """
+
+    user = models.ForeignKey(User, null=False,
+                             on_delete=models.CASCADE)
+
+    greenhouse_name = models.CharField(max_length=100, unique=False, null=False)
+
+
+class GreenhouseData(models.Model):
+    """This class defines a django model to store the link between all stored
+    input data and the user the data belongs to.
+
+    It represents the actual data set.
+    """
+
+    greenhouse = models.ForeignKey("backend.Greenhouses", null=False,
+                                   on_delete=models.CASCADE)
+
+    date = models.DateField()
+    date_of_input = models.DateTimeField(auto_now_add=True)
+
+
 class Calculations(models.Model):
     """This class defines a django model to store the names of all
     values that get calculated.
 
     It is part of the structure for direct user input.
     """
-    calculation_name = models.CharField(max_length=50, unique=True, null=False)
-    unit_name = models.CharField(max_length=20, unique=False, null=False)
+    calculation_name = models.CharField(max_length=100, unique=True, null=False)
+    unit_name = models.CharField(max_length=100, unique=False, null=False)
 
 
 class Results(models.Model):
@@ -57,7 +84,7 @@ class Measurements(models.Model):
     
     It is part of the structure for direct user input.
     """
-    measurement_name = models.CharField(max_length=50, unique=True, null=False)
+    measurement_name = models.CharField(max_length=100, unique=True, null=False)
 
 
 class MeasurementUnits(models.Model):
@@ -65,9 +92,9 @@ class MeasurementUnits(models.Model):
 
     It is part of the structure for direct user input.
     """
-    measurement = models.ForeignKey("backend.Measurements", null=False,
+    measurement = models.ForeignKey("backend.Measurements", null=True,
                                     on_delete=models.CASCADE)
-    unit_name = models.CharField(max_length=20, unique=False, null=False)
+    unit_name = models.CharField(max_length=100, unique=False, null=False)
 
 
 class Measures(models.Model):
@@ -87,41 +114,13 @@ class Measures(models.Model):
     measure_value = models.DecimalField(max_digits=20, decimal_places=3)
 
 
-class GreenhouseData(models.Model):
-    """This class defines a django model to store the link between all stored 
-    input data and the user the data belongs to.
-    
-    It represents the actual data set.
-    """
-    
-    greenhouse = models.ForeignKey("backend.Greenhouses", null=False,
-                                      on_delete=models.CASCADE)
-
-    date = models.DateField()
-    date_of_input = models.DateTimeField(auto_now_add=True)
-
-
-
-class Greenhouses(models.Model):
-    """This class defines a django model to store the link between all stored
-    input data and the user the data belongs to.
-
-    It represents the actual data set.
-    """
-
-    user = models.ForeignKey(User, null=False,
-                             on_delete=models.CASCADE)
-
-    greenhouse_name = models.CharField(max_length=50, unique=False, null=False)
-
-
 class OptionGroups(models.Model):
     """This class defines a django model to store groups for optional values.
     
     It is part of the structure for predefined values (e.g. dropdowns)
     """
     
-    option_group_name = models.CharField(max_length=50, unique=True,
+    option_group_name = models.CharField(max_length=100, unique=True,
                                          null=False)
     
 
@@ -135,7 +134,7 @@ class Options(models.Model):
     option_group = models.ForeignKey("backend.OptionGroups", null=True,
                                      on_delete=models.CASCADE)
     
-    option_value = models.CharField(max_length=50, null=False)
+    option_value = models.CharField(max_length=100, null=False)
 
 
 class OptionUnits(models.Model):
@@ -146,7 +145,7 @@ class OptionUnits(models.Model):
 
     option = models.ForeignKey("backend.Options", null=True, on_delete=models.SET_NULL)
 
-    unit_name = models.CharField(max_length=20, unique=False, null=False)
+    unit_name = models.CharField(max_length=100, unique=False, null=False)
 
 
 class Selections(models.Model):

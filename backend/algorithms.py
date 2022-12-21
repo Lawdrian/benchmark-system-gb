@@ -28,7 +28,7 @@ def calc_footprints(data):
     konstruktion_h2o, energieschirm_h2o, bodenabdeckung_h2o, produktionssystem_h2o, bewaesserung_h2o, heizsystem_h2o, zusaetzliches_heizsystem_h2o = calc_greenhouse_construction(data, helping_values, all_options)
     energietraeger_co2, energietraeger_h2o = calc_energy_source(data, helping_values, all_options)
     strom_co2, strom_h2o = calc_electric_power(data, helping_values, all_options)
-    brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o, restwasser_co2, restwasser_h2o = calc_water_usage(data, helping_values, all_options)
+    brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o = calc_water_usage(data, helping_values, all_options)
     co2_zudosierung_co2, co2_zudosierung_h2o = calc_co2_added(data, helping_values, all_options)
     duengemittel_co2, duengemittel_h2o = calc_fertilizer(data, helping_values, all_options)
     psm_co2, psm_h2o = calc_psm(data)
@@ -56,7 +56,6 @@ def calc_footprints(data):
         "regenwasser_co2": regenwasser_co2,
         "stadtwasser_co2": stadtwasser_co2,
         "oberflaechenwasser_co2": oberflaechenwasser_co2,
-        "restwasser_co2": restwasser_co2,
         "co2_zudosierung_co2": co2_zudosierung_co2,
         "duengemittel_co2": duengemittel_co2,
         "psm_co2": psm_co2,
@@ -75,12 +74,7 @@ def calc_footprints(data):
     print("co2_footprint: " + str(co2_footprint))
 
     co2_results["co2_footprint"] = co2_footprint
-    co2_results["co2_footprint_norm_kg"] = co2_footprint / (
-            data["SnackErtragJahr"][0] +
-            data["CocktailErtragJahr"][0] +
-            data["RispenErtragJahr"][0] +
-            data["FleischErtragJahr"][0]
-    )
+    co2_results["co2_footprint_norm_kg"] = co2_footprint / helping_values["total_harvest"]
     co2_results["co2_footprint_norm_m2"] = co2_footprint / helping_values["gh_size"]
 
     h2o_results = {
@@ -97,7 +91,6 @@ def calc_footprints(data):
         "regenwasser_h2o": regenwasser_h2o,
         "stadtwasser_h2o": stadtwasser_h2o,
         "oberflaechenwasser_h2o": oberflaechenwasser_h2o,
-        "restwasser_h2o": restwasser_h2o,
         "co2_zudosierung_h2o": co2_zudosierung_h2o,
         "duengemittel_h2o": duengemittel_h2o,
         "psm_h2o": psm_h2o,
@@ -116,13 +109,15 @@ def calc_footprints(data):
     print("h2o_footprint: " + str(h2o_footprint))
 
     h2o_results["h2o_footprint"] = h2o_footprint
-    h2o_results["h2o_footprint_norm_kg"] = h2o_footprint / (
-            data["SnackErtragJahr"][0] +
-            data["CocktailErtragJahr"][0] +
-            data["RispenErtragJahr"][0] +
-            data["FleischErtragJahr"][0]
-    )
+    h2o_results["h2o_footprint_norm_kg"] = h2o_footprint / helping_values["total_harvest"]
     h2o_results["h2o_footprint_norm_m2"] = h2o_footprint / helping_values["gh_size"]
+    direct_h2o_footprint = regenwasser_h2o + brunnenwasser_h2o + stadtwasser_h2o + oberflaechenwasser_h2o
+    print("direct_h2o_footprint", direct_h2o_footprint)
+    print("direct_h2o_footprint_norm_kg", direct_h2o_footprint / helping_values["total_harvest"])
+    print("direct_h2o_footprint_norm_m2", direct_h2o_footprint / helping_values["gh_size"])
+    h2o_results["direct_h2o_footprint"] = direct_h2o_footprint
+    h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
+    h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
 
     """
     calculation_results = {
@@ -209,8 +204,6 @@ def calc_helping_values(data, all_options):
         energyconsumption_company = energyconsumption_company + option[1]
 
     energyconsumption_total = energyconsumption_company+energyconsumption_lighting
-    #
-    #
     gh_size = calc_gh_size(data)
     culture_size = calc_culture_size(data, gh_size)
     hull_size = calc_hull_size(data)
@@ -218,7 +211,6 @@ def calc_helping_values(data, all_options):
     row_length = data["Laenge"][0]-data["Vorwegbreite"][0]
     row_length_total = row_length*row_count
     walk_length_total = (row_count-1)*row_length
-
     # Calculate the amount of fruits
     snack_count = 0
     cocktail_count = 0
@@ -243,6 +235,7 @@ def calc_helping_values(data, all_options):
     cord_length_total = data["SchnuereRankhilfen:Laenge"][0]*shoots_count_total
     clips_count_total = data["Klipse:AnzahlProTrieb"][0]*shoots_count_total
     panicle_hanger_count_total = rispen_shoots_count*data["Rispenbuegel:AnzahlProTrieb"][0] + fleisch_shoots_count * data["Rispenbuegel:AnzahlProTrieb"][0]
+    total_harvest = data["SnackErtragJahr"][0] + data["CocktailErtragJahr"][0] + data["RispenErtragJahr"][0] + data["FleischErtragJahr"][0]
 
     # Check if bhkw is used or not
     energietraeger_id = OptionGroups.objects.get(option_group_name="Energietraeger").id
@@ -273,6 +266,7 @@ def calc_helping_values(data, all_options):
     print("rispen_count: " + str(rispen_count))
     print("fleisch_count: " + str(fleisch_count))
     print("plant_count_total: " + str(plant_count_total))
+    print("total_harvest" + str(total_harvest))
     print("snack_shoots_count: " + str(snack_shoots_count))
     print("cocktail_shoots_count: " + str(cocktail_shoots_count))
     print("rispen_shoots_count: " + str(rispen_shoots_count))
@@ -301,6 +295,7 @@ def calc_helping_values(data, all_options):
         "rispen_count": rispen_count,
         "fleisch_count": fleisch_count,
         "plant_count_total": plant_count_total,
+        "total_harvest": total_harvest,
         "snack_shoots_count": snack_shoots_count,
         "cocktail_shoots_count": cocktail_shoots_count,
         "rispen_shoots_count": rispen_shoots_count,
@@ -350,7 +345,7 @@ def calc_hull_size(data):
     hull_size_roof = 0
     hull_size_total = 0
     if(norm_name=="Venlo"):
-        hull_size_wall = (data["Laenge"][0]+data["Breite"][0])*2*data["Stehwandhoehe"][0]+((((math.sqrt((data["Scheibenlaenge"][0]**2) - (data["Kappenbreite"][0]/2)**2))*data["Kappenbreite"][0])/2)*(data["Breite"][0]/data["Kappenbreite"][0]))
+        hull_size_wall = (data["Laenge"][0]+data["Breite"][0])*2*data["Stehwandhoehe"][0]+((((math.sqrt(abs((data["Scheibenlaenge"][0]**2) - (data["Kappenbreite"][0]/2)**2)))*data["Kappenbreite"][0])/2)*(data["Breite"][0]/data["Kappenbreite"][0]))
         hull_size_roof = data["Scheibenlaenge"][0]*data["Laenge"][0]*(data["Breite"][0]/data["Kappenbreite"][0]*2)
         hull_size_total = hull_size_wall+hull_size_roof
     elif(norm_name=="Deutsche Norm"):
@@ -593,7 +588,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
         bewaesserung_co2 = bewaesserung * 2.67
         bewaesserung_h2o = bewaesserung * 2.67
     elif bewaesserungmaterial == "Handschlauch":
-        bewaesserung = (math.sqrt(helping_values["gh_size"]*2.5) * 4 / 30) / 15
+        bewaesserung = (math.sqrt(abs(helping_values["gh_size"]*2.5)) * 4 / 30) / 15
         bewaesserung_co2 = bewaesserung * 2.67
         bewaesserung_h2o = bewaesserung * 2.67
     else:
@@ -702,8 +697,10 @@ def calc_energy_source(data, helping_values, all_options):
             raise ValueError('Energietraeger value unit has not been converted to kWh!')
         energietraegertyp = all_options.get(id=option[0]).option_value
         menge = option[1]
+
         if energietraegertyp == "Erdgas":
-            erdgas_co2 = menge * 0.252
+            energietraeger_co2 = energietraeger_co2 + menge * 0.252
+            energietraeger_h2o = energietraeger_h2o + menge * 0.252
         elif energietraegertyp == "Biogas":
             energietraeger_co2 = energietraeger_co2 + menge * 0.06785
             energietraeger_h2o = energietraeger_h2o + menge * 0.06785
@@ -733,7 +730,6 @@ def calc_energy_source(data, helping_values, all_options):
             energietraeger_h2o = energietraeger_h2o + menge * 0.06785
         else:
             raise ValueError('No valid option for Energietraeger has been selected')
-
 
     if(geteilte_waermeversorgung=="ja"):
         energietraeger_co2 = energietraeger_co2 * (data["GWHFlaeche"][0]/data["WaermeteilungFlaeche"][0])
@@ -835,7 +831,6 @@ def calc_electric_power(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Stromherkunft has been selected')
 
-    strom_gesamt_co2 = deutscher_strommix_co2 + oekostrom_co2 + photovoltaik_co2 + windenergie_land_co2 + windenergie_see_co2 + wasserkraft_co2 + tiefengeothermie_co2 + bhkwerdgas_co2 + bhkwbiomethan_co2 + diesel_co2
     # Take Belichtung into account if it isn't already included in the calculation
     if all_options.get(id=data["Zusatzbelichtung"][0][0]).option_value == "ja" and all_options.get(id=data["Belichtungsstrom"][0][0]).option_value == "nein":
         deutscher_strommix_co2 = deutscher_strommix_co2 + (helping_values["energyconsumption_lighting"] * deutscher_strommix_anteil * 0.485)
@@ -889,6 +884,7 @@ def calc_electric_power(data, helping_values, all_options):
     print("strom_h2o: " + str(strom_gesamt_h2o))
     return strom_gesamt_co2, strom_gesamt_h2o
 
+
 def calc_water_usage(data, helping_values, all_options):
     brunnenwasser_co2 = 0
     brunnenwasser_h2o = 0
@@ -898,34 +894,34 @@ def calc_water_usage(data, helping_values, all_options):
     stadtwasser_h2o = 0
     oberflaechenwasser_co2 = 0
     oberflaechenwasser_h2o = 0
+    wasser_daten = all_options.get(id=data["WasserVerbrauch"][0][0]).option_value
+    print("wasser", wasser_daten)
+    if(wasser_daten == "ja"):
+        if (data["VorlaufmengeAnteile"] != default_option):
+            for option in data["VorlaufmengeAnteile"]:
+                # Check if the values have the correct unit
+                if OptionUnits.objects.get(id=option[2]).unit_name != "Liter":
+                    raise ValueError('VorlaufmengeAnteile value unit has not been converted to Liter!')
 
-    if (data["VorlaufmengeAnteile"] != default_option):
-        for option in data["VorlaufmengeAnteile"]:
-            # Check if the values have the correct unit
-            if OptionUnits.objects.get(id=option[2]).unit_name != "Liter":
-                raise ValueError('VorlaufmengeAnteile value unit has not been converted to Liter!')
-
-            vorlaufmengetyp = all_options.get(id=option[0]).option_value
-            menge = option[1]
-            if vorlaufmengetyp == "Brunnenwasser":
-                brunnenwasser_co2 = brunnenwasser_co2 + menge * 1
-                brunnenwasser_h2o = brunnenwasser_h2o + menge * 1
-            elif vorlaufmengetyp == "Regenwasser":
-                regenwasser_co2 = regenwasser_co2 + menge * 1
-                regenwasser_h2o = regenwasser_h2o + menge * 1
-            elif vorlaufmengetyp == "Stadtwasser":
-                stadtwasser_co2 = stadtwasser_co2 + menge * 1
-                stadtwasser_h2o = stadtwasser_h2o + menge * 1
-            elif vorlaufmengetyp == "Oberflaechenwasser":
-                oberflaechenwasser_co2 = oberflaechenwasser_co2 + menge * 1
-                oberflaechenwasser_h2o = oberflaechenwasser_h2o + menge * 1
-            else:
-                raise ValueError('No valid option for VorlaufmengeAnteile has been selected')
-    if MeasurementUnits.objects.get(id=data["Restwasser"][1]).unit_name != "Liter":
-        raise ValueError('Restwasser value unit has not been converted to Liter!')
-    restwasser_co2 = data["Restwasser"][0] * 1
-    restwasser_h2o = data["Restwasser"][0] * 1
-
+                vorlaufmengetyp = all_options.get(id=option[0]).option_value
+                menge = option[1] - data["Restwasser"][0] * option[1]/data["VorlaufmengeGesamt"][0]
+                # menge cannot be lower than 0
+                if menge < 0:
+                    menge = 0
+                if vorlaufmengetyp == "Brunnenwasser":
+                    brunnenwasser_co2 = brunnenwasser_co2 + menge * 1
+                    brunnenwasser_h2o = brunnenwasser_h2o + menge * 1
+                elif vorlaufmengetyp == "Regenwasser":
+                    regenwasser_co2 = regenwasser_co2 + menge * 1
+                    regenwasser_h2o = regenwasser_h2o + menge * 1
+                elif vorlaufmengetyp == "Stadtwasser":
+                    stadtwasser_co2 = stadtwasser_co2 + menge * 1
+                    stadtwasser_h2o = stadtwasser_h2o + menge * 1
+                elif vorlaufmengetyp == "Oberflaechenwasser":
+                    oberflaechenwasser_co2 = oberflaechenwasser_co2 + menge * 1
+                    oberflaechenwasser_h2o = oberflaechenwasser_h2o + menge * 1
+                else:
+                    raise ValueError('No valid option for VorlaufmengeAnteile has been selected')
 
     print("brunnenwasser_co2: " + str(brunnenwasser_co2))
     print("brunnenwasser_h2o: " + str(brunnenwasser_h2o))
@@ -935,9 +931,7 @@ def calc_water_usage(data, helping_values, all_options):
     print("stadtwasser_h2o: " + str(stadtwasser_h2o))
     print("oberflaechenwasser_co2: " + str(oberflaechenwasser_co2))
     print("oberflaechenwasser_h2o: " + str(oberflaechenwasser_h2o))
-    print("restwasser_co2: " + str(restwasser_co2))
-    print("restwasser_h2o: " + str(restwasser_h2o))
-    return brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o, restwasser_co2, restwasser_h2o
+    return brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o
 
 
 def calc_co2_added(data, helping_values, all_options):
