@@ -23,6 +23,9 @@ migrations/
 # additional settings
 local_settings.py
 
+# enviroment variables
+.env
+
 # static content
 /static/
 /build/

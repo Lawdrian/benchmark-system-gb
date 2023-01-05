@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,8 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-#SECRET_KEY = 'dummy-key'
-# specified in local settings
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -33,10 +33,10 @@ EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.ionos.de'
-EMAIL_HOST_USER = 'adrian@wild.network'
-EMAIL_HOST_PASSWORD = 'kinderWild2015'
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 465
-DEFAULT_FROM_EMAIL = 'adrian@wild.network'
+DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
 
 
 # Application definition
@@ -96,15 +96,23 @@ WSGI_APPLICATION = 'benchmarksystemgb.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#        'OPTIONS': {
-#            'timeout': 60
-#        }
-#    }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'benchmark',
+        'USER': config('DATABASE_HOST'),
+        'PASSWORD': config('DATABASE_PASSWORD'),
+        'HOST': 'localhost',
+        'PORT': '5432'
+    },
+    # 'default': {
+    #    'ENGINE': 'django.db.backends.sqlite3',
+    #    'NAME': '/srv/www/benchmark/benchmark-system-gb/db.sqlite3',
+    #    'OPTIONS': {
+    #        'timeout': 60
+    #    }
+    # }
+}
 
 
 # Password validationSS
@@ -150,9 +158,4 @@ STATIC_ROOT = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-try:
-    from benchmarksystemgb.local_settings import *
-except ImportError:
-    pass
 
