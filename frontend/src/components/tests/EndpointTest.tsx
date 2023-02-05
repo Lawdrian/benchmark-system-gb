@@ -19,7 +19,7 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
-import {InputMode} from "../pages/PageInputData";
+import {InputMode} from "../pages/input/PageInputData";
 import {loadH2OFootprint} from "../../actions/h2ofootprint";
 
 const mapStateToProps = (state: RootState) => ({
@@ -337,8 +337,6 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
                     setTestResults(testResults)
                 }
             );
-            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
         },
         true,
         () => {

@@ -19,7 +19,7 @@ class ListOfTuples(serializers.Field):
     serializer field. The data structure of this field is a list of tuples
     whose first element is an integer and  whose second element, which is
     optional, contains a float. The first element is the option_id and the
-    second element is the amount corresponding to this option. This field
+    second element is the value corresponding to this option. This field
     lets you realise a multiple selection with a float number for each
     selection. Therefore, this class is used for the categorical variables.
     """
@@ -30,12 +30,12 @@ class ListOfTuples(serializers.Field):
         string matches a list of tuples whose first element is an integer and
         whose second element, which is optional, contains a float.
 
-                Args:
-                    input_string : The string which should be checked.
+        Args:
+            input_string : The string which should be checked.
 
-                Returns:
-                    True: input_string matches the format.
-                    False: input_string does not match the format.
+        Returns:
+            True: input_string matches the format.
+            False: input_string does not match the format.
         """
         tupel_regex = "\(\s*\d+((((\s*,\s*\d+(\.\d+)?){2,3})?)|(\s*,\s*))\s*\)"
         tuple1_regex = "\(\s*\d+(|(\s*,\s*))\s*\)"
@@ -59,14 +59,14 @@ class ListOfTuples(serializers.Field):
         serializable data types in order to be able to pass it directly to
         Response().
 
-                Args:
-                    value : The result of to_internal_value(), so a python
-                    list of tuples containing the option_id and
-                    eventually a corresponding amount.
+        Args:
+            value : The result of to_internal_value(), so a python
+            list of tuples containing the option_id and
+            eventually a corresponding value.
 
-                Returns:
-                    Simply returns <value>, because <value> is already a
-                    primitive (easy serializable) data type.
+        Returns:
+            Simply returns <value>, because <value> is already a
+            primitive (easy serializable) data type.
         """
         return value
 
@@ -77,16 +77,16 @@ class ListOfTuples(serializers.Field):
         By the way: This function will be called in the is_valid() function of
         the serializer.
 
-                Args:
-                    data : Contains the data. In this case a list of tuples
-                           in form of a single string. This list contains
-                           the selections and maybe the amounts for these
-                           selections for one categorical variable
-                           (e.g. 'energy source').
+        Args:
+            data : Contains the data. In this case a list of tuples
+                   in form of a single string. This list contains
+                   the selections and maybe the values for these
+                   selections for one categorical variable
+                   (e.g. 'energy source').
 
-                Returns:
-                    A python list of tuples containing the option_id and
-                    eventually a corresponding amount.
+        Returns:
+            A python list of tuples containing the option_id and
+            eventually a corresponding value.
         """
 
         # Check the format [(),(),(),...] with a regex
@@ -104,18 +104,18 @@ class ListOfTuples(serializers.Field):
             values = elem.strip('()').split(',')
             if len(values) > 4:
                 raise serializers.ValidationError({
-                    'The maximal tuple size is 3! option_id, perhaps amount and perhaps value2'
+                    'The maximal tuple size is 3! option_id, perhaps value and perhaps value2'
                 })
             try:
                 values[0] = int(values[0])  # first element is option_id
-                # check if an amount is declared for this option:
+                # check if a value is declared for this option:
                 # if the tuple has the form (int,), the second element in
                 # values is ''
                 if len(values) >= 2:
                     if values[1].strip() == '':
                         del values[1]
                     elif len(values) >= 3:
-                        values[1] = float(values[1])  # second element is amount
+                        values[1] = float(values[1])  # second element is value
                         values[2] = int(values[2])    # third element is unit
                         # if the tuple has the form (int,float,int,float)
                         if len(values) == 4:
@@ -142,12 +142,12 @@ class Tuple(serializers.Field):
         string matches a list of tuples whose first element is an integer and
         whose second element, which is optional, contains a float.
 
-                Args:
-                    input_string : The string which should be checked.
+        Args:
+            input_string : The string which should be checked.
 
-                Returns:
-                    True: input_string matches the format.
-                    False: input_string does not match the format.
+        Returns:
+            True: input_string matches the format.
+            False: input_string does not match the format.
         """
         tupel_regex = "\(\s*\d+(\.\d*)?\s*,\s*\d+\s*\)"
         return bool(re.compile(tupel_regex).match(input_string))
@@ -164,13 +164,13 @@ class Tuple(serializers.Field):
         By the way: This function will be called in the is_valid() function of
         the serializer.
 
-                Args:
-                    data : Contains the data. In this case a tuple
-                           in form of a single string. This contains
-                           the value and unit_id of a measurement.
+        Args:
+            data : Contains the data. In this case a tuple
+                   in form of a single string. This contains
+                   the value and unit_id of a measurement.
 
-                Returns:
-                    A python tuple containing the value and unit_id.
+        Returns:
+            A python tuple containing the value and unit_id.
         """
 
         # Check the format [(),(),(),...] with a regex
@@ -204,9 +204,9 @@ def _get_continuous_variables():
     """This function returns the names of all continuous variables which
     are stored in the database (in the table 'Measurements').
 
-            Returns:
-                A python list of the names of all continuous variables
-                stored in the database.
+    Returns:
+        A python list of the names of all continuous variables
+        stored in the database.
     """
     return Measurements.objects.all()
 
@@ -215,9 +215,9 @@ def _get_categorical_variables():
     """This function returns the names of all categorical variables which
     are stored in the database (in the table 'OptionGroups').
 
-            Returns:
-                A python list of the names of all categorical variables
-                stored in the database.
+    Returns:
+        A python list of the names of all categorical variables
+        stored in the database.
     """
     return OptionGroups.objects.all()
 
@@ -226,6 +226,7 @@ class InputDataSerializer(serializers.Serializer):
     """ This class inherits from serializer.Serializer and defines a serializer
     for the input data of the client which should be stored in the database.
     """
+
     greenhouse_name = serializers.CharField()
     date = serializers.DateField()
 
@@ -250,6 +251,7 @@ class InputDataSerializer(serializers.Serializer):
         However, the error will be ignored in "makemagrations", because once 
         "python manage.py migrate" is executed, the error do not appear anymore!
         """
+
         pass
 
     def update(self, instance, validated_data):

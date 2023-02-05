@@ -1,3 +1,5 @@
+import re
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
@@ -5,14 +7,21 @@ from rest_framework import serializers
 from .models import Profile
 
 
-# Profile Serializer
+def no_special_chars(field):
+    # contains all special characters apart from '@' and '.'
+    special_characters = "!\"#$%&'()*+,\-/:;<=>?[\]^_`{|}~"
+    regexp = re.compile(f"[{special_characters}]+")
+    if regexp.search(field):
+        raise serializers.ValidationError({"Error": "Invalid credentials", "Message": "No special chars are allowed."})
+
 class ProfileSerializer(serializers.ModelSerializer):
+    company_name = serializers.CharField(validators=[no_special_chars])
+
     class Meta:
         model = Profile
         fields = ['company_name']
 
 
-# User Serializer
 class UserSerializer(serializers.ModelSerializer):
     profile = ProfileSerializer(required=True)
 
@@ -21,9 +30,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'profile')
 
 
-# Register Serializer
 class RegisterSerializer(serializers.ModelSerializer):
+
     profile = ProfileSerializer(required=True)
+    username = serializers.CharField(validators=[no_special_chars])
+    email = serializers.EmailField(validators=[no_special_chars])
 
     class Meta:
         model = User
@@ -44,7 +55,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# Login Serializer
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()

@@ -1,7 +1,7 @@
-import {DynamicInputValue, MeasureValue} from "../components/utils/inputPage/InputFields";
+import {DynamicInputValue, MeasureValue} from "../components/utils/input/InputFields";
 import {Option, UnitValues} from "../reducers/lookup";
 import {GreenhouseData} from "../types/reduxTypes";
-import {DataToSubmit} from "../components/pages/PageInputData";
+import {DataToSubmit} from "../components/pages/input/PageInputData";
 
 
 export const parseToFloat = (value: string): number|null => {
@@ -151,8 +151,8 @@ export const parseStringToArray = (greenhouse:string) => {
 /**
  * This function receives a GreenhouseData object and maps it to the state object used for input page
  *
- * @param tuple:string object of type GreenhouseData
  *
+ * @param initialDataset object of type GreenhouseData
  * @return {ReactNode} object
  */
 export const fillInputState = (initialDataset: GreenhouseData) => {

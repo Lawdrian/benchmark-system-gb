@@ -83,38 +83,6 @@ class PageBuilder {
         return this;
     }
 
-    /**
-     * Currently unused
-     *
-     * @param icon
-     * @param text
-     */
-    includeInHeader(
-        icon: ReactNode,
-        text: string = 'Default Header Text',
-    ): PageBuilder {
-        this.headerAttr = {
-            linkText: text,
-            icon: icon,
-        }
-
-        return this;
-    }
-
-    /**
-     * Currently unused
-     *
-     * @param text
-     */
-    includeInAccountMenu(
-        text: string = 'Default AccMenu Text',
-    ): PageBuilder {
-        this.accountMenuAttr = {
-            linkText: text,
-        }
-
-        return this;
-    }
 
     /**
      * Generates the final page object from this PageBuilder instance

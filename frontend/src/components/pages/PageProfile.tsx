@@ -15,11 +15,11 @@ import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {deleteUser} from "../../actions/auth";
 import {loadProfile} from "../../actions/profile";
-import {SectionDivider} from "../utils/inputPage/layout";
+import {SectionDivider} from "../utils/input/layout";
 import {DatasetSummary} from "../../types/reduxTypes";
 import {loadDatasets} from "../../actions/dataset";
 import {fillInputState, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
-import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
+import PageInputData, {DataToSubmit, InputMode} from "./input/PageInputData";
 
 const mapStateToProps = (state: RootState) => ({
     dataset: state.dataset,
@@ -53,10 +53,8 @@ const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadD
     const handleDatasetUpdate = (greenhouseId: number, datasetId: number) => {
 
         if (dataset.datasets != [] && dataset.datasets != "" && typeof dataset.datasets != "string") {
-            console.log(greenhouseId, datasetId)
             const initialGreenhouse = dataset.datasets.filter(greenhouse => parseInt(parseStringToArray(greenhouse.greenhouse_specs)[0]) == greenhouseId)[0]
             const initialDataset = initialGreenhouse.greenhouse_datasets.filter(dataset => parseInt(parseStringToArray(dataset.greenhouse_data_id)[0]) == datasetId)[0]
-            console.log(initialDataset)
             setInputFieldData(fillInputState(initialDataset))
             setSelectedDatasetId(datasetId)
         }

@@ -1,8 +1,8 @@
 import React from "react";
 import {Box, Container, Grid, Typography} from "@mui/material";
 
-import Table from '../../images/table.png'
-import Logo from '../../images/logo_small.png'
+import Table from '../../assets/table.png'
+import Logo from '../../assets/data_information_logo.png'
 
 type DataInformationProps = {
 }

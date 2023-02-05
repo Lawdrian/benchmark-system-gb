@@ -28,7 +28,7 @@ import PageHome from "../components/pages/PageHome";
 import PageUserActivation from "../components/pages/user/PageUserActivation";
 import PageForgotPW from "../components/pages/user/PageForgotPW";
 import PageResetPW from "../components/pages/user/PageResetPW";
-import PagePreInputData from "../components/pages/PagePreInputData";
+import PagePreInputData from "../components/pages/input/PagePreInputData";
 import PageDataInformation from "../components/pages/PageDataInformation";
 import PageH2OFootprint from "../components/pages/visualisation/PageH2OFootprint";
 
@@ -45,7 +45,7 @@ export const pageConfig: PageConfig = {
 
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
-        .withHeaderTitle("Projekt PROSIBOR - Benchmark System für Gewächshausdaten")
+        .withHeaderTitle("Process simulation based on plant response - Benchmark Tool für den Tomatenanbau im Gewächshaus")
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")
@@ -57,13 +57,12 @@ const pageDefinitions: Array<Page> = [
         .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PageC02Footprint/>, "co2-footprint")
-        .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
+        .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Verbrauchs")
         .includeInDrawer(<Co2Icon/>, "CO2 Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")
         .includeInDrawer(<AccountCircle/>, "Profil", Section.Profile)
-        .includeInAccountMenu("Profil")
         .finalize(),
     generatePage(<PageAbout/>, "about")
         .withHeaderTitle("Über uns")

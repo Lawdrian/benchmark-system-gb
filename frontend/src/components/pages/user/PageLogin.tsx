@@ -33,6 +33,10 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUr
     const navigate = useNavigate()
 
     console.log("Login Page!")
+    if (isAuthenticated) {
+        navigate(loggedInUrl)
+    }
+
     const handleLogin = (event: any) => {
         event.preventDefault();
         login(email, password, () => setShowAlert(true));
@@ -48,10 +52,6 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUr
                 </Alert>
             </Grid>
         );
-    }
-
-    if (isAuthenticated) {
-        navigate(loggedInUrl)
     }
 
     return (

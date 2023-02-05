@@ -1,8 +1,8 @@
 import React from "react";
 import {Box, Container, Grid, Typography} from "@mui/material";
 
-import Overview_Project from '../../images/overview_project.png'
-import Overview_Plot from '../../images/overview_plot2.png'
+import Overview_Project from '../../assets/overview_project.png'
+import Overview_Plot from '../../assets/overview_plot2.png'
 import {RootState} from "../../store";
 import {loadDatasets} from "../../actions/dataset";
 import {connect, ConnectedProps} from "react-redux";

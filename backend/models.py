@@ -1,22 +1,23 @@
-"""
-    This module contains all models that define the structure of the database.
+"""This module contains all models that define the structure of the database.
 
-  Every class represents a table inside the database structure. It has to
-  inherit from models.Model so the django framework can interpret and generate
-  the table. Inside each class are the columns that will be added to the table.
-  For detailed information about the databases structure have a look at the
-  documentation.
-  
-  Models:
-      Calculations
-      Results
-      Measurements
-      Measures
-      GreenhouseData
-      Greenhouses
-      OptionGroups
-      Options
-      Selections
+Every class represents a table inside the database structure. It has to
+inherit from models.Model so the django framework can interpret and generate
+the table. Inside each class are the columns that will be added to the table.
+For detailed information about the databases structure have a look at the
+documentation.
+
+Models:
+  Calculations
+  Results
+  Measurements
+  MeasurementUnits
+  Measures
+  GreenhouseData
+  Greenhouses
+  OptionGroups
+  Options
+  OptionUnits
+  Selections
 """
 
 
@@ -49,6 +50,7 @@ class GreenhouseData(models.Model):
                                    on_delete=models.CASCADE)
 
     date = models.DateField()
+
     date_of_input = models.DateTimeField(auto_now_add=True)
 
 
@@ -150,8 +152,8 @@ class OptionUnits(models.Model):
 
 class Selections(models.Model):
     """This class defines a django model to store the connection between an
-    option, the amount for this option and the data set it beongs to.
-    
+    option, the value for this option and the data set it beongs to. Furthermore another value
+    can be saved in this model.
     It is part of the structure for predefined values (e.g. dropdowns)
     """
     
@@ -160,11 +162,11 @@ class Selections(models.Model):
     option = models.ForeignKey("backend.Options", null=False,
                                      on_delete=models.CASCADE)
     
-    amount = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    selection_value = models.DecimalField(max_digits=20, decimal_places=3, null=True)
 
     selection_unit = models.ForeignKey("backend.OptionUnits", null=True, on_delete=models.SET_NULL)
 
-    value2 = models.DecimalField(max_digits=20, decimal_places=3, null=True)
+    selection_value2 = models.DecimalField(max_digits=20, decimal_places=3, null=True)
 
 
 

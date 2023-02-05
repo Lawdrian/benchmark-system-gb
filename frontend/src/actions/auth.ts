@@ -107,7 +107,6 @@ export const register = (
         .then((response) => {
             dispatch({
                 type: REGISTER_SUCCESS,
-                payload: response.data,
             });
             callbackSucc()
         })
@@ -115,7 +114,7 @@ export const register = (
             dispatch({
                 type: REGISTER_FAIL,
             });
-            callbackErr()
+            callbackErr(error.response.data.Error)
         });
 };
 

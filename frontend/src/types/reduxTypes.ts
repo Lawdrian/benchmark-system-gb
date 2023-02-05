@@ -212,7 +212,7 @@ export type FootprintPlot = Plot & {
 export type GreenhouseFootprint = {
     greenhouse: string
     performerProductionType: string
-    performerDate: string
+    bestPerformerDate: string
     data: FootprintPlot
 }
 
@@ -233,7 +233,8 @@ export type BenchmarkPlot = Plot & {
 export type GreenhouseBenchmark = {
     greenhouse: string
     performerProductionType: string
-    performerDate: string
+    bestPerformerDate: string
+    worstPerformerDate: string
     data: BenchmarkPlot
 }
 

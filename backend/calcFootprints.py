@@ -1,20 +1,3 @@
-"""
-    This file provides algorithms for calculating footprints and benchmark.
-
-  The main and only function right now is calc_footprints(data) which
-  calculates the co2-footprint and h2o-footprint for a greenhouse-dataset. Specifications of the
-  structure for variable data can be found in views.py.
-  Other functions of this file should not be called directly.
-  
-  The general structure of this files functions contains a main calculation
-  function that calls multiple other calculation functions which return their
-  respective value after evaluating the given data.
-  Then the main calculation function returns a dict of values.
-
-  Typical usage example:
-
-  footprint_data = calc_footprints(data)
-"""
 import math
 
 from backend.models import Options, OptionUnits, OptionGroups, MeasurementUnits

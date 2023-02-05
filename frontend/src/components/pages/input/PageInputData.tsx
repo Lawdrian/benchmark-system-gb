@@ -13,22 +13,22 @@ import * as React from "react";
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import {connect, ConnectedProps} from "react-redux";
-import {InputPaginationButtonsProps} from "../utils/inputPage/InputPaginationButtons";
-import {indexedTabProps, TabPanel} from "../../helpers/TabPanel";
-import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
-import HelpingMaterialsInput, {HelpingMaterialsState} from "./input/HelpingMaterials";
-import CompanyInformationInput, {CompanyInformationState} from "./input/CompanyInformation";
-import {DateValue, MeasureValue, SelectionValue} from "../utils/inputPage/InputFields";
-import CultureInformationInput, {CultureInformationState} from "./input/CultureInformation";
-import CompanyMaterialsInput, {CompanyMaterialsState} from "./input/CompanyMaterials";
-import EnergyConsumptionInput, {EnergyConsumptionState} from "./input/EnergyConsumption";
-import {submitGreenhouseData} from "../../actions/submission";
-import {GreenhouseData} from "../../types/reduxTypes";
+import {InputPaginationButtonsProps} from "../../utils/input/InputPaginationButtons";
+import {indexedTabProps, TabPanel} from "../../../helpers/TabPanel";
+import {loadLookupValues, loadUnitValues} from "../../../actions/lookup";
+import HelpingMaterialsInput, {HelpingMaterialsState} from "./subpages/HelpingMaterials";
+import CompanyInformationInput, {CompanyInformationState} from "./subpages/CompanyInformation";
+import {DateValue, MeasureValue, SelectionValue} from "../../utils/input/InputFields";
+import CultureInformationInput, {CultureInformationState} from "./subpages/CultureInformation";
+import CompanyMaterialsInput, {CompanyMaterialsState} from "./subpages/CompanyMaterials";
+import EnergyConsumptionInput, {EnergyConsumptionState} from "./subpages/EnergyConsumption";
+import {submitGreenhouseData} from "../../../actions/submission";
+import {GreenhouseData} from "../../../types/reduxTypes";
 import {useNavigate} from "react-router-dom";
 import {Tab, Tabs} from "@mui/material";
-import {RootState} from "../../store";
+import {RootState} from "../../../store";
 import {format} from "date-fns";
-import WaterUsageInput, {WaterUsageState} from "./input/WaterUsage";
+import WaterUsageInput, {WaterUsageState} from "./subpages/WaterUsage";
 
 const mapStateToProps = (state: RootState) => ({
     submission: state.submission,

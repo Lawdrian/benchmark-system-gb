@@ -1,5 +1,5 @@
 import React from "react";
-import {Typography} from "@mui/material";
+import {Divider, Typography} from "@mui/material";
 
 type ImpressumProps = {
 
@@ -8,22 +8,36 @@ type ImpressumProps = {
 const PageImpressum = (props: ImpressumProps) => {
     return (
         <div id="login" className="page">
-            <Typography variant={"h5"}>
+            <Typography variant={"h4"}>
                 Impressum
             </Typography>
+            <Divider sx={{ borderBottomWidth: 3, bgcolor: "black"  }}/>
+            <br/>
+            <Typography variant={"h6"}>
+                Herausgeber
+            </Typography>
             <p style={{textAlign: "start"}}>
-                Benchmark Tool<br/>
-                Hauptstraße 1<br/>
-                50667 Köln<br/>
-                Fon: +49 (0) 221 - 12 34 56 - 0<br/>
-                Fax: +49 (0) 221 - 12 34 56 - 1<br/>
-                E-Mail: info@benchmark-tool.de<br/>
-                Web: http://www.benchmark-tool.de<br/>
-                ---------------------------------------------------------------------------<br/>
-                Benchmark Tool e.V.<br/>
-                Geschäftsführer: Max Mustermann<br/>
-                Vorstand: Dr. jur. Stefanie Musterfrau(Vorsitzende), Heinz Muster (stv. Vorsitzender), Markus Beispiel, Stefan Example,<br/>
-                Beatrice Beispielhaft Vereinsregister: Amtsgericht Köln, VR 123456 Sitz des Vereins: Köln
+                Das WWW-Angebot der Hochschule Weihenstephan-Triesdorf wird im Auftrag des Präsidenten der Hochschule Weihenstephan-Triesdorf veröffentlicht.
+            </p>
+            <Typography variant={"subtitle1"}>
+                <b>Präsident der Hochschule Weihenstephan-Triesdorf</b>
+            </Typography>
+            <p style={{textAlign: "start"}}>
+                Dr. Eric Veulliet<br/>
+                T +49 8161 71-3340<br/>
+                praesident@hswt.de
+            </p>
+            <Typography variant={"h6"}>
+                Anschrift
+            </Typography>
+            <p style={{textAlign: "start"}}>
+                Hochschule Weihenstephan-Triesdorf<br/>
+                Am Hofgarten 4<br/>
+                85354 Freising<br/>
+                <br/>
+                T +49 8161 71-0<br/>
+                praesident@hswt.de<br/>
+                Internet: www.hswt.de
             </p>
         </div>
     );

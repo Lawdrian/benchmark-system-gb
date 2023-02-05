@@ -19,7 +19,7 @@ import {
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
-import {InputMode} from "../components/pages/PageInputData";
+import {InputMode} from "../components/pages/input/PageInputData";
 
 /**
  * Submit a dataset of type {@link GreenhouseData} to the server

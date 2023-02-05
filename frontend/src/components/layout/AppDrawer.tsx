@@ -9,7 +9,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import StyledDrawer from "../styled/StyledDrawer";
 import { DrawerListItem, SharedDrawerProps } from "../../types/SharedLayoutTypes";
 import { Section } from "../../types/PageConfigTypes";
-import Logo from "../../images/logo_small.png"
+import Logo from "../../assets/app_drawer_logo.png"
 
 type DrawerProps = SharedDrawerProps & {
     listItems: DrawerListItem[]
@@ -52,11 +52,12 @@ const AppDrawer = (
             <Toolbar
                 sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'start',
                     justifyContent: 'flex-end',
                     px: [1],
                     ml: 4,
-                    mb: 1
+                    mb: 1,
+                    mt: 1
                 }}
             >
                 <img src={Logo}></img>

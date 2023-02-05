@@ -1,19 +1,19 @@
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import React from "react";
 
-export type OptimizationTableData = {
+export type OptimisationTableData = {
     name: string
     percentage: number
     value: number
 }
 
-type OptimizationTableProps = {
+type OptimisationTableProps = {
     unit: string
-    data: OptimizationTableData[]
+    data: OptimisationTableData[]
 
 }
 
-export const OptimizationTable = (props:OptimizationTableProps) => {
+export const OptimisationTable = (props:OptimisationTableProps) => {
 
     const selectedOption = props.data[0]
     const improvingOptions = props.data.slice(1) // Returns all elements of the array apart from the first one

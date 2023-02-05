@@ -15,19 +15,20 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import * as React from "react";
-import {RootState} from "../../store";
+import {RootState} from "../../../store";
 import {connect, ConnectedProps} from "react-redux";
 import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
 import {useEffect, useState} from "react";
 import FormControl from "@mui/material/FormControl";
 import {Divider, FormHelperText, InputLabel} from "@mui/material";
-import DynamicSelect, {DynamicSelectProps} from "../utils/DynamicSelect";
-import {loadDatasets} from "../../actions/dataset";
-import {Option} from "../../reducers/lookup";
+import DynamicSelect, {DynamicSelectProps} from "../../utils/DynamicSelect";
+import {loadDatasets} from "../../../actions/dataset";
+import {Option} from "../../../reducers/lookup";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
-import {resetSubmissionState} from "../../actions/submission";
-import {loadLookupValues} from "../../actions/lookup";
-import {fillInputState, findOptionId, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
+import {resetSubmissionState} from "../../../actions/submission";
+import {loadLookupValues} from "../../../actions/lookup";
+import {fillInputState, findOptionId, parseStringToArray, emptyDataset} from "../../../helpers/InputHelpers";
+import {companyValid, containsSpecialChars, getCompanyHelperText} from "../../../helpers/UserManagement";
 
 
 
@@ -80,6 +81,12 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         return nameTries > 0
     }
 
+    const nameHelperText = (name: string) => {
+        if (name == "") return "Bitte geben Sie einen Namen für Ihr Gewächshaus ein"
+        else if(containsSpecialChars(name)) return "Es sind keine Sonderzeichen für den Gewächshausnamen erlaubt"
+        else return "Es ist ein Fehler aufgetreten. Bitte wählen Sie einen anderen Namen für das Gewächshaus"
+    }
+
     const hasSelectTried = () => {
         return selectTries > 0
     }
@@ -117,7 +124,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     }
 
     const renderEmptyInputPages = () => {
-        if(inputFieldData.companyInformation.gewaechshausName != null && inputFieldData.companyInformation.gewaechshausName != "") {
+        if(inputFieldData.companyInformation.gewaechshausName != null && inputFieldData.companyInformation.gewaechshausName != "" && !containsSpecialChars(inputFieldData.companyInformation.gewaechshausName)) {
             resetSubmissionState()
 
             if(!isLoading) {
@@ -188,7 +195,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
             setNameTries(0)
         },
         error: hasNameTried(),
-        helperText: hasNameTried() ? "Bitte geben Sie einen Namen für Ihr Gewächshaus ein": undefined,
+        helperText: hasNameTried() ? nameHelperText(inputFieldData.companyInformation.gewaechshausName ?? ""): undefined,
         type:"text",
         placeholder:"Name",
     }

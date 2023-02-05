@@ -81,7 +81,7 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
         <>
             <Dialog open={openDialog}>
                 <>
-                    <DialogTitle>Ihr persöhnlicher Fußabdruck wird erstellt</DialogTitle>
+                    <DialogTitle>Ihr persöhnlicher Footprint wird erstellt</DialogTitle>
                      <DialogContent sx={{display: "flex"}}>
                          <Grid container item xs={12} alignItems={"center"} justifyContent={"center"}>
                             <CircularProgress/>

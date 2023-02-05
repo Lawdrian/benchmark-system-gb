@@ -3,17 +3,22 @@ import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../store";
 import {loadH2OFootprint} from "../../../actions/h2ofootprint";
 import {GreenhouseMenu} from "../../utils/GreenhouseMenu";
-import FootprintPlotObject from "../../utils/footprintPages/FootprintPlot";
+import FootprintPlotObject from "../../utils/visualization/FootprintPlot";
 import {
     CircularProgress, Dialog,
     DialogContent,
     DialogTitle, Grid, Tab, Tabs
 } from "@mui/material";
 import {indexedTabProps, TabPanel} from "../../../helpers/TabPanel";
-import BenchmarkPlotObject from "../../utils/footprintPages/BenchmarkPlot";
-import {SectionDivider} from "../../utils/inputPage/layout";
-import {FootprintTable} from "../../utils/footprintPages/FootprintTable";
-import {createFootprintPageHeader, createFootprintProductionTypeHeader, NormalizedType} from "./PageCO2Footprint";
+import BenchmarkPlotObject from "../../utils/visualization/BenchmarkPlot";
+import {SectionDivider} from "../../utils/input/layout";
+import {FootprintTable} from "../../utils/visualization/FootprintTable";
+import {
+    createFootprintPageHeader,
+    createFootprintProductionTypeHeader, handleNormalizedTypeChange,
+    NormalizedType,
+    selectNormalizedPlotData
+} from "../../utils/visualization/FootprintHeader";
 
 
 
@@ -89,22 +94,6 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
 
 
-    const selectNormalizedPlotData = (kgData:any,m2Data:any, normalizedType:NormalizedType) => {
-        if(normalizedType == NormalizedType.kg) return kgData
-        else if(normalizedType == NormalizedType.m2) return m2Data
-        else console.log("ERROR: Could not select NormalizedPlotData")
-
-    }
-
-    const handleNormalizedTypeChange = (
-        event: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        if(event.target.value == "kg") setNormalizedType(NormalizedType.kg)
-        else if(event.target.value == "m2") setNormalizedType(NormalizedType.m2)
-        else console.log("Error: Toggle didn't work")
-    }
-
-
     if(openDialog) {
         return(
             <Dialog open={openDialog}>
@@ -175,7 +164,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
                         Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
                     </p>
-                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
                         title={("H2O-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
@@ -189,7 +178,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Hier können Sie die spezifischen Fußabdrücke der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
                         Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
                     </p>
-                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                      <FootprintPlotObject
                         title={("H2O-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
                         yLabel={'H2O-Äquivalente [Liter]'}
@@ -202,7 +191,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
                         Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
                     </p>
-                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
                         title={("H2O-Footprint direkter Wasserverbrauch für " + greenhouses[curGreenHouseIndex])}
@@ -216,8 +205,8 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                         Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
                     </p>
                     <>
-                        {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event) )}
-                        {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
+                        {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
+                        {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? benchmarkkg: benchmarkm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
                             title={"H2O-Benchmark für " + greenhouses[curGreenHouseIndex]}
                             yLabel={'H2O-Äquivalente [Liter]'}

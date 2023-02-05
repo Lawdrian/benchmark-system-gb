@@ -6,8 +6,10 @@ from ..models import OptionGroups, Options
 
 
 class GetOptionGroupValues(APIView):
-    """API endpoint for retrieving the dropdown values that a user can select
-    when entering his data for all categorical measurement variables.
+    """API endpoint for retrieving the options for every option group.
+
+    The options are used in the dropdown menus. A user can select
+    these, when entering his data for all categorical measurement variables.
     For example: "Energietraeger": Erdgas | Heizoel | ...
     """
 
@@ -16,16 +18,26 @@ class GetOptionGroupValues(APIView):
     ]
 
     def get(self, request, format=None):
-        """Get request that returns the dropdown values for all categorical
+        """Returns the dropdown values for all categorical
         measurement variables.
 
         Args:
-            request : No query parameters needed
+            request : no query parameters needed
 
         Returns:
-            json: dropdown values for all categorical measurement variables
+            json: {
+                <OptionGroup>: [
+                    {
+                        id: <id>,
+                        value: <value>
+                    },
+                    ...
+                ],
+                ...
+            }
         """
-        data = dict()
+
+        response_data = dict()
         option_groups = OptionGroups.objects.all()
         if len(option_groups) > 0:
             for option_group in option_groups:
@@ -38,9 +50,10 @@ class GetOptionGroupValues(APIView):
                     option["id"] = option_group_value.id
                     option["values"] = option_group_value.option_value
                     options.append(option)
-                data[option_group.option_group_name.replace(" ", "")] = options
+                response_data[option_group.option_group_name.replace(" ", "")] = options
         else:
+            print("GetOptionGroupValues: couldn't retrieve options")
             return Response({"Bad Request": "No data in database"},
                             status=status.HTTP_204_NO_CONTENT)
 
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(response_data, status=status.HTTP_200_OK)

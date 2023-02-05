@@ -6,8 +6,10 @@ from backend.models import GreenhouseData, Greenhouses, Calculations, Results
 
 
 class GetProfileSummary(APIView):
-    """API endpoint for retrieving a summary of all datasets a user has including label, co2-footprint, h2o-footprint.
-        This endpoint is used by the profile page to display all datasets a user created.
+    """API endpoint for retrieving a summary of all data sets a user owns.
+
+     This includes label, co2 footprint, h2o footprint. This endpoint is used by the profile page
+     to display all data sets a user has created.
     """
 
     permission_classes = [
@@ -15,10 +17,10 @@ class GetProfileSummary(APIView):
     ]
 
     def get(self, request, format=None):
-        """Get request that returns a summary of all datasets of a user in the correct datastruct.
+        """Returns a summary of all data sets of a user in the correct json format.
 
         Args:
-            request : No query parameters needed
+            request : user object
 
         Returns:
             json:
@@ -29,14 +31,14 @@ class GetProfileSummary(APIView):
                             {
                                 datasetId: <dataset-id>
                                 label: <label>,
-                                co2Footprint: <co2-footprint>,
-                                h2oFootrpint: <h2o-footprint>
+                                co2Footprint: <co2 footprint>,
+                                h2oFootrpint: <h2o footprint>
                             },
                             {
-                                datasetId: <dataset-id>
+                                datasetId: <dataset-id>,
                                 label: <label>,
-                                co2Footprint: <co2_footprint>,
-                                h2oFootrpint: <h2o-footprint>
+                                co2Footprint: <co2 footprint>,
+                                h2oFootrpint: <h2o footprint>
                             }
                         ]
                     }
@@ -44,20 +46,21 @@ class GetProfileSummary(APIView):
         """
         user_id = self.request.user.id
         if user_id is None:
+            print("GetProfileSummary: invalid user")
             return Response({'Bad Request': 'No valid user!'},
                             status=status.HTTP_400_BAD_REQUEST)
         co2_footprint_id = Calculations.objects.get(calculation_name="co2_footprint")
         h2o_footprint_id = Calculations.objects.get(calculation_name="h2o_footprint")
 
-        # Retrieve all greenhouses of a specific user
+        # retrieve all greenhouses of a specific user
         greenhouses = Greenhouses.objects.filter(user_id=user_id)
         response_data = []
         if greenhouses.exists():
 
-            # Iterate through every greenhouse, retrieve all the data for it and save it in the correct json structure
+            # iterate through every greenhouse, retrieve all the metadata for it
+            # and save it in the correct json structure
             for greenhouse in greenhouses:
 
-                # Retrieve all greenhouse_data for one greenhouse
                 greenhouse_datasets = GreenhouseData.objects.filter(
                     greenhouse_id=greenhouse.id)
                 if greenhouse_datasets.exists():
@@ -69,15 +72,19 @@ class GetProfileSummary(APIView):
                         dataset_dict["greenhouseId"] = greenhouse.id
                         dataset_dict["datasetId"] = dataset.id
                         dataset_dict["label"] = dataset.date
-                        dataset_dict["co2Footprint"] = round(Results.objects.get(calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
-                        dataset_dict["h2oFootprint"] = round(Results.objects.get(calculation_id=h2o_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
+                        dataset_dict["co2Footprint"] = round(Results.objects.get(
+                            calculation_id=co2_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
+                        dataset_dict["h2oFootprint"] = round(Results.objects.get(
+                            calculation_id=h2o_footprint_id, greenhouse_data_id=dataset.id).result_value, 0)
                         greenhouse_data_list.append(dataset_dict)
                     greenhouse_data["data"] = greenhouse_data_list
                 else:
-                    return Response({'No Content': 'No dataset exists for a greenhouse of this user'},
+                    print("GetProfileSummary: no data set for greenhouse")
+                    return Response({'No Content': 'No data set exists for a greenhouse of this user'},
                                     status=status.HTTP_204_NO_CONTENT)
                 response_data.append(greenhouse_data)
             return Response(response_data, status=status.HTTP_200_OK)
         else:
+            print("GetProfileSummary: no greenhouse for user")
             return Response({'No Content': 'No greenhouse exists for this user'},
                             status=status.HTTP_204_NO_CONTENT)
