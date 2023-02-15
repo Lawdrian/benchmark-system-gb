@@ -12,54 +12,61 @@ import {
     DATASET_RESET,
     GreenhouseData,
     SUBMISSION_ERROR,
-    SUBMISSION_INPROGRESS,
+    SUBMISSION_LOADING,
     SUBMISSION_RESET,
     SUBMISSION_SUCCESS
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
 import {tokenConfig} from "./auth";
-import {InputMode} from "../components/pages/PageInputData";
+import {InputMode} from "../components/pages/input/PageInputData";
 
 /**
  * Submit a dataset of type {@link GreenhouseData} to the server
  *
  * @param data - The data to submit
- * @param callback - Callback, that gets executed when receiving the http-response
+ * @param finalCB - Callback, that gets executed after the request is finished
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the submission request is in progress
+ * @param successCB - Function that should be executed, when the submission request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the submission request
+ * @param mode - Parameter of type {@link InputMode}, decides if a new dataset should be created, or an existing one
+ * updated
+ * @param datasetId - This parameter is necessary, if the mode is set to update a dataset. This is the id of the to be
+ * updated dataset
  */
 export const submitGreenhouseData = (
     data: GreenhouseData,
-    callback: Function = () => { /* NOOP */ },
+    finalCB: Function = () => { /* NOOP */ },
     withAuth: boolean = true,
-    inProgressCB: Function = () => { /* NOOP */ },
+    loadingCB: Function = () => { /* NOOP */ },
     successCB: Function = () => { /* NOOP */ },
     errorCB: Function = () => { /* NOOP */ },
     mode: InputMode,
     datasetId?: number
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
-        dispatch({type: SUBMISSION_INPROGRESS})
-        inProgressCB();
+        dispatch({type: SUBMISSION_LOADING})
+        loadingCB();
 
-        // Create the request headers
+        // create the request headers
         let config = withAuth ? tokenConfig(getState) : {
             headers: {
                 'Content-Type': 'application/json',
             },
         };
         let url = "/backend/create-greenhouse-data"
-        // If a dataset should be updated instead of creating a new one, then the id of the dataset
+        // if a dataset should be updated instead of creating a new one, then the id of the dataset
         // needs to be sent in the header and a different endpoint needs to be called.
         if (mode == InputMode.update && datasetId) {
             config.headers = {...config.headers, datasetId: datasetId}
             url = "/backend/update-greenhouse-data"
         }
-        // Create the request body
+        // create the request body
         const body = JSON.stringify(data);
 
-        // Send the post request to the server
+        // send the post request to the server
         axios.post(url, body, config)
             .then((response) => {
-                //console.log("CO2 Response", response)
                 dispatch({
                     type: SUBMISSION_SUCCESS
                 })
@@ -68,13 +75,13 @@ export const submitGreenhouseData = (
                     type: DATASET_RESET
                 })
             })
-            .catch((error) => {// TODO: Proper Error handling
+            .catch((error) => {
                 dispatch({
                     type: SUBMISSION_ERROR
                 })
                 errorCB(error.response.data["Message"])
             })
-            .finally(() => callback())
+            .finally(() => finalCB())
     }
 
 export const resetSubmissionState = () => (dispatch: AppDispatch) =>{

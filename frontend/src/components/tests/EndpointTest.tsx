@@ -9,7 +9,6 @@ import Paper from '@mui/material/Paper';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {submitGreenhouseData} from "../../actions/submission";
-import {loadWaterBenchmark} from "../../actions/waterbenchmark";
 import {loadWeatherData} from "../../actions/weather";
 import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
@@ -19,15 +18,16 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
 import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
-import {InputMode} from "../pages/PageInputData";
+import {InputMode} from "../pages/input/PageInputData";
 import {loadH2OFootprint} from "../../actions/h2ofootprint";
+import {loadDatasets} from "../../actions/dataset";
+import {loadProfile} from "../../actions/profile";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
     co2: state.co2,
     water: state.h2o,
-    benchmark: state.benchmark,
     weather: state.weather,
     submission: state.submission,
     lookup: state.lookup
@@ -35,13 +35,14 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
     loadCO2Footprint,
-    loadWaterBenchmark,
     loadH2OFootprint,
     loadWeatherData,
     submitGreenhouseData,
     resetData,
     loadLookupValues,
-    loadUnitValues
+    loadUnitValues,
+    loadDatasets,
+    loadProfile
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -64,11 +65,18 @@ type TestResults = {
     units: AuthEPTest
     lookup: AuthEPTest
     co2: AuthEPTest
+    h2o: AuthEPTest
+    profile: AuthEPTest
+    dataset: AuthEPTest
     submission: AuthEPTest
 }
 
 const initialTestResults: TestResults = {
     co2: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    h2o: {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
@@ -84,6 +92,14 @@ const initialTestResults: TestResults = {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
+    profile: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    dataset: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
 }
 
 const resetTests = (props: EndpointTestProps, setTestResults: Function) => {
@@ -91,10 +107,15 @@ const resetTests = (props: EndpointTestProps, setTestResults: Function) => {
     setTestResults(JSON.parse(JSON.stringify(initialTestResults)));
 }
 
+/**
+ * This function performs an endpoint test, calling all endpoints specified in this function with a predefined data set.
+ * @param props - Properties
+ * @param setTestResults - Function to set the test results after the response from the endpoints came back
+ */
 const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     resetTests(props, setTestResults)
 
-    // Deep copy so initalTestResults do not get modified
+    // deep copy so initalTestResults do not get modified
     const testResults: TestResults = JSON.parse(JSON.stringify(initialTestResults))
 
     let weatherInput = {
@@ -207,7 +228,7 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         BelichtungsstromEinheit: "[(160)]"
     }
 
-    // Echte Betriebsdaten: RothenbucherA
+    // real company data: RothenbucherA
     let testData2: GreenhouseData = {
          "10-30Gramm(Snack)": "[(33)]",
         "30-100Gramm(Cocktail)": "[(35)]",
@@ -310,15 +331,13 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         ZusaetzlichesHeizsystemTyp: "[(0,)]",
         Zusatzbelichtung: "[(64)]",
         date: "2021-01-01",
-        greenhouse_name: "Haus"
+        greenhouse_name: "Haus2"
     }
-
 
     const testLoading = (test: EPTest) => { return {...test,  loading: true} }
     const testSuccess = () => { return {successful: true, loading: false} }
     const testFailed = () => { return {successful: false, loading: false} }
 
-    //props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
     props.submitGreenhouseData(testData2,
         () => {
             props.loadCO2Footprint(
@@ -330,15 +349,57 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
                 () => {
                     testResults.co2.withAuth = testSuccess()
                     setTestResults(testResults)
-                    console.warn("Co2 with auth successful:", testResults)
                 },
                 () => {
                     testResults.co2.withAuth = testFailed()
                     setTestResults(testResults)
                 }
             );
-            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            props.loadH2OFootprint(
+                true,
+                () => {
+                    testResults.h2o.withAuth = testLoading(testResults.h2o.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadDatasets(
+                true,
+                () => {
+                    testResults.dataset.withAuth = testLoading(testResults.dataset.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadProfile(
+                true,
+                () => {
+                    testResults.profile.withAuth = testLoading(testResults.profile.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
         },
         true,
         () => {
@@ -373,8 +434,51 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
                     setTestResults(testResults)
                 }
             );
-            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            props.loadH2OFootprint(
+                false,
+                () => {
+                    testResults.h2o.withoutAuth = testLoading(testResults.h2o.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadDatasets(
+                false,
+                () => {
+                    testResults.dataset.withoutAuth = testLoading(testResults.dataset.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadProfile(
+                false,
+                () => {
+                    testResults.profile.withoutAuth = testLoading(testResults.profile.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
         },
         false,
         () => {
@@ -457,55 +561,73 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     );
 }
 
+/**
+ * This functional component renders a page, where an endpoint test can be started.
+ *
+ * It shows the result of the endpoint test.
+ * @param props Properties
+ */
 const EndpointTest = (props: EndpointTestProps) => {
-    // Deep copy so initalTestResults do not get modified
+    // deep copy so initalTestResults do not get modified
     const [testResults, setTestResults] = useState<TestResults>(JSON.parse(JSON.stringify(initialTestResults)));
     const rows = [
         {
-            name: "Load CO2-Footprint Data (Authenticated)",
-            loading: testResults.co2.withAuth.loading,
-            successful: testResults.co2.withAuth.successful
-        }, {
-            name: "Load CO2-Footprint Data (Not Authenticated)",
-            loading: testResults.co2.withoutAuth.loading,
-            successful: testResults.co2.withoutAuth.successful
-        },/* {
-            name: "Water Footprint",
-            loading: dataLoading(props.water),
-            successful: dataAvailable(props.water)
-        }, {
-            name: "Water Benchmark",
-            loading: dataLoading(props.benchmark),
-            successful: dataAvailable(props.benchmark)
-        },*/ {
             name: "Save Greenhouse Data (Authenticated)",
             loading: testResults.submission.withAuth.loading,
             successful: testResults.submission.withAuth.successful
         }, {
-            name: "Save Greenhouse Data (Not Authenticated)",
-            loading: testResults.submission.withoutAuth.loading,
-            successful: testResults.submission.withoutAuth.successful
+            name: "Load CO2-Footprint Data (Authenticated)",
+            loading: testResults.co2.withAuth.loading,
+            successful: testResults.co2.withAuth.successful
+        }, {
+            name: "Load H2O-Footprint Data (Authenticated)",
+            loading: testResults.h2o.withAuth.loading,
+            successful: testResults.h2o.withAuth.successful,
+        }, {
+            name: "Load User's Data Sets (Authenticated)",
+            loading: testResults.dataset.withAuth.loading,
+            successful: testResults.dataset.withAuth.successful,
+        }, {
+            name: "Load User's Profile Data (Authenticated)",
+            loading: testResults.profile.withAuth.loading,
+            successful: testResults.profile.withAuth.successful,
         }, {
             name: "Load Lookup Values (Authenticated)",
             loading: testResults.lookup.withAuth.loading,
             successful: testResults.lookup.withAuth.successful
         }, {
-            name: "Load Lookup Values (Not Authenticated)",
-            loading: testResults.lookup.withoutAuth.loading,
-            successful: testResults.lookup.withoutAuth.successful
-        }, {
             name: "Load Unit Values (Authenticated)",
             loading: testResults.units.withAuth.loading,
             successful: testResults.units.withAuth.successful
         }, {
+            name: "Save Greenhouse Data (Not Authenticated)",
+            loading: testResults.submission.withoutAuth.loading,
+            successful: testResults.submission.withoutAuth.successful
+        }, {
+            name: "Load CO2-Footprint Data (Not Authenticated)",
+            loading: testResults.co2.withoutAuth.loading,
+            successful: testResults.co2.withoutAuth.successful
+        }, {
+            name: "Load H2O-Footprint Data (Not Authenticated)",
+            loading: testResults.h2o.withoutAuth.loading,
+            successful: testResults.h2o.withoutAuth.successful,
+        }, {
+            name: "Load User's Data Sets (Not Authenticated)",
+            loading: testResults.dataset.withoutAuth.loading,
+            successful: testResults.dataset.withoutAuth.successful,
+        }, {
+            name: "Load User's Profile Data (Not Authenticated)",
+            loading: testResults.profile.withoutAuth.loading,
+            successful: testResults.profile.withoutAuth.successful,
+        }, {
+            name: "Load Lookup Values (Not Authenticated)",
+            loading: testResults.lookup.withoutAuth.loading,
+            successful: testResults.lookup.withoutAuth.successful
+        }, {
             name: "Load Unit Values (Not Authenticated)",
             loading: testResults.units.withoutAuth.loading,
             successful: testResults.units.withoutAuth.successful
-        }/*,{
-            name: "Load Weather Data",
-            loading: props.weather.isLoading,
-            successful: !!props.weather.weatherData
-        },*/
+        }
     ]
 
     return (

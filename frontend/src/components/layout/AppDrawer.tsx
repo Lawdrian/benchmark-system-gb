@@ -9,7 +9,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import StyledDrawer from "../styled/StyledDrawer";
 import { DrawerListItem, SharedDrawerProps } from "../../types/SharedLayoutTypes";
 import { Section } from "../../types/PageConfigTypes";
-import Logo from "../../images/logo_small.png"
+import Logo from "../../assets/app_drawer_logo.png"
 
 type DrawerProps = SharedDrawerProps & {
     listItems: DrawerListItem[]
@@ -32,7 +32,15 @@ const getSectionDivider = (): ReactNode => {
     return (<Divider sx={{ my: 1 }} />);
 }
 
-
+/**
+ * This component renders the app drawer seen on the left side of the website. It contains all buttons that lead to
+ * the different pages of the web application.
+ *
+ * @param open - Boolean if the app drawer should be visible or not
+ * @param toggleDrawer - Function that will be called, when the icon button at the top of the drawer is clicked
+ * @param drawerWidth - Determines the width of the drawer
+ * @param listItems - List, that contains the Buttons that lead to different pages of the web application
+ */
 const AppDrawer = (
     {
         open,
@@ -52,14 +60,15 @@ const AppDrawer = (
             <Toolbar
                 sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'start',
                     justifyContent: 'flex-end',
                     px: [1],
                     ml: 4,
-                    mb: 1
+                    mb: 1,
+                    mt: 1
                 }}
             >
-                <img src={Logo}></img>
+                <img src={Logo} alt="Website logo"/>
                 <IconButton onClick={toggleDrawer}>
                     <ChevronLeftIcon />
                 </IconButton>

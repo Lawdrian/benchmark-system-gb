@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
+from django.db import IntegrityError
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from knox.models import AuthToken
 from rest_framework import permissions, generics, status
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.hashers import make_password
@@ -15,15 +17,34 @@ from .acc_activation_token import account_activation_token
 from .serializers import UserSerializer, RegisterSerializer, LoginSerializer, ForgotPWSerializer, ResetPWSerializer
 
 
+class UserAPI(generics.RetrieveAPIView):
+    """This API endpoint returns the current user if logged in."""
+
+    permission_classes = [
+        permissions.IsAuthenticated,
+    ]
+    serializer_class = UserSerializer
+
+    def get_object(self):
+        return self.request.user
+
+
 class RegisterAPI(generics.GenericAPIView):
-    """This API endpoint creates a new user and stores it in the database.
-    """
+    """This API endpoint creates a new user and stores it in the database."""
+
     serializer_class = RegisterSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
+        try:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            user = serializer.save()
+        except ValidationError:
+            return Response({'Error': 'Invalid credentials', 'Message': 'Illegal characters are used.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            return Response({'Error': 'Email in use', 'Message': 'The provided email is already used by an account.'},
+                     status=status.HTTP_400_BAD_REQUEST)
 
         # to get the domain of the current site
         current_site = get_current_site(request)
@@ -54,17 +75,18 @@ class RegisterAPI(generics.GenericAPIView):
         #    <head>
         #       <img src="cid:logo.png" alt="Benchmark Logo">
         #    </head>
+        try:
+            email.send(fail_silently=False)
+        except Exception as err:
+            print(err)
+            serializer.delete(serializer.validated_data)
+            return Response({'Error': 'Internal error', 'Message': 'Email service not working.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Message: Account has been successfully created.'}, status=status.HTTP_201_CREATED)
 
-        email.send(fail_silently=False)
-
-        return Response({
-                "user": UserSerializer(user,
-                                       context=self.get_serializer_context()).data,
-                "token": AuthToken.objects.create(user)[1]
-        })
 
 class ActivateAPI(APIView):
-    """This API endpoint sends an account verification link to the users email.
+    """This API endpoint activates a user account if the correct url parameters are set in the request.
     """
 
     def patch(self, request):
@@ -73,7 +95,7 @@ class ActivateAPI(APIView):
         token = request.GET.get('token', None)
         User = get_user_model()
         try:
-            # Decode the encoded bytestring to the user id
+            # decode the encoded bytestring to the user id
             uid = urlsafe_base64_decode(uidb64)
             uid = uid.decode("utf-8")
             user = User.objects.get(id=uid)
@@ -83,14 +105,15 @@ class ActivateAPI(APIView):
         if user is not None and account_activation_token.check_token(user, token):
             user.is_active = True
             user.save()
-            return Response('Thank you for your email confirmation. Now you can login your account.', status=status.HTTP_200_OK)
+            return Response('Thank you for your email confirmation. Now you can login your account.',
+                            status=status.HTTP_200_OK)
         else:
             return Response({'Bad Request': 'Activation link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ForgotPWAPI(generics.GenericAPIView):
-    """This API endpoint sends a password reset link to a users email.
-    """
+    """This API endpoint sends a password reset link to a user's email."""
+
     serializer_class = ForgotPWSerializer
 
     def post(self, request):
@@ -124,8 +147,8 @@ class ForgotPWAPI(generics.GenericAPIView):
 
 
 class ResetPWAPI(generics.GenericAPIView):
-    """This API endpoint changes a users password.
-    """
+    """This API endpoint changes a user's password."""
+
     serializer_class = ResetPWSerializer
 
     def patch(self, request):
@@ -137,7 +160,7 @@ class ResetPWAPI(generics.GenericAPIView):
         token = request.GET.get('token', None)
         User = get_user_model()
         try:
-            # Decode the encoded bytestring to the user id
+            # decode the encoded bytestring to the user id
             uid = urlsafe_base64_decode(uidb64)
             uid = uid.decode("utf-8")
             user = User.objects.get(id=uid)
@@ -153,8 +176,8 @@ class ResetPWAPI(generics.GenericAPIView):
 
 
 class LoginAPI(generics.GenericAPIView):
-    """This API endpoint checks if the user credentials are correct and returns a user object and token if so.
-    """
+    """This API endpoint checks if the user credentials are correct and returns a user object and token if so."""
+
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
@@ -170,6 +193,8 @@ class LoginAPI(generics.GenericAPIView):
 
 
 class DeleteAPI(generics.GenericAPIView):
+    """This API endpoint deletes the user sent in the request."""
+
     permission_classes = [
         permissions.IsAuthenticated,
     ]
@@ -181,14 +206,3 @@ class DeleteAPI(generics.GenericAPIView):
             return Response('Your account has been successfully deleted!', status=status.HTTP_200_OK)
         else:
             return Response({'Bad Request': 'User not found!'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserAPI(generics.RetrieveAPIView):
-    """This API endpoint returns the current user if logged in."""
-    permission_classes = [
-        permissions.IsAuthenticated,
-    ]
-    serializer_class = UserSerializer
-
-    def get_object(self):
-        return self.request.user

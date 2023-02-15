@@ -15,7 +15,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import PageC02Footprint from "../components/pages/visualisation/PageCO2Footprint";
+import PageC02Footprint from "../components/pages/visualization/PageCO2Footprint";
 import PageProfile from "../components/pages/PageProfile";
 import PageLogin from "../components/pages/user/PageLogin";
 import PageRegister from "../components/pages/user/PageRegister";
@@ -28,10 +28,13 @@ import PageHome from "../components/pages/PageHome";
 import PageUserActivation from "../components/pages/user/PageUserActivation";
 import PageForgotPW from "../components/pages/user/PageForgotPW";
 import PageResetPW from "../components/pages/user/PageResetPW";
-import PagePreInputData from "../components/pages/PagePreInputData";
+import PagePreInputData from "../components/pages/input/PagePreInputData";
 import PageDataInformation from "../components/pages/PageDataInformation";
-import PageH2OFootprint from "../components/pages/visualisation/PageH2OFootprint";
+import PageH2OFootprint from "../components/pages/visualization/PageH2OFootprint";
 
+/**
+ * Url slugs used by the web application.
+ */
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
     registerUrl: "/register",
@@ -40,12 +43,14 @@ export const pageConfig: PageConfig = {
     resetPWUrl: "resetpw",
     dataInfoUrl: "/information",
     homeUrl: "/",
-    proceedUrl: "", // TODO: Still necessary?!
 }
 
+/**
+ * The pages used by the web application are generated here.
+ */
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
-        .withHeaderTitle("Projekt PROSIBOR - Benchmark System für Gewächshausdaten")
+        .withHeaderTitle("Process simulation based on plant response - Benchmark Tool für den Tomatenanbau im Gewächshaus")
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")
@@ -57,13 +62,12 @@ const pageDefinitions: Array<Page> = [
         .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PageC02Footprint/>, "co2-footprint")
-        .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Fußabdrucks")
+        .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Verbrauchs")
         .includeInDrawer(<Co2Icon/>, "CO2 Footprint", Section.Diagrams)
         .finalize(),
     generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")
         .includeInDrawer(<AccountCircle/>, "Profil", Section.Profile)
-        .includeInAccountMenu("Profil")
         .finalize(),
     generatePage(<PageAbout/>, "about")
         .withHeaderTitle("Über uns")

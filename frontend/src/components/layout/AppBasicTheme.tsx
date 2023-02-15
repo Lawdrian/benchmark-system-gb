@@ -8,6 +8,11 @@ type BasicThemeProps = {
     children?: ReactNode
 }
 
+/**
+ * This component creates the theme for the web application.
+ *
+ * @param children - The component, that the theme should be applied on
+ */
 const AppBasicTheme = ({ children }: BasicThemeProps) => {
     return (
         <ThemeProvider theme={createTheme({palette: {primary: {main: '#7ab800', contrastText: '#f3f3f3'}}})}>

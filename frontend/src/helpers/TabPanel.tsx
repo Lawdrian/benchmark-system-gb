@@ -8,6 +8,11 @@ export interface TabPanelProps {
   value: number;
 }
 
+/**
+ * This functional component creates a tab panel to switch between multiple pages.
+ *
+ * @param props - Properties used for the tab panel
+ */
 export function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
 

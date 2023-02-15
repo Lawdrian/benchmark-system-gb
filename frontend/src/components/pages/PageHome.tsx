@@ -1,8 +1,8 @@
 import React from "react";
 import {Box, Container, Grid, Typography} from "@mui/material";
 
-import Overview_Project from '../../images/overview_project.png'
-import Overview_Plot from '../../images/overview_plot2.png'
+import Overview_Project from '../../assets/overview_project.png'
+import Overview_Plot from '../../assets/overview_plot2.png'
 import {RootState} from "../../store";
 import {loadDatasets} from "../../actions/dataset";
 import {connect, ConnectedProps} from "react-redux";
@@ -25,17 +25,18 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 
 /**
- * #####################################################################
- * This is the page component for rendering the pre data inputpage. The
- * user gets to this page by clicking on "Dateneingabe" on the left
- * drawer. This page lets the user select one of his greenhouses, or
- * create a new one. The user will then be bought to the input page:
- * PageInputData.tsx
- *######################################################################
+ * This is the page component for rendering the pre data inputpage.
+ *
+ * The user gets to this page by clicking on "Dateneingabe" on the left drawer.
+ * This page lets the user select one of his greenhouses, or create a new one.
+ * The user will then be bought to the input page: PageInputData.tsx
+ *
+ * @param loadDatasets - Function that requests the datasets from the back end (preload data for pre input page)
+ * @param dataset - Redux dataset state
  */
 const PageHome = ({loadDatasets, dataset}: PageHomeProps) => {
 
-    // Preload datasets for profile page and pre input page
+    // preload datasets for profile page and pre input page
     React.useEffect(() => {
         if (!dataset.successful) {
             loadDatasets()

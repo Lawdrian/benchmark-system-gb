@@ -14,7 +14,7 @@ import {
 /**
  * @type H2OFootprintState
  *
- * Contains the necessary data to visualize the h2o-footprint
+ * Contains the necessary data to visualize the h2o-footprint.
  *
  * @property {boolean} [isLoading] - True, while the data is loaded from the server
  * @property {GreenhouseFootprint[]} - The data to create the plot
@@ -32,7 +32,7 @@ export type H2OFootprintState = {
     benchmarkm2: GreenhouseBenchmark[]
 }
 
-// Initialize the water-footprint state
+// initialize the water-footprint state
 const initialState: H2OFootprintState = {
     isLoading: false,
     total: [],
@@ -51,7 +51,6 @@ const initialState: H2OFootprintState = {
  *
  * @param state - The current water-footprint state
  * @param action - The action to dispatch
- *
  * @returns The updated weather state
  */
 export default function (state: H2OFootprintState = initialState, action: any): H2OFootprintState {

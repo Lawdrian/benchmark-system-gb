@@ -2,7 +2,7 @@
  * #############################################################################
  * lookup.ts: Redux action generators to handle lookup values
  *
- *     This file provides the utility to load the avaliable lookup values from
+ *     This file provides the utility to load the available lookup values from
  *     the server into the redux store.
  *
  * For further information on action generators see:
@@ -20,6 +20,13 @@ import {tokenConfig} from "./auth";
 
 /**
  * Load the currently available lookup values.
+ *
+ * This function requests the lookup values used for filling the selection fields on the input page.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the lookup value request is in progress
+ * @param successCB - Function that should be executed, when the lookup value request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the lookup value request
  */
 export const loadLookupValues = (
     withAuth: boolean = true,
@@ -27,11 +34,11 @@ export const loadLookupValues = (
     successCB: Function = () => { /* NOOP */ },
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
-    // User Loading
+
     dispatch({type: LOOKUP_LOADING});
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-lookup-values', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Lookup Response", response)
@@ -51,6 +58,14 @@ export const loadLookupValues = (
 
 /**
  * Load the currently available unit values.
+ *
+ * This function requests the unit values used for the input fields from the back end.
+ *
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the lookup unit request is in progress
+ * @param successCB - Function that should be executed, when the lookup unit request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the lookup unit request
  */
 export const loadUnitValues = (
     withAuth: boolean = true,
@@ -59,11 +74,10 @@ export const loadUnitValues = (
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    // User Loading
     dispatch({type: UNITS_LOADING});
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-unit-values', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Unit Response", response)

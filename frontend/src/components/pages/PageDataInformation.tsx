@@ -1,23 +1,17 @@
 import React from "react";
 import {Box, Container, Grid, Typography} from "@mui/material";
 
-import Table from '../../images/table.png'
-import Logo from '../../images/logo_small.png'
-
-type DataInformationProps = {
-}
+import Table from '../../assets/table.png'
+import Logo from '../../assets/data_information_logo.png'
 
 /**
- * #####################################################################
  * This is the page component for rendering the data information page.
+ *
  * The user gets to this page by clicking on the "Datenschutz" link during
  * registration. This page shows the user what kind of data gets saved
  * and for what purpose. It also tells him about his rights.
- *######################################################################
  */
-const PageDataInformation = (props: DataInformationProps) => {
-
-
+const PageDataInformation = () => {
     return (
         <Container component="main" maxWidth="md">
             <Box

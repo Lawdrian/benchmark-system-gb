@@ -3,12 +3,11 @@ import {BrowserRouter as Router, Route, Routes} from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import PageHelper from "./utils/PageHelper";
 import {Page, Section} from "../types/PageConfigTypes";
-import {DrawerListItem} from "../types/SharedLayoutTypes";
+import {DrawerListItem, LayoutConfig} from "../types/SharedLayoutTypes";
 import AppBasicTheme from "./layout/AppBasicTheme";
 import {connect, ConnectedProps, Provider} from "react-redux";
 import {AppStore} from "../store";
 import {loadUser} from "../actions/auth";
-import {LayoutConfig} from "../types/LayoutConfigTypes";
 
 const connector = connect(null, {loadUser});
 
@@ -21,6 +20,14 @@ type AppProps = ReduxProps & {
     loginPageUrl: string
 }
 
+/**
+ * This is the main component of the web application. It renders all pages under different routes.
+ * @param store - Redux store
+ * @param layoutConfig - Config for the layout
+ * @param pageDefinitions - Pages that should be rendered with a specific route
+ * @param loginPageUrl - Slug of the login page
+ * @param loadUser - Function that loads the user from the back end
+ */
 const App = ({store, layoutConfig, pageDefinitions, loginPageUrl, loadUser}: AppProps) => {
     loadUser()
 
@@ -50,7 +57,10 @@ const App = ({store, layoutConfig, pageDefinitions, loginPageUrl, loadUser}: App
     );
 }
 
-
+/**
+ * This function generates the pages that should not be included in the drawer menu and don't have the layout.
+ * @param pageDef - List of pages
+ */
 const generateIndependentPageRoutes = (pageDef: Page[]): ReactNode => {
     return (
         pageDef
@@ -71,6 +81,11 @@ const generateIndependentPageRoutes = (pageDef: Page[]): ReactNode => {
     );
 };
 
+/**
+ * This function generates the pages that should contain the layout of the website
+ * @param pageDef - List of pages
+ * @param loginPageUrl - The url slug of the login page
+ */
 const generateLayoutedPageRoutes = (pageDef: Page[], loginPageUrl: string): ReactNode => {
     return (
         pageDef
@@ -90,6 +105,7 @@ const generateLayoutedPageRoutes = (pageDef: Page[], loginPageUrl: string): Reac
             })
     );
 };
+
 
 const generateDrawerItems = (pageConfig: Page[]): DrawerListItem[] => {
     return (
@@ -111,6 +127,7 @@ const generateDrawerItems = (pageConfig: Page[]): DrawerListItem[] => {
             })
     )
 }
+
 
 const getHomepage = (pageConfig: Page[]) => {
     const homePage = pageConfig.filter(page => page.urlSnippet == "/")

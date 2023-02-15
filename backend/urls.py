@@ -13,7 +13,6 @@ from .api.getCalculatedCO2Footprint import GetCalculatedCO2Footprint
 from .api.getCalculatedH2OFootprint import GetCalculatedH2OFootprint
 from .api.getProfileSummary import GetProfileSummary
 from .api.getDatasets import GetDatasets
-from .api.getGreenhouseData import GetGreenhouseData
 from .api.getOptionGroupValues import GetOptionGroupValues
 from .api.getUnitValues import GetUnitValues
 from .api.updateGreenhouseData import UpdateGreenhouseData
@@ -22,7 +21,6 @@ from backend.api.getWeatherData import GetWeatherData
 urlpatterns = [
     path('get-co2-footprint', GetCalculatedCO2Footprint.as_view()),
     path('get-h2o-footprint', GetCalculatedH2OFootprint.as_view()),
-    path('get-data', GetGreenhouseData.as_view()),
     path('create-greenhouse-data', CreateGreenhouseData.as_view()),
     path('update-greenhouse-data', UpdateGreenhouseData.as_view()),
     path('get-weather', GetWeatherData.as_view()),

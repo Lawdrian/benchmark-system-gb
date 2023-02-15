@@ -6,7 +6,7 @@
 import {
     RESET_DATA,
     SUBMISSION_ERROR,
-    SUBMISSION_INPROGRESS, SUBMISSION_RESET,
+    SUBMISSION_LOADING, SUBMISSION_RESET,
     SUBMISSION_SUCCESS
 } from "../types/reduxTypes";
 
@@ -23,7 +23,7 @@ export type SubmissionState = {
     successful: boolean | null
 }
 
-// Initialize sumbission state
+// initialize sumbission state
 const initialState: SubmissionState = {
     inProgress: false,
     successful: null
@@ -39,7 +39,7 @@ const initialState: SubmissionState = {
  */
 export default function (state: SubmissionState = initialState, action: any): SubmissionState {
     switch (action.type) {
-        case SUBMISSION_INPROGRESS:
+        case SUBMISSION_LOADING:
             return {
                 ...state,
                 inProgress: true,

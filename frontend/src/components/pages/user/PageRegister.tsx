@@ -5,8 +5,6 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import CheckIcon from '@mui/icons-material/Check';
-import CloseIcon from '@mui/icons-material/Close';
 import {connect, ConnectedProps} from "react-redux";
 import {Link, useNavigate} from "react-router-dom";
 import {register} from "../../../actions/auth";
@@ -41,6 +39,12 @@ type RegisterProps = ReduxProps & {
     dataInfoUrl: string
 }
 
+/**
+ * This functional component represents the register page.
+ * @param register - Function that calls the back end to register a new user
+ * @param loginUrl - Url slug of the page, where a user can log in.
+ * @param dataInfoUrl - Url slug of the page, where the data information is displayed to the user
+ */
 const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
@@ -51,17 +55,18 @@ const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
     const [openCookieSnackBar, setOpenCookieSnackBar] = useState<boolean>(true)
     const [cookieConsent, setCookieConsent] = useState<boolean>(false)
     const [emailIsUnique, setEmailIsUnique] = useState<boolean>(true)
-    const [showAlert, setShowAlert] = useState<boolean>(false)
+    const [showCookieAlert, setShowCookieAlert] = useState<boolean>(false)
+    const [showGeneralAlert, setShowGeneralAlert] = useState<boolean>(false)
     const navigate = useNavigate()
 
     const handleRegistration = (event: any) => {
         event.preventDefault();
         if (inputValid(company, email, password, cPassword)) {
             if (cookieConsent) {
-                register(email, email, password, company, () => setOpenDialog(true), () => setEmailIsUnique(false))
+                register(email, email, password, company, () => setOpenDialog(true), (error: string) => handleRegistrationError(error))
             }
             else {
-                setShowAlert(true)
+                setShowCookieAlert(true)
             }
         }
         setTries(tries + 1)
@@ -84,19 +89,34 @@ const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
     const handleCookieClick = () => {
         setCookieConsent(true)
         setOpenCookieSnackBar(false)
-        setShowAlert(false)
+        setShowCookieAlert(false)
     }
 
     const cookieErrorAlert = (
         <Grid item xs={12}>
-            <Alert severity="error" onClose={() => setShowAlert(false)}>
+            <Alert severity="error" onClose={() => setShowCookieAlert(false)}>
                 <AlertTitle>Registrierung fehlgeschlagen</AlertTitle>
                 Sie müssen den Cookies zustimmen um das Benchmark-Tool verwenden zu können.
             </Alert>
         </Grid>
     )
 
+    const generalAlert = (
+        <Grid item xs={12}>
+            <Alert severity="error" onClose={() => setShowGeneralAlert(false)}>
+                <AlertTitle>Registrierung fehlgeschlagen</AlertTitle>
+                Es ist ein Fehler bei der Registrierung aufgetreten. Verwenden Sie nicht erlaubte Symbole?
+            </Alert>
+        </Grid>
+    )
 
+    const handleRegistrationError = (error: string) => {
+        if (error == "Email in use") {
+            setEmailIsUnique(false)
+        } else {
+            setShowGeneralAlert(true)
+        }
+    }
 
     return (
         <Container component="main" maxWidth="xs">
@@ -203,7 +223,8 @@ const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
                             Wir verarbeiten Ihre Daten entsprechend unserer <Link to={dataInfoUrl}>Datenschutzhinweise</Link>
                         </p>
                     </Grid>
-                    {showAlert ? cookieErrorAlert : null}
+                    {showCookieAlert ? cookieErrorAlert : null}
+                    {showGeneralAlert ? generalAlert : null}
                     <Grid item xs={12}>
                         <Button
                             onClick={(event) => handleRegistration(event)}
@@ -226,7 +247,5 @@ const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
         </Container>
     );
 }
-
-
 
 export default connector(PageRegister);

@@ -10,9 +10,7 @@ import Button from "@mui/material/Button";
 import {Dialog, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
-
 const mapStateToProps = (state: RootState) => ({
-    isActivated: state.auth.isActivated
 });
 
 const connector = connect(mapStateToProps, {resetPW});
@@ -23,7 +21,16 @@ type userActivationProps = ReduxProps & {
     loginUrl: string
 }
 
-const PageResetPW = ({isActivated, resetPW, loginUrl}: userActivationProps) => {
+/**
+ * This functional component renders the page to change a user's password.
+ *
+ * It is accessed through a link sent in the password change request email.
+ * That link contains the encoded user ID and a token. These parameters need to be sent
+ * to the backend to change the password successfully.
+ * @param resetPW - Function that calls the back end to change the user's password
+ * @param loginUrl - Url slug of the login page
+ */
+const PageResetPW = ({resetPW, loginUrl}: userActivationProps) => {
 
     const [password, setPassword] = useState<string>("")
     const [cPassword, setCPassword] = useState<string>("")
@@ -33,7 +40,7 @@ const PageResetPW = ({isActivated, resetPW, loginUrl}: userActivationProps) => {
 
     const navigate = useNavigate()
 
-    // Get the encoded user id and the activation token that was sent in the email out of the url params
+    // get the encoded user id and the activation token that was sent in the email out of the url params
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const uidb64 = urlParams.get('uid')

@@ -20,20 +20,27 @@ import axios from "axios";
 import {AppDispatch, ReduxStateHook} from "../store";
 import {tokenConfig} from "./auth";
 import {format} from "date-fns";
+import {formatLabel} from "./co2footprint";
 
 
+/**
+ * @type RawH2ODataset
+ *
+ * The structure of a single h2o footprint greenhouse data, that is provided by the server.
+ */
 type RawGreenhouseH2ODataset = {
     greenhouse_name: string
     performer_productiontype?: string
-    performer_date?: string
-    greenhouseDatasets: RawH2ODataset[]
+    best_performer_date?: string
+    worst_performer_date?: string
+    greenhouse_datasets: RawH2ODataset[]
 }
 
 /**
  * @type RawH2ODataset
  *
  * Contains the values, which make up the h2o-footprint, and a label, that
- * gives additional information about the dataset. (The Data in this case)
+ * gives additional information about the dataset. (The date in this case)
  */
 type RawH2ODataset = {
     label: string
@@ -65,13 +72,24 @@ type RawH2ODataset = {
     transport_h2o: number
 }
 
+/**
+ * @type RawGreenhouseDirectH2ODataset
+ *
+ * The structure of a single h2o footprint direct water usage greenhouse data, that is provided by the server.
+ */
 type RawGreenhouseDirectH2ODataset = {
     greenhouse_name: string
     performer_productiontype?: string
-    performer_date?: string
-    greenhouseDatasets: RawDirectH2ODataset[]
+    best_performer_date?: string
+    greenhouse_datasets: RawDirectH2ODataset[]
 }
 
+/**
+ * @type RawDirectH2ODataset
+ *
+ * Contains the values, which make up the direct water usage h2o-footprint, and a label, that
+ * gives additional information about the dataset. (The date in this case)
+ */
 type RawDirectH2ODataset = {
     label: string
     brunnenwasser_h2o: number
@@ -82,7 +100,13 @@ type RawDirectH2ODataset = {
 
 
 /**
- * Loads the h2ofootprint data for the current user.
+ * Loads the h2o footprint data for the current user.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the h2o footprint request is in progress
+ * @param successCB - Function that should be executed, when the h2o footprint request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the h2o footprint request
+ * @param noContentCB - Function that should be executed, when there is no h2o footprint
  */
 export const loadH2OFootprint = (
     withAuth: boolean = true,
@@ -92,19 +116,16 @@ export const loadH2OFootprint = (
     noContentCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    // User Loading
     dispatch({type: H2OFP_LOADING });
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-h2o-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("H2O Response", response)
             if (response.status == 204) {
-                console.log("No Content")
                 dispatch({type: H2OFP_NO_CONTENT})
                 noContentCB()
-                console.log("Called")
             }
             else {
                 dispatch({
@@ -122,7 +143,7 @@ export const loadH2OFootprint = (
                 successCB()
             }
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: H2OFP_ERROR
             })
@@ -132,10 +153,10 @@ export const loadH2OFootprint = (
 
 /**
  * Takes the raw h2o-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data.
  *
- * @param responseData - The h2o-footprint data provided by the server
+ * @param responseData - The h2o footprint data provided by the server
  */
 export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseFootprint[] => {
 
@@ -143,19 +164,19 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
         return {
             greenhouse: greenhouse.greenhouse_name,
             performerProductionType: greenhouse.performer_productiontype ?? "",
-            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
+            bestPerformerDate: formatLabel(greenhouse.best_performer_date ?? ""),
             data: {
-                labels: greenhouse.greenhouseDatasets
+                labels: greenhouse.greenhouse_datasets
                     .map(dataset => dataset.label)
                     .map(label => formatLabel(label)),
                 datasets: [{
                     label: "Brunnenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.brunnenwasser_h2o
                     ),
                     backgroundColor: "rgb(040,086,162)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Brunnenwasser", "value": dataset.brunnenwasser_h2o},
                     ]),
                     optimization: [],
@@ -163,11 +184,11 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Regenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.regenwasser_h2o
                     ),
                     backgroundColor: "rgb(068,154,191)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Regenwasser", "value": dataset.regenwasser_h2o},
                     ]),
                     optimization: [],
@@ -175,11 +196,11 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Stadtwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.stadtwasser_h2o
                     ),
                     backgroundColor: "rgb(135,194,228)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Stadtwasser", "value": dataset.stadtwasser_h2o},
                     ]),
                     optimization: [],
@@ -187,11 +208,11 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Oberflächenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.oberflaechenwasser_h2o
                     ),
                     backgroundColor: "rgb(100,149,237)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Oberflächenwasser", "value": dataset.oberflaechenwasser_h2o},
                     ]),
                     optimization: [],
@@ -199,7 +220,7 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Gewächshaus Konstruktion",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                             dataset.konstruktion_h2o +
                             dataset.energieschirm_h2o +
                             dataset.bodenabdeckung_h2o +
@@ -209,7 +230,7 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                             dataset.zusaetzliches_heizsystem_h2o
                     ),
                     backgroundColor: "rgba(24, 24, 24, 0.3)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         { "name": "Konstruktion", "value": dataset.konstruktion_h2o},
                         { "name": "Energieschirm", "value": dataset.energieschirm_h2o},
                         { "name": "Bodenabdeckung", "value": dataset.bodenabdeckung_h2o},
@@ -223,9 +244,9 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 },  {
                     label: "Wärmeträger",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.energietraeger_h2o),
+                    data: greenhouse.greenhouse_datasets.map(dataset => dataset.energietraeger_h2o),
                     backgroundColor: "rgb(168,023,041)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         { "name": "Wärmeträger", "value": dataset.energietraeger_h2o}
                     ]),
                     optimization: [],
@@ -233,9 +254,9 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Strom",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset => dataset.strom_h2o),
+                    data: greenhouse.greenhouse_datasets.map(dataset => dataset.strom_h2o),
                     backgroundColor: "rgb(255,221,0)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         { "name": "Strom", "value": dataset.strom_h2o}
                     ]),
                     optimization: [],
@@ -243,13 +264,13 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Hilfsstoffe",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.co2_zudosierung_h2o +
                         dataset.duengemittel_h2o +
                         dataset.psm_h2o
                     ),
                     backgroundColor: "rgb(122,184,0)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         { "name": "CO2 Zudosierung", "value": dataset.co2_zudosierung_h2o},
                         { "name": "Düngemittel", "value": dataset.duengemittel_h2o},
                         { "name": "Pflanzenschutzmittel", "value": dataset.psm_h2o}
@@ -259,7 +280,7 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                 }, {
                     label: "Betriebsstoffe",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.pflanzenbehaelter_h2o +
                         dataset.substrat_h2o +
                         dataset.jungpflanzen_substrat_h2o +
@@ -271,7 +292,7 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                         dataset.sonstige_verbrauchsmaterialien_h2o
                     ),
                     backgroundColor: "rgb(161,087,103)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         { "name": "Pflanzenbehälter", "value": dataset.pflanzenbehaelter_h2o},
                         { "name": "Substrat", "value": dataset.substrat_h2o},
                         { "name": "Jungpflanzen Substrat", "value": dataset.jungpflanzen_substrat_h2o},
@@ -289,31 +310,29 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
 }
 /**
  * Takes the raw h2o-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data.
  *
- * @param responseData - The h2o-footprint data provided by the server
+ * @param responseData - The h2o footprint data provided by the server
  */
 export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODataset[]): GreenhouseFootprint[] => {
-    console.log("toDirectH2O")
-    console.log(responseData)
     return responseData.map(greenhouse => {
         return {
             greenhouse: greenhouse.greenhouse_name,
             performerProductionType: greenhouse.performer_productiontype ?? "",
-            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
+            bestPerformerDate: formatLabel(greenhouse.best_performer_date ?? "") ,
             data: {
-                labels: greenhouse.greenhouseDatasets
+                labels: greenhouse.greenhouse_datasets
                     .map(dataset => dataset.label)
                     .map(label => formatLabel(label)),
                 datasets: [{
                     label: "Brunnenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.brunnenwasser_h2o
                     ),
                     backgroundColor: "rgb(040,086,162)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Brunnenwasser", "value": dataset.brunnenwasser_h2o},
                     ]),
                     optimization: [],
@@ -321,11 +340,11 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
                 }, {
                     label: "Regenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.regenwasser_h2o
                     ),
                     backgroundColor: "rgb(068,154,191)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Regenwasser", "value": dataset.regenwasser_h2o},
                     ]),
                     optimization: [],
@@ -333,11 +352,11 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
                 }, {
                     label: "Stadtwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.stadtwasser_h2o
                     ),
                     backgroundColor: "rgb(135,194,228)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Stadtwasser", "value": dataset.stadtwasser_h2o},
                     ]),
                     optimization: [],
@@ -345,11 +364,11 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
                 }, {
                     label: "Oberflächenwasser",
                     type: 'bar' as const,
-                    data: greenhouse.greenhouseDatasets.map(dataset =>
+                    data: greenhouse.greenhouse_datasets.map(dataset =>
                         dataset.oberflaechenwasser_h2o
                     ),
                     backgroundColor: "rgb(100,149,237)",
-                    splitData: greenhouse.greenhouseDatasets.map(dataset => [
+                    splitData: greenhouse.greenhouse_datasets.map(dataset => [
                         {"name": "Oberflächenwasser", "value": dataset.oberflaechenwasser_h2o},
                     ]),
                     optimization: [],
@@ -363,9 +382,10 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
 
 /**
  * Takes the raw h2o-benchmark data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data. Every bar represents the categories(e.g. Wärmeenergie).
- * These bars will have dots on them showing how the best performer and worst performer are doing
+ * The h2o footprint of the best and worst performer split up into its categories,
+ * is displayed in addition to the user's co2 footprint.
  *
  * @param responseData - The h2o-benchmark data provided by the server
  */
@@ -379,47 +399,48 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
         let wasserverbrauch: number[] = []
         let hilfsstoffe: number[] = []
         let betriebsstoffe: number[] = []
-        for (let i in greenhouse.greenhouseDatasets) {
-            konstruktion[i] = greenhouse.greenhouseDatasets[i].konstruktion_h2o +
-                greenhouse.greenhouseDatasets[i].energieschirm_h2o +
-                greenhouse.greenhouseDatasets[i].bodenabdeckung_h2o +
-                greenhouse.greenhouseDatasets[i].produktionssystem_h2o +
-                greenhouse.greenhouseDatasets[i].bewaesserung_h2o +
-                greenhouse.greenhouseDatasets[i].heizsystem_h2o +
-                greenhouse.greenhouseDatasets[i].zusaetzliches_heizsystem_h2o
+        for (let i in greenhouse.greenhouse_datasets) {
+            konstruktion[i] = greenhouse.greenhouse_datasets[i].konstruktion_h2o +
+                greenhouse.greenhouse_datasets[i].energieschirm_h2o +
+                greenhouse.greenhouse_datasets[i].bodenabdeckung_h2o +
+                greenhouse.greenhouse_datasets[i].produktionssystem_h2o +
+                greenhouse.greenhouse_datasets[i].bewaesserung_h2o +
+                greenhouse.greenhouse_datasets[i].heizsystem_h2o +
+                greenhouse.greenhouse_datasets[i].zusaetzliches_heizsystem_h2o
 
-            waermetraeger[i] = greenhouse.greenhouseDatasets[i].energietraeger_h2o
-            strom[i] = greenhouse.greenhouseDatasets[i].strom_h2o
-            wasserverbrauch[i] = greenhouse.greenhouseDatasets[i].brunnenwasser_h2o +
-                greenhouse.greenhouseDatasets[i].regenwasser_h2o +
-                greenhouse.greenhouseDatasets[i].stadtwasser_h2o +
-                greenhouse.greenhouseDatasets[i].oberflaechenwasser_h2o
-            hilfsstoffe[i] = greenhouse.greenhouseDatasets[i].co2_zudosierung_h2o +
-                greenhouse.greenhouseDatasets[i].duengemittel_h2o +
-                greenhouse.greenhouseDatasets[i].psm_h2o
-            betriebsstoffe[i] = greenhouse.greenhouseDatasets[i].pflanzenbehaelter_h2o +
-                greenhouse.greenhouseDatasets[i].substrat_h2o +
-                greenhouse.greenhouseDatasets[i].jungpflanzen_substrat_h2o +
-                greenhouse.greenhouseDatasets[i].jungpflanzen_transport_h2o +
-                greenhouse.greenhouseDatasets[i].schnuere_h2o +
-                greenhouse.greenhouseDatasets[i].klipse_h2o +
-                greenhouse.greenhouseDatasets[i].rispenbuegel_h2o +
-                greenhouse.greenhouseDatasets[i].verpackung_h2o +
-                greenhouse.greenhouseDatasets[i].sonstige_verbrauchsmaterialien_h2o
+            waermetraeger[i] = greenhouse.greenhouse_datasets[i].energietraeger_h2o
+            strom[i] = greenhouse.greenhouse_datasets[i].strom_h2o
+            wasserverbrauch[i] = greenhouse.greenhouse_datasets[i].brunnenwasser_h2o +
+                greenhouse.greenhouse_datasets[i].regenwasser_h2o +
+                greenhouse.greenhouse_datasets[i].stadtwasser_h2o +
+                greenhouse.greenhouse_datasets[i].oberflaechenwasser_h2o
+            hilfsstoffe[i] = greenhouse.greenhouse_datasets[i].co2_zudosierung_h2o +
+                greenhouse.greenhouse_datasets[i].duengemittel_h2o +
+                greenhouse.greenhouse_datasets[i].psm_h2o
+            betriebsstoffe[i] = greenhouse.greenhouse_datasets[i].pflanzenbehaelter_h2o +
+                greenhouse.greenhouse_datasets[i].substrat_h2o +
+                greenhouse.greenhouse_datasets[i].jungpflanzen_substrat_h2o +
+                greenhouse.greenhouse_datasets[i].jungpflanzen_transport_h2o +
+                greenhouse.greenhouse_datasets[i].schnuere_h2o +
+                greenhouse.greenhouse_datasets[i].klipse_h2o +
+                greenhouse.greenhouse_datasets[i].rispenbuegel_h2o +
+                greenhouse.greenhouse_datasets[i].verpackung_h2o +
+                greenhouse.greenhouse_datasets[i].sonstige_verbrauchsmaterialien_h2o
         }
 
 
         return {
             greenhouse: greenhouse.greenhouse_name,
             performerProductionType: greenhouse.performer_productiontype ?? "",
-            performerDate: formatLabel(greenhouse.performer_date ?? "") ,
+            bestPerformerDate: formatLabel(greenhouse.best_performer_date ?? "") ,
+            worstPerformerDate: formatLabel(greenhouse.worst_performer_date ?? "") ,
             data: {
                 labels: ["Gwh Konstruktion", "Wärmeträger", "Strom", "Wasserverbrauch", "Hilfsstoffe", "Betriebsstoffe"],
                 datasets: [
                     {
-                        label: formatLabel(greenhouse.greenhouseDatasets[1].label),
+                        label: formatLabel(greenhouse.greenhouse_datasets[1].label),
                         type: 'scatter' as const,
-                        data: [konstruktion[1], waermetraeger[1], strom[1], hilfsstoffe[1], betriebsstoffe[1]],
+                        data: [konstruktion[1], waermetraeger[1], strom[1], wasserverbrauch[1], hilfsstoffe[1], betriebsstoffe[1]],
                         backgroundColor: "rgba(11,156,49,0.6)",
                         pointStyle: "cross",
                         borderColor: "rgba(11,156,49,0.6)",
@@ -430,9 +451,9 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                         hoverBorderWidth: 3
                     },
                     {
-                        label: formatLabel(greenhouse.greenhouseDatasets[2].label),
+                        label: formatLabel(greenhouse.greenhouse_datasets[2].label),
                         type: 'scatter' as const,
-                        data: [konstruktion[2], waermetraeger[2], strom[2], hilfsstoffe[2], betriebsstoffe[2]],
+                        data: [konstruktion[2], waermetraeger[2], strom[2], wasserverbrauch[2], hilfsstoffe[2], betriebsstoffe[2]],
                         backgroundColor: "rgba(255,0,0,0.8)",
                         pointStyle: "cross",
                         borderColor: "rgba(255,0,0,0.8)",
@@ -443,23 +464,13 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                         hoverBorderWidth: 3
                     },
                     {
-                        label: formatLabel(greenhouse.greenhouseDatasets[0].label),
+                        label: formatLabel(greenhouse.greenhouse_datasets[0].label),
                         type: 'bar' as const,
-                        data: [konstruktion[0], waermetraeger[0], strom[0], hilfsstoffe[0], betriebsstoffe[0]],
+                        data: [konstruktion[0], waermetraeger[0], strom[0], wasserverbrauch[0], hilfsstoffe[0], betriebsstoffe[0]],
                         backgroundColor: "rgba(187, 181, 184, 0.8)"
                     }
                 ]
             }
         }
     });
-}
-
-export function formatLabel(label: string):string {
-        try {
-            return format(new Date(label), 'yyyy')
-
-        }
-        catch(e) {
-            return label
-        }
 }

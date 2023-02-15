@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {
     Box,
     Button, Card, CardActions, CardContent,
@@ -15,11 +15,11 @@ import {RootState} from "../../store";
 import {connect, ConnectedProps} from "react-redux";
 import {deleteUser} from "../../actions/auth";
 import {loadProfile} from "../../actions/profile";
-import {SectionDivider} from "../utils/inputPage/layout";
+import {SectionDivider} from "../utils/input/layout";
 import {DatasetSummary} from "../../types/reduxTypes";
 import {loadDatasets} from "../../actions/dataset";
 import {fillInputState, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
-import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
+import PageInputData, {DataToSubmit, InputMode} from "./input/PageInputData";
 
 const mapStateToProps = (state: RootState) => ({
     dataset: state.dataset,
@@ -33,14 +33,28 @@ type ReduxProps = ConnectedProps<typeof connector>
 
 type ProfileProps = ReduxProps & {}
 
+/**
+ * This functional component renders the profile page.
+ *
+ * The profile page displays the metadata of a user's account. Furthermore, all data sets from a user are listed
+ * with the co2 and h2o footprint values. The user can edit a data set or delete his account on this page.
+ * @param deleteUser - Function that deletes a user's account
+ * @param user - Redux user state
+ * @param profileData - profile data from the Redux profile state
+ * @param dataset - Redux dataset state
+ * @param loadProfile - Function that loads the profile information (data set metadata) from the back end
+ * @param loadDatasets - Function that loads the data sets from the back end (preload for input page)
+ * @constructor
+ */
 const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadDatasets}: ProfileProps) => {
-    // Load profile data
-    React.useEffect(() => {
+    // load profile data and if not yet loaded also the user's data sets
+    useEffect(() => {
         loadProfile()
         if (!dataset.successful) {
             loadDatasets()
         }
     }, [])
+
     const [openDialog, setOpenDialog] = useState<boolean>(false)
     const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(emptyDataset)
     const [selectedDatasetId, setSelectedDatasetId] = useState<number>(0)
@@ -49,19 +63,14 @@ const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadD
         deleteUser()
     }
 
-
     const handleDatasetUpdate = (greenhouseId: number, datasetId: number) => {
-
         if (dataset.datasets != [] && dataset.datasets != "" && typeof dataset.datasets != "string") {
-            console.log(greenhouseId, datasetId)
             const initialGreenhouse = dataset.datasets.filter(greenhouse => parseInt(parseStringToArray(greenhouse.greenhouse_specs)[0]) == greenhouseId)[0]
             const initialDataset = initialGreenhouse.greenhouse_datasets.filter(dataset => parseInt(parseStringToArray(dataset.greenhouse_data_id)[0]) == datasetId)[0]
-            console.log(initialDataset)
             setInputFieldData(fillInputState(initialDataset))
             setSelectedDatasetId(datasetId)
         }
     }
-
 
     const DatasetCard = (data: DatasetSummary) => {
         return (

@@ -8,19 +8,16 @@ from backend.utils import default_value, default_option, generic_error_message, 
 
 def validate_mandatory_fields(data):
     """Function that checks if every mandatory input field has been filled out. Fields that depend on a conditional
-        field that hasn't been selected can have a default value.
+    field that hasn't been selected can have a default value.
 
-        Args:
-            data : Contains the data that needs to be validated
+    Args:
+        data : contains the data that needs to be validated
 
-        Returns:
-            boolean: true = valid date; false = invalid data
+    Returns:
+        boolean: valid data -> True; invalid data -> False
     """
 
-
-
-
-    # Retrieve all measurements, optiongroups and options from the database
+    # retrieve all measurements, optiongroups and options from the database
     mandatory_measurements = Measurements.objects.in_bulk(
         field_name='measurement_name')  # transform table to a dict
 
@@ -72,15 +69,10 @@ def validate_mandatory_fields(data):
             if condition.upper() == selected_option_value.upper():
                 optiongroup_required = True
 
-        #print(optiongroup_required)
-
-        #print("not required")
         if(optiongroup_required == False):
             # if a measurement is not mandatory delete it out of the mandatory measurements list
             if len(measurements) != 0:
                 for not_required_measurement in measurements:
-                    #print("This one is not required:")
-                    #print(not_required_measurement)
                     del mandatory_measurements[not_required_measurement]
 
             # if an optiongroup is not mandatory delete it out of the mandatory optiongroups list
@@ -92,7 +84,7 @@ def validate_mandatory_fields(data):
                         print("Optiongroup " + str(not_required_optiongroup) + " has already been deleted or doesn't exist")
                         return False, generic_error_message
 
-    # This place is for manually deleting always optional fields out of the mandatory lists
+    # this place is for manually deleting always optional fields out of the mandatory lists
     del mandatory_optiongroups["SonstigeVerbrauchsmaterialien"]
     del mandatory_optiongroups["CO2-Herkunft"]
     del mandatory_optiongroups["Duengemittel:VereinfachteAngabe"]
@@ -108,23 +100,17 @@ def validate_mandatory_fields(data):
 
     # check if any element in the mandatory_measurements list has a default value
     for name, value in mandatory_measurements.items():
-        #print(name)
-        #print(data[value.measurement_name])
-        #print(data[value.measurement_name] == default_value)
         if data[value.measurement_name] == default_value:
             print("Error: Mandatory measurement field " + value.measurement_name + " has default value!")
             return False, input_error_message
 
-    print("Mandatory Optiongroup check")
     # check if any element in the mandatory_optiongroups list has a default value
     for name, value in mandatory_optiongroups.items():
-        # print(data[value.option_group_name]==default_option)
-        # print(type(data[value.option_group_name]))
         if data[value.option_group_name] == default_option:
             print("Error: Mandatory option group " + value.option_group_name + " has default value!")
             return False, input_error_message
 
-    # Check if at least one fruitclass has been selected
+    # check if at least one fruitclass has been selected
     fruit_class_fields = ["10-30Gramm(Snack)", "30-100Gramm(Cocktail)", "100-150Gramm(Rispen)", ">150Gramm(Fleisch)"]
     fruit_class_selected = False
     for fruit_class in fruit_class_fields:
