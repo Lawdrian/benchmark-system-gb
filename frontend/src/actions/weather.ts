@@ -30,13 +30,12 @@ export const loadWeatherData = (postalCode: number, startDate: Date, endDate: Da
         const startDateString = startDate.toISOString().substring(0, 10);
         const endDateString = endDate.toISOString().substring(0, 10);
 
-        // User Loading
+        // weather Loading
         dispatch({type: WEATHER_LOADING});
 
-        // Send request
+        // send request
         axios.get('/backend/get-weather?postalCode=' + postalCode + '&startDate=' + startDateString + '&endDate=' + endDateString)
             .then((response) => {
-                //console.log("CO2 Response", response)
                 dispatch({
                     type: WEATHER_LOADED,
                     payload: toWeatherData(response.data)

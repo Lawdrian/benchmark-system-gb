@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../../store";
 import {loadCO2Footprint} from "../../../actions/co2footprint";
@@ -20,7 +20,6 @@ import {
     createFootprintProductionTypeHeader, handleNormalizedTypeChange, NormalizedType, selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
 
-
 const mapStateToProps = (state: RootState) => ({
     total: state.co2.total,
     normalizedkg: state.co2.normalizedkg,
@@ -30,7 +29,9 @@ const mapStateToProps = (state: RootState) => ({
     benchmarkkg: state.co2.benchmarkkg,
     benchmarkm2: state.co2.benchmarkm2
 });
+
 const connector = connect(mapStateToProps, {loadCO2Footprint});
+
 type ReduxProps = ConnectedProps<typeof connector>
 
 /**
@@ -39,17 +40,17 @@ type ReduxProps = ConnectedProps<typeof connector>
 type C02FootprintProps = ReduxProps & {}
 
 /**
- * Returns the page showing a Dropdown menu for selecting the greenhouse to
- * show the plots for as well as the CO2-Footprint plots.
+ * Returns the page that displays the co2 footprint plots for a selected greenhouse. Furthermore, it shows a benchmark
+ * plot and the optimization data. A greenhouse can be selected with a dropdown menu.
+ * If there is no data, it shows a generic error message.
  *
- * @param {C02FootprintProps}
- * Divided into plotData (data of multiple greenhouses to be shown in the plot) and
+ * @param {C02FootprintProps} - Divided into plot data and
  * loadCO2Footprint (a function to fetch the necessary data from the backend)
- * @return JSX.Element
  */
 const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, benchmarkkg, benchmarkm2, loadCO2Footprint}: C02FootprintProps) => {
-    // Load CO2-Footprint data
-    React.useEffect(() => {
+
+    // load CO2-Footprint data
+    useEffect(() => {
         loadCO2Footprint(
             true,
             () => setOpenDialog(true),
@@ -63,13 +64,12 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     const [loadSuccess, setLoadSuccess] = useState<boolean>(false)
 
     const [tab, setTab] = useState<number>(0)
-    const [normalizedType, setNormalizedType] = React.useState<NormalizedType>(NormalizedType.kg);
+    const [normalizedType, setNormalizedType] = useState<NormalizedType>(NormalizedType.kg);
 
     let greenhouses = total.map(dataset => dataset.greenhouse)
 
-    // Stuff for Dropdown Menu:
-    const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
-
+    // state holding the index of the selected greenhouse
+    const [curGreenHouseIndex, setCurGreenHouseIndex] = useState<number>(0);
 
     const handleLoadSuccess = () => {
         setOpenDialog(false)
@@ -81,6 +81,7 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
         setLoadError(true)
     }
 
+    // depending on the result of the loadCO2Footprint request, an error page or the footprints will be rendered
     if(openDialog) {
         return(
             <Dialog open={openDialog}>

@@ -1,11 +1,10 @@
 import React from "react";
 import {Divider, Typography} from "@mui/material";
 
-type ImpressumProps = {
-
-}
-
-const PageImpressum = (props: ImpressumProps) => {
+/**
+ * This component renders the imprint page.
+ */
+const PageImpressum = () => {
     return (
         <div id="login" className="page">
             <Typography variant={"h4"}>

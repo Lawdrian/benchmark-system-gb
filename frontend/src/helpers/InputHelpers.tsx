@@ -1,8 +1,6 @@
 import {DynamicInputValue, MeasureValue} from "../components/utils/input/InputFields";
-import {Option, UnitValues} from "../reducers/lookup";
-import {GreenhouseData} from "../types/reduxTypes";
+import {GreenhouseData, Option, UnitValues} from "../types/reduxTypes";
 import {DataToSubmit} from "../components/pages/input/PageInputData";
-
 
 export const parseToFloat = (value: string): number|null => {
 
@@ -11,16 +9,20 @@ export const parseToFloat = (value: string): number|null => {
     return num
 }
 
-
-// Function that decides if an input field of the dynamic input component should set the error tag or not
+/**
+ * Function that decides if an input field of a measure input component should set the error tag or not.
+ */
 export const showDynamicMeasureInputError = (value: MeasureValue, submissionSuccess: boolean|null): boolean => {
     if ((value.value == null || value.value == 0) && submissionSuccess == false) return true
     return false
 }
 
+/**
+ * Function that decides if an input field of a select input component should set the error tag or not.
+ */
 export const showDynamicSelectInputError = (value: number|null, submissionSuccess: boolean|null): boolean => {
-        if ((value == null || value == 0) && submissionSuccess == false) return true
-        return false
+    if ((value == null || value == 0) && submissionSuccess == false) return true
+    return false
 }
 
 export const isEmptyDynamicInputField = (value:DynamicInputValue): boolean => {
@@ -33,11 +35,10 @@ export const isEmptyDynamicInputField = (value:DynamicInputValue): boolean => {
 }
 
 /**
- *  findOptionId()
- *  This function finds the id of an option by using the display name of the option
- * @param lookupValues the lookupValues of one optiongroup
- * @param wantedOptionName the name of the option looked for
+ * This function finds the id of an option by using the display name of the option.
  *
+ * @param lookupValues - The lookupValues of one optiongroup
+ * @param wantedOptionName - The name of the option looked for
  * @return the unit id or null if nothing was found
  */
 export const findOptionId = (lookupValues: Option[], wantedOptionName: string): number|null => {
@@ -52,22 +53,21 @@ export const findOptionId = (lookupValues: Option[], wantedOptionName: string): 
 
 
 /**
- *  findOptionUnitId()
- *  This function finds the unit id of an option by using its id
+ * This function finds the unit id of an option by using its id.
+ *
  * @param optionId id of an option
  * @param optionGroup the name of the optiongroup that the option belongs to
  * @param lookupValues the lookupValues of one optiongroup
  * @param unitValues all unitValues
- *
  * @return the unit id or null if nothing was found
  */
 export const findOptionUnitId = (optionId: number|null, optionGroup: string, lookupValues: Option[], unitValues: UnitValues): number|null => {
     if (optionId == null) return null
-    // Find the name of the option that belongs to the optionId
+    // find the name of the option that belongs to the optionId
     let lookupNameRaw = lookupValues.find((lookupValue: Option) => {return lookupValue.id==optionId})?.values.replaceAll(" ","")
     let lookupName:string = "\"" + lookupNameRaw + "\""
     let options = unitValues.selections[optionGroup as keyof typeof unitValues.selections]
-    // Search through all options of the optiongroup and find the option with the same name as lookupName
+    // search through all options of the optiongroup and find the option with the same name as lookupName
     const selectedOption = Object.entries(options).find(([key, value]) => {
         if (!key.includes("\"")) lookupName = lookupName.replaceAll("\"", "")
         if (key == lookupName) return true
@@ -80,10 +80,9 @@ export const findOptionUnitId = (optionId: number|null, optionGroup: string, loo
 }
 
 /**
- * This function is used for parsing a measureTuple to the correct data struct
+ * This function is used for parsing a measureTuple to the correct data struct.
  *
  * @param tuple:string The tuple that needs to be parsed
- *
  * @return {ReactNode} {value: number, unit: number} | {value: null, unit: null}
  */
 const parseMeasureTuple = (tuple:string) => {
@@ -95,10 +94,9 @@ const parseMeasureTuple = (tuple:string) => {
 }
 
 /**
- * This function is used for parsing a selectionTuple to the correct data struct
+ * This function is used for parsing a selectionTuple to the correct data struct.
  *
  * @param tuple:string The tuple that needs to be parsed
- *
  * @return {ReactNode} number | null | {selectValue: number, textFieldValue: {value: number, unit: number}} |
  *                     {selectValue: number, textFieldValue: {value: number, unit: number}, textField2Value: number}
  */
@@ -128,10 +126,9 @@ const parseSelectionTuple = (tuple:string) => {
 }
 
 /**
- * This function is used for parsing a dateTuple to the correct data struct
+ * This function is used for parsing a dateTuple to the correct data struct.
  *
  * @param tuple:string The tuple that needs to be parsed
- *
  * @return {ReactNode} {value: Date, unit: number} | {value: null, unit: null}
  */
 const parseDateTuple = (tuple:string) => {
@@ -149,8 +146,7 @@ export const parseStringToArray = (greenhouse:string) => {
 }
 
 /**
- * This function receives a GreenhouseData object and maps it to the state object used for input page
- *
+ * This function receives a GreenhouseData object and maps it to the state object used for input page.
  *
  * @param initialDataset object of type GreenhouseData
  * @return {ReactNode} object

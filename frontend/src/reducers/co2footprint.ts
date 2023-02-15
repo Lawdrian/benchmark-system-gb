@@ -15,7 +15,6 @@ import {
  * @type CO2FootprintState
  *
  * Contains the necessary data to visualize the co2-footprint.
- *
  * @property {boolean} [isLoading] - True, while the data is loaded from the server
  * @property {GreenhouseFootprint[]} [plotData] - The data to create the plot
  */
@@ -30,7 +29,7 @@ export type CO2FootprintState = {
     benchmarkm2: GreenhouseBenchmark[]
 }
 
-// Initialize the co2-footprint state
+// initialize the co2-footprint state
 const initialState: CO2FootprintState = {
     isLoading: false,
     total: [],
@@ -47,7 +46,6 @@ const initialState: CO2FootprintState = {
  *
  * @param state - The current co2-footprint state
  * @param action - The action to dispatch
- *
  * @returns The updated co2-footprint state
  */
 export default function (state: CO2FootprintState = initialState, action: any): CO2FootprintState {

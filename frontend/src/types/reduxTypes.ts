@@ -1,7 +1,7 @@
 /**
  * #############################################################################
  * reduxTypes.ts: Defines action types to dispatch for redux and other redux
- *                related types
+ *                related types that are shared between reducers
  *
  *     The redux action types are string constants, which are used to determine
  *     within the reducers, which action to execute. This happens when redux
@@ -12,105 +12,99 @@
 /**
  * ----------- REDUX ACTION TYPES ---------------
  */
-// Reset the redux store
+// reset the redux store
 export const RESET_DATA = "RESET_DATA";
-// Set the user-loading flag
+// set the user-loading flag
 export const USER_LOADING = "USER_LOADING";
-// Loading of the current user has finished
+// loading of the current user has finished
 export const USER_LOADED = "USER_LOADED";
-// Loading of the current user failed due to authentication errors
+// loading of the current user failed due to authentication errors
 export const AUTH_ERROR = "AUTH_ERROR";
-// Login was successful
+// login was successful
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
-// Login has failed
+// login has failed
 export const LOGIN_FAIL = "LOGIN_FAILED";
-// Logout was successful
+// logout was successful
 export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
-// Registration of a new user was successful
+// registration of a new user was successful
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
-// Registration of a new user failed
+// registration of a new user failed
 export const REGISTER_FAIL = "REGISTER_FAIL";
-// Activation of a new user was successful
+// activation of a new user was successful
 export const ACTIVATE_SUCCESS = "ACTIVATE_SUCCESS";
-// Activation of a new user is loading
+// activation of a new user is loading
 export const ACTIVATE_LOADING = "ACTIVATE_LOADING";
-// Activation of a new user failed
+// activation of a new user failed
 export const ACTIVATE_FAIL = "ACTIVATE_FAIL";
-// Reset of a user password was successful
+// reset of a user password was successful
 export const RESETPW_SUCCESS = "RESETPW_SUCCESS";
-// Reset password email has been successfully send to the user email, but password hasn't been changed yet
+// reset password email has been successfully send to the user email, but password hasn't been changed yet
 export const RESETPW_PENDING = "RESETPW_PENDING";
-// Reset of a user password failed
+// reset of a user password failed
 export const RESETPW_FAIL = "RESETPW_FAIL";
-// Deletion of user account was successful
+// deletion of user account was successful
 export const DELETE_SUCCESS = "DELETE_SUCCESS";
-// Deletion of user account has failed
+// deletion of user account has failed
 export const DELETE_FAIL = "DELETE_FAIL";
-// Set the co2-footprint-loading flag
+// set the co2-footprint-loading flag
 export const CO2FP_LOADING = "CO2FP_LOADING";
-// Loading of co2-footprint was successful
+// loading of co2-footprint was successful
 export const CO2FP_LOADED = "CO2FP_LOADED";
-// Loading of co2-footprint failed
+// loading of co2-footprint failed
 export const CO2FP_ERROR = "CO2FP_ERROR";
-// Set the co2-benchmark-loading flag
+// set the co2-benchmark-loading flag
 export const CO2BM_LOADING = "CO2BM_LOADING";
-// Loading of co2-benchmark was successful
+// loading of co2-benchmark was successful
 export const CO2BM_LOADED = "CO2BM_LOADED";
-// Loading of co2-benchmark failed
+// loading of co2-benchmark failed
 export const CO2BM_ERROR = "CO2BM_ERROR";
-// Set the waterfooprint-loading flag
+// set the waterfooprint-loading flag
 export const H2OFP_LOADING = "H2OFP_LOADING";
-// Loading of waterfootprint was successful
+// loading of waterfootprint was successful
 export const H2OFP_LOADED = "H2OFP_LOADED";
-// Loading of waterfootprint failed
+// loading of waterfootprint failed
 export const H2OFP_ERROR = "H2OFP_ERROR";
-// Waterfootprint loaded, but no content;
+// waterfootprint loaded, but no content;
 export const H2OFP_NO_CONTENT = "H2OFP_NO_CONTENT";
-// Set the waterbenchmark-loading flag
-export const WATERBM_LOADING = "WATERBM_LOADING";
-// Loading of waterbenchmark was successful
-export const WATERBM_LOADED = "WATERBM_LOADED";
-// Loading of waterbenchmark failed
-export const WATERBM_ERROR = "WATERBM_ERROR";
-// Set the weaterdata-loading flag
+// loading weather data
 export const WEATHER_LOADING = "WEATHER_LOADING";
-// Loading of weatherdata was successful
+// loading of weatherdata was successful
 export const WEATHER_LOADED = "WEATHER_LOADED";
-// Loading of weatherdata failed
+// loading of weatherdata failed
 export const WEATHER_ERROR = "WEATHER_ERROR";
-// Set the submission-in-progress flag
-export const SUBMISSION_INPROGRESS = "SUBMISSION_INPROGRESS";
-// Submission of data was successful
+// set the submission-in-progress flag
+export const SUBMISSION_LOADING = "SUBMISSION_LOADING";
+// submission of data was successful
 export const SUBMISSION_SUCCESS = "SUBMISSION_SUCCESS";
-// Submission of data failed
+// submission of data failed
 export const SUBMISSION_ERROR = "SUBMISSION_ERROR";
-// Reset submission state
+// reset submission state
 export const SUBMISSION_RESET = "SUBMISSION_RESET";
-// Set the lookup values-loading flag
+// set the lookup values-loading flag
 export const LOOKUP_LOADING = "LOOKUP_LOADING";
-// Loading of lookup values was successful
+// loading of lookup values was successful
 export const LOOKUP_LOADED = "LOOKUP_LOADED";
-// Loading of lookup values failed
+// loading of lookup values failed
 export const LOOKUP_FAILED = "LOOKUP_FAILED";
-// Set the unit values-loading flag
+// set the unit values-loading flag
 export const UNITS_LOADING = "UNITS_LOADING";
-// Loading of unit values was successful
+// loading of unit values was successful
 export const UNITS_LOADED = "UNITS_LOADED";
-// Loading of unit values failed
+// loading of unit values failed
 export const UNITS_FAILED = "UNITS_FAILED";
-// Set the dataset-loading flag
+// set the dataset-loading flag
 export const DATASET_LOADING = "DATASET_LOADING";
-// Loading of dataset was successful
+// loading of dataset was successful
 export const DATASET_LOADED = "DATASET_LOADED";
-// Loading of dataset failed
+// loading of dataset failed
 export const DATASET_ERROR = "DATASET_ERROR";
-// Reset dataset state
+// reset dataset state
 export const DATASET_RESET = "DATASET_RESET";
-// Set the profile-loading flag
+// set the profile-loading flag
 export const PROFILE_LOADING = "PROFILE_LOADING";
-// Loading of profile data was successful
+// loading of profile data was successful
 export const PROFILE_LOADED = "PROFILE_LOADED";
-// Loading of profile data failed
+// loading of profile data failed
 export const PROFILE_ERROR = "PROFILE_ERROR";
 /**
  * ----------- REDUX RELATED TS-TYPES ---------------
@@ -124,22 +118,20 @@ type Profile = {
     company_name?: string
 }
 
-
 /**
  * @type ProfileData
  *
- * The Metadata of a users datasets
+ * The Metadata of a users datasets.
  */
 export type ProfileData = {
     "greenhouse_name": string,
     "data": DatasetSummary[]
-
 }
 
 /**
  * @type DatasetSummary
  *
- * The Metadata of one dataset
+ * The Metadata of one dataset.
  */
 export type DatasetSummary = {
     "greenhouseId": number
@@ -148,8 +140,6 @@ export type DatasetSummary = {
     "co2Footprint": number,
     "h2oFootprint": number
 }
-
-
 
 /**
  * @type User
@@ -166,7 +156,7 @@ export type User = {
 /**
  * @type FootprintDataset
  *
- * Represents a single dataset of a footprint plot
+ * Represents a single dataset of a footprint plot.
  */
 type FootprintDataset = {
     label: string
@@ -178,7 +168,7 @@ type FootprintDataset = {
 /**
  * @type BenchmarkDataset
  *
- * Represents a single dataset of a benchmark plot
+ * Represents a single dataset of a benchmark plot.
  */
 type BenchmarkDataset = {
     label: string
@@ -189,7 +179,7 @@ type BenchmarkDataset = {
 /**
  * @type Plot
  *
- * Base type for any plot datatype
+ * Base type for any plot datatype.
  */
 type Plot = {
     labels: string[]
@@ -198,7 +188,7 @@ type Plot = {
 /**
  * @type FootprintPlot
  *
- * Contains the data for a complete footprint visulization
+ * Contains the data for a complete footprint visualization.
  */
 export type FootprintPlot = Plot & {
     datasets: FootprintDataset[]
@@ -207,7 +197,7 @@ export type FootprintPlot = Plot & {
 /**
  * @type GreenhouseFootprint
  *
- * Represents a {@link FootprintPlot} that is related to a single greenhouse
+ * Represents a {@link FootprintPlot} that is related to a single greenhouse.
  */
 export type GreenhouseFootprint = {
     greenhouse: string
@@ -228,7 +218,7 @@ export type BenchmarkPlot = Plot & {
 /**
  * @type GreenhouseBenchmark
  *
- * Represents a {@link BenchmarkPlot}, that is related to a single greenhouse
+ * Represents a {@link BenchmarkPlot}, that is related to a single greenhouse.
  */
 export type GreenhouseBenchmark = {
     greenhouse: string
@@ -241,14 +231,13 @@ export type GreenhouseBenchmark = {
 /**
  * @type WeatherData
  *
- * Container type for the weather data, that is fetched from the server
+ * Container type for the weather data, that is fetched from the server.
  */
 export type WeatherData = {
     precipitation_height: string
     temperature_air_mean_200: string
     sunshine_duration: string
 }
-
 
 export type DatasetData = {
     greenhouse_specs: string
@@ -263,7 +252,7 @@ export type GreenhouseDataId = GreenhouseData & {
  * @type GreenhouseData
  *
  * Defines all fields the backend expects when submitting a new dataset for any
- * greenhouse. (NOT FINAL - SUBJECT TO CHANGE!!!)
+ * greenhouse.
  */
 export type GreenhouseData = {
     greenhouse_name: string
@@ -368,4 +357,403 @@ export type GreenhouseData = {
     Verpackungsmaterial: string
     SonstigeVerbrauchsmaterialien: string
     BelichtungsstromEinheit: string
+}
+
+/**
+ * @type Option
+ *
+ * @property {number} [id] - The option id from the database
+ * @property {string} [values] - The option (display) value
+ */
+export type Option = {
+    id: number
+    values: string
+}
+
+/**
+ * @type LookupValues
+ *
+ * A type to store the options for every option-group from the database.
+ */
+export type LookupValues = {
+    Waermeversorgung: Option[]
+    GWHArt: Option[]
+    Land: Option[]
+    Region: Option[]
+    Bedachungsmaterial: Option[]
+    Stehwandmaterial: Option[]
+    AlterdesBedachungsmaterials: Option[]
+    Energieschirm: Option[]
+    EnergieschirmTyp: Option[]
+    Heizsystem: Option[]
+    Produktionstyp: Option[]
+    Produktionssystem: Option[]
+    AnzahlTriebe: Option[]
+    ZusaetzlichesHeizsystem: Option[]
+    ZusaetzlichesHeizsystemTyp: Option[]
+    "10-30Gramm(Snack)": Option[]
+    "30-100Gramm(Cocktail)": Option[]
+    "100-150Gramm(Rispen)": Option[]
+    ">150Gramm(Fleisch)": Option[]
+    Nebenkultur: Option[]
+    Entfeuchtung: Option[]
+    Energietraeger: Option[]
+    BHKW: Option[]
+    Stromherkunft: Option[]
+    Zusatzbelichtung: Option[]
+    Belichtungsstrom: Option[]
+    WasserVerbrauch: Option[]
+    VorlaufmengeAnteile: Option[]
+    Restwasser: Option[]
+    "CO2-Herkunft": Option[]
+    "Duengemittel:VereinfachteAngabe": Option[]
+    "Duengemittel:DetaillierteAngabe": Option[]
+    Nuetzlinge: Option[]
+    GrowbagsKuebel: Option[]
+    Substrat: Option[]
+    Schnur: Option[]
+    "SchnuereRankhilfen:Material": Option[]
+    Klipse: Option[]
+    "Klipse:Material": Option[]
+    Rispenbuegel: Option[]
+    "Rispenbuegel:Material": Option[]
+    Bewaesserungsart: Option[]
+    Bodenabdeckung: Option[]
+    "Jungpflanzen:Zukauf": Option[]
+    "Jungpflanzen:Substrat": Option[]
+    Verpackungsmaterial: Option[]
+    SonstigeVerbrauchsmaterialien: Option[]
+    ZusaetzlicherMaschineneinsatz: Option[]
+    BelichtungsstromEinheit: Option[]
+}
+
+/**
+ * @type UnitValues
+ *
+ * A type to store the units for every input field from the database.
+ */
+export type UnitValues = {
+    measures: {
+        GWHFlaeche: Option[]
+        WaermeteilungFlaeche: Option[]
+        GWHAlter: Option[]
+        AlterBedachungsmaterial: Option[]
+        AlterStehwandmaterial: Option[]
+        AlterEnergieschirm: Option[]
+        Stehwandhoehe: Option[]
+        Laenge: Option[]
+        Breite: Option[]
+        Kappenbreite: Option[]
+        Scheibenlaenge: Option[]
+        "Reihenabstand(Rinnenabstand)": Option[]
+        Vorwegbreite: Option[]
+        AlterHeizsystem: Option[]
+        AlterProduktionssystem: Option[]
+        AlterZusaetzlichesHeizsystem: Option[]
+        "SnackReihenanzahl": Option[]
+        "SnackPflanzenabstandInDerReihe": Option[]
+        "SnackTriebzahl": Option[]
+        "SnackErtragJahr": Option[]
+        "CocktailReihenanzahl": Option[]
+        "CocktailPflanzenabstandInDerReihe": Option[]
+        "CocktailTriebzahl": Option[]
+        "CocktailErtragJahr": Option[]
+        "RispenReihenanzahl": Option[]
+        "RispenPflanzenabstandInDerReihe": Option[]
+        "RispenTriebzahl": Option[]
+        "RispenErtragJahr": Option[]
+        "FleischReihenanzahl": Option[]
+        "FleischPflanzenabstandInDerReihe": Option[]
+        "FleischTriebzahl": Option[]
+        "FleischErtragJahr": Option[]
+        Nutzflaeche: Option[]
+        KulturBeginn: Option[]
+        KulturEnde: Option[]
+        NebenkulturBeginn: Option[]
+        NebenkulturEnde: Option[]
+        MittlereSolltemperaturTag: Option[]
+        MittlereSolltemperaturNacht: Option[]
+        Luftfeuchte: Option[]
+        "Belichtung:Stromverbrauch": Option[]
+        "Belichtung:AnzahlLampen": Option[]
+        "Belichtung:AnschlussleistungProLampe": Option[]
+        "Belichtung:LaufzeitProJahr": Option[]
+        VorlaufmengeGesamt: Option[]
+        Restwasser: Option[]
+        FungizideKg: Option[]
+        FungizideLiter: Option[]
+        InsektizideKg: Option[]
+        InsektizideLiter: Option[]
+        "Kuebel:VolumenProTopf": Option[]
+        "Kuebel:JungpflanzenProTopf": Option[]
+        "Kuebel:Alter": Option[]
+        "SchnuereRankhilfen:Laenge": Option[]
+        "SchnuereRankhilfen:Wiederverwendung": Option[]
+        "Klipse:AnzahlProTrieb": Option[]
+        "Klipse:Wiederverwendung": Option[]
+        "Rispenbuegel:AnzahlProTrieb": Option[]
+        "Rispenbuegel:Wiederverwendung": Option[]
+        "Bodenabdeckung:Wiederverwendung": Option[]
+        "Jungpflanzen:Distanz": Option[]
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": Option[]
+        "Transport:Distanz": Option[]
+    }
+    selections: {
+        Waermeversorgung: {
+            ja: Option[]
+            nein: Option[]
+        }
+        GWHArt: {
+            "Venlo": Option[]
+            "DeutscheNorm": Option[]
+            "Folientunnel": Option[]
+        }
+        Bedachungsmaterial: {
+            "Einfachglas": Option[]
+            "Doppelglas": Option[]
+            "Doppelstegplatte": Option[]
+            "Dreifachstegplatte": Option[]
+            "Einfachfolie": Option[]
+            "Doppelfolie": Option[]
+        }
+        Stehwandmaterial: {
+            "Einfachglas": Option[]
+            "Doppelglas": Option[]
+            "Doppelstegplatte": Option[]
+            "Dreifachstegplatte": Option[]
+            "Einfachfolie": Option[]
+            "Doppelfolie": Option[]
+        }
+        Energieschirm: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        EnergieschirmTyp: {
+            "kein": Option[]
+            "einfach": Option[]
+            "doppelt": Option[]
+            "einfach,aluminisiert": Option[]
+            "doppelt,aluminisiert": Option[]
+        }
+        Heizsystem: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Produktionssystem: {
+            "Boden": Option[]
+            "Hydroponikoffen": Option[]
+            "Hydroponikgeschlossen": Option[]
+        }
+        ZusaetzlichesHeizsystem: {
+            ja: Option[]
+            nein: Option[]
+        }
+        ZusaetzlichesHeizsystemTyp: {
+            Vegetationsheizung: Option[]
+            Konvektionsheizung: Option[]
+            keines: Option[]
+        }
+        "10-30Gramm(Snack)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        "30-100Gramm(Cocktail)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        "100-150Gramm(Rispen)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        ">150Gramm(Fleisch)": {
+            ja: Option[]
+            nein: Option[]
+        }
+        Nebenkultur: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+         Entfeuchtung: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Energietraeger: {
+            "Erdgas": Option[]
+            "Heizoel": Option[]
+            "Steinkohle": Option[]
+            "Braunkohle": Option[]
+            "Hackschnitzel": Option[]
+            "Biogas": Option[]
+            "Geothermie(oberflaechennah)": Option[]
+            Tiefengheothermie: Option[]
+        }
+        Stromherkunft: {
+            "DeutscherStrommix": Option[]
+            "Oekostrom(DurschnittDeutschland)": Option[]
+            "Photovoltaik": Option[]
+            "Windenergie(Land)": Option[]
+            "Windenergie(See)": Option[]
+            "Wasserkraft": Option[]
+            "Tiefengeothermie": Option[]
+            "Biomethan": Option[]
+            "BHKW Biomethan": Option[]
+            "BHKW Erdgas": Option[]
+            Diesel: Option[]
+        }
+        Zusatzbelichtung: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        Belichtungsstrom: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        VorlaufmengeAnteile: {
+            "Brunnenwasser": Option[]
+            "Regenwasser": Option[]
+            "Stadtwasser": Option[]
+            "Oberflaechenwasser": Option[]
+        }
+        "CO2-Herkunft": {
+            "technisches CO2": Option[]
+            "direkte Gasverbrennung": Option[]
+            "eigenes BHKW": Option[]
+        }
+        "Duengemittel:VereinfachteAngabe": {
+            "A/B Bag: Standardduengung": Option[]
+            "Vinasse": Option[]
+            "Pferdemist": Option[]
+            "Kompost": Option[]
+            "Hornmehl, -griess, -spaene": Option[]
+            "Blutmehl": Option[]
+            "Mist": Option[]
+            "Gruenduengung": Option[]
+            "Knochenmehl": Option[]
+            "Pflanzkali": Option[]
+            "org. Vollduenger": Option[]
+        }
+        "Duengemittel:DetaillierteAngabe": {
+            "Ammoniumnitrat": Option[]
+            "Kaliumnitrat (Kalisalpeter)": Option[]
+            "Calciumnitrat fluessig (Kalksalpeter)": Option[]
+            "Calciumnitrat fest": Option[]
+            "Kaliumcholird, KCL, muriate of potash": Option[]
+            "Kaliumsulfat": Option[]
+            "Monokaliumphosphat (Flory6)": Option[]
+            "Borax": Option[]
+            "Eisen DDTPA 3%": Option[]
+            "Eisen EDDHA 6 %": Option[]
+            "25 % Cu Kupfersulfat": Option[]
+            "32 % Mn Mangansulfat": Option[]
+            "Natriummolybdat": Option[]
+            "Zinksulfat": Option[]
+            "Chlorbleichlauge": Option[]
+            "Bittersalz": Option[]
+            "Phosphorsaeure 75%": Option[]
+            "Salpetersaeure 65%": Option[]
+            "Salpetersaeure 38%": Option[]
+            "Kalksalpeter": Option[]
+            "Magnesiumnitrat": Option[]
+            "Magnesiumsulfat": Option[]
+            "Kalisilikat": Option[]
+            "Mangansulfat": Option[]
+            "Cupfersulfat": Option[]
+            "Ammoniummolybdat": Option[]
+        }
+        Nuetzlinge: {
+            "Erzwespe (Encasia, Eretmocerus, oder vergleichbares)": Option[]
+            "Macrolophus (oder vergleichbares)": Option[]
+            "Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)": Option[]
+            "Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)": Option[]
+            "Gallmuecken (Aphidoletes, oder vergleichbares)": Option[]
+            "Florfliegen (Chrysoperla, oder vergleichbares)": Option[]
+            "Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)": Option[]
+            "Hummeln": Option[]
+            "Andere": Option[]
+        }
+        GrowbagsKuebel: {
+            "Growbags": Option[]
+            "Kuebel": Option[]
+            "nichts": Option[]
+        }
+        Substrat: {
+            "Standardsubstrat": Option[]
+            "Kokos": Option[]
+            "Kompost": Option[]
+            "Steinwolle": Option[]
+            "Perlite": Option[]
+            "Nachhaltiges Substrat": Option[]
+        }
+        Schnur: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "SchnuereRankhilfen:Material": {
+            "Kunststoff": Option[]
+            "Jute": Option[]
+            "Sisal": Option[]
+            "Zellulose": Option[]
+            "andere Nachhaltige/abbaubare Option": Option[]
+            "Bambusstab": Option[]
+            "Edelstahl": Option[]
+        }
+        Klipse: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "Klipse:Material": {
+            "Kunststoff": Option[]
+            "Metall": Option[]
+            "Nachhaltige / kompostierbare Option": Option[]
+        }
+        Rispenbuegel: {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "Rispenbuegel:Material": {
+            "Kunststoff": Option[]
+            "Metall": Option[]
+            "Nachhaltige / kompostierbare Option": Option[]
+        }
+        Bewaesserungsart: {
+            "Tropfschlaeuche": Option[]
+            "Bodensprenkler": Option[]
+            "Handschlauch": Option[]
+        }
+        Bodenabdeckung: {
+            "Bodenfolie": Option[]
+            "Bodengewebe": Option[]
+            "Beton": Option[]
+        }
+        "Jungpflanzen:Zukauf": {
+            "ja": Option[]
+            "nein": Option[]
+        }
+        "Jungpflanzen:Substrat": {
+            Standardsubstrat: Option[]
+            Kokos: Option[]
+            Steinwolle: Option[]
+            Perlite: Option[]
+            "Nachhaltiges Substrat": Option[]
+        }
+        Verpackungsmaterial: {
+            Karton: Option[]
+            Plastik: Option[]
+        }
+        SonstigeVerbrauchsmaterialien: {
+            "Folie": Option[]
+            "Eisen": Option[]
+            "Alluminium": Option[]
+            "Kunststoff": Option[]
+            "Holz": Option[]
+            "Pappe": Option[]
+        }
+        ZusaetzlicherMaschineneinsatz: {
+            Gabelstapler: Option[]
+        }
+        BelichtungsstromEinheit: {
+            kWh: Option[]
+            Angaben: Option[]
+        }
+    }
 }

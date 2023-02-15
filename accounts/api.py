@@ -75,9 +75,13 @@ class RegisterAPI(generics.GenericAPIView):
         #    <head>
         #       <img src="cid:logo.png" alt="Benchmark Logo">
         #    </head>
-
-        email.send(fail_silently=False)
-
+        try:
+            email.send(fail_silently=False)
+        except Exception as err:
+            print(err)
+            serializer.delete(serializer.validated_data)
+            return Response({'Error': 'Internal error', 'Message': 'Email service not working.'},
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response({'Message: Account has been successfully created.'}, status=status.HTTP_201_CREATED)
 
 

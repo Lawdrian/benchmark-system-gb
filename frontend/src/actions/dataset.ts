@@ -5,7 +5,12 @@ import {DATASET_ERROR, DATASET_LOADED, DATASET_LOADING} from "../types/reduxType
 
 
 /**
- * Load the greenhouses that a user created.
+ * Load all datasets for every greenhouse, that a user created.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the account deletion is in progress
+ * @param successCB - Function that should be executed, when the account deletion was a success
+ * @param errorCB - Function that should be executed, when an error occurred during account deletion
  */
 export const loadDatasets = (
     withAuth: boolean = true,
@@ -14,11 +19,10 @@ export const loadDatasets = (
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    // User Loading
     dispatch({type: DATASET_LOADING});
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-datasets', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Dataset response", response)

@@ -2,9 +2,9 @@
  * #############################################################################
  * auth.ts: Redux action generators for authentication purposes
  *
- *     This file defines functions to register a new user, login an existing user
- *     or logout the current user. To check, whether the current user is
- *     authenticated, the backend provides an authentication token, which is
+ *     This file defines functions to register a new user, validate a user account, login an existing user
+ *     or logout the current user, change a user's password and delete a user's account.
+ *     To check, whether the current user is authenticated, the backend provides an authentication token, which is
  *     stored in the {@link AuthenticationState}.
  *
  * For further information on action generators see:
@@ -70,29 +70,29 @@ export const logout = () => (dispatch: AppDispatch, getState: ReduxStateHook) =>
 /**
  * Register a new user.
  *
- * @param username - The new username
+ * @param username - The username (same as email)
  * @param email - The users' email
  * @param password - The password to use
  * @param companyName - The company, the user works at
- * @param callbackSucc - Function that should be executed, when the registration was a success
- * @param callbackErr - Function that should be executed, when an error occurred during registration
+ * @param successCB - Function that should be executed, when the registration was a success
+ * @param errorCB - Function that should be executed, when an error occurred during registration
  */
 export const register = (
     username: string,
     email: string,
     password: string,
     companyName: string,
-    callbackSucc: Function = () => {},
-    callbackErr: Function = () => {}
+    successCB: Function = () => {},
+    errorCB: Function = () => {}
 ) => (dispatch: any) => {
-    // Create request headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
         },
     };
 
-    // Create request body for post request
+    // create request body for post request
     const body = JSON.stringify({
         username: username,
         email: email,
@@ -102,22 +102,21 @@ export const register = (
         }
     });
 
-    // Send the http request
+    // send the http request
     axios.post('/accounts/auth/register', body, config)
         .then((response) => {
             dispatch({
                 type: REGISTER_SUCCESS,
             });
-            callbackSucc()
+            successCB()
         })
         .catch((error) => {
             dispatch({
                 type: REGISTER_FAIL,
             });
-            callbackErr(error.response.data.Error)
+            errorCB(error.response.data.Error)
         });
 };
-
 
 /**
  * Activate a newly created account.
@@ -130,7 +129,7 @@ export const activate = (
     token: string
 ) => (dispatch: any) => {
 
-    // Create request headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -138,10 +137,7 @@ export const activate = (
     };
 
     const url = `/accounts/auth/activate?uid=${uidb64}&token=${token}`
-    console.log("Activate called")
-    // Activate Loading
     dispatch({type: ACTIVATE_LOADING});
-
     axios.patch(url, {}, config)
         .then((response) => {
             dispatch({
@@ -155,9 +151,8 @@ export const activate = (
         });
 }
 
-
 /**
- * Send password change link to user email.
+ * Send password change link to user email via back end.
  *
  * @param email - The users' email
  */
@@ -166,7 +161,7 @@ export const forgotPW = (
 ) => (dispatch: any) => {
 
 
-    // Create request headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -194,7 +189,7 @@ export const forgotPW = (
 
 
 /**
- * Reset a users password.
+ * Change a user's password.
  *
  * @param uidb64 - Encoded user id
  * @param token - User-specific activation token
@@ -210,7 +205,7 @@ export const resetPW = (
     callbackErr: Function = () => {}
 ) => (dispatch: any) => {
 
-    // Create request headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -238,21 +233,20 @@ export const resetPW = (
         });
 }
 
-
 /**
  * Delete a users account.
  *
  * @param withAuth - User needs to be logged in to use this function
- * @param callbackSucc - Function that should be executed, when the account deletion was a success
- * @param callbackErr - Function that should be executed, when an error occurred during account deletion
+ * @param successCB - Function that should be executed, when the account deletion was a success
+ * @param errorCB - Function that should be executed, when an error occurred during account deletion
  */
 export const deleteUser = (
     withAuth: boolean = true,
-    callbackSucc: Function = () => {},
-    callbackErr: Function = () => {}
+    successCB: Function = () => {},
+    errorCB: Function = () => {}
 ) => (dispatch: any, getState: ReduxStateHook) => {
 
-    // Create request headers
+    // create request headers
     const config = withAuth ? tokenConfig(getState) : {
         headers: {
             'Content-Type': 'application/json',
@@ -267,37 +261,36 @@ export const deleteUser = (
             dispatch({
                 type: DELETE_SUCCESS,
             });
-            callbackSucc()
+            successCB()
         })
         .catch((error) => {
             dispatch({
                 type: DELETE_FAIL,
             });
-            callbackErr()
+            errorCB()
         });
 }
-
 
 /**
  * Login a user using the provided credentials.
  *
  * @param username - The username
  * @param password - The users' password
- * @param onError - Error callback. Gets called if the login process fails.
+ * @param errorCB - Function that should be executed, when an error occurred during login
  */
 export const login = (
     username: string,
     password: string,
-    onError: Function = () => { /*NOOP*/ }
+    errorCB: Function = () => { /*NOOP*/ }
 ) => (dispatch: AppDispatch) => {
-    // Headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
         },
     };
 
-    // Request Body
+    // create request body
     const body = JSON.stringify({
         username: username,
         password: password
@@ -310,11 +303,11 @@ export const login = (
                 payload: response.data,
             });
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: LOGIN_FAIL,
             });
-            onError();
+            errorCB();
         });
 }
 
@@ -326,23 +319,23 @@ export const login = (
  * @param getState - Handle to retrieve the redux state
  */
 export const tokenConfig = (getState: ReduxStateHook): AxiosRequestConfig => {
-    // Get token from state
+    // get token from state
     const token = getState().auth.token;
 
-    // Create headers
+    // create headers
     const headers: AxiosRequestHeaders = {
         'Content-Type': 'application/json'
     }
 
-    // If token, add to header
+    // append authorization token to header if available
     if (token) {
         headers['Authorization'] = "Token " + token;
     }
 
-    // Get csrftoken
+    // get csrftoken
     const csrftoken = Cookies.get('csrftoken');
 
-    // Append token to header if available
+    // append token to header if available
     if (csrftoken) {
         headers['X-CSRFToken'] = csrftoken
     }

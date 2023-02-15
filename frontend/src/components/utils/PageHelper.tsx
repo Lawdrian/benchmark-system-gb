@@ -18,6 +18,15 @@ type PageHelperProps = ReduxProps & {
     isPrivate?: boolean
 }
 
+/**
+ * This function checks with the {@link checkAuthentication} function, if a page should
+ * be only visible for logged-in users.
+ * @param children - Page that wants to be accessed
+ * @param pageTitle - Title of the page that wants to be accessed
+ * @param isPrivate - Boolean value that determines, if the page is only accessible for logged-in users
+ * @param auth - Authentication Redux state
+ * @param loginUrl - Url of the login page that the user gets redirected to, if he is not authenticated
+ */
 const PageHelper = ({
                         children,
                         pageTitle,
@@ -28,7 +37,6 @@ const PageHelper = ({
     useLayoutOutletContext().setTitle(pageTitle);
 
     if (isPrivate) {
-        //console.log("PRIVATE PAGE: Before Authentication")
         return checkAuthentication(loginUrl, children, auth)
     } else {
         return <>{children}</>

@@ -21,7 +21,12 @@ type CO2FootprintOptimizationData = {
     normalizedUnit: string
 }
 
-
+/**
+ * This component renders the optimization for a data set.
+ * @param data
+ * @param normalizedUnit
+ * @constructor
+ */
 export const CO2FootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOptimizationData) => {
 
     const bestPerformer = data.datasets[0].data.length-1
@@ -32,7 +37,7 @@ export const CO2FootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOpt
     })
 
     const percentageIncreases = data.datasets.map( (dataset) => {
-        return (dataset.data[recentDataset] - dataset.data[bestPerformer])/dataset.data[bestPerformer]*100 || 0
+        return (dataset.data[recentDataset] - dataset.data[bestPerformer]) / dataset.data[bestPerformer] * 100 || 0
     })
 
     const calculateRating = (percentageIncrease: number): number => {

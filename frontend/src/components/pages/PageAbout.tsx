@@ -1,10 +1,9 @@
 import React from "react";
 
-type AboutProps = {
-
-}
-
-const PageAbout = (props: AboutProps) => {
+/**
+ * This component renders the about page, that displays some information about the project team.
+ */
+const PageAbout = () => {
     return (
         <div id="about" className="page">
           <p style={{textAlign: "center"}}>

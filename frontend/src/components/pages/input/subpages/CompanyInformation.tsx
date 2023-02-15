@@ -15,10 +15,9 @@ import {
     ConditionalSelectionInputField,
     DynamicInputField, DynamicInputProps
 } from "../../../utils/input/InputFields";
-import Grid from "@mui/material/Grid";
 import {RootState} from "../../../../store";
 import {connect, ConnectedProps} from "react-redux";
-import {Divider, Paper, TextField, Typography} from "@mui/material";
+import {Paper, TextField, Grid} from "@mui/material";
 import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../../utils/input/InputPaginationButtons";
 import {SectionDivider} from "../../../utils/input/layout";
@@ -42,6 +41,9 @@ type CompanyInformationProps = ReduxProps & SubpageProps & {
     values: CompanyInformationState
 }
 
+/**
+ * This type contains the types for the {@link companyInformation} state.
+ */
 export type CompanyInformationState = {
     gewaechshausName: string | null
     datum: Date | null
@@ -77,6 +79,18 @@ export type CompanyInformationState = {
     zusaetzlichesHeizsystemAlter: DateValue | null
 }
 
+/**
+ * This functional component renders the sub-page company information for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideCompanyInformation - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param submissionSuccess - Boolean value determining, whether the submission was a success or not
+ * @param unitValues - Values used for displaying the unit in the input fields
+ * @param showDateInputError - Function that determines if an error in a date input field should be displayed
+ * @param showSelectInputError - Function that determines if an error in a select input field should be displayed
+ * @param showMeasureInputError - Function that determines if an error in a measure input field should be displayed
+ */
 const CompanyInformationInput = ({values, provideCompanyInformation, paginationProps, lookupValues, submissionSuccess, unitValues, showDateInputError, showSelectInputError, showMeasureInputError}: CompanyInformationProps) => {
     const [companyInformation, setCompanyInformation] = useState<CompanyInformationState>(values)
 
@@ -85,7 +99,7 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
         provideCompanyInformation(companyInformation)
     }
 
-
+    // properties of the input fields
     const datumProps: DateInputProps = {
         title: "Datensatzzeitraum",
         label: "Auf welchen Zeitraum beziehen sich die Daten?",

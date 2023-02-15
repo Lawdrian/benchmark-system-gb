@@ -14,11 +14,24 @@ export type UserManagementLayoutProps = {
     children?: ReactNode
 }
 
-
-export const UserManagementLayout: React.FC<UserManagementLayoutProps> = ({title, subtitle, buttonText, navigateTo, children}) => {
+/**
+ * This functional component renders a page with a specific layout that is used outside the main app layout.
+ *
+ * @param title - The title of the page
+ * @param subtitle - The subtitle of the page
+ * @param buttonText - The name of the button
+ * @param navigateTo - The page where the user should be navigated to, if the button is pressed
+ * @param children - Children components that are displayed above the button
+ */
+export const UserManagementLayout: React.FC<UserManagementLayoutProps> = ({
+                                                                              title,
+                                                                              subtitle,
+                                                                              buttonText,
+                                                                              navigateTo,
+                                                                              children
+}) => {
 
     const navigate = useNavigate()
-
 
     const navigateToPage = () => {
         navigate(navigateTo)

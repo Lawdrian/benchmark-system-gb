@@ -285,8 +285,9 @@ class GetCalculatedH2OFootprint(APIView):
                                         calculation_id=calculation_id) \
                                 .values('result_value')[0]['result_value']
 
-                            best_performer_directkg_dict[direct_h2o_calculation_names[i]] = value_kg / total_harvest
-                            best_performer_directm2_dict[direct_h2o_calculation_names[i]] = value_m2 / gh_size
+                            best_performer_directkg_dict[direct_h2o_calculation_names[i]] = \
+                                round(value_kg / total_harvest, 2)
+                            best_performer_directm2_dict[direct_h2o_calculation_names[i]] = round(value_m2 / gh_size, 2)
 
                         direct_h2o_kg_data_set_list.append(best_performer_directkg_dict)
                         direct_h2o_m2_data_set_list.append(best_performer_directm2_dict)

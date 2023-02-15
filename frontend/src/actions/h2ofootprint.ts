@@ -20,8 +20,14 @@ import axios from "axios";
 import {AppDispatch, ReduxStateHook} from "../store";
 import {tokenConfig} from "./auth";
 import {format} from "date-fns";
+import {formatLabel} from "./co2footprint";
 
 
+/**
+ * @type RawH2ODataset
+ *
+ * The structure of a single h2o footprint greenhouse data, that is provided by the server.
+ */
 type RawGreenhouseH2ODataset = {
     greenhouse_name: string
     performer_productiontype?: string
@@ -34,7 +40,7 @@ type RawGreenhouseH2ODataset = {
  * @type RawH2ODataset
  *
  * Contains the values, which make up the h2o-footprint, and a label, that
- * gives additional information about the dataset. (The Data in this case)
+ * gives additional information about the dataset. (The date in this case)
  */
 type RawH2ODataset = {
     label: string
@@ -66,6 +72,11 @@ type RawH2ODataset = {
     transport_h2o: number
 }
 
+/**
+ * @type RawGreenhouseDirectH2ODataset
+ *
+ * The structure of a single h2o footprint direct water usage greenhouse data, that is provided by the server.
+ */
 type RawGreenhouseDirectH2ODataset = {
     greenhouse_name: string
     performer_productiontype?: string
@@ -73,6 +84,12 @@ type RawGreenhouseDirectH2ODataset = {
     greenhouse_datasets: RawDirectH2ODataset[]
 }
 
+/**
+ * @type RawDirectH2ODataset
+ *
+ * Contains the values, which make up the direct water usage h2o-footprint, and a label, that
+ * gives additional information about the dataset. (The date in this case)
+ */
 type RawDirectH2ODataset = {
     label: string
     brunnenwasser_h2o: number
@@ -83,7 +100,13 @@ type RawDirectH2ODataset = {
 
 
 /**
- * Loads the h2ofootprint data for the current user.
+ * Loads the h2o footprint data for the current user.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the h2o footprint request is in progress
+ * @param successCB - Function that should be executed, when the h2o footprint request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the h2o footprint request
+ * @param noContentCB - Function that should be executed, when there is no h2o footprint
  */
 export const loadH2OFootprint = (
     withAuth: boolean = true,
@@ -93,16 +116,14 @@ export const loadH2OFootprint = (
     noContentCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    // User Loading
     dispatch({type: H2OFP_LOADING });
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-h2o-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("H2O Response", response)
             if (response.status == 204) {
-                console.log("No Content")
                 dispatch({type: H2OFP_NO_CONTENT})
                 noContentCB()
             }
@@ -132,10 +153,10 @@ export const loadH2OFootprint = (
 
 /**
  * Takes the raw h2o-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data.
  *
- * @param responseData - The h2o-footprint data provided by the server
+ * @param responseData - The h2o footprint data provided by the server
  */
 export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseFootprint[] => {
 
@@ -289,14 +310,12 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
 }
 /**
  * Takes the raw h2o-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data.
  *
- * @param responseData - The h2o-footprint data provided by the server
+ * @param responseData - The h2o footprint data provided by the server
  */
 export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODataset[]): GreenhouseFootprint[] => {
-    console.log("toDirectH2O")
-    console.log(responseData)
     return responseData.map(greenhouse => {
         return {
             greenhouse: greenhouse.greenhouse_name,
@@ -363,9 +382,10 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
 
 /**
  * Takes the raw h2o-benchmark data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data. Every bar represents the categories(e.g. Wärmeenergie).
- * These bars will have dots on them showing how the best performer and worst performer are doing
+ * The h2o footprint of the best and worst performer split up into its categories,
+ * is displayed in addition to the user's co2 footprint.
  *
  * @param responseData - The h2o-benchmark data provided by the server
  */
@@ -420,7 +440,7 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                     {
                         label: formatLabel(greenhouse.greenhouse_datasets[1].label),
                         type: 'scatter' as const,
-                        data: [konstruktion[1], waermetraeger[1], strom[1], hilfsstoffe[1], betriebsstoffe[1]],
+                        data: [konstruktion[1], waermetraeger[1], strom[1], wasserverbrauch[1], hilfsstoffe[1], betriebsstoffe[1]],
                         backgroundColor: "rgba(11,156,49,0.6)",
                         pointStyle: "cross",
                         borderColor: "rgba(11,156,49,0.6)",
@@ -433,7 +453,7 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                     {
                         label: formatLabel(greenhouse.greenhouse_datasets[2].label),
                         type: 'scatter' as const,
-                        data: [konstruktion[2], waermetraeger[2], strom[2], hilfsstoffe[2], betriebsstoffe[2]],
+                        data: [konstruktion[2], waermetraeger[2], strom[2], wasserverbrauch[2], hilfsstoffe[2], betriebsstoffe[2]],
                         backgroundColor: "rgba(255,0,0,0.8)",
                         pointStyle: "cross",
                         borderColor: "rgba(255,0,0,0.8)",
@@ -446,21 +466,11 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
                     {
                         label: formatLabel(greenhouse.greenhouse_datasets[0].label),
                         type: 'bar' as const,
-                        data: [konstruktion[0], waermetraeger[0], strom[0], hilfsstoffe[0], betriebsstoffe[0]],
+                        data: [konstruktion[0], waermetraeger[0], strom[0], wasserverbrauch[0], hilfsstoffe[0], betriebsstoffe[0]],
                         backgroundColor: "rgba(187, 181, 184, 0.8)"
                     }
                 ]
             }
         }
     });
-}
-
-export function formatLabel(label: string):string {
-        try {
-            return format(new Date(label), 'yyyy')
-
-        }
-        catch(e) {
-            return label
-        }
 }

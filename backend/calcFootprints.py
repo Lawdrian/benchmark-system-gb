@@ -5,25 +5,36 @@ from .utils import default_value, default_option
 
 
 def calc_footprints(data):
+    """Function that calculates the co2 and h2o footprints for a greenhouse dataset.
+
+    This function calls multiple functions that calculate the footprints for each specific category.
+
+    Args:
+        data : contains the data that is used for the footprint calculation
+
+    Returns:
+        dictionary contains the calculated footprints for both co2 and h2o
+    """
+
     all_options = Options.objects.all()
     helping_values = calc_helping_values(data, all_options)
     konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserung_co2, heizsystem_co2, zusaetzliches_heizsystem_co2, \
     konstruktion_h2o, energieschirm_h2o, bodenabdeckung_h2o, produktionssystem_h2o, bewaesserung_h2o, heizsystem_h2o, zusaetzliches_heizsystem_h2o = calc_greenhouse_construction(data, helping_values, all_options)
-    energietraeger_co2, energietraeger_h2o = calc_energy_source(data, helping_values, all_options)
+    energietraeger_co2, energietraeger_h2o = calc_energy_source(data, all_options)
     strom_co2, strom_h2o = calc_electric_power(data, helping_values, all_options)
-    brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o = calc_water_usage(data, helping_values, all_options)
-    co2_zudosierung_co2, co2_zudosierung_h2o = calc_co2_added(data, helping_values, all_options)
-    duengemittel_co2, duengemittel_h2o = calc_fertilizer(data, helping_values, all_options)
+    brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o = calc_water_usage(data, all_options)
+    co2_zudosierung_co2, co2_zudosierung_h2o = calc_co2_added(data, all_options)
+    duengemittel_co2, duengemittel_h2o = calc_fertilizer(data, all_options)
     psm_co2, psm_h2o = calc_psm(data)
-    pflanzenbehaelter_co2, pflanzenbehaelter_h2o = calc_pflanzenbehaelter(data, helping_values, all_options)
+    pflanzenbehaelter_co2, pflanzenbehaelter_h2o = calc_plantbags(data, helping_values, all_options)
     substrat_co2, substrat_h2o = calc_substrate(data, helping_values, all_options)
     jungpflanzen_substrat_co2, jungpflanzen_substrat_h2o = calc_young_plants_substrate(data, helping_values, all_options)
-    jungpflanzen_transport_co2, jungpflanzen_transport_h2o = calc_young_plants_transport(data, helping_values, all_options)
+    jungpflanzen_transport_co2, jungpflanzen_transport_h2o = calc_young_plants_transport(data, helping_values)
     schnuere_co2, schnuere_h2o = calc_cords(data, helping_values, all_options)
     klipse_co2, klipse_h2o = calc_clips(data, helping_values, all_options)
     rispenbuegel_co2, rispenbuegel_h2o = calc_panicle_hanger(data, helping_values, all_options)
-    verpackung_co2, verpackung_h2o = calc_packaging(data, helping_values, all_options)
-    sonstige_verbrauchsmaterialien_co2, sonstige_verbrauchsmaterialien_h2o = calc_other_consumables(data, helping_values, all_options)
+    verpackung_co2, verpackung_h2o = calc_packaging(data, all_options)
+    sonstige_verbrauchsmaterialien_co2, sonstige_verbrauchsmaterialien_h2o = calc_other_consumables(data, all_options)
 
     co2_results = {
         "konstruktion_co2": konstruktion_co2,
@@ -102,72 +113,17 @@ def calc_footprints(data):
     h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
     h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
 
-    """
-    calculation_results = {
-        "konstruktion_co2": konstruktion_co2,
-        "konstruktion_h2o": konstruktion_h2o,
-        "energieschirm_co2": energieschirm_co2,
-        "energieschirm_h2o": energieschirm_h2o,
-        "bodenabdeckung_co2": bodenabdeckung_co2,
-        "bodenabdeckung_h2o": bodenabdeckung_h2o,
-        "produktionssystem_co2": produktionssystem_co2,
-        "produktionssystem_h2o": produktionssystem_h2o,
-        "bewaesserung_co2": bewaesserung_co2,
-        "bewaesserung_h2o": bewaesserung_h2o,
-        "heizsystem_co2": heizsystem_co2,
-        "heizsystem_h2o": heizsystem_h2o,
-        "zusaetzliches_heizsystem_co2": zusaetzliches_heizsystem_co2,
-        "zusaetzliches_heizsystem_h2o": zusaetzliches_heizsystem_h2o,
-        "energietraeger_co2": energietraeger_co2,
-        "energietraeger_h2o": energietraeger_h2o,
-        "strom_co2": strom_co2,
-        "strom_h2o": strom_h2o,
-        "brunnenwasser_co2": brunnenwasser_co2,
-        "brunnenwasser_h2o": brunnenwasser_h2o,
-        "regenwasser_co2": regenwasser_co2,
-        "regenwasser_h2o": regenwasser_h2o,
-        "stadtwasser_co2": stadtwasser_co2,
-        "stadtwasser_h2o": stadtwasser_h2o,
-        "oberflaechenwasser_co2": oberflaechenwasser_co2,
-        "oberflaechenwasser_h2o": oberflaechenwasser_h2o,
-        "restwasser_co2": restwasser_co2,
-        "restwasser_h2o": restwasser_h2o,
-        "co2_zudosierung_co2": co2_zudosierung_co2,
-        "co2_zudosierung_h2o": co2_zudosierung_h2o,
-        "duengemittel_co2": duengemittel_co2,
-        "duengemittel_h2o": duengemittel_h2o,
-        "psm_co2": psm_co2,
-        "psm_h2o": psm_h2o,
-        "pflanzenbehaelter_co2": pflanzenbehaelter_co2,
-        "pflanzenbehaelter_h2o": pflanzenbehaelter_h2o,
-        "substrat_co2": substrat_co2,
-        "substrat_h2o": substrat_h2o,
-        "jungpflanzen_substrat_co2": jungpflanzen_substrat_co2,
-        "jungpflanzen_substrat_h2o": jungpflanzen_substrat_h2o,
-        "jungpflanzen_transport_co2": jungpflanzen_transport_co2,
-        "jungpflanzen_transport_h2o": jungpflanzen_transport_h2o,
-        "schnuere_co2": schnuere_co2,
-        "schnuere_h2o": schnuere_h2o,
-        "klipse_co2": klipse_co2,
-        "klipse_h2o": klipse_h2o,
-        "rispenbuegel_co2": rispenbuegel_co2,
-        "rispenbuegel_h2o": rispenbuegel_h2o,
-        "verpackung_co2": verpackung_co2,
-        "verpackung_h2o": verpackung_h2o,
-        "sonstige_verbrauchsmaterialien_co2": sonstige_verbrauchsmaterialien_co2,
-        "sonstige_verbrauchsmaterialien_h2o": sonstige_verbrauchsmaterialien_h2o
-    }
-    """
     return co2_results | h2o_results
 
 
 def calc_helping_values(data, all_options):
-    """This function calculates various helping values needed for calculating the co2-footprint
-            Args:
-                data : greenhousedata
+    """This function calculates various helping values needed for calculating the co2 and h2o footprints
 
-            Returns:
-                helping_values: A dictionary containing the calculated variables
+    Args:
+        data : greenhouse dataset
+
+    Returns:
+        dictionary: contains the calculated variables
     """
 
     if data["KulturEnde"][0] > data["KulturBeginn"][0]:
@@ -194,7 +150,8 @@ def calc_helping_values(data, all_options):
     row_length = data["Laenge"][0]-data["Vorwegbreite"][0]
     row_length_total = row_length*row_count
     walk_length_total = (row_count-1)*row_length
-    # Calculate the amount of fruits
+
+    # calculate the amount of fruits
     snack_count = 0
     cocktail_count = 0
     rispen_count = 0
@@ -220,7 +177,7 @@ def calc_helping_values(data, all_options):
     panicle_hanger_count_total = rispen_shoots_count*data["Rispenbuegel:AnzahlProTrieb"][0] + fleisch_shoots_count * data["Rispenbuegel:AnzahlProTrieb"][0]
     total_harvest = data["SnackErtragJahr"][0] + data["CocktailErtragJahr"][0] + data["RispenErtragJahr"][0] + data["FleischErtragJahr"][0]
 
-    # Check if bhkw is used or not
+    # check if bhkw is used or not
     energietraeger_id = OptionGroups.objects.get(option_group_name="Energietraeger").id
     bhkw_erdgas_option = all_options.get(option_group=energietraeger_id, option_value="BHKW Erdgas").id
     bhkw_biomethan_option = all_options.get(option_group=energietraeger_id, option_value="BHKW Biomethan").id
@@ -228,7 +185,6 @@ def calc_helping_values(data, all_options):
     for option in data["Energietraeger"]:
         if option[0] == bhkw_erdgas_option or option[0] == bhkw_biomethan_option:
             bhkw_usage = True
-
 
     print("Helping Values:")
     print("culture_length: " + str(culture_length))
@@ -293,8 +249,17 @@ def calc_helping_values(data, all_options):
 
 def calc_energyconsumption_lighting(data, all_options):
     """Calculates the energyconsumption that belongs to lightning.
+
     Will be 0, if lighting is already included in GWHStromverbrauch.
+
+    Args:
+        data : greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        energyconsumption for lighting
     """
+
     if all_options.filter(id=data["Zusatzbelichtung"][0][0])[0].option_value == "ja" and all_options.filter(id=data["Belichtungsstrom"][0][0])[0].option_value == "nein":
         if(data["Belichtung:Stromverbrauch"][0]> 0): return data["Belichtung:Stromverbrauch"][0]
         else:
@@ -304,29 +269,49 @@ def calc_energyconsumption_lighting(data, all_options):
 
 
 def calc_gh_size(data):
-    """Calculates the size of the greenhouse
-        """
+    """Calculates the size of the greenhouse.
+
+    Args:
+        data : greenhouse dataset
+
+    Returns:
+        greenhouse size
+    """
+
     if (data["GWHFlaeche"][0] > 0): return data["GWHFlaeche"][0]
     else:
         return data["Laenge"][0]*data["Breite"][0]
 
 
 def calc_culture_size(data, gh_size):
-    """Calculates the size of the culture
-        """
+    """Calculates the size of the culture.
+
+    Args:
+        data : greenhouse dataset
+
+    Returns:
+        size that the culture takes up
+    """
+
     if (data["Nutzflaeche"][0] > 0): return data["Nutzflaeche"][0]
     else:
         return gh_size-(data["Vorwegbreite"][0]*data["Breite"][0])
 
 
 def calc_hull_size(data):
-    """Calculates the size of the greenhouse hull depending on which norm used
-        """
+    """Calculates the size of the greenhouse hull depending on which norm used.
+
+    Args:
+        data : greenhouse dataset
+
+    Returns:
+        hull size of the greenhouse
+    """
+
     norm_id = data["GWHArt"][0][0]
     norm_name = Options.objects.get(id=norm_id).option_value
     hull_size_wall = 0
     hull_size_roof = 0
-    hull_size_total = 0
     if(norm_name=="Venlo"):
         hull_size_wall = (data["Laenge"][0]+data["Breite"][0])*2*data["Stehwandhoehe"][0]+((((math.sqrt(abs((data["Scheibenlaenge"][0]**2) - (data["Kappenbreite"][0]/2)**2)))*data["Kappenbreite"][0])/2)*(data["Breite"][0]/data["Kappenbreite"][0]))
         hull_size_roof = data["Scheibenlaenge"][0]*data["Laenge"][0]*(data["Breite"][0]/data["Kappenbreite"][0]*2)
@@ -349,7 +334,18 @@ def calc_hull_size(data):
 
 
 def calc_greenhouse_construction(data, helping_values, all_options):
-    # First check which kind of greenhouse is used
+    """Calculates the size of the footprint for the greenhouse construction.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the categories of the greenhouse construction
+    """
+
+    # first check which kind of greenhouse is used
     norm_id = data["GWHArt"][0][0]
     norm_name = all_options.get(id=norm_id).option_value
     stehwandmaterial= all_options.get(id=data["Stehwandmaterial"][0][0]).option_value
@@ -369,9 +365,9 @@ def calc_greenhouse_construction(data, helping_values, all_options):
     stehwand_h2o = 0
     bedachung_h2o = 0
 
-    # GWHart
+    # input field: GWHart
     if norm_name == "Venlo" or norm_name == "Deutsche Norm":
-        # Materials
+        # calculate material footprints
         if data["GWHAlter"][0] <= 20:
             if norm_name == "Venlo":
                 beton = helping_values["gh_size"] * 2.52032 * helping_values["culture_length_usage"]
@@ -398,7 +394,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
                 aluminium_co2 = aluminium * 14.365981
                 aluminium_h2o = aluminium * 14.365981
 
-        # Stehwand
+        # input field: Stehwand
         if stehwandmaterial == "Einfachglas":
             if data["AlterStehwandmaterial"][0] <= 15:
                 stehwand = helping_values["hull_size"]["wall"] * 0.664 * helping_values["culture_length_usage"]
@@ -432,7 +428,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Stehwandmaterial has been selected')
 
-        # Bedachung
+        # input field: Bedachung
         if bedachungsmaterial == "Einfachglas":
             if data["AlterBedachungsmaterial"][0] <= 15:
                 bedachung = helping_values["hull_size"]["wall"] * 0.664 * helping_values["culture_length_usage"]
@@ -476,7 +472,9 @@ def calc_greenhouse_construction(data, helping_values, all_options):
                 stahl = helping_values["gh_size"] * 0.13 * helping_values["culture_length_usage"]
                 stahl_co2 = stahl * 1.5641297
                 stahl_h2o = stahl * 1.5641297
-        else: # Assume Doppelfolie has been selected. If something else has been selected this will be assumed to not cause unneccessary errors.
+        else:
+            # assume option Doppelfolie has been selected.
+            # if something else has been selected this will be assumed to not cause unnecessary errors.
             if data["AlterBedachungsmaterial"][0] <= 5:
                 lpde = helping_values["hull_size"]["total"] * 0.14 * helping_values["culture_length_usage"]
                 lpde_co2 = lpde * 2.78897
@@ -488,7 +486,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
     else:
         raise ValueError('No valid option for GWHArt has been selected')
 
-    # Energieschirm
+    # input field: Energieschirm
     energieschirm_co2 = 0
     energieschirm_h2o = 0
     energieschirmverwendung = all_options.get(id=data["Energieschirm"][0][0]).option_value
@@ -514,7 +512,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Energieschirm has been selected')
 
-    # Bodenabdeckung
+    # input field: Bodenabdeckung
     bodenabdeckung_co2 = 0
     bodenabdeckung_h2o = 0
     if data["Bodenabdeckung"] != default_option:
@@ -539,7 +537,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
             else:
                 raise ValueError('No valid option for Bodenabdeckung has been selected')
 
-    # Produktionssystem
+    # input field: Produktionssystem
     produktionssystemtyp = all_options.get(id=data["Produktionssystem"][0][0]).option_value
     produktionstyp = all_options.get(id=data["Produktionstyp"][0][0]).option_value
     produktionssystem_co2 = 0
@@ -558,7 +556,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Produktionssystem has been selected')
 
-    # Bewässerungsart
+    # input field: Bewässerungsart
     bewaesserungmaterial = all_options.get(id=data["Bewaesserungsart"][0][0]).option_value
     bewaesserung_co2 = 0
     bewaesserung_h2o = 0
@@ -577,7 +575,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
     else:
         raise ValueError('No valid option for Bewaesserungsart has been selected')
 
-    # Heizsystem
+    # input field: Heizsystem
     heizsystemtyp = all_options.get(id=data["Heizsystem"][0][0]).option_value
     heizsystem_co2 = 0
     heizsystem_h2o = 0
@@ -602,7 +600,7 @@ def calc_greenhouse_construction(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Heizsystem has been selected')
 
-    # Zusaetzliches Heizsystem
+    # input field: Zusaetzliches Heizsystem
     zusaetzliches_heizsystem_co2 = 0
     zusaetzliches_heizsystem_h2o = 0
     zusaetzliches_heizsystemverwendung = all_options.get(id=data["ZusaetzlichesHeizsystem"][0][0]).option_value
@@ -614,7 +612,9 @@ def calc_greenhouse_construction(data, helping_values, all_options):
                 zusaetzliches_heizsystem_co2 = zusaetzliches_heizsystem * 1.5641297
                 zusaetzliches_heizsystem_h2o = zusaetzliches_heizsystem * 1.5641297
             elif heizsystemtyp == "Rohrheizung (hoch, niedrig, etc.)":
-                heizsystem = helping_values["walk_length_total"] * 0.135 * 1.5641297
+                zusaetzliches_heizsystem = helping_values["walk_length_total"] * 0.135 * 2.7 * helping_values["culture_length_usage"]
+                zusaetzliches_heizsystem_co2 = zusaetzliches_heizsystem * 1.5641297
+                zusaetzliches_heizsystem_h2o = zusaetzliches_heizsystem * 1.5641297
         if data["AlterZusaetzlichesHeizsystem"][0] <= 15:
             if zusaetzliches_heizsystemtyp == "Konvektionsheizung":
                 zusaetzliches_heizsystem = data["Laenge"][0] * 0.8 * 2 * 7 * 0.466666667 * helping_values["culture_length_usage"]
@@ -659,23 +659,30 @@ def calc_greenhouse_construction(data, helping_values, all_options):
     print("bewässerungsart_h2o " + str(bewaesserung_h2o))
     print("heizsystem_h2o " + str(heizsystem_h2o))
     print("zusaetzliches_heizsystem_h2o " + str(zusaetzliches_heizsystem_h2o))
-    print("gwh-konstruktion_h2o: " + str(gesamt_co2))
+    print("gwh-konstruktion_h2o: " + str(gesamt_h2o))
     return konstruktion_co2, energieschirm_co2, bodenabdeckung_co2, produktionssystem_co2, bewaesserung_co2, heizsystem_co2, zusaetzliches_heizsystem_co2, \
            konstruktion_h2o, energieschirm_h2o, bodenabdeckung_h2o, produktionssystem_h2o, bewaesserung_h2o, heizsystem_h2o, zusaetzliches_heizsystem_h2o
 
 
+def calc_energy_source(data, all_options):
+    """Calculates the co2 and h2o footprints for the heat energy consumption
 
-def calc_energy_source(data, helping_values, all_options):
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
 
-    # Energietraeger
-    # They should always have the unit kWh already
+    Returns:
+        co2 and h2o footprints for heat energy consumption
+    """
+    # input field: Energietraeger
+    # they should always have the unit kWh already
     energietraeger_co2 = 0
     energietraeger_h2o = 0
 
     geteilte_waermeversorgung = all_options.get(id=data["Waermeversorgung"][0][0]).option_value
 
     for option in data["Energietraeger"]:
-        # Check if the values have the correct unit
+        # check if the values have the correct unit
         if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
             raise ValueError('Energietraeger value unit has not been converted to kWh!')
         energietraegertyp = all_options.get(id=option[0]).option_value
@@ -714,7 +721,7 @@ def calc_energy_source(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Energietraeger has been selected')
 
-    if(geteilte_waermeversorgung=="ja"):
+    if geteilte_waermeversorgung == "ja":
         energietraeger_co2 = energietraeger_co2 * (data["GWHFlaeche"][0]/data["WaermeteilungFlaeche"][0])
         energietraeger_h2o = energietraeger_h2o * (data["GWHFlaeche"][0]/data["WaermeteilungFlaeche"][0])
 
@@ -724,11 +731,18 @@ def calc_energy_source(data, helping_values, all_options):
 
 
 def calc_electric_power(data, helping_values, all_options):
-    # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
-    # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-    # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+    """Calculates the co2 and h2o footprints for electric power consumption.
 
-    # CO2 usage
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the electric power consumption
+    """
+
+    # co2 usage
     strom_gesamt_co2 = 0
     deutscher_strommix_co2 = 0
     oekostrom_co2 = 0
@@ -741,7 +755,7 @@ def calc_electric_power(data, helping_values, all_options):
     bhkwbiomethan_co2 = 0
     diesel_co2 = 0
 
-    # H2O usage
+    # h2o usage
     deutscher_strommix_h2o = 0
     oekostrom_h2o = 0
     photovoltaik_h2o = 0
@@ -753,7 +767,7 @@ def calc_electric_power(data, helping_values, all_options):
     bhkwbiomethan_h2o = 0
     diesel_h2o = 0
 
-    # Part of total kWh
+    # part of total kWh
     deutscher_strommix_anteil = 0
     oekostrom_anteil = 0
     photovoltaik_anteil = 0
@@ -765,7 +779,7 @@ def calc_electric_power(data, helping_values, all_options):
     bhkwbiomethan_anteil= 0
     diesel_anteil = 0
     for option in data["Stromherkunft"]:
-        # Check if the values have the correct unit
+        # check if the values have the correct unit
         if OptionUnits.objects.get(id=option[2]).unit_name != "kWh":
             raise ValueError('Stromherkunft value unit has not been converted to kWh!')
         stromtyp = all_options.get(id=option[0]).option_value
@@ -814,7 +828,7 @@ def calc_electric_power(data, helping_values, all_options):
         else:
             raise ValueError('No valid option for Stromherkunft has been selected')
 
-    # Take Belichtung into account if it isn't already included in the calculation
+    # take field Belichtung into account if it isn't already included in the calculation
     if all_options.get(id=data["Zusatzbelichtung"][0][0]).option_value == "ja" and all_options.get(id=data["Belichtungsstrom"][0][0]).option_value == "nein":
         deutscher_strommix_co2 = deutscher_strommix_co2 + (helping_values["energyconsumption_lighting"] * deutscher_strommix_anteil * 0.485)
         deutscher_strommix_h2o = deutscher_strommix_h2o + (helping_values["energyconsumption_lighting"] * deutscher_strommix_anteil * 0.485)
@@ -837,9 +851,9 @@ def calc_electric_power(data, helping_values, all_options):
         diesel_co2 = diesel_co2 + (helping_values["energyconsumption_lighting"] * diesel_anteil * 0.048675561)
         diesel_h2o = diesel_h2o + (helping_values["energyconsumption_lighting"] * diesel_anteil * 0.048675561)
 
-    # Tiefengeothermie: !!!Falls bei Wärmeverbrauch ausgewählt, dann Wert=0!!!
-    # BHKW-Erdgas: !!!Falls BHKW ausgewählt, dann Wert=0!!!
-    # BHKW-Biomethan: !!!Falls BHKW ausgewählt, dann Wert=0!!!
+    # input field: Tiefengeothermie: If option has already been selected for field Wärmeverbrauch, then value = 0
+    # input field: BHKW-Erdgas: If option has already been selected for field Wärmeverbrauch, then value = 0
+    # input field: BHKW-Biomethan: If option has already been selected for field Wärmeverbrauch, then value = 0
     for option in data["Energietraeger"]:
         if all_options.get(id=option[0]).option_value == "Tiefengeothermie":
             tiefengeothermie_co2 = 0
@@ -868,7 +882,17 @@ def calc_electric_power(data, helping_values, all_options):
     return strom_gesamt_co2, strom_gesamt_h2o
 
 
-def calc_water_usage(data, helping_values, all_options):
+def calc_water_usage(data, all_options):
+    """Calculates the size of the footprints for the direct water usage.
+
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the direct water usage split up into the water categories
+    """
+
     brunnenwasser_co2 = 0
     brunnenwasser_h2o = 0
     regenwasser_co2 = 0
@@ -879,10 +903,10 @@ def calc_water_usage(data, helping_values, all_options):
     oberflaechenwasser_h2o = 0
     wasser_daten = all_options.get(id=data["WasserVerbrauch"][0][0]).option_value
     print("wasser", wasser_daten)
-    if(wasser_daten == "ja"):
-        if (data["VorlaufmengeAnteile"] != default_option):
+    if wasser_daten == "ja":
+        if data["VorlaufmengeAnteile"] != default_option:
             for option in data["VorlaufmengeAnteile"]:
-                # Check if the values have the correct unit
+                # check if the values have the correct unit
                 if OptionUnits.objects.get(id=option[2]).unit_name != "Liter":
                     raise ValueError('VorlaufmengeAnteile value unit has not been converted to Liter!')
 
@@ -917,16 +941,25 @@ def calc_water_usage(data, helping_values, all_options):
     return brunnenwasser_co2, brunnenwasser_h2o, regenwasser_co2, regenwasser_h2o, stadtwasser_co2, stadtwasser_h2o, oberflaechenwasser_co2, oberflaechenwasser_h2o
 
 
-def calc_co2_added(data, helping_values, all_options):
+def calc_co2_added(data, all_options):
+    """Calculates the size of the footprints for the added co2
 
-    # CO2-Herkunft
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the added co2
+    """
+
+    # input field: CO2-Herkunft
     co2_zudosierung_co2 = 0
     co2_zudosierung_h2o = 0
-    # Check if there is even a co2-zudosierung
+    # check if there is even co2 added
     print("CO-Herkunft")
     if (data["CO2-Herkunft"] != default_option):
         for option in data["CO2-Herkunft"]:
-            # Check if the values have the correct unit
+            # check if the values have the correct unit
             if OptionUnits.objects.get(id=option[2]).unit_name != "kg":
                 raise ValueError('CO2-Herkunft value unit has not been converted to kg!')
 
@@ -938,7 +971,8 @@ def calc_co2_added(data, helping_values, all_options):
             elif co2_zudosierungtyp == "direkte Gasverbrennung":
                 co2_zudosierung_co2 = co2_zudosierung_co2 + menge * 0.252
                 co2_zudosierung_h2o = co2_zudosierung_h2o + menge * 0.252
-            elif co2_zudosierungtyp == "eigenes BHKW":  # There is no need to check, if energietraeger uses bhkw since it has no impact anyways.
+            elif co2_zudosierungtyp == "eigenes BHKW":
+                # there is no need to check, if energietraeger uses bhkw since it has no impact anyway.
                 co2_zudosierung_co2 = co2_zudosierung_co2 + menge * 0
                 co2_zudosierung_h2o = co2_zudosierung_h2o + menge * 0
             else:
@@ -949,8 +983,18 @@ def calc_co2_added(data, helping_values, all_options):
     return co2_zudosierung_co2, co2_zudosierung_h2o
 
 
-def calc_fertilizer(data, helping_values, all_options):
-    # CO2-Herkunft
+def calc_fertilizer(data, all_options):
+    """Calculates the co2 and h2o footprints for fertilizer usage.
+
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the fertilizer usage.
+    """
+
+    # input field: CO2-Herkunft
     duengemittel_einfach_co2 = 0
     duengemittel_einfach_h2o = 0
     if data["Duengemittel:VereinfachteAngabe"] != default_option:
@@ -1090,6 +1134,15 @@ def calc_fertilizer(data, helping_values, all_options):
 
 
 def calc_psm(data):
+    """Calculates the co2 and h2o footprints for crop protection product usage.
+
+    Args:
+        data: greenhouse dataset
+
+    Returns:
+        co2 and h2o footprints for crop protection product usage
+    """
+
     fungizide = (data["FungizideKg"][0] + (data["FungizideLiter"][0] * 100))
     insektizide = (data["InsektizideKg"][0] + (data["InsektizideLiter"][0] * 100))
     fungizide_co2 = fungizide * 11
@@ -1102,6 +1155,7 @@ def calc_psm(data):
     print("psm_co2: ", psm_co2)
     print("psm_h2o: ", psm_h2o)
     return psm_co2, psm_h2o
+
 #def calc_nuetzlinge_co2(data, helping_values, all_options):
 #    # Nuetzlinge
 #    # TODO Korrekte Äquivalente einfügen
@@ -1134,9 +1188,19 @@ def calc_psm(data):
 #    return nuetzlinge_co2
 
 
-def calc_pflanzenbehaelter(data, helping_values, all_options):
+def calc_plantbags(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for plant bag usage.
 
-    # Growbags + Kuebel
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for plant bag usage
+    """
+
+    # input fields: Growbags + Kuebel
     growbagskuebelverwendung = all_options.get(id=data["GrowbagsKuebel"][0][0]).option_value
     growbags_co2 = 0
     growbags_h2o = 0
@@ -1171,12 +1235,22 @@ def calc_pflanzenbehaelter(data, helping_values, all_options):
 
 
 def calc_substrate(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for substrate consumption.
 
-    # Substrat
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the substrate power consumption
+    """
+
+    # input field: Substrat
     substrat_co2 = 0
     substrat_h2o = 0
     volumen = 0
-    # Asign the correct volume for the selected pflanzenbehaelter
+    # assign the correct volume for the selected option Pflanzenbehaelter
     growbagskuebelverwendung = all_options.get(id=data["GrowbagsKuebel"][0][0]).option_value
     if growbagskuebelverwendung == "Growbags":
         volumen = helping_values["row_length_total"] * 2 * 0.11
@@ -1215,13 +1289,23 @@ def calc_substrate(data, helping_values, all_options):
 
 
 def calc_young_plants_substrate(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for young plants' substrate consumption.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the young plants' substrate consumption
+    """
+
     jungpflanzen_substratmaterial = all_options.get(id=data["Jungpflanzen:Substrat"][0][0]).option_value
-    junpflanzen_substrat_co2 = 0
-    junpflanzen_substrat_h2o = 0
+
     volumen = (0.1*0.1*0.1) * helping_values["plant_count_total"]
     if jungpflanzen_substratmaterial == "Standardsubstrat":
-         junpflanzen_substrat_co2 = volumen * 100
-         junpflanzen_substrat_h2o = volumen * 100
+        junpflanzen_substrat_co2 = volumen * 100
+        junpflanzen_substrat_h2o = volumen * 100
     elif jungpflanzen_substratmaterial == "Kokos":
         junpflanzen_substrat_co2 = volumen * 33.29
         junpflanzen_substrat_h2o = volumen * 33.29
@@ -1242,7 +1326,17 @@ def calc_young_plants_substrate(data, helping_values, all_options):
     return junpflanzen_substrat_co2, junpflanzen_substrat_h2o
 
 
-def calc_young_plants_transport(data, helping_values, all_options):
+def calc_young_plants_transport(data, helping_values):
+    """Calculates the co2 and h2o footprints for young plants' transport.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+
+    Returns:
+        co2 and h2o footprints for the transport of the young plants
+    """
+
     jungpflanzen_transport_co2 = 0
     jungpflanzen_transport_h2o = 0
 
@@ -1259,6 +1353,17 @@ def calc_young_plants_transport(data, helping_values, all_options):
 
 
 def calc_cords(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for cords usage.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the consumptions of cords
+    """
+
     schnurverwendung = all_options.get(id=data["Schnur"][0][0]).option_value
     schnuerematerial = all_options.get(id=data["SchnuereRankhilfen:Material"][0][0]).option_value
     schnuere_co2 = 0
@@ -1309,8 +1414,17 @@ def calc_cords(data, helping_values, all_options):
     return schnuere_co2, schnuere_h2o
 
 
-
 def calc_clips(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for clips usage.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the clips usage
+    """
 
     klipseverwendung = all_options.get(id=data["Klipse"][0][0]).option_value
     klipsematerial = all_options.get(id=data["Klipse:Material"][0][0]).option_value
@@ -1346,6 +1460,16 @@ def calc_clips(data, helping_values, all_options):
 
 
 def calc_panicle_hanger(data, helping_values, all_options):
+    """Calculates the co2 and h2o footprints for the panicle hanger consumption.
+
+    Args:
+        data: greenhouse dataset
+        helping_values: dictionary of values, that are necessary for the calculation
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for the panicle hanger consumption
+    """
 
     rispenbuegelverwendung = all_options.get(id=data["Rispenbuegel"][0][0]).option_value
     rispenbuegelmaterial = all_options.get(id=data["Rispenbuegel:Material"][0][0]).option_value
@@ -1377,8 +1501,17 @@ def calc_panicle_hanger(data, helping_values, all_options):
     return rispenbuegel_co2, rispenbuegel_h2o
 
 
-def calc_packaging(data, helping_values, all_options):
-    # Verpackungsmaterial
+def calc_packaging(data, all_options):
+    """Calculates the co2 and h2o footprints for packaging consumption.
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for packaging consumption consumption
+    """
+
+    # input field: Verpackungsmaterial
     verpackung_co2 = 0
     verpackung_h2o = 0
     if data["Verpackungsmaterial"] != default_option:
@@ -1394,7 +1527,7 @@ def calc_packaging(data, helping_values, all_options):
             else:
                 raise ValueError('No valid option for Verpackungsmaterial has been selected')
 
-    # Mehrwegsteigen
+    # input field: Mehrwegsteigen
     if data["Verpackungsmaterial:AnzahlMehrwegsteigen"] != default_value:
         verpackung_co2 = verpackung_co2 + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
         verpackung_h2o = verpackung_h2o + (data["Verpackungsmaterial:AnzahlMehrwegsteigen"][0] / 50 * 0.003662)
@@ -1404,8 +1537,18 @@ def calc_packaging(data, helping_values, all_options):
     return verpackung_co2, verpackung_h2o
 
 
-def calc_other_consumables(data, helping_values, all_options):
-    # Sonstige Verbrauchsmaterialien
+def calc_other_consumables(data, all_options):
+    """Calculates the co2 and h2o footprints for other consumables.
+
+    Args:
+        data: greenhouse dataset
+        all_options: all options in the database
+
+    Returns:
+        co2 and h2o footprints for other consumables
+    """
+
+    # input field: Sonstige Verbrauchsmaterialien
     sonstige_verbrauchsmaterialien_co2 = 0
     sonstige_verbrauchsmaterialien_h2o = 0
     if data["SonstigeVerbrauchsmaterialien"] != default_option:

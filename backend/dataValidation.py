@@ -8,13 +8,13 @@ from backend.utils import default_value, default_option, generic_error_message, 
 
 def validate_mandatory_fields(data):
     """Function that checks if every mandatory input field has been filled out. Fields that depend on a conditional
-        field that hasn't been selected can have a default value.
+    field that hasn't been selected can have a default value.
 
-        Args:
-            data : contains the data that needs to be validated
+    Args:
+        data : contains the data that needs to be validated
 
-        Returns:
-            boolean: valid data -> True; invalid data -> False
+    Returns:
+        boolean: valid data -> True; invalid data -> False
     """
 
     # retrieve all measurements, optiongroups and options from the database

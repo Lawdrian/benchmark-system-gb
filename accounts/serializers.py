@@ -54,6 +54,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return user
 
+    def delete(self, validated_data):
+        user = User.objects.get(email=validated_data['email'])
+        user.delete()
+        return user
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()

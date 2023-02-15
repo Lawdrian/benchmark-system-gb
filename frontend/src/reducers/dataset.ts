@@ -17,6 +17,7 @@ import {
  *
  * @property {boolean} inProgress - True, when the dataset fetching is still in progress
  * @property {boolean|null} successful - True, when data was fetched successfully
+ * @property datasets - A list of greenhouses and all data sets for each greenhouse
  */
 
 export type DatasetState = {
@@ -25,13 +26,11 @@ export type DatasetState = {
     datasets: DatasetData[] | string
 }
 
-
-// Initialize sumbission state
+// initialize sumbission state
 const initialState: DatasetState = {
     inProgress: false,
     successful: null,
     datasets: []
-
 }
 
 /**
@@ -39,7 +38,6 @@ const initialState: DatasetState = {
  *
  * @param state - The current dataset state
  * @param action - The action to dispatch
- *
  * @returns The updated dataset state
  */
 export default function (state: DatasetState = initialState, action: any): DatasetState {

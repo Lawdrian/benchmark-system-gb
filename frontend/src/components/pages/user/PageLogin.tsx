@@ -25,6 +25,15 @@ type LoginProps = ReduxProps & {
     forgotPWUrl: string
 }
 
+/**
+ * This functional component represents the login page of the web application.
+ * @param login - Function that calls the back end to log in a user
+ * @param isAuthenticated - Boolean value from the Redux auth state that determines whether a user is authenticated or
+ * not
+ * @param loggedInUrl - Url slug of the page, that the user should be routed to after a successful login
+ * @param registerUrl - Url slug of the page, where a user can register a new account
+ * @param forgotPWUrl - Url slug of the page, where a user can request a password change
+ */
 const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUrl}: LoginProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
@@ -32,7 +41,7 @@ const PageLogin = ({login, isAuthenticated, loggedInUrl, registerUrl, forgotPWUr
 
     const navigate = useNavigate()
 
-    console.log("Login Page!")
+    // checks if the user is already authenticated
     if (isAuthenticated) {
         navigate(loggedInUrl)
     }

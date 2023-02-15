@@ -94,8 +94,9 @@ class UpdateGreenhouseData(APIView):
                 result = Results.objects.get(
                     greenhouse_data=greenhouse_data, calculation_id=calculation_variables[variable].id)
                 if result is not None:
-                    print(result, value)
-                    result.result_value = round(value, 0)
+                    # the old value can be simply overwritten, since the amount of result values per data set is always
+                    # the same
+                    result.result_value = round(value, 2)
                     result.save()
                 else:
                     print("UpdateGreenhouseData: footprint calculations success")

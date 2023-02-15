@@ -1,13 +1,17 @@
 import React, {useEffect, useState} from "react";
 import MenuItem from "@mui/material/MenuItem";
 import Select, {SelectProps} from "@mui/material/Select";
-import {Option, UnitValues} from "../../reducers/lookup";
-import {DynamicInputValue} from "./input/InputFields";
+import {DynamicInputValue} from "./InputFields";
+import {Option, UnitValues} from "../../../types/reduxTypes";
 
 export type DynamicSelectProps<T> = SelectProps<T> & {
     lookupValues: Option[]
 }
 
+/**
+ * This functional component creates a drop-down menu input field.
+ * @param props - Contains the values used as options for the drop-down menu
+ */
 const DynamicSelect = (props: DynamicSelectProps<any>) => {
     const {lookupValues, ...selectProps} = props
     return (
@@ -17,15 +21,12 @@ const DynamicSelect = (props: DynamicSelectProps<any>) => {
     );
 }
 
-
-
-// These types and the component are only used for DynamicInputField component!
+// these types and the component are only used for DynamicInputField component!
 export type DynamicUnitSelectParentProps<T> = SelectProps<T> & {
     lookupValues: Option[],
     unitValues: UnitValues,
     optionGroup: string,
 }
-
 
 export type DynamicUnitSelectProps<T> = SelectProps<T> & {
     lookupValues: Option[],
@@ -35,10 +36,16 @@ export type DynamicUnitSelectProps<T> = SelectProps<T> & {
     activeValue: DynamicInputValue
 }
 
-
+/**
+ * This functional component creates a drop-down menu for selecting a unit.
+ * The available options of the drop-down menu depend on the selection of another component of type
+ * {@link DynamicSelect}. The selected value of that component is used, to query the unitValues for the options to
+ * display in this component.
+ * @param props - Properties needed to use the component.
+ */
 export const DynamicUnitSelect = (props: DynamicUnitSelectProps<any>) => {
 
-    // This will call the updateUnits function upon render.(Selected Unit will be shown if one switches tab and back)
+    // this will call the updateUnits function upon render. (Selected Unit will be shown if one switches tab and back)
     useEffect(() => {
         updateUnits()
     },[])
@@ -54,25 +61,19 @@ export const DynamicUnitSelect = (props: DynamicUnitSelectProps<any>) => {
 
 
     const updateUnits = () => {
-
+        // find out the name of the selected option
         let lookupNameRaw = lookupValues.find((lookupValue) => {
             if (activeValue.selectValue != null) {
-                return lookupValue.id==activeValue.selectValue
+                return lookupValue.id == activeValue.selectValue
             }
             })?.values.replaceAll(" ","")
         let lookupName:string = "\"" + lookupNameRaw + "\""
         let activeUnitValues = unitValues.selections[optionGroup as keyof typeof unitValues.selections]
 
-        //console.log("lookupName: " + lookupName)
-        //console.log("activeUnitValues: ")
-        //console.log(activeUnitValues)
-        //console.log(activeUnitValues[lookupName as keyof typeof activeUnitValues])
-
+        // find the units, that belong to the selected option (lookupName)
         Object.entries(activeUnitValues).find(([key, value]) => {
             if(!key.includes("\"")) lookupName=lookupName.replaceAll("\"","")
             if (key == lookupName) {
-                //console.log("Funktioniert")
-                //console.log(value)
                 setUnits(value)
             }
         })

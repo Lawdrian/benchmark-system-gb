@@ -20,8 +20,6 @@ import {
     selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
 
-
-
 const mapStateToProps = (state: RootState) => ({
     total: state.h2o.total,
     normalizedkg: state.h2o.normalizedkg,
@@ -33,7 +31,9 @@ const mapStateToProps = (state: RootState) => ({
     benchmarkkg: state.h2o.benchmarkkg,
     benchmarkm2: state.h2o.benchmarkm2
 });
+
 const connector = connect(mapStateToProps, {loadH2OFootprint});
+
 type ReduxProps = ConnectedProps<typeof connector>
 
 /**
@@ -42,16 +42,16 @@ type ReduxProps = ConnectedProps<typeof connector>
 type H2OFootprintProps = ReduxProps & {}
 
 /**
- * Returns the page showing a Dropdown menu for selecting the greenhouse to
- * show the plots for as well as the h2o-footprint plots.
+ * Returns the page that displays the h2o footprint plots for a selected greenhouse. Furthermore, it shows a benchmark
+ * plot and the optimization data. A greenhouse can be selected with a dropdown menu.
+ * If there is no data, it shows a generic error message.
  *
- * @param {H2OFootprintProps}
- * Divided into plotData (data of multiple greenhouses to be shown in the plot) and
- * loadH2OFootprint (a function to fetch the necessary data from the backend)
+ * @param {C02FootprintProps} - Divided into plot data and
+ * loadCO2Footprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
 const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, directWaterkg, directWaterm2, benchmarkkg, benchmarkm2, loadH2OFootprint}: H2OFootprintProps) => {
-    // Load Water-Footprint data
+    // load Water-Footprint data
     React.useEffect(() => {
         loadH2OFootprint(
             true,
@@ -72,9 +72,8 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
 
     let greenhouses = total.map(dataset => dataset.greenhouse)
 
-    // The index of the currently selected greenhouse:
+    // the index of the currently selected greenhouse
     const [curGreenHouseIndex, setCurGreenHouseIndex] = React.useState<number>(0);
-
 
     const handleLoadSuccess = () => {
         setOpenDialog(false)
@@ -93,7 +92,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
         setNoWaterData(true)
     }
 
-
+    // depending on the result of the loadH2OFootprint request, an error page or the footprints will be rendered
     if(openDialog) {
         return(
             <Dialog open={openDialog}>

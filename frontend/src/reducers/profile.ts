@@ -9,29 +9,25 @@ import {
 import {DatasetState} from "./dataset";
 
 /**
- * @type DatasetState
+ * @type ProfileDataState
  *
  * Contains the status and data of fetching the profile data of a user from the database.
  *
  * @property {boolean} inProgress - True, when the profile data fetching is still in progress
  * @property {boolean|null} successful - True, when data was fetched successfully
+ * @property profileData - List of profile data
  */
-
-
-
 export type ProfileDataState = {
     inProgress: boolean
     successful: boolean | null
     profileData: ProfileData[]
 }
 
-
-// Initialize sumbission state
+// initialize sumbission state
 const initialState: ProfileDataState = {
     inProgress: false,
     successful: null,
     profileData: []
-
 }
 
 /**

@@ -8,15 +8,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 ChartJS.register(...registerables, zoomPlugin);
 
-/**
- * Returns a Benchmark plot for the given data.
- *
- * @param {string} title The title of the plot
- * @param {string} yLabel The label shown at the y-axis in the plot
- * @param {string} tooltipLabel The label shown after the amount in the tooltip section.
- * @param {BenchmarkPlot} data Data to be shown in the plot. (see reduxTypes)
- * @return JSX.Element
- */
 
 type props = {
     title: string
@@ -25,16 +16,21 @@ type props = {
     data: BenchmarkPlot
 }
 
-export default function BenchmarkPlotObject({title, yLabel, tooltipLabel, data}:props) {
+/**
+ * Returns a Benchmark plot for the given data.
+ *
+ * @param props - The title of the plot
+ * @param yLabel - The label shown at the y-axis in the plot
+ * @param tooltipLabel - The label shown after the amount in the tooltip section
+ * @param data - Data to be shown in the plot. (see reduxTypes)
+ */
+export default function BenchmarkPlotObject({title, yLabel, tooltipLabel, data}: props) {
 
     const chartRef = React.useRef<any>(null);
 
     const handleResetZoom = () => {
         chartRef.current.resetZoom();
     };
-
-
-
 
     let options = {
         responsive: true,

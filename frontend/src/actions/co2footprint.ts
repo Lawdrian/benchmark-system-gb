@@ -23,7 +23,7 @@ import {format} from "date-fns";
 /**
  * @type RawCO2Dataset
  *
- * The structure of a single co2-footprint dataset, that is provided by the server.
+ * The structure of a single co2 footprint greenhouse data, that is provided by the server.
  */
 type RawGreenhouseCO2Dataset = {
     greenhouse_name: string
@@ -36,8 +36,8 @@ type RawGreenhouseCO2Dataset = {
 /**
  * @type RawCO2Dataset
  *
- * Contains the values, which make up the co2-footprint, and a label, that
- * gives additional information about the dataset. (The Data in this case)
+ * Contains the values, which make up the co2 footprint, and a label, that
+ * gives additional information about the dataset. (The creation date in this case)
  */
 type RawCO2Dataset = {
     label: string
@@ -72,12 +72,17 @@ type RawCO2Dataset = {
 /**
  * @type RawCO2Data
  *
- * The structure of the http-response data, when fetching the co2-footprint data.
+ * The structure of the http-response data, when fetching the co2 footprint data.
  */
 type RawCO2Data = RawGreenhouseCO2Dataset[];
 
 /**
  * Load all co2-footprint datasets for the current user.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the co2 footprint request is in progress
+ * @param successCB - Function that should be executed, when the co2 footprint request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the co2 footprint request
  */
 export const loadCO2Footprint = (
     withAuth: boolean = true,
@@ -86,11 +91,10 @@ export const loadCO2Footprint = (
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    // User Loading
     dispatch({type: CO2FP_LOADING});
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-co2-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("CO2 Response", response)
@@ -116,7 +120,7 @@ export const loadCO2Footprint = (
 
 /**
  * Takes the raw co2-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data.
  *
  * @param responseData - The co2-footprint data provided by the server
@@ -232,14 +236,14 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
     });
 }
 
-
 /**
  * Takes the raw co2-benchmark data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
+ * transforms it into a data structure, that chart.js can use to create a
  * visualisation of the data. Every bar represents the categories(e.g. Wärmeenergie).
- * These bars will have dots on them showing how the best performer and worst performer are doing
+ * The co2 footprint of the best and worst performer split up into its categories,
+ * is displayed in addition to the user's co2 footprint.
  *
- * @param responseData - The co2-benchmark data provided by the server
+ * @param responseData - The co2 benchmark data provided by the server
  */
 export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmark[] => {
 
@@ -322,11 +326,16 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
     });
 }
 
+/**
+ * This function tries to parse the label into a date.
+ *
+ * @param label - The label of a dataset
+ */
 export function formatLabel(label: string):string {
-        try {
-            return format(new Date(label), 'yyyy')
-        }
-        catch(e) {
-            return label
-        }
+    try {
+        return format(new Date(label), 'yyyy')
+    }
+    catch(e) {
+        return label
+    }
 }

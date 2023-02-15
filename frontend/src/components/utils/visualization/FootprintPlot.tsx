@@ -17,16 +17,6 @@ type splitDataObject = {
     value: number
 }
 
-/**
- * Returns a Footprint plot for the given data.
- *
- * @param {string} title The title of the plot
- * @param {string} yLabel The label shown at the y-axis in the plot
- * @param {string} tooltipLabel The label shown after the amount in the tooltip section.
- * @param {FootprintPlot} data Data to be shown in the plot. (see reduxTypes)
- * @return JSX.Element
- */
-
 type props = {
     title: string
     yLabel: string
@@ -34,6 +24,17 @@ type props = {
     data: BenchmarkPlot
 }
 
+/**
+ * Returns a Footprint plot for the given data.
+ *
+ * The plot object is a stack plot with a tool tip.
+ *
+ * @param title - The title of the plot
+ * @param yLabel - The label shown at the y-axis in the plot
+ * @param tooltipLabel - The label shown after the amount in the tooltip section.
+ * @param data - Data to be shown in the plot. (see reduxTypes)
+ * @return JSX.Element
+ */
 export default function FootprintPlotObject({title, yLabel, tooltipLabel, data}:props) {
     let options = {
         responsive: true,
@@ -79,12 +80,12 @@ export default function FootprintPlotObject({title, yLabel, tooltipLabel, data}:
                             body += "\n" + "𝐀𝐧𝐭𝐞𝐢𝐥 𝐚𝐦 𝐅𝐮ß𝐚𝐛𝐝𝐫𝐮𝐜𝐤: " + (context[0].dataset.data[j]/total_co2*100).toFixed(0) + "%\n"
                             // @ts-ignore
                             body += "\n" +"𝐙𝐮𝐬𝐚𝐦𝐦𝐞𝐧𝐬𝐞𝐭𝐳𝐮𝐧𝐠: \n" + context[0].dataset.splitData[j]
-                                // Sort list so that the splitDataObject with the highest value is at the first place of the list
+                                // sort list so that the splitDataObject with the highest value is at the first place of the list
                                 .sort((firstObject: splitDataObject, secondObject: splitDataObject) => (firstObject.value > secondObject.value) ? -1 : 1)
                                 .map((singleData: splitDataObject) =>
                             { return singleData.name + ": " + (singleData.value/context[0].dataset.data[j]*100).toFixed(2) + "%\n"})
                         }
-                        body = body.replaceAll(",", "") // For some reason commas are automatically added, so they need to be removed.
+                        body = body.replaceAll(",", "") // for some reason commas are automatically added, so they need to be removed.
                         return body
                     }
                 },

@@ -20,7 +20,6 @@ export type InputPaginationButtonsProps = {
     previous: Function
     next: Function
     submit: Function
-
 }
 
 /**
@@ -28,8 +27,8 @@ export type InputPaginationButtonsProps = {
  * On the last tab there will be a submit button that can be used to submit the user data.
  * The user will be redirected to the plotting page
  *
- * @param {InputPaginationButtonsProps} props This Type contains 5 functions that are used to change the current tab and submit the data
- * @return {ReactNode} 2 Buttons to change the current tab. On the last page the next button changes to a submission button.
+ * @param {InputPaginationButtonsProps} props - This Type contains 5 functions that are used to change the
+ * current tab and submit the data
  */
 const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
     const [showAlert, setShowAlert] = useState<boolean>(false)
@@ -75,7 +74,6 @@ const InputPaginationButtons = (props:InputPaginationButtonsProps) => {
         props.previous()
         scrollComponent?.scrollTo(0,0)
     }
-
 
     return (
         <>

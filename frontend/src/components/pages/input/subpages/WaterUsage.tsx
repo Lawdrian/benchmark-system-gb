@@ -34,6 +34,9 @@ type WaterUsageProps = ReduxProps & SubpageProps & {
     values: WaterUsageState
 }
 
+/**
+ * This type contains the types for the {@link waterUsage} state.
+ */
 export type WaterUsageState = {
     wasserVerbrauch: number | null
     vorlaufmengeGesamt: MeasureValue | null
@@ -41,6 +44,17 @@ export type WaterUsageState = {
     restwasser: MeasureValue | null
 }
 
+/**
+ * This functional component renders the sub-page water usage for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideWaterUsage - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param submissionSuccess - Boolean value determining, whether the submission was a success or not
+ * @param unitValues - Values used for displaying the unit in the input fields
+ * @param showSelectInputError - Function that determines if an error in a select input field should be displayed
+ * @param showMeasureInputError - Function that determines if an error in a measure input field should be displayed
+ */
 const WaterUsageInput = ({values, provideWaterUsage, paginationProps, lookupValues, submissionSuccess, unitValues, showSelectInputError, showMeasureInputError}: WaterUsageProps) => {
     const [waterUsage, setWaterUsage] = useState<WaterUsageState>(values)
 
@@ -49,7 +63,7 @@ const WaterUsageInput = ({values, provideWaterUsage, paginationProps, lookupValu
         provideWaterUsage(waterUsage)
     }
 
-
+    // properties of the input fields
     const wasserVerbrauchProps: SingleShowConditionalRadioInputProps = {
         title: "Wasserverbrauch Daten",
         label: "Haben Sie Daten zu dem Wasserverbrauch Ihres Gewächshauses?",

@@ -33,24 +33,23 @@ export type AuthenticationState = {
     isAuthenticated: boolean
     isLoading: boolean
     user: User | null
-    isActivated: boolean
+    isActivated: boolean | null
 }
 
-// Initialize the authentication state
+// initialize the authentication state
 const initialState: AuthenticationState = {
     token: localStorage.getItem('token'),
     isAuthenticated: false,
     isLoading: false,
     user: null,
-    isActivated: false
+    isActivated: null,
 }
 
 /**
- * Dispatches any actions related to user authentication
+ * Dispatches any actions related to user authentication.
  *
  * @param state - The current authentication state
  * @param action - The action to dispatch
- *
  * @returns The updated authentication state
  */
 export default function (state = initialState, action: any): AuthenticationState {
@@ -66,7 +65,7 @@ export default function (state = initialState, action: any): AuthenticationState
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                user: action.payload
+                user: action.payload,
             };
         case LOGIN_SUCCESS:
             localStorage.setItem('token', action.payload.token)
@@ -74,7 +73,8 @@ export default function (state = initialState, action: any): AuthenticationState
                 ...state,
                 ...action.payload,
                 isAuthenticated: true,
-                isLoading: false
+                isLoading: false,
+                isActivationError: true
             }
         case REGISTER_SUCCESS:
         case AUTH_ERROR:
@@ -94,16 +94,15 @@ export default function (state = initialState, action: any): AuthenticationState
             return {
                 ...state,
                 isActivated: true,
-                isLoading: false
+                isLoading: false,
             }
         case ACTIVATE_FAIL:
             return {
                 ...state,
                 isActivated: false,
-                isLoading: false
+                isLoading: false,
             }
         default:
             return state;
     }
 }
-

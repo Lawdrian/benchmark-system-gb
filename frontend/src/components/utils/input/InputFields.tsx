@@ -18,7 +18,7 @@ import DynamicSelect, {
     DynamicSelectProps,
     DynamicUnitSelect,
     DynamicUnitSelectParentProps,
-} from "../DynamicSelect";
+} from "./DynamicSelect";
 import {AdapterDateFns} from '@mui/x-date-pickers/AdapterDateFns';
 import {DesktopDatePicker, DesktopDatePickerProps, LocalizationProvider} from '@mui/x-date-pickers';
 import {
@@ -33,13 +33,13 @@ import FormLabel from '@mui/material/FormLabel';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import IconButton from "@mui/material/IconButton";
-import {Option, UnitValues} from "../../../reducers/lookup";
 import {
     findOptionUnitId, isEmptyDynamicInputField,
     parseToFloat,
     showDynamicMeasureInputError,
     showDynamicSelectInputError
 } from "../../../helpers/InputHelpers";
+import {Option, UnitValues} from "../../../types/reduxTypes";
 
 type InputFieldProps = {
     title: string
@@ -52,7 +52,10 @@ type BaseInputFieldProps = InputFieldProps & {
 
 const optionalColor = "gray"
 
-// BaseInput component
+/**
+ * Layout component that acts as a wrapper for input fields
+ * @param props - Properties to fill the component
+ */
 export const BaseInputField = (props: BaseInputFieldProps) => {
     return(
         <Grid item container xs={6} direction="row">
@@ -72,8 +75,7 @@ export const BaseInputField = (props: BaseInputFieldProps) => {
     )
 }
 
-// Datatypes that the elements of the input state can have
-
+// datatypes that the elements of the input state can have
 export type SelectionValue = {
     selectValue: number | null
     textFieldValue: MeasureValue
@@ -91,15 +93,12 @@ export type MeasureValue = {
 }
 
 
-// MeasureInput component
 export type MeasureInputProps = InputFieldProps & {
     textFieldProps: TextFieldProps,
     unitName?: string | null
 }
 
-
 export const MeasureInputField = (props: MeasureInputProps) => {
-
     return(
         <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <TextField
@@ -107,7 +106,7 @@ export const MeasureInputField = (props: MeasureInputProps) => {
                 placeholder='Menge'
                 inputProps={{min:1}}
                 InputProps={{
-                    endAdornment: <InputAdornment position="end">{props.unitName??""}</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">{props.unitName ?? ""}</InputAdornment>,
                 }}
                 onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
                 {...props.textFieldProps}
@@ -118,15 +117,13 @@ export const MeasureInputField = (props: MeasureInputProps) => {
 }
 
 
-// MeasureUnitInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type MeasureUnitInputProps = MeasureInputProps & {
     textFieldProps: TextFieldProps,
     selectProps: DynamicSelectProps<any>
 }
 
-
 export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
-
     return(
         <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <TextField
@@ -147,13 +144,13 @@ export const MeasureUnitInputField = (props: MeasureUnitInputProps) => {
     )
 }
 
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type DateInputProps = InputFieldProps & {
     datePickerProps: DesktopDatePickerProps<any, any>
     showError: boolean
 }
 
 export const DateInputField = (props: DateInputProps) => {
-
     return(
         <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -168,15 +165,13 @@ export const DateInputField = (props: DateInputProps) => {
 
 }
 
-
-// SelectioBaseInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 type SelectionBaseInputProps = InputFieldProps & {
     selectProps: DynamicSelectProps<any>
     children?: ReactNode
 }
 
 const SelectionBaseInputField = (props: SelectionBaseInputProps) => {
-
     return(
         <BaseInputField title={props.title} label={props.label} optional={props.optional}>
             <FormControl fullWidth>
@@ -188,8 +183,7 @@ const SelectionBaseInputField = (props: SelectionBaseInputProps) => {
     )
 }
 
-
-// SelectionInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SelectionInputProps = InputFieldProps & {
     selectProps: DynamicSelectProps<any>
 }
@@ -198,15 +192,13 @@ export const SelectionInputField = (props: SelectionInputProps) => {
    return <SelectionBaseInputField {...props} />
 }
 
-
-// SelectionAmountInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SelectionAmountInputProps = SelectionBaseInputProps & {
     textFieldProps: TextFieldProps
 }
 
 export const SelectionAmountInputField = (props: SelectionAmountInputProps) => {
     const {textFieldProps, ...baseInputProps} = props
-
     return (
         <SelectionBaseInputField {...baseInputProps}>
             <TextField type="number" placeholder="Menge" fullWidth sx={{mt: 2}} {...textFieldProps}/>
@@ -214,8 +206,7 @@ export const SelectionAmountInputField = (props: SelectionAmountInputProps) => {
     )
 }
 
-
-// SelectionAmountUnitInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SelectionAmountUnitInputProps  = SelectionBaseInputProps & {
     textFieldProps: TextFieldProps,
     unitSelectProps: DynamicSelectProps<any>
@@ -223,7 +214,6 @@ export type SelectionAmountUnitInputProps  = SelectionBaseInputProps & {
 
 export const SelectionAmountUnitInputField = (props: SelectionAmountUnitInputProps) => {
     const {textFieldProps, unitSelectProps, ...baseInputProps} = props;
-
     return (
         <SelectionBaseInputField {...baseInputProps}>
             <Grid container direction="row" marginTop={1} spacing={1}>
@@ -240,23 +230,24 @@ export const SelectionAmountUnitInputField = (props: SelectionAmountUnitInputPro
         </SelectionBaseInputField>
     );
 }
+
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type ConditionalSelectionInputProps = SelectionInputProps & {
     showChildren: (value: any) => boolean
     children?: ReactNode
 }
 
-
 /**
  * This component relies on the SelectionBaseInputField. It always shows the children, if not a specific option has been selected
  *
- * @param {ConditionalSelectionInputProps} props This Type contains the SelectionInputProps and multiple other ones:
+ * @param {ConditionalSelectionInputProps} props - This Type contains the SelectionInputProps and multiple other ones:
  *       <p><strong>hideChildren:</strong> Function, that determines which selected option will hide the children.</p>
  *      <p><strong>children:</strong>Children, that will be rendered if the wrong selection hasn't been selected.</p>
  * @return {ReactNode} One single show conditional component.
  */
 export const ConditionalSelectionInputField = (props: ConditionalSelectionInputProps) => {
     const {showChildren, children, ...SelectionInputProps} = props
-   return (
+    return (
         <Grid item container xs={12} spacing={4}>
                 <SelectionBaseInputField {...SelectionInputProps}/>
                 {props.showChildren(props.selectProps.value) ?  children : undefined}
@@ -264,8 +255,7 @@ export const ConditionalSelectionInputField = (props: ConditionalSelectionInputP
    )
 }
 
-
-// SelectionRadioInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SelectionRadioInputProps = InputFieldProps & {
     radioProps: RadioGroupProps
     children?: ReactNode
@@ -273,7 +263,6 @@ export type SelectionRadioInputProps = InputFieldProps & {
 
 export const SelectionRadioInputField = (props: SelectionRadioInputProps) => {
     const {radioProps, ...baseInputProps} = props
-
     return (
         <BaseInputField {...baseInputProps}>
             <FormControl sx={{pl:1.5}}>
@@ -286,8 +275,7 @@ export const SelectionRadioInputField = (props: SelectionRadioInputProps) => {
     )
 }
 
-
-// DynamicInput component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type DynamicInputValue = {
     id: number
     selectValue: number | null
@@ -319,7 +307,7 @@ type UnitProps = {
  * This component is used for <strong>multi select inputs</strong>. It has one selection field and one text intput field. With a plus
  * button a new input section will be shown and with the minus button it can be deleted.
  *
- * @param {DynamicInputUnitSelectField} props This Type contains the InputFieldProps and multiple other ones:
+ * @param {DynamicInputUnitSelectField} props - This Type contains the InputFieldProps and multiple other ones:
  *       <p><strong>selectProps:</strong> lookupValues need to be specified in there for the selection field.</p>
  *      <p><strong>textFieldProps:</strong> No required props, can be included for styling the text input field.</p>
  *      <p><strong>onValueChange:</strong> Save the values of both the selection and text input field in the parent state.</p>
@@ -440,7 +428,7 @@ export const DynamicInputField = (props: DynamicInputProps) => {
     )
 }
 
-
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type DynamicInputUnitSelectProps = BaseDynamicInputProps & {
     unitSelectProps: DynamicUnitSelectParentProps<any>
 }
@@ -449,7 +437,7 @@ export type DynamicInputUnitSelectProps = BaseDynamicInputProps & {
  * This component is used for <strong>multi select inputs</strong>. It has one selection field,one text intput field and one select field for unit selection. With a plus
  * button a new input section will be shown and with the minus button it can be deleted.
  *
- * @param {DynamicInputUnitSelectField} props This Type contains the InputFieldProps and multiple other ones:
+ * @param {DynamicInputUnitSelectField} props - This Type contains the InputFieldProps and multiple other ones:
  *       <p><strong>selectProps:</strong> lookupValues need to be specified in there for the selection field.</p>
  *      <p><strong>textFieldProps:</strong> No required props, can be included for styling the text input field.</p>
  *      <p><strong>onValueChange:</strong> Save the values of both the selection and text input field in the parent state.</p>
@@ -584,20 +572,18 @@ export const DynamicInputUnitSelectField = (props: DynamicInputUnitSelectProps) 
     )
 }
 
-
-// ConditionalRadio component
+/*--------------------------------------------------------------------------------------------------------------------*/
 type ConditionalRadioBaseInputProps = InputFieldProps & {
     radioGroupProps: RadioGroupProps
     radioButtonValues: Option[]
     children?: ReactNode
 }
 
-
 /**
  * This component is used for <strong>conditional field inputs</strong>. This component has a title, label, radio button and will render its children below the header.
  * This is just the base component and will not be directly used. It is used by other components that implement further logic.
  *
- * @param {ConditionalRadioBaseInputProps} props This Type contains the InputFieldProps and multiple other ones:
+ * @param {ConditionalRadioBaseInputProps} props - This Type contains the InputFieldProps and multiple other ones:
  *       <p><strong>radioGroupProps:</strong> value contains the value of the currently selected radioButton . The onChange function is needed for updating
  *       the parents state.</p>
  *      <p><strong>radioButtonValues:</strong> Contains the lookupValues for the RadioButtons.</p>
@@ -605,7 +591,6 @@ type ConditionalRadioBaseInputProps = InputFieldProps & {
  * @return {ReactNode} One base conditional component.
  */
 const ConditionalRadioBaseInputField = (props:ConditionalRadioBaseInputProps) => {
-
     return (
         <>
             <Grid container item direction="row" xs={12}>
@@ -633,19 +618,21 @@ const ConditionalRadioBaseInputField = (props:ConditionalRadioBaseInputProps) =>
     )
 }
 
-// ConditionalRadio component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SingleShowConditionalRadioInputProps = ConditionalRadioBaseInputProps & {
     showChildren: (value: any) => boolean
     children?: ReactNode
 }
 
 /**
- * This component relies on the ConditionalRadioBaseInputField. It only shows the child component, if the correct radio button
- * has been pressed.
+ * This component relies on the ConditionalRadioBaseInputField. It only shows the child component,
+ * if the correct radio button has been pressed.
  *
- * @param {SingleShowConditionalRadioInputProps} props This Type contains the ConditionalRadioBaseInputProps and multiple other ones:
- *       <p><strong>showChildren:</strong> Function, that determines which radio button is the correct one that will show the children.</p>
- *      <p><strong>children:</strong>Children, that will be rendered if the correct button has been selected.</p>
+ * @param {SingleShowConditionalRadioInputProps} props - This Type contains the ConditionalRadioBaseInputProps
+ * and multiple other ones:
+ * <p><strong>showChildren:</strong> Function, that determines which radio button is the correct one that will
+ * show the children.</p>
+ * <p><strong>children:</strong>Children, that will be rendered if the correct button has been selected.</p>
  * @return {ReactNode} One single show conditional component.
  */
 export const SingleShowConditionalRadioInputField = (props: SingleShowConditionalRadioInputProps) => {
@@ -657,7 +644,7 @@ export const SingleShowConditionalRadioInputField = (props: SingleShowConditiona
     )
 }
 
-// ConditionalRadio component
+/*--------------------------------------------------------------------------------------------------------------------*/
 export type SelectShowConditionalRadioInputProps = ConditionalRadioBaseInputProps & {
     showFirstChildren: (value: any) => boolean
     showSecondChildren: (value: any) => boolean
@@ -666,8 +653,8 @@ export type SelectShowConditionalRadioInputProps = ConditionalRadioBaseInputProp
 }
 
 /**
- * This component relies on the ConditionalRadioBaseInputField. It either shows one or another child component, depending on which
- * radio button has been selected.
+ * This component relies on the ConditionalRadioBaseInputField. It either shows one or another child component,
+ * depending on which radio button has been selected.
  *
  * @param {SingleShowConditionalRadioInputProps} props This Type contains the ConditionalRadioBaseInputProps and multiple other ones:
  *       <p><strong>showFirstChildren:</strong> Function, that determines which radio button will render which children.</p>

@@ -8,7 +8,6 @@
  *######################################################################
  */
 
-
 import * as React from "react";
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
@@ -24,7 +23,6 @@ import CompanyMaterialsInput, {CompanyMaterialsState} from "./subpages/CompanyMa
 import EnergyConsumptionInput, {EnergyConsumptionState} from "./subpages/EnergyConsumption";
 import {submitGreenhouseData} from "../../../actions/submission";
 import {GreenhouseData} from "../../../types/reduxTypes";
-import {useNavigate} from "react-router-dom";
 import {Tab, Tabs} from "@mui/material";
 import {RootState} from "../../../store";
 import {format} from "date-fns";
@@ -55,6 +53,9 @@ export type SubpageProps = {
     paginationProps: InputPaginationButtonsProps
 }
 
+/**
+ * Type holding the types for the main input state
+ */
 export type DataToSubmit = {
     companyInformation: CompanyInformationState
     cultureInformation: CultureInformationState
@@ -64,6 +65,7 @@ export type DataToSubmit = {
     companyMaterials: CompanyMaterialsState
 }
 
+// the default values that should be inserted, if an input field has not been filled out for submission
 export const defaultValue = "(0,0)"
 export const defaultOption = "[(0,)]"
 
@@ -72,13 +74,20 @@ export enum InputMode {
     update
 }
 
-
+/**
+ * This function formats an Option value to a tuple struct. This function is used for
+ * single select multiple choice fields.
+ * @param value - Option value to be formatted
+ */
 const formatOptionValue = (value: number|null): string => {
     if (value==null) return defaultOption
-
     return `[(${value})]`
 }
 
+/**
+ * This function formats the values of a multi select multiple choice field into a tuple struct.
+ * @param values - Option values to be formatted
+ */
 const formatOptionValues = (values: SelectionValue[]): string => {
     if (values[0].selectValue == null || values[0].textFieldValue.value == null) return defaultOption
 
@@ -101,6 +110,10 @@ const formatOptionValues = (values: SelectionValue[]): string => {
     return formattedString
 }
 
+/**
+ * This function formats the value of a measure intput field into a tuple struct.
+ * @param value - Value to be formatted
+ */
 const formatMeasureValue = (value: MeasureValue | null): string => {
 
     if (value != null &&
@@ -111,10 +124,13 @@ const formatMeasureValue = (value: MeasureValue | null): string => {
         return `(${value.value},${value.unit})`
     }
     else return defaultValue
-
 }
 
- const formatDateValue = (date: DateValue | null) => {
+/**
+ * This function formats the date value of a date input field into a tuple struct. The date gets mapped to an age value.
+ * @param date - Value to be formatted
+ */
+const formatDateValue = (date: DateValue | null) => {
 
         if(date!=null && date.value) {
             const today = new Date()
@@ -124,7 +140,6 @@ const formatMeasureValue = (value: MeasureValue | null): string => {
         }
         else return defaultValue
     }
-
 
 /**
  * This function processes the data from the state of the input page component and maps it to the correct
@@ -146,12 +161,9 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         companyMaterials
     } = dataToSubmit
 
-
-
-    // TODO: Implement a proper default value concept. Maybe get default value object from server?
-    //submittionData maps the data from the dataToSubmit state so it can be used in the post request
+    // submittionData maps the data from the dataToSubmit state so it can be used in the post request
     let submissionData: GreenhouseData = {
-        // Measure input fields
+        // measure input fields
         greenhouse_name: companyInformation?.gewaechshausName ??  "Standardhaus",
         date: companyInformation.datum ? format(companyInformation.datum, 'yyyy-MM-dd') : new Date().toISOString().substring(0, 10),
         GWHFlaeche: formatMeasureValue(companyInformation?.gwhFlaeche),
@@ -212,7 +224,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         "Rispenbuegel:Wiederverwendung": formatMeasureValue(companyMaterials?.rispenbuegelWiederverwendung),
         "Jungpflanzen:Distanz": formatMeasureValue(companyMaterials?.jungpflanzenDistanz),
         "Verpackungsmaterial:AnzahlMehrwegsteigen": formatMeasureValue(companyMaterials?.anzahlNutzungenMehrwegsteigen),
-        // Selection input fields
+        // selection input fields
         Waermeversorgung: formatOptionValue(energyConsumption.waermeversorgung),
         GWHArt: formatOptionValue(companyInformation.gwhArt),
         Land: formatOptionValue(companyInformation.land),
@@ -246,7 +258,7 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Bewaesserungsart: formatOptionValue(companyInformation.bewaesserArt),
         "Jungpflanzen:Zukauf": formatOptionValue(companyMaterials.jungpflanzenZukauf),
         "Jungpflanzen:Substrat": formatOptionValue(companyMaterials.jungpflanzenSubstrat),
-        // Dynamic input fields
+        // dynamic input fields
         Bodenabdeckung: formatOptionValues(companyInformation.bodenabdeckung),
         Energietraeger: formatOptionValues(energyConsumption.energietraeger),
         Stromherkunft: formatOptionValues(energyConsumption.stromherkunft),
@@ -262,13 +274,17 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
     return submissionData
 }
 
+/**
+ * This functional component renders the input page with all its sub-pages. Furthermore it holds the main state of all
+ * sub-pages and maps it to a submission state of type {@link GreenhouseData}. This way it can be sent to the back end.
+ * @param props - Contains the properties for the page. The initial state of the input fields, and the submit mode are
+ * mandatory
+ */
 const PageInputData = (props: InputDataProps) => {
     useEffect(() => {
         props.loadLookupValues()
         props.loadUnitValues()
     }, [])
-
-    const navigate = useNavigate()
 
     const [dataToSubmit, setDataToSubmit] = useState<DataToSubmit>(props.initialData)
     const [tab, setTab] = useState<number>(0)
@@ -294,6 +310,8 @@ const PageInputData = (props: InputDataProps) => {
         }
     }
 
+    // these function determine, if an error should be showed on an input field
+    // this happens, if data was tried to be submitted, but failed and the input field is empty
     const showMeasureInputError = (value: MeasureValue): boolean => {
         if ((value.value == null || value.value == 0) && props.submission.successful == false) return true
         return false
@@ -310,7 +328,7 @@ const PageInputData = (props: InputDataProps) => {
     }
 
 
-    //These functions are passed down to the subpages so that they can update the main state with their state
+    // these functions are passed down to the subpages so that they can update the main state with their state
     const setCompanyInformation = (companyInformation: CompanyInformationState) => setDataToSubmit({...dataToSubmit, companyInformation})
     const setCultureInformation = (cultureInformation: CultureInformationState) => setDataToSubmit({...dataToSubmit, cultureInformation})
     const setEnergyConsumption = (energyConsumption: EnergyConsumptionState) => setDataToSubmit({...dataToSubmit, energyConsumption})
@@ -338,10 +356,10 @@ const PageInputData = (props: InputDataProps) => {
                 <CompanyInformationInput paginationProps={paginationProps} provideCompanyInformation={setCompanyInformation} values={dataToSubmit.companyInformation} showDateInputError={showDateInputError} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
             <TabPanel index={1} value={tab}>
-                <CultureInformationInput paginationProps={paginationProps} provideCultureInformation={setCultureInformation} values={dataToSubmit.cultureInformation} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
+                <CultureInformationInput paginationProps={paginationProps} provideCultureInformation={setCultureInformation} values={dataToSubmit.cultureInformation} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
             <TabPanel index={2} value={tab}>
-                <EnergyConsumptionInput paginationProps={paginationProps} provideEnergyConsumption={setEnergyConsumption} values={dataToSubmit.energyConsumption} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>
+                <EnergyConsumptionInput paginationProps={paginationProps} provideEnergyConsumption={setEnergyConsumption} values={dataToSubmit.energyConsumption} showMeasureInputError={showMeasureInputError}/>
             </TabPanel>
             <TabPanel index={3} value={tab}>
                 <WaterUsageInput paginationProps={paginationProps} provideWaterUsage={setWaterUsage} values={dataToSubmit.waterUsage} showSelectInputError={showSelectInputError} showMeasureInputError={showMeasureInputError}/>

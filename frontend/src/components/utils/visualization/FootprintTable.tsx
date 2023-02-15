@@ -11,6 +11,10 @@ type FootprintTableData = {
     }[]
 }
 
+/**
+ * This function maps the data of a data set into the correct format to be displayed in a table
+ * @param data - Footprint data object
+ */
 function createFootprintTableData(data: GreenhouseFootprint): FootprintTableData[] {
     return (
         data.data.datasets.map(dataset => (
@@ -35,6 +39,13 @@ type footprintTableProps = {
     unit: string
 }
 
+/**
+ * This functional component renders a table displaying the calculated co2 footprint for one dataset.
+ * It uses the {@link createFootprintTableData} function to map the data into the correct format.
+ *
+ * @param footprintData - Footprint data object
+ * @param unit - The unit of the values displayed
+ */
 export const FootprintTable = ({footprintData, unit}:footprintTableProps) => {
 
     const tableData: FootprintTableData[] = createFootprintTableData(footprintData)

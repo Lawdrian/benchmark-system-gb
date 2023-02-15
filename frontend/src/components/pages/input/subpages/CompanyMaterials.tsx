@@ -35,6 +35,9 @@ type CompanyMaterialsProps = ReduxProps & SubpageProps & {
     values: CompanyMaterialsState
 }
 
+/**
+ * This type contains the types for the {@link companyMaterials} state.
+ */
 export type CompanyMaterialsState = {
     growbagsKuebel: number | null
     growbagsKuebelSubstrat: SelectionValue[]
@@ -59,10 +62,19 @@ export type CompanyMaterialsState = {
     verpackungsmaterial: SelectionValue[]
     anzahlNutzungenMehrwegsteigen: MeasureValue | null
     sonstVerbrauchsmaterialien: SelectionValue[]
-
-
 }
 
+/**
+ * This functional component renders the sub-page company materials for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideCompanyMaterials - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param submissionSuccess - Boolean value determining, whether the submission was a success or not
+ * @param unitValues - Values used for displaying the unit in the input fields
+ * @param showSelectInputError - Function that determines if an error in a select input field should be displayed
+ * @param showMeasureInputError - Function that determines if an error in a measure input field should be displayed
+ */
 const CompanyMaterialsInput = ({values, provideCompanyMaterials, paginationProps, lookupValues, submissionSuccess, unitValues, showSelectInputError, showMeasureInputError}: CompanyMaterialsProps) => {
     const [companyMaterials, setCompanyMaterials] = useState<CompanyMaterialsState>(values)
 
@@ -71,7 +83,7 @@ const CompanyMaterialsInput = ({values, provideCompanyMaterials, paginationProps
         provideCompanyMaterials(companyMaterials)
     }
 
-    // Properties of the input fields
+    // properties of the input fields
     const growbagsKuebelSubstratProps: DynamicInputProps = {
         title: "Substratart & Nutzungsdauer",
         label: "Welches Substrat wird verwendet und wie lange?",

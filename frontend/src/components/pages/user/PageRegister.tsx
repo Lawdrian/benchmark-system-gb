@@ -39,6 +39,12 @@ type RegisterProps = ReduxProps & {
     dataInfoUrl: string
 }
 
+/**
+ * This functional component represents the register page.
+ * @param register - Function that calls the back end to register a new user
+ * @param loginUrl - Url slug of the page, where a user can log in.
+ * @param dataInfoUrl - Url slug of the page, where the data information is displayed to the user
+ */
 const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
     const [email, setEmail] = useState<string>("")
     const [password, setPassword] = useState<string>("")
@@ -241,7 +247,5 @@ const PageRegister = ({register, loginUrl, dataInfoUrl}: RegisterProps) => {
         </Container>
     );
 }
-
-
 
 export default connector(PageRegister);

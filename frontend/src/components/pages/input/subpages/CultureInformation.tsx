@@ -25,10 +25,12 @@ type ReduxProps = ConnectedProps<typeof connector>
 type CultureInformationProps = ReduxProps & SubpageProps & {
     provideCultureInformation: Function
     showMeasureInputError: Function
-    showSelectInputError: Function
     values: CultureInformationState
 }
 
+/**
+ * This type contains the types for the {@link cultureInformation} state.
+ */
 export type CultureInformationState = {
     snack: number | null
     snackReihenanzahl: MeasureValue | null
@@ -57,7 +59,16 @@ export type CultureInformationState = {
     nebenkulturEnde: MeasureValue | null
 }
 
-const CultureInformationInput = ({values, provideCultureInformation, paginationProps, lookupValues, unitValues, showSelectInputError, showMeasureInputError}: CultureInformationProps) => {
+/**
+ * This functional component renders the sub-page culture information for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideCultureInformation - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param unitValues - Values used for displaying the unit in the input fields
+ * @param showMeasureInputError - Function that determines if an error in a measure input field should be displayed
+ */
+const CultureInformationInput = ({values, provideCultureInformation, paginationProps, lookupValues, unitValues, showMeasureInputError}: CultureInformationProps) => {
     const [cultureInformation, setCultureInformation] = useState<CultureInformationState>(values)
 
     const setCultureInformationState = (cultureInformation: CultureInformationState) => {
@@ -65,7 +76,7 @@ const CultureInformationInput = ({values, provideCultureInformation, paginationP
         provideCultureInformation(cultureInformation)
     }
 
-    //Fruchtgröße: Snack
+    // properties of the input fields
     const snackProps: SingleShowConditionalRadioInputProps = {
         title: "10 bis 30 Gramm (Snack)",
         label: "Kultivieren Sie Tomaten dieser Größe in dem zu berechnenden Haus?",

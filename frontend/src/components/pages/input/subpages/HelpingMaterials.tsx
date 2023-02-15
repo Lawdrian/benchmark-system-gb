@@ -33,6 +33,9 @@ type HelpingMaterialsProps = ReduxProps & SubpageProps & {
     values: HelpingMaterialsState
 }
 
+/**
+ * This type contains the types for the {@link helpingMaterials} state.
+ */
 export type HelpingMaterialsState = {
     co2Herkunft: SelectionValue[]
     duengemittelSimple: SelectionValue[]
@@ -43,6 +46,15 @@ export type HelpingMaterialsState = {
     insektizideLiter: MeasureValue | null
 }
 
+/**
+ * This functional component renders the sub-page helping materials for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideHelpingMaterials - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param submissionSuccess - Boolean value determining, whether the submission was a success or not
+ * @param unitValues - Values used for displaying the unit in the input fields
+ */
 const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps, lookupValues, unitValues, submissionSuccess}: HelpingMaterialsProps) => {
     const [helpingMaterials, setHelpingMaterials] = useState<HelpingMaterialsState>(values)
 
@@ -52,6 +64,7 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
         console.log(helpingMaterials.duengemittelSimple)
     }
 
+    // properties of the input fields
     const co2HerkunftProps: DynamicInputUnitSelectProps = {
         title: "CO2-Zudosierung",
         label: "Wie und in welcher Menge führen Sie der Kultur CO2 zu? (falls zutreffend)",

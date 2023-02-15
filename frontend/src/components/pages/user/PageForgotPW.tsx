@@ -10,7 +10,6 @@ import Button from "@mui/material/Button";
 import {Dialog, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
-
 const mapStateToProps = (state: RootState) => ({
 });
 
@@ -22,10 +21,15 @@ type userActivationProps = ReduxProps & {
     loginUrl: string
 }
 
+/**
+ * This functional component renders the page that will be displayed, if a user wants to reset his password. On this
+ * page he can type in the email address of his account and request a password reset.
+ * @param forgotPW - This function calls the back end to request a password change for the user
+ * @param loginUrl - The url slug to the login page
+ */
 const PageForgotPW = ({forgotPW, loginUrl}: userActivationProps) => {
 
     const [email, setEmail] = useState<string>("")
-    const [emailIsUnique, setEmailIsUnique] = useState<boolean>(true)
     const [tries, setTries] = useState<number>(0)
     const [openDialog, setOpenDialog] = useState<boolean>(false)
 
@@ -35,20 +39,12 @@ const PageForgotPW = ({forgotPW, loginUrl}: userActivationProps) => {
         return tries > 0
     }
 
-    // Get the encoded user id and the activation token that was sent in the email out of the url params
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const uidb64 = urlParams.get('uid')
-    const token = urlParams.get('token')
-
-
     const props = {
         title: "Passwort zurücksetzen",
         subtitle: "Geben sie Ihre Emailadresse ein",
         buttonText: "Zur Anmeldung",
         navigateTo: loginUrl
     }
-
 
     const handleForgotPW = () => {
         setTries(tries+1)
@@ -83,7 +79,7 @@ const PageForgotPW = ({forgotPW, loginUrl}: userActivationProps) => {
                     id="email"
                     autoComplete="email"
                     onChange={(event) => {setEmail(event.target.value)}}
-                    helperText={hasTried() ? getMailHelperText(email, emailIsUnique) : undefined}
+                    helperText={hasTried() ? getMailHelperText(email, true) : undefined}
                     error={hasTried() && !emailValid(email)}
                 />
             </Grid>

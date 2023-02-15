@@ -51,5 +51,4 @@ export type PageConfig = {
     readonly resetPWUrl: string
     readonly dataInfoUrl: string
     readonly homeUrl: string
-    readonly proceedUrl: string
 }

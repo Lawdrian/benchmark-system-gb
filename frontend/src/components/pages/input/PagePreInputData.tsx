@@ -8,7 +8,6 @@
  *######################################################################
  */
 
-
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -21,16 +20,14 @@ import PageInputData, {DataToSubmit, InputMode} from "./PageInputData";
 import {useEffect, useState} from "react";
 import FormControl from "@mui/material/FormControl";
 import {Divider, FormHelperText, InputLabel} from "@mui/material";
-import DynamicSelect, {DynamicSelectProps} from "../../utils/DynamicSelect";
+import DynamicSelect, {DynamicSelectProps} from "../../utils/input/DynamicSelect";
 import {loadDatasets} from "../../../actions/dataset";
-import {Option} from "../../../reducers/lookup";
 import TextField, {TextFieldProps} from "@mui/material/TextField";
 import {resetSubmissionState} from "../../../actions/submission";
 import {loadLookupValues} from "../../../actions/lookup";
 import {fillInputState, findOptionId, parseStringToArray, emptyDataset} from "../../../helpers/InputHelpers";
-import {companyValid, containsSpecialChars, getCompanyHelperText} from "../../../helpers/UserManagement";
-
-
+import {containsSpecialChars} from "../../../helpers/UserManagement";
+import {Option} from "../../../types/reduxTypes";
 
 const mapStateToProps = (state: RootState) => ({
     dataset: state.dataset,
@@ -51,6 +48,16 @@ type ReduxProps = ConnectedProps<typeof connector>
 type PreInputDataProps = ReduxProps & {
 }
 
+/**
+ * This functional component is the pre-page in front of the input page. Here the user decides on the greenhouse name to
+ * create a new greenhouse, or selects an existing greenhouse.
+ * @param resetSubmissionState - Function, that resets the Redux submission state
+ * @param loadDatasets - Function, that loads all data sets from a user from the back end
+ * @param loadLookupValues - Function, that loads all lookup values from the back end
+ * @param isLoading - Boolean value, determining if the lookup request is still loading
+ * @param dataset - Redux dataset state
+ * @param lookupValues - Lookup values from the Redux lookup state
+ */
 const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, isLoading, dataset, lookupValues}: PreInputDataProps) => {
     useEffect(() => {
         if (!dataset.successful) {
@@ -70,12 +77,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     const [pageStatus, setPageStatus] = useState<PageStatus>(PageStatus.PreInput)
     const [nameTries, setNameTries] = useState<number>(0)
     const [selectTries, setSelectTries] = useState<number>(0)
-
-
-
-
     const [inputFieldData, setInputFieldData] = useState<DataToSubmit>(emptyDataset)
-
 
     const hasNameTried = () => {
         return nameTries > 0
@@ -91,10 +93,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         return selectTries > 0
     }
 
-
-
-
-    // Load the greenhouse dataset
+    // load the greenhouse dataset
     let lookupGreenhouses: Option[] = []
     if(dataset.datasets != []) {
         if(dataset.datasets != "" && typeof dataset.datasets != "string") {
@@ -108,10 +107,12 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         else if(dataset.datasets == "") {
             console.log("Dataset corrupted")
         }
-
     }
-    // Render the Inputpages with already filled out input fields.
-    // The data for the input fields comes from the most recent dataset from the selected greenhouse
+
+    /**
+     * This function renders the input page with an initial state, that comes from the most recent data set from the
+     * selected greenhouse. -> The input fields will already be filled out.
+     */
     const renderFilledInputPages = () => {
         if (selectedGreenhouse != null && dataset.datasets != "" && typeof dataset.datasets != "string") {
             const initialDataset = dataset.datasets.filter(value => parseInt(parseStringToArray(value.greenhouse_specs)[0]) == selectedGreenhouse)[0]
@@ -123,6 +124,9 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         setSelectTries(selectTries + 1)
     }
 
+    /**
+     * This function renders the input page with an empty state (apart from initial radio button selections).
+     */
     const renderEmptyInputPages = () => {
         if(inputFieldData.companyInformation.gewaechshausName != null && inputFieldData.companyInformation.gewaechshausName != "" && !containsSpecialChars(inputFieldData.companyInformation.gewaechshausName)) {
             resetSubmissionState()
@@ -167,8 +171,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         setNameTries(nameTries+1)
     }
 
-
-
+    // properties of the input fields
     const ghSelectProps: DynamicSelectProps<any> = {
         "lookupValues": lookupGreenhouses,
         value: selectedGreenhouse,
@@ -179,8 +182,6 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         error: hasSelectTried()
     }
 
-
-    // Properties of the input fields
     const gewaechshausNameProps: TextFieldProps = {
         label: "Gewächshaus Name",
         value: inputFieldData.companyInformation.gewaechshausName,
@@ -199,7 +200,6 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         type:"text",
         placeholder:"Name",
     }
-
 
     if(pageStatus == PageStatus.PreInput) {
 
@@ -289,8 +289,6 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     }
     else
         throw new Error('pageStatus is invalid!')
-
-
-
 }
+
 export default connector(PagePreInputData)

@@ -4,7 +4,7 @@ import {Page, Section} from "../types/PageConfigTypes";
 /**
  * @class PageBuilder
  *
- * Helper class to build an objcet of type Page out of various parameters.
+ * Helper class to build an object of type Page out of various parameters.
  *
  * @property {JSX.Element} component - A component holding the pages content
  * @property {string} urlSnippet - The url that leads to the page
@@ -63,7 +63,7 @@ class PageBuilder {
     }
 
     /**
-     * Specify to include the page in the drawer-panel of the AppLayout
+     * Specify to include the page in the drawer-panel of the AppLayout.
      *
      * @param icon - The icon to use
      * @param text - The link text
@@ -85,7 +85,7 @@ class PageBuilder {
 
 
     /**
-     * Generates the final page object from this PageBuilder instance
+     * Generates the final page object from this PageBuilder instance.
      */
     finalize(): Page {
         let slots = {

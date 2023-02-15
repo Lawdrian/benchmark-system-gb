@@ -6,10 +6,9 @@ import React from "react";
 import {Divider} from "@mui/material";
 
 /**
- * This component is used to divide input fields at the same input page
+ * This component is used to divide input fields on the same input page.
  *
- *
- * @param {DynamicInputField} props This Type contains the title for the divider
+ * @param {@link DynamicInputField} props - This Type contains the title for the divider
  * @return {ReactNode} One SectionDivider component.
  */
 export const SectionDivider = (props: {title: string}) => {

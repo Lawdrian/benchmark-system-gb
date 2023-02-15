@@ -7,7 +7,6 @@ import {combineReducers} from "redux";
 import auth from "./auth";
 import co2 from "./co2footprint";
 import h2o from "./h2ofootprint";
-import benchmark from "./waterbenchmark";
 import weather from "./weather";
 import submission from "./submission";
 import lookup from "./lookup"
@@ -36,7 +35,6 @@ export default combineReducers({
     auth: auth,
     co2: co2,
     h2o: h2o,
-    benchmark: benchmark,
     weather: weather,
     submission: submission,
     lookup: lookup,

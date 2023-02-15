@@ -10,7 +10,11 @@ export type LoadingLayoutProps = {
     subtitle: string
 }
 
-
+/**
+ * This functional component renders a page displaying a loading circle
+ * @param title - Title of the page
+ * @param subtitle - Subtitle of the page
+ */
 export const LoadingLayout: React.FC<LoadingLayoutProps> = ({title, subtitle}) => {
 
     return(

@@ -22,6 +22,15 @@ type HeaderProps = SharedDrawerProps & ReduxProps & {
     title?: String
 }
 
+/**
+ * This component renders the header bar of the web application. The header consists of a title and a logout button.
+ * @param open - Boolean if the app bar should be visible or not
+ * @param toggleDrawer - Function that will be called, when the icon button at the top of the drawer is clicked
+ * @param drawerWidth - Determines the width of the drawer
+ * @param title - Title that should be displayed on the header
+ * @param logout - Function that should be called, when the logout button is pressed
+ * @constructor
+ */
 const AppHeader = (
     {
         open,

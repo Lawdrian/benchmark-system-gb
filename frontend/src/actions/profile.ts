@@ -7,6 +7,13 @@ import {formatLabel} from "./co2footprint";
 
 /**
  * Load the profile data of a user.
+ *
+ * This data is requested to be displayed on the profile page.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param loadingCB - Function that should be executed, when the profile request is in progress
+ * @param successCB - Function that should be executed, when the profile request was a success
+ * @param errorCB - Function that should be executed, when an error occurred during the profile request
  */
 export const loadProfile = (
     withAuth: boolean = true,
@@ -15,12 +22,10 @@ export const loadProfile = (
     errorCB: Function = () => { /* NOOP */ }
 ) => (dispatch: AppDispatch, getState: ReduxStateHook) => {
 
-    console.log("loadProfileData started")
-    // User Loading
     dispatch({type: PROFILE_LOADING});
     loadingCB();
 
-    // Send request
+    // send request
     axios.get('/backend/get-profile-summary', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Profile response", response)
@@ -54,11 +59,9 @@ export const loadProfile = (
 
 
 /**
- * Takes the raw co2-footprint data (how it is provided by the server) and
- * transforms it into a data structre, that chart.js can use to create a
- * visualisation of the data.
+ * Formats the label of every dataset of every greenhouse
  *
- * @param responseData - The co2-footprint data provided by the server
+ * @param responseData - profile metadata
  */
 const mapProfileData = (responseData: ProfileData[]): ProfileData[] => {
     return responseData.map(greenhouse => {

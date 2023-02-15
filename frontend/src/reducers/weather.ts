@@ -25,7 +25,7 @@ export type WeatherState = {
     weatherData: WeatherData | null
 }
 
-// Initialize the weather state
+// initialize the weather state
 const initialState: WeatherState = {
     isLoading: false,
     weatherData: null

@@ -32,7 +32,15 @@ const getSectionDivider = (): ReactNode => {
     return (<Divider sx={{ my: 1 }} />);
 }
 
-
+/**
+ * This component renders the app drawer seen on the left side of the website. It contains all buttons that lead to
+ * the different pages of the web application.
+ *
+ * @param open - Boolean if the app drawer should be visible or not
+ * @param toggleDrawer - Function that will be called, when the icon button at the top of the drawer is clicked
+ * @param drawerWidth - Determines the width of the drawer
+ * @param listItems - List, that contains the Buttons that lead to different pages of the web application
+ */
 const AppDrawer = (
     {
         open,
@@ -60,7 +68,7 @@ const AppDrawer = (
                     mt: 1
                 }}
             >
-                <img src={Logo}></img>
+                <img src={Logo} alt="Website logo"/>
                 <IconButton onClick={toggleDrawer}>
                     <ChevronLeftIcon />
                 </IconButton>

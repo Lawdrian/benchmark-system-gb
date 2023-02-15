@@ -15,7 +15,7 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import InfoIcon from '@mui/icons-material/Info';
 import GroupsIcon from '@mui/icons-material/Groups';
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import PageC02Footprint from "../components/pages/visualisation/PageCO2Footprint";
+import PageC02Footprint from "../components/pages/visualization/PageCO2Footprint";
 import PageProfile from "../components/pages/PageProfile";
 import PageLogin from "../components/pages/user/PageLogin";
 import PageRegister from "../components/pages/user/PageRegister";
@@ -30,8 +30,11 @@ import PageForgotPW from "../components/pages/user/PageForgotPW";
 import PageResetPW from "../components/pages/user/PageResetPW";
 import PagePreInputData from "../components/pages/input/PagePreInputData";
 import PageDataInformation from "../components/pages/PageDataInformation";
-import PageH2OFootprint from "../components/pages/visualisation/PageH2OFootprint";
+import PageH2OFootprint from "../components/pages/visualization/PageH2OFootprint";
 
+/**
+ * Url slugs used by the web application.
+ */
 export const pageConfig: PageConfig = {
     loginUrl: "/login",
     registerUrl: "/register",
@@ -40,9 +43,11 @@ export const pageConfig: PageConfig = {
     resetPWUrl: "resetpw",
     dataInfoUrl: "/information",
     homeUrl: "/",
-    proceedUrl: "", // TODO: Still necessary?!
 }
 
+/**
+ * The pages used by the web application are generated here.
+ */
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
         .withHeaderTitle("Process simulation based on plant response - Benchmark Tool für den Tomatenanbau im Gewächshaus")

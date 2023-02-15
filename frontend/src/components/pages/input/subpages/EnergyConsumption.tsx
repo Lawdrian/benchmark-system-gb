@@ -31,10 +31,12 @@ type ReduxProps = ConnectedProps<typeof connector>
 type EnergyConsumptionProps = ReduxProps & SubpageProps & {
     provideEnergyConsumption: Function
     showMeasureInputError: Function
-    showSelectInputError: Function
     values: EnergyConsumptionState
 }
 
+/**
+ * This type contains the types for the {@link energyConsumption} state.
+ */
 export type EnergyConsumptionState = {
     waermeversorgung: number | null
     waermeteilungFlaeche: MeasureValue | null
@@ -49,7 +51,17 @@ export type EnergyConsumptionState = {
     belichtungsstromLaufzeitJahr: MeasureValue | null
 }
 
-const EnergyConsumptionInput = ({values, provideEnergyConsumption, paginationProps, lookupValues, submissionSuccess, unitValues, showSelectInputError, showMeasureInputError}: EnergyConsumptionProps) => {
+/**
+ * This functional component renders the sub-page energy consumption for the input page.
+ * @param values - Initial values for the input state of the component
+ * @param provideEnergyConsumption - Function to update the parent state on state change in this child
+ * @param paginationProps - Contains the properties used for navigating the sub-pages and submitting the form
+ * @param lookupValues - Values used for multiple choice fields
+ * @param submissionSuccess - Boolean value determining, whether the submission was a success or not
+ * @param unitValues - Values used for displaying the unit in the input fields
+ * @param showMeasureInputError - Function that determines if an error in a measure input field should be displayed
+ */
+const EnergyConsumptionInput = ({values, provideEnergyConsumption, paginationProps, lookupValues, submissionSuccess, unitValues, showMeasureInputError}: EnergyConsumptionProps) => {
     const [energyConsumption, setEnergyConsumption] = useState<EnergyConsumptionState>(values)
 
     const setEnergyConsumptionState = (energyConsumption: EnergyConsumptionState) => {
@@ -57,7 +69,7 @@ const EnergyConsumptionInput = ({values, provideEnergyConsumption, paginationPro
         provideEnergyConsumption(energyConsumption)
     }
 
-    // Properties of the input fields
+    // properties of the input fields
     const waermeversorgungProps: SingleShowConditionalRadioInputProps = {
         title: "Geteilte Wärmeversorgung",
         label: "Teilt sich das zu berechnende Haus die Wärmeversorgung mit anderen Häusern?",

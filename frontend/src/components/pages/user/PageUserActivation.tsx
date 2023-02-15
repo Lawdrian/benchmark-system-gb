@@ -7,7 +7,7 @@ import {LoadingLayout, LoadingLayoutProps} from "../../utils/LoadingLayout";
 
 const mapStateToProps = (state: RootState) => ({
     isActivated: state.auth.isActivated,
-    isLoading: state.auth.isLoading
+    isLoading: state.auth.isLoading,
 });
 
 const connector = connect(mapStateToProps, {activate});
@@ -18,29 +18,35 @@ type userActivationProps = ReduxProps & {
     loginUrl: string
 }
 
+/**
+ * This functional component renders the page that will be displayed when a user activated his account.
+ *
+ * This page either shows the user a success or error message.
+ * @param isActivated - Boolean value from the Redux auth state, that determines if a user is activated or not
+ * @param isLoading - Boolean value from the Redux auth state, that determines if the activate request to the back end
+ * is already done or still loading
+ * @param activate - Function that makes a call to the back end to activate a user's account
+ * @param loginUrl - Url slug of the login page
+ */
 const PageUserActivation = ({isActivated, isLoading, activate, loginUrl}: userActivationProps) => {
 
-    console.log("UserActivation Page!")
-
-    // Get the encoded user id and the activation token that was sent in the email out of the url params
+    // get the encoded user id and the activation token that was sent in the email out of the url params
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const uidb64 = urlParams.get('uid')
     const token = urlParams.get('token')
 
-    // Use useEffect so activate gets only called once
+    // use the useEffect hook, so activate gets only called once
     useEffect(() => {
         if (uidb64!=null && token!=null) {
             activate(uidb64, token)
         }
     },[])
 
-
     const loadingProps: LoadingLayoutProps = {
         title: "Email wird verifiziert",
         subtitle: "Haben Sie einen Moment Gedult."
     }
-
 
     const successProps: UserManagementLayoutProps = {
         title: "Email wurde erfolgreich bestätigt!",
@@ -55,14 +61,14 @@ const PageUserActivation = ({isActivated, isLoading, activate, loginUrl}: userAc
         buttonText: "Zur Anmeldung",
         navigateTo: loginUrl
     }
-    if(isLoading && !isActivated) {
-        return <LoadingLayout {...loadingProps}/>
-    }
-    else if(isActivated && !isLoading) {
+
+    // return a loading, error or success page depending on the activate request status
+    if(isActivated == true && !isLoading) {
         return <UserManagementLayout {...successProps}/>
-    }
-    else {
+    } else if(isActivated == false && !isLoading) {
         return <UserManagementLayout {...errorProps}/>
+    } else {
+        return <LoadingLayout {...loadingProps}/>
     }
 }
 

@@ -4,8 +4,7 @@ import {Box, Container} from "@mui/material";
 import Toolbar from "@mui/material/Toolbar";
 import AppHeader from "./AppHeader";
 import AppDrawer from "./AppDrawer";
-import {LayoutConfig} from "../../types/LayoutConfigTypes";
-import {DrawerListItem} from "../../types/SharedLayoutTypes";
+import {DrawerListItem, LayoutConfig} from "../../types/SharedLayoutTypes";
 import AppBasicTheme from "./AppBasicTheme";
 
 type LayoutProps = {
@@ -13,13 +12,20 @@ type LayoutProps = {
     drawerItems: DrawerListItem[]
 }
 
+/**
+ * This component combines the {@link AppDrawer} and {@link AppHeader} components and renders them together with a
+ * color theme designed in the {@link AppBasicTheme} component.
+ *
+ * @param config - Type {@link LayoutConfig} that contains the drawerWidth
+ * @param drawerItems - List, containing all drawer items
+ */
 const AppLayout = (
     {
         config,
         drawerItems
     }: LayoutProps
 ) => {
-    const [title, setTitle] = React.useState("Default Header Layouer")
+    const [title, setTitle] = React.useState("Default Header Layout")
     const [open, setOpen] = React.useState(true);
     const toggleDrawer = () => {
         setOpen(!open);
