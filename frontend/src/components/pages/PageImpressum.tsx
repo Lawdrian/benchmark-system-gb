@@ -38,6 +38,13 @@ const PageImpressum = () => {
                 praesident@hswt.de<br/>
                 Internet: www.hswt.de
             </p>
+            <Typography variant={"h6"}>
+                Kontakt
+            </Typography>
+            <p style={{textAlign: "start"}}>
+                Bei Fragen oder Anreizen können Sie mit uns über die folgende E-Mail in Kontakt treten:<br/>
+                gwh-benchmark.gl@hswt.de
+            </p>
         </div>
     );
 }

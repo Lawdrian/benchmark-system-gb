@@ -17,7 +17,7 @@ type OptimisationTableProps = {
  * This functional component renders an optimization table.
  * @param props - unit is the name of the unit and data is the data used to display the optimization data
  */
-export const OptimisationTable = (props:OptimisationTableProps) => {
+export const OptimizationTable = (props:OptimisationTableProps) => {
 
     const selectedOption = props.data[0]
     const improvingOptions = props.data.slice(1) // returns all elements of the array apart from the first one

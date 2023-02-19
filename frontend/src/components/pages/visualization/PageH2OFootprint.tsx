@@ -19,6 +19,7 @@ import {
     NormalizedType,
     selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
+import {H2OFootprintOptimisation} from "./subpages/H2OFootprintOptimization";
 
 const mapStateToProps = (state: RootState) => ({
     total: state.h2o.total,
@@ -109,7 +110,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
     else if(loadError) {
         return (<p> Bisher wurden noch keine Daten erfasst. <br/>
-            Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus ein. <a
+            Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus <a
                 href="/input-data">hier</a> ein.</p>)
     }
     else if(noWaterData) {
@@ -126,11 +127,12 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                       variant="scrollable"
                       scrollButtons="auto"
                       aria-label="tabs">
-                    <Tab label="Gesamt" {...indexedTabProps(0)} />
-                    <Tab label="Normiert" {...indexedTabProps(1)} />
-                    <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
-                    <Tab label="Direkter Wasserverbrauch" {...indexedTabProps(3)} />
-                    <Tab label="Benchmark" {...indexedTabProps(4)} />
+                    <Tab label="Gesamt" {...indexedTabProps(0)}/>
+                    <Tab label="Normiert" {...indexedTabProps(1)}/>
+                    <Tab label="Klassenspezifisch" {...indexedTabProps(2)}/>
+                    <Tab label="Direkter Wasserverbrauch" {...indexedTabProps(3)}/>
+                    <Tab label="Benchmark" {...indexedTabProps(4)}/>
+                    <Tab label="Optimierung" {...indexedTabProps(5)}/>
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
@@ -213,6 +215,10 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                             data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                         />
                     </>
+                </TabPanel>
+                <TabPanel index={5} value={tab}>
+                    {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
+                    <H2OFootprintOptimisation data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data} normalizedUnit={normalizedType}/>
                 </TabPanel>
             </div>
         )

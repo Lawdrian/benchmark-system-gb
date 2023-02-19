@@ -21,8 +21,8 @@ from backend.api.getWeatherData import GetWeatherData
 urlpatterns = [
     path('get-co2-footprint', GetCalculatedCO2Footprint.as_view()),
     path('get-h2o-footprint', GetCalculatedH2OFootprint.as_view()),
-    path('create-greenhouse-data', CreateGreenhouseData.as_view()),
-    path('update-greenhouse-data', UpdateGreenhouseData.as_view()),
+    path('create-dataset', CreateGreenhouseData.as_view()),
+    path('update-dataset', UpdateGreenhouseData.as_view()),
     path('get-weather', GetWeatherData.as_view()),
     path('get-lookup-values', GetOptionGroupValues.as_view()),
     path('get-unit-values', GetUnitValues.as_view()),

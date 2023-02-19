@@ -54,12 +54,12 @@ export const submitGreenhouseData = (
                 'Content-Type': 'application/json',
             },
         };
-        let url = "/backend/create-greenhouse-data"
+        let url = "/backend/create-dataset"
         // if a dataset should be updated instead of creating a new one, then the id of the dataset
         // needs to be sent in the header and a different endpoint needs to be called.
         if (mode == InputMode.update && datasetId) {
             config.headers = {...config.headers, datasetId: datasetId}
-            url = "/backend/update-greenhouse-data"
+            url = "/backend/update-dataset"
         }
         // create the request body
         const body = JSON.stringify(data);
