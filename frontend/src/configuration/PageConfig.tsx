@@ -73,7 +73,7 @@ const pageDefinitions: Array<Page> = [
         .withHeaderTitle("Über uns")
         .includeInDrawer(<InfoIcon/>, "Über uns", Section.FurtherReading)
         .finalize(),
-    generatePage(<PageImpressum/>, "impressum")
+    generatePage(<PageImpressum/>, "imprint")
         .withHeaderTitle("Impressum")
         .includeInDrawer(<GroupsIcon/>, "Impressum", Section.FurtherReading)
         .finalize(),

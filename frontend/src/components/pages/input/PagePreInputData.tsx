@@ -204,77 +204,74 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     if(pageStatus == PageStatus.PreInput) {
 
         return (
-            <Container component="main" maxWidth="lg">
-                <Box
-                    sx={{
-                        height: '50vh',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center´'
-                    }}
-                >
-                    <Grid container direction={"row"} xs={12} >
-                        <Grid container item  alignItems="center" justifyContent="center">
-                            <Typography component="h1" variant="h5">
-                                Neuen Datensatz anlegen
-                            </Typography>
-                        </Grid>
-                        <Grid container item alignItems={"center"} justifyContent={"center"}  xs={12}>
-                            <Grid item xs={8}>
-                                <p>
-                                    Sie haben den ersten Schritt getätigt um einen neuen Datensatz anzulegen. Nun haben Sie zwei Optionen zur Auswahl.
-                                    Entweder Sie legen einen komplett neuen Datensatz an (bei Erstnutzung oder Hinzufügen eines weiteren Gewächshauses), oder Sie wählen ein bestehendes/ bereits hinterlegtes Haus aus und nehmen Änderungen am Datensatz vor.
-                                    Dies ist besonders sinnvoll, wenn Sie für ein bestehendes Haus ein weiteres Kulturjahr hinterlegen wollen um die Veränderungen der Fußabdrücke über die Jahre betrachten zu wollen.
-                                    In diesem Fall ändern Sie im Datensatz bspw. das Kulturjahr, bauliche Änderungen, Erträge, Verbräuche und so weiter.
-                                </p>
-                            </Grid>
-                        </Grid>
-                        <Grid container direction={"row"} xs={12} sx={{pt:8}} alignItems="center" justifyContent="center" >
-                            <Grid item container xs={4} alignItems="center" justifyContent="center" sx={{pr:4}} spacing={1}>
-                                <Typography component="h1" variant="subtitle2">
-                                    Für bestehendes Gewächshaus
-                               </Typography>
-                                <FormControl fullWidth sx={{mt:2}}>
-                                    <InputLabel id="amount-select-label">Gewächshaus</InputLabel>
-                                <DynamicSelect label="GWH" {...ghSelectProps} />
-                                    <FormHelperText error>{hasSelectTried() ? "Bitte wählen Sie eines Ihrer Gewächshäuser aus": ""}</FormHelperText>
-                                </FormControl>
-                                <Button
-                                    sx={{mt:2}}
-                                    onClick={(event) => renderFilledInputPages()}
-                                    variant="contained"
-                                    color="primary"
-                                    fullWidth
-                                >
-                                    anlegen
-                                </Button>
-                            </Grid>
-                            <Divider orientation="vertical" flexItem> oder </Divider>
-                            <Grid item container xs={4} alignItems="center" justifyContent="center" sx={{pl:4}} spacing={1}>
-                                <Typography component="h1" variant="subtitle2" >
-                                    Für neues Gewächshaus
-                                </Typography>
-                                <TextField
-                                    sx={{mt:2}}
-                                    placeholder='Gewächshaus Name'
-                                    onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
-                                    {...gewaechshausNameProps}
-                                    fullWidth
-                                />
-                                <Button
-                                    sx={{mt:2}}
-                                    onClick={(event) => renderEmptyInputPages()}
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                >
-                                    erstellen
-                                </Button>
-                            </Grid>
+            <Box
+                sx={{
+                    height: '50vh',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+            >
+                <Grid container direction={"row"} xs={12} >
+                    <Grid container item  alignItems="center" justifyContent="center">
+                        <Typography component="h1" variant="h5">
+                            Neuen Datensatz anlegen
+                        </Typography>
+                    </Grid>
+                    <Grid container item alignItems={"center"} justifyContent={"center"}  xs={12}>
+                        <Grid item xs={8}>
+                            <p>
+                                Sie haben den ersten Schritt getätigt um einen neuen Datensatz anzulegen. Nun haben Sie zwei Optionen zur Auswahl.
+                                Entweder Sie legen einen komplett neuen Datensatz an (bei Erstnutzung oder Hinzufügen eines weiteren Gewächshauses), oder Sie wählen ein bestehendes/ bereits hinterlegtes Haus aus und nehmen Änderungen am Datensatz vor.
+                                Dies ist besonders sinnvoll, wenn Sie für ein bestehendes Haus ein weiteres Kulturjahr hinterlegen wollen um die Veränderungen der Fußabdrücke über die Jahre betrachten zu wollen.
+                                In diesem Fall ändern Sie im Datensatz bspw. das Kulturjahr, bauliche Änderungen, Erträge, Verbräuche und so weiter.
+                            </p>
                         </Grid>
                     </Grid>
-                </Box>
-            </Container>
+                    <Grid container direction={"row"} xs={12} sx={{pt:8}} alignItems="center" justifyContent="center" >
+                        <Grid item container xs={4} alignItems="center" justifyContent="center" sx={{pr:4}} spacing={1}>
+                            <Typography component="h1" variant="subtitle2">
+                                Für bestehendes Gewächshaus
+                           </Typography>
+                            <FormControl fullWidth sx={{mt:2}}>
+                                <InputLabel id="amount-select-label">Gewächshaus</InputLabel>
+                            <DynamicSelect label="GWH" {...ghSelectProps} />
+                                <FormHelperText error>{hasSelectTried() ? "Bitte wählen Sie eines Ihrer Gewächshäuser aus": ""}</FormHelperText>
+                            </FormControl>
+                            <Button
+                                sx={{mt:2}}
+                                onClick={(event) => renderFilledInputPages()}
+                                variant="contained"
+                                color="primary"
+                                fullWidth
+                            >
+                                anlegen
+                            </Button>
+                        </Grid>
+                        <Divider orientation="vertical" flexItem> oder </Divider>
+                        <Grid item container xs={4} alignItems="center" justifyContent="center" sx={{pl:4}} spacing={1}>
+                            <Typography component="h1" variant="subtitle2" >
+                                Für neues Gewächshaus
+                            </Typography>
+                            <TextField
+                                sx={{mt:2}}
+                                placeholder='Gewächshaus Name'
+                                onWheel={(event) => event.currentTarget.querySelector('input')?.blur()}
+                                {...gewaechshausNameProps}
+                                fullWidth
+                            />
+                            <Button
+                                sx={{mt:2}}
+                                onClick={(event) => renderEmptyInputPages()}
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                            >
+                                erstellen
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Box>
         )
     }
     else if(pageStatus == PageStatus.NewGH) {

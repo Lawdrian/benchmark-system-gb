@@ -14,11 +14,11 @@ import {indexedTabProps, TabPanel} from "../../../helpers/TabPanel";
 import BenchmarkPlotObject from "../../utils/visualization/BenchmarkPlot";
 import FootprintPlotObject from "../../utils/visualization/FootprintPlot";
 import {FootprintTable} from "../../utils/visualization/FootprintTable";
-import {CO2FootprintOptimisation} from "../../utils/visualization/CO2FootprintOptimisation";
 import {
     createFootprintPageHeader,
     createFootprintProductionTypeHeader, handleNormalizedTypeChange, NormalizedType, selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
+import {CO2FootprintOptimisation} from "./subpages/CO2FootprintOptimization";
 
 const mapStateToProps = (state: RootState) => ({
     total: state.co2.total,
@@ -98,7 +98,7 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
     else if(loadError) {
         return (<p> Bisher wurden noch keine Daten erfasst. <br/>
-            Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus ein. <a
+            Bitte wechseln Sie auf den Reiter Dateneingabe und geben Sie Daten zu Ihrem Gewächshaus <a
                 href="/input-data">hier</a> ein.</p>)
     }
     else if(loadSuccess) {
@@ -108,11 +108,11 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                       variant="scrollable"
                       scrollButtons="auto"
                       aria-label="tabs">
-                    <Tab label="Gesamt" {...indexedTabProps(0)} />
-                    <Tab label="Normiert" {...indexedTabProps(1)} />
-                    <Tab label="Klassenspezifisch" {...indexedTabProps(2)} />
-                    <Tab label="Benchmark" {...indexedTabProps(3)} />
-                    <Tab label="Optimierung" {...indexedTabProps(4)} />
+                    <Tab label="Gesamt" {...indexedTabProps(0)}/>
+                    <Tab label="Normiert" {...indexedTabProps(1)}/>
+                    <Tab label="Klassenspezifisch" {...indexedTabProps(2)}/>
+                    <Tab label="Benchmark" {...indexedTabProps(3)}/>
+                    <Tab label="Optimierung" {...indexedTabProps(4)}/>
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
