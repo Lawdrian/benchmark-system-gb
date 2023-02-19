@@ -29,14 +29,14 @@ DEBUG = False
 ALLOWED_HOSTS = ['.benchmark-gb.fagw.info']
 
 # Email sending
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.ionos.de'
+EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 465
-DEFAULT_FROM_EMAIL = config('EMAIL_HOST_USER')
+EMAIL_PORT = config('EMAIL_HOST_PORT')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 
 
 # Application definition
