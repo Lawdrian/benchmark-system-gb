@@ -48,7 +48,7 @@ export const H2OFootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOpt
                 Die Effizienz ihres Gewächshauses setzt sich aus folgenden Punkten zusammen:
             </Grid>
             <Grid item xs={12}>
-            <RatingTable tableData={ratingTableData} unit={normalizedUnit}/>
+            <RatingTable tableData={ratingTableData} unit={normalizedUnit} useH2OIcon={true}/>
             </Grid>
             <Grid item xs={12}>
                 <Typography sx={{textDecoration: 'underline'}} display={"inline"} variant={"h3"}>Optimierung</Typography>
