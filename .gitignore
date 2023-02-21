@@ -24,7 +24,7 @@ migrations/
 local_settings.py
 
 # enviroment variables
-.env
+benchmarksystemgb/.env
 
 # static content
 /static/

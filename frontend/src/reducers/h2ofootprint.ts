@@ -51,7 +51,6 @@ const initialState: H2OFootprintState = {
  *
  * @param state - The current water-footprint state
  * @param action - The action to dispatch
- * @returns The updated weather state
  */
 export default function (state: H2OFootprintState = initialState, action: any): H2OFootprintState {
     switch (action.type) {

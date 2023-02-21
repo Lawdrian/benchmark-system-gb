@@ -29,7 +29,7 @@ mkdir -p build/benchmark-system-gb
 
 # copy all necessary folders and files to build
 cp -R ./accounts ./backend ./benchmarksystemgb ./frontend ./static ./config ./build/benchmark-system-gb
-cp requirements.txt manage.py LICENSE .env ./build/benchmark-system-gb
+cp requirements.txt manage.py LICENSE ./build/benchmark-system-gb
 
 # remove unnecessary folders and files (caches from python and npm)
 cd ./build/benchmark-system-gb || exit

@@ -9,7 +9,6 @@ import Paper from '@mui/material/Paper';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {submitGreenhouseData} from "../../actions/submission";
-import {loadWeatherData} from "../../actions/weather";
 import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
@@ -28,7 +27,6 @@ const mapStateToProps = (state: RootState) => ({
     user: state.auth.user,
     co2: state.co2,
     water: state.h2o,
-    weather: state.weather,
     submission: state.submission,
     lookup: state.lookup
 });
@@ -36,7 +34,6 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
     loadCO2Footprint,
     loadH2OFootprint,
-    loadWeatherData,
     submitGreenhouseData,
     resetData,
     loadLookupValues,
@@ -118,11 +115,6 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     // deep copy so initalTestResults do not get modified
     const testResults: TestResults = JSON.parse(JSON.stringify(initialTestResults))
 
-    let weatherInput = {
-        postalCode: 82439,
-        startDate: new Date("2020-05-20"),
-        endDate: new Date("2022-06-20")
-    }
     let testData: GreenhouseData = {
         greenhouse_name: "Haus1",
         date: "2019-09-29",

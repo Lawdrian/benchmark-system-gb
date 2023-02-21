@@ -66,12 +66,6 @@ export const H2OFP_LOADED = "H2OFP_LOADED";
 export const H2OFP_ERROR = "H2OFP_ERROR";
 // waterfootprint loaded, but no content;
 export const H2OFP_NO_CONTENT = "H2OFP_NO_CONTENT";
-// loading weather data
-export const WEATHER_LOADING = "WEATHER_LOADING";
-// loading of weatherdata was successful
-export const WEATHER_LOADED = "WEATHER_LOADED";
-// loading of weatherdata failed
-export const WEATHER_ERROR = "WEATHER_ERROR";
 // set the submission-in-progress flag
 export const SUBMISSION_LOADING = "SUBMISSION_LOADING";
 // submission of data was successful
@@ -226,17 +220,6 @@ export type GreenhouseBenchmark = {
     bestPerformerDate: string
     worstPerformerDate: string
     data: BenchmarkPlot
-}
-
-/**
- * @type WeatherData
- *
- * Container type for the weather data, that is fetched from the server.
- */
-export type WeatherData = {
-    precipitation_height: string
-    temperature_air_mean_200: string
-    sunshine_duration: string
 }
 
 export type DatasetData = {
