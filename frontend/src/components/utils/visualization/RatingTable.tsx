@@ -1,18 +1,8 @@
-import {
-    Paper,
-    Rating,
-    SvgIcon,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    useTheme
-} from "@mui/material";
+import {Paper, Rating, SvgIcon, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import {styled} from "@mui/material/styles";
 import EnergySavingsLeafIcon from "@mui/icons-material/EnergySavingsLeaf";
 import React from "react";
+import {OptimizationDataset} from "../../../types/reduxTypes";
 
 const WaterIcon = () => {
     return <SvgIcon
@@ -42,22 +32,55 @@ type ratingTableProps = {
     useH2OIcon: boolean
 }
 
-export const calculateRating = (percentageIncrease: number): number => {
-    if (percentageIncrease != null) {
+export const createRatingValues = (data: OptimizationDataset[], recentDataset: number, bestPerformer: number, worstPerformer: number) => {
+
+    return data.map((dataset) => {
+        console.log("category: " + dataset.label)
+        console.log("recentDataset: " + dataset.data[recentDataset])
+        console.log("bestPerformer: " + dataset.data[bestPerformer])
+        console.log("worstPerformer: " + dataset.data[worstPerformer])
+        const result = (1 - (dataset.data[recentDataset] - dataset.data[bestPerformer]) / (dataset.data[worstPerformer] - dataset.data[bestPerformer])) || 0
+        console.log("result: " + result)
+        return result
+    })
+}
+
+
+export const createRatingTableData = (data: OptimizationDataset[], ratingValues: number[], recentDataset: number): RatingTableData[] => {
+
+    const dataLabels = data.map((dataset) => {
+        return dataset.label
+    })
+
+    return dataLabels.map((label, idx) => {
+        return ({
+            name: label,
+            value: parseFloat(data[idx].data[recentDataset].toFixed(2)),
+            rating: calculateRating(ratingValues[idx]),
+        })
+    })
+
+}
+
+
+export const calculateRating = (ratingValue: number): number => {
+    if (ratingValue != null) {
         switch (true) {
-            case (percentageIncrease < 10):
-                return 5
-            case (percentageIncrease < 50):
-                return 4
-            case (percentageIncrease < 100):
-                return 3
-            case (percentageIncrease < 200):
-                return 2
-            default:
+            case (ratingValue <= 0):
+                return 0
+            case (ratingValue < 0.25):
                 return 1
+            case (ratingValue < 0.5):
+                return 2
+            case (ratingValue < 0.75):
+                return 3
+            case (ratingValue < 1):
+                return 4
+            default:
+                return 5
         }
     }
-    return 1
+    return 0
 }
 
 /**

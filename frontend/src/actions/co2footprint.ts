@@ -13,7 +13,7 @@ import {
     CO2FP_ERROR,
     CO2FP_LOADED,
     CO2FP_LOADING, GreenhouseBenchmark,
-    GreenhouseFootprint
+    GreenhouseFootprint, OptimizationData
 } from "../types/reduxTypes";
 import {AppDispatch, ReduxStateHook} from "../store";
 import axios from "axios";
@@ -70,13 +70,6 @@ type RawCO2Dataset = {
 }
 
 /**
- * @type RawCO2Data
- *
- * The structure of the http-response data, when fetching the co2 footprint data.
- */
-type RawCO2Data = RawGreenhouseCO2Dataset[];
-
-/**
  * Load all co2-footprint datasets for the current user.
  *
  * @param withAuth - User needs to be logged in to use this function
@@ -105,8 +98,10 @@ export const loadCO2Footprint = (
                 payload3: toCO2FootprintPlot(response.data.normalizedm2),
                 payload4: toCO2FootprintPlot(response.data.fruitsizekg),
                 payload5: toCO2FootprintPlot(response.data.fruitsizem2),
-                payload6: toCO2BenchmarkPlot(response.data.benchmarkkg),
-                payload7: toCO2BenchmarkPlot(response.data.benchmarkm2)
+                payload6: toCO2BenchmarkPlot(response.data.normalizedkg),
+                payload7: toCO2BenchmarkPlot(response.data.normalizedm2),
+                payload8: toCO2ptimizationData(response.data.normalizedkg),
+                payload9: toCO2ptimizationData(response.data.normalizedm2),
             })
             successCB()
         })
@@ -125,9 +120,16 @@ export const loadCO2Footprint = (
  *
  * @param responseData - The co2-footprint data provided by the server
  */
-export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprint[] => {
+export const toCO2FootprintPlot = (responseData: RawGreenhouseCO2Dataset[]): GreenhouseFootprint[] => {
 
-    return responseData.map(greenhouse => {
+     const footprintData = responseData.map(greenhouse => {
+        return {...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter(dataset => {
+            return dataset.label != "Worst Performer"
+        })}
+    })
+
+    return footprintData.map(greenhouse => {
         return {
             greenhouse: greenhouse.greenhouse_name,
             performerProductionType: greenhouse.performer_productiontype ?? "",
@@ -245,10 +247,16 @@ export const toCO2FootprintPlot = (responseData: RawCO2Data): GreenhouseFootprin
  *
  * @param responseData - The co2 benchmark data provided by the server
  */
-export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmark[] => {
+export const toCO2BenchmarkPlot = (responseData: RawGreenhouseCO2Dataset[]): GreenhouseBenchmark[] => {
 
+     const benchmarkData = responseData.map(greenhouse => {
+        return {...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter((dataset, i, datasets) => {
+            return !(i < datasets.length - 3)
+        })}
+    })
 
-    return responseData.map(greenhouse => {
+    return benchmarkData.map(greenhouse => {
         let konstruktion:number[] = []
         let waermetraeger:number[] = []
         let strom:number[] = []
@@ -326,12 +334,83 @@ export const toCO2BenchmarkPlot = (responseData: RawCO2Data): GreenhouseBenchmar
     });
 }
 
+
+/**
+ * Takes the raw hco2-footprint data (how it is provided by the server) and
+ * transforms it into a data structure, that can be used to create a rating table and efficiency bar
+ *
+ * @param responseData - The h2o footprint data provided by the server
+ */
+export const toCO2ptimizationData = (responseData: RawGreenhouseCO2Dataset[]): OptimizationData[] => {
+
+    // only use the data from most recent data set, best performer, and worst performer
+    const optimizationData = responseData.map(greenhouse => {
+        return {
+            ...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter((dataset, i, datasets) => {
+                return !(i < datasets.length - 3)
+            })
+        }
+    })
+
+    const response = optimizationData.map(greenhouse => {
+        return {
+            greenhouse: greenhouse.greenhouse_name,
+            data: [
+                {
+                    label: "Gewächshaus Konstruktion",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.konstruktion_co2 +
+                        dataset.energieschirm_co2 +
+                        dataset.bodenabdeckung_co2 +
+                        dataset.produktionssystem_co2 +
+                        dataset.bewaesserung_co2 +
+                        dataset.heizsystem_co2 +
+                        dataset.zusaetzliches_heizsystem_co2
+                    ).toFixed(2))),
+                }, {
+                    label: "Wärmeträger",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat(dataset.energietraeger_co2.toFixed(2))),
+                }, {
+                    label: "Strom",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat(dataset.strom_co2.toFixed(2))),
+                }, {
+                    label: "Hilfsstoffe",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.co2_zudosierung_co2 +
+                        dataset.duengemittel_co2 +
+                        dataset.psm_co2 +
+                        dataset.brunnenwasser_co2 +
+                        dataset.regenwasser_co2 +
+                        dataset.stadtwasser_co2 +
+                        dataset.oberflaechenwasser_co2
+                    ).toFixed(2))),
+                }, {
+                    label: "Betriebsstoffe",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.pflanzenbehaelter_co2 +
+                        dataset.substrat_co2 +
+                        dataset.jungpflanzen_substrat_co2 +
+                        dataset.jungpflanzen_transport_co2 +
+                        dataset.schnuere_co2 +
+                        dataset.klipse_co2 +
+                        dataset.rispenbuegel_co2 +
+                        dataset.verpackung_co2 +
+                        dataset.sonstige_verbrauchsmaterialien_co2
+                    ).toFixed(2))),
+                }
+            ]
+        }
+    });
+    return response
+}
+
 /**
  * This function tries to parse the label into a date.
  *
  * @param label - The label of a dataset
  */
-export function formatLabel(label: string):string {
+export const formatLabel = (label: string):string => {
     try {
         return format(new Date(label), 'yyyy')
     }

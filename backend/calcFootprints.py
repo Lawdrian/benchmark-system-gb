@@ -64,12 +64,17 @@ def calc_footprints(data):
         "sonstige_verbrauchsmaterialien_co2": sonstige_verbrauchsmaterialien_co2
     }
 
-    co2_footprint = sum(co2_results.values())
+    # round every result to 2 decimal places
+    rounded_co2_results = {k: round(v, 2) for k, v in co2_results.items()}
+
+    co2_footprint = sum(rounded_co2_results.values())
     print("co2_footprint: " + str(co2_footprint))
 
-    co2_results["co2_footprint"] = co2_footprint
-    co2_results["co2_footprint_norm_kg"] = co2_footprint / helping_values["total_harvest"]
-    co2_results["co2_footprint_norm_m2"] = co2_footprint / helping_values["gh_size"]
+    rounded_co2_results["co2_footprint"] = co2_footprint
+    co2_footprint_norm_kg = round(co2_footprint / helping_values["total_harvest"], 2)
+    print("co2_footprint_norm_kg: " + str(co2_footprint_norm_kg))
+    rounded_co2_results["co2_footprint_norm_kg"] = co2_footprint_norm_kg
+    rounded_co2_results["co2_footprint_norm_m2"] = round(co2_footprint / helping_values["gh_size"], 2)
 
     h2o_results = {
         "konstruktion_h2o": konstruktion_h2o,
@@ -99,21 +104,28 @@ def calc_footprints(data):
         "sonstige_verbrauchsmaterialien_h2o": sonstige_verbrauchsmaterialien_h2o
     }
 
-    h2o_footprint = sum(h2o_results.values())
+    # round every result to 2 decimal places
+    rounded_h2o_results = {k: round(v, 2) for k, v in h2o_results.items()}
+
+    h2o_footprint = sum(rounded_h2o_results.values())
     print("h2o_footprint: " + str(h2o_footprint))
 
-    h2o_results["h2o_footprint"] = h2o_footprint
-    h2o_results["h2o_footprint_norm_kg"] = h2o_footprint / helping_values["total_harvest"]
-    h2o_results["h2o_footprint_norm_m2"] = h2o_footprint / helping_values["gh_size"]
-    direct_h2o_footprint = regenwasser_h2o + brunnenwasser_h2o + stadtwasser_h2o + oberflaechenwasser_h2o
+    rounded_h2o_results["h2o_footprint"] = h2o_footprint
+    rounded_h2o_results["h2o_footprint_norm_kg"] = round(h2o_footprint / helping_values["total_harvest"], 2)
+    rounded_h2o_results["h2o_footprint_norm_m2"] = round(h2o_footprint / helping_values["gh_size"], 2)
+    direct_h2o_footprint = rounded_h2o_results["regenwasser_h2o"] + \
+                           rounded_h2o_results["brunnenwasser_h2o"] + \
+                           rounded_h2o_results["stadtwasser_h2o"] + \
+                           rounded_h2o_results["oberflaechenwasser_h2o"]
+
     print("direct_h2o_footprint", direct_h2o_footprint)
     print("direct_h2o_footprint_norm_kg", direct_h2o_footprint / helping_values["total_harvest"])
     print("direct_h2o_footprint_norm_m2", direct_h2o_footprint / helping_values["gh_size"])
-    h2o_results["direct_h2o_footprint"] = direct_h2o_footprint
-    h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
-    h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
+    rounded_h2o_results["direct_h2o_footprint"] = direct_h2o_footprint
+    rounded_h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
+    rounded_h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
 
-    return co2_results | h2o_results
+    return rounded_co2_results | rounded_h2o_results
 
 
 def calc_helping_values(data, all_options):

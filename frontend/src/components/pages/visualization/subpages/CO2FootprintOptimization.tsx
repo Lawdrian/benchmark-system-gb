@@ -1,12 +1,16 @@
 import {Grid, Typography} from "@mui/material";
 import React from "react";
 import {OptimizationTable, OptimisationTableData} from "../../../utils/visualization/OptimizationTable";
-import {FootprintPlot} from "../../../../types/reduxTypes";
-import RatingTable, {calculateRating, RatingTableData} from "../../../utils/visualization/RatingTable";
+import {OptimizationDataset} from "../../../../types/reduxTypes";
+import RatingTable, {
+    calculateRating,
+    createRatingTableData, createRatingValues,
+    RatingTableData
+} from "../../../utils/visualization/RatingTable";
 import EfficiencyBar, {calculateEfficiency} from "../../../utils/visualization/EfficiencyBar";
 
 type CO2FootprintOptimizationData = {
-    data: FootprintPlot
+    data: OptimizationDataset[]
     normalizedUnit: string
 }
 
@@ -18,26 +22,12 @@ type CO2FootprintOptimizationData = {
  */
 export const CO2FootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOptimizationData) => {
 
-    const bestPerformer = data.datasets[0].data.length-1
-    const recentDataset = bestPerformer -1
+    const worstPerformer = data[0].data.length - 1
+    const bestPerformer = worstPerformer - 1
+    const recentDataset = worstPerformer - 2
 
-    const dataLabels = data.datasets.map( (dataset) => {
-        return dataset.label
-    })
-
-    const percentageIncreases = data.datasets.map( (dataset) => {
-        return (dataset.data[recentDataset] - dataset.data[bestPerformer]) / dataset.data[bestPerformer] * 100 || 0
-    })
-
-
-    const ratingTableData: RatingTableData[] =
-        dataLabels.map( (label, idx) => {
-            return({
-                name: label,
-                value: parseFloat(data.datasets[idx].data[recentDataset].toFixed(2)),
-                rating: calculateRating(percentageIncreases[idx]),
-            })
-        })
+    const ratingValues = createRatingValues(data, recentDataset, bestPerformer, worstPerformer)
+    const ratingTableData = createRatingTableData(data, ratingValues, recentDataset)
 
     const simpleWaermetraegerTableData:OptimisationTableData[] = [
         {
@@ -76,7 +66,7 @@ export const CO2FootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOpt
             <Grid item xs={12}>
                 <Typography sx={{textDecoration: 'underline'}} display={"inline"} variant={"h3"}>Ihre Ressourceneffizienz</Typography>
             </Grid>
-            <EfficiencyBar currentEfficiency={calculateEfficiency(percentageIncreases)}/>
+            <EfficiencyBar currentEfficiency={calculateEfficiency(ratingValues)}/>
             <Grid item xs={12}>
                 Die Effizienz ihres Gewächshauses setzt sich aus folgenden Punkten zusammen:
             </Grid>

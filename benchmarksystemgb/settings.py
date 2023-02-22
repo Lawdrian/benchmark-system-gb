@@ -25,6 +25,9 @@ SECRET_KEY = 'dummy-key'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# http only cookies set
+CSRF_COOKIE_HTTPONLY = True
+
 ALLOWED_HOSTS = []
 
 # Email sending

@@ -7,7 +7,7 @@ import {
     CO2FP_ERROR,
     CO2FP_LOADED,
     CO2FP_LOADING, GreenhouseBenchmark,
-    GreenhouseFootprint,
+    GreenhouseFootprint, OptimizationData,
     RESET_DATA
 } from "../types/reduxTypes";
 
@@ -27,6 +27,8 @@ export type CO2FootprintState = {
     fruitsizem2: GreenhouseFootprint[]
     benchmarkkg: GreenhouseBenchmark[]
     benchmarkm2: GreenhouseBenchmark[]
+    optimizationkg: OptimizationData[]
+    optimizationm2: OptimizationData[]
 }
 
 // initialize the co2-footprint state
@@ -38,7 +40,9 @@ const initialState: CO2FootprintState = {
     fruitsizekg: [],
     fruitsizem2: [],
     benchmarkkg: [],
-    benchmarkm2: []
+    benchmarkm2: [],
+    optimizationkg: [],
+    optimizationm2: []
 }
 
 /**
@@ -68,7 +72,9 @@ export default function (state: CO2FootprintState = initialState, action: any): 
                 fruitsizekg: action.payload4,
                 fruitsizem2: action.payload5,
                 benchmarkkg: action.payload6,
-                benchmarkm2: action.payload7
+                benchmarkm2: action.payload7,
+                optimizationkg: action.payload8,
+                optimizationm2: action.payload9
             };
         case CO2FP_ERROR:
         case RESET_DATA:

@@ -197,12 +197,8 @@ def add_best_and_worst_performer(
         all_measurements,
         normalizedkg_greenhouse_dict,
         normalizedm2_greenhouse_dict,
-        benchmarkkg_greenhouse_dict,
-        benchmarkm2_greenhouse_dict,
         normalizedkg_data_set_list,
         normalizedm2_data_set_list,
-        benchmarkkg_data_set_list,
-        benchmarkm2_data_set_list
 ):
     """Adds the best and worst performer data sets to the footprint data.
 
@@ -216,22 +212,13 @@ def add_best_and_worst_performer(
         calculation_ids: The IDs of all fields in the Calculations table that resemble the footprint
         calculation_names: The names of all fields in the Calculations table that resemble the footprint
         all_measurements: all measurements saved in the database
-        normalizedkg_greenhouse_dict: dict in that the data set of the best performer for kg should be saved in
-        normalizedm2_greenhouse_dict: dict in that the data set of the best performer for m2 should be saved in
-        benchmarkkg_greenhouse_dict: dict in that the data sets of the best & worst performer for kg should be saved in
-        benchmarkm2_greenhouse_dict: dict in that the data sets of the best & worst performer for m2 should be saved in
+        normalizedkg_greenhouse_dict: dict in that the data sets of the best & worst performer for kg should be saved in
+        normalizedm2_greenhouse_dict: dict in that the data sets of the best & worst performer for m2 should be saved in
         normalizedkg_data_set_list: list containing all data sets normalized for kg of a greenhouse
         normalizedm2_data_set_list: list containing all data sets normalized for m2 of a greenhouse
-        benchmarkkg_data_set_list: list containing the most recent data set normalized for kg of a greenhouse
-        benchmarkm2_data_set_list: list containing the most recent data set normalized for m2 of a greenhouse
-
     Returns:
         normalizedkg_greenhouse_dict: dict containing all normalized footprint data for kg of a greenhouse
         normalizedm2_greenhouse_dict: dict containing all normalized footprint data for m2 of a greenhouse
-        benchmarkkg_greenhouse_dict: dict containing all benchmark footprint data for kg of a greenhouse
-        benchmarkm2_greenhouse_dict: dict containing all benchmark footprint data for m2 of a greenhouse
-
-
     """
     # find the best performers for both kg and m2 normalization
     best_performer_dataset_kg = find_performer_dataset(recent_dataset_is_biologic, calculation_name_kg, True)
@@ -245,18 +232,12 @@ def add_best_and_worst_performer(
         best_performer_normalizedm2_dict['label'] = "Best Performer"
         normalizedkg_greenhouse_dict['best_performer_date'] = best_performer_dataset_kg[0].date
         normalizedm2_greenhouse_dict['best_performer_date'] = best_performer_dataset_m2[0].date
-        benchmarkkg_greenhouse_dict['best_performer_date'] = best_performer_dataset_kg[0].date
-        benchmarkm2_greenhouse_dict['best_performer_date'] = best_performer_dataset_m2[0].date
         if recent_dataset_is_biologic:
             normalizedkg_greenhouse_dict['performer_productiontype'] = "Biologisch"
             normalizedm2_greenhouse_dict['performer_productiontype'] = "Biologisch"
-            benchmarkkg_greenhouse_dict['performer_productiontype'] = "Biologisch"
-            benchmarkm2_greenhouse_dict['performer_productiontype'] = "Biologisch"
         else:
             normalizedkg_greenhouse_dict['performer_productiontype'] = "Konventionell"
             normalizedm2_greenhouse_dict['performer_productiontype'] = "Konventionell"
-            benchmarkkg_greenhouse_dict['performer_productiontype'] = "Konventionell"
-            benchmarkm2_greenhouse_dict['performer_productiontype'] = "Konventionell"
 
         snack_harvest, cocktail_harvest, rispen_harvest, fleisch_harvest = get_harvest(best_performer_dataset_kg[0].id,
                                                                                        all_measurements)
@@ -284,8 +265,6 @@ def add_best_and_worst_performer(
 
         normalizedkg_data_set_list.append(best_performer_normalizedkg_dict)
         normalizedm2_data_set_list.append(best_performer_normalizedm2_dict)
-        benchmarkkg_data_set_list.append(best_performer_normalizedkg_dict)
-        benchmarkm2_data_set_list.append(best_performer_normalizedm2_dict)
 
         # find the worst performers for both kg and m2 normalization
         worst_performer_dataset_kg = find_performer_dataset(recent_dataset_is_biologic, calculation_name_kg, False)
@@ -293,12 +272,12 @@ def add_best_and_worst_performer(
 
         # generate the footprint data for the worst performers
         if worst_performer_dataset_kg is not None and worst_performer_dataset_m2 is not None:
-            worst_performer_benchmarkkg_dict = dict()
-            worst_performer_benchmarkm2_dict = dict()
-            worst_performer_benchmarkkg_dict['label'] = "Worst Performer"
-            worst_performer_benchmarkm2_dict['label'] = "Worst Performer"
-            benchmarkkg_greenhouse_dict['worst_performer_date'] = worst_performer_dataset_kg[0].date
-            benchmarkm2_greenhouse_dict['worst_performer_date'] = worst_performer_dataset_m2[0].date
+            worst_performer_normalizedkg_dict = dict()
+            worst_performer_normalizedm2_dict = dict()
+            worst_performer_normalizedkg_dict['label'] = "Worst Performer"
+            worst_performer_normalizedm2_dict['label'] = "Worst Performer"
+            normalizedkg_greenhouse_dict['worst_performer_date'] = worst_performer_dataset_kg[0].date
+            normalizedm2_greenhouse_dict['worst_performer_date'] = worst_performer_dataset_m2[0].date
 
             snack_harvest, cocktail_harvest, rispen_harvest, fleisch_harvest = get_harvest(
                 worst_performer_dataset_kg[0].id, all_measurements)
@@ -307,7 +286,7 @@ def add_best_and_worst_performer(
 
             gh_size_id = Measurements.objects.get(measurement_name="GWHFlaeche")
             gh_size = Measures.objects \
-                .get(greenhouse_data_id=best_performer_dataset_m2[0].id,
+                .get(greenhouse_data_id=worst_performer_dataset_m2[0].id,
                      measurement_id=gh_size_id
                      ).measure_value
 
@@ -321,19 +300,15 @@ def add_best_and_worst_performer(
                             calculation_id=calculation_id) \
                     .values('result_value')[0]['result_value']
 
-                worst_performer_benchmarkkg_dict[calculation_names[i]] = round(value_kg / total_harvest, 2)
-                worst_performer_benchmarkm2_dict[calculation_names[i]] = round(value_m2 / gh_size, 2)
-
-            benchmarkkg_data_set_list.append(worst_performer_benchmarkkg_dict)
-            benchmarkm2_data_set_list.append(worst_performer_benchmarkm2_dict)
+                worst_performer_normalizedkg_dict[calculation_names[i]] = round(value_kg / total_harvest, 2)
+                worst_performer_normalizedm2_dict[calculation_names[i]] = round(value_m2 / gh_size, 2)
+            normalizedkg_data_set_list.append(worst_performer_normalizedkg_dict)
+            normalizedm2_data_set_list.append(worst_performer_normalizedm2_dict)
 
             normalizedkg_greenhouse_dict['greenhouse_datasets'] = normalizedkg_data_set_list
             normalizedm2_greenhouse_dict['greenhouse_datasets'] = normalizedm2_data_set_list
-            benchmarkkg_greenhouse_dict['greenhouse_datasets'] = benchmarkkg_data_set_list
-            benchmarkm2_greenhouse_dict['greenhouse_datasets'] = benchmarkm2_data_set_list
 
-            return normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict, \
-                   benchmarkkg_greenhouse_dict, benchmarkm2_greenhouse_dict
+            return normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict
 
 
 def is_productiontype_biologic(dataset):

@@ -8,7 +8,7 @@ import {
     RESET_DATA,
     H2OFP_ERROR,
     H2OFP_LOADED,
-    H2OFP_LOADING, GreenhouseBenchmark, H2OFP_NO_CONTENT
+    H2OFP_LOADING, GreenhouseBenchmark, H2OFP_NO_CONTENT, OptimizationData
 } from "../types/reduxTypes";
 
 /**
@@ -30,6 +30,8 @@ export type H2OFootprintState = {
     directWaterm2: GreenhouseFootprint[]
     benchmarkkg: GreenhouseBenchmark[]
     benchmarkm2: GreenhouseBenchmark[]
+    optimizationkg: OptimizationData[]
+    optimizationm2: OptimizationData[]
 }
 
 // initialize the water-footprint state
@@ -43,7 +45,9 @@ const initialState: H2OFootprintState = {
     directWaterkg: [],
     directWaterm2: [],
     benchmarkkg: [],
-    benchmarkm2: []
+    benchmarkm2: [],
+    optimizationkg: [],
+    optimizationm2: []
 }
 
 /**
@@ -72,7 +76,9 @@ export default function (state: H2OFootprintState = initialState, action: any): 
                 directWaterkg: action.payload6,
                 directWaterm2: action.payload7,
                 benchmarkkg: action.payload8,
-                benchmarkm2: action.payload9
+                benchmarkm2: action.payload9,
+                optimizationkg: action.payload10,
+                optimizationm2: action.payload11
             };
         case H2OFP_ERROR:
         case H2OFP_NO_CONTENT:
