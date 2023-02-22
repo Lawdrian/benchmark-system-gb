@@ -27,7 +27,9 @@ const mapStateToProps = (state: RootState) => ({
     fruitsizekg: state.co2.fruitsizekg,
     fruitsizem2: state.co2.fruitsizem2,
     benchmarkkg: state.co2.benchmarkkg,
-    benchmarkm2: state.co2.benchmarkm2
+    benchmarkm2: state.co2.benchmarkm2,
+    optimizationkg: state.co2.optimizationkg,
+    optimizationm2: state.co2.optimizationm2,
 });
 
 const connector = connect(mapStateToProps, {loadCO2Footprint});
@@ -47,7 +49,7 @@ type C02FootprintProps = ReduxProps & {}
  * @param {C02FootprintProps} - Divided into plot data and
  * loadCO2Footprint (a function to fetch the necessary data from the backend)
  */
-const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, benchmarkkg, benchmarkm2, loadCO2Footprint}: C02FootprintProps) => {
+const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, benchmarkkg, benchmarkm2, optimizationkg, optimizationm2, loadCO2Footprint}: C02FootprintProps) => {
 
     // load CO2-Footprint data
     useEffect(() => {
@@ -184,7 +186,7 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 </TabPanel>
                 <TabPanel index={4} value={tab}>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
-                    <CO2FootprintOptimisation data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data} normalizedUnit={normalizedType}/>
+                    <CO2FootprintOptimisation data={selectNormalizedPlotData(optimizationkg, optimizationm2, normalizedType)[curGreenHouseIndex].data} normalizedUnit={normalizedType}/>
                 </TabPanel>
             </div>
         )

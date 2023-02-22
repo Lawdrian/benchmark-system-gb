@@ -117,8 +117,6 @@ class GetCalculatedH2OFootprint(APIView):
         fruitsizem2_response_data = []
         directkg_response_data = []
         directm2_response_data = []
-        benchmarkkg_response_data = []
-        benchmarkm2_response_data = []
         optimization_response_data = []
         response_data = dict()
 
@@ -205,8 +203,6 @@ class GetCalculatedH2OFootprint(APIView):
                     fruitsizem2_greenhouse_dict = dict()
                     directkg_greenhouse_dict = dict()
                     directm2_greenhouse_dict = dict()
-                    benchmarkkg_greenhouse_dict = dict()
-                    benchmarkm2_greenhouse_dict = dict()
                     optimization_greenhouse_dict = dict()
                     total_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
                     normalizedkg_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
@@ -215,20 +211,12 @@ class GetCalculatedH2OFootprint(APIView):
                     fruitsizem2_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
                     directkg_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
                     directm2_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
-                    benchmarkkg_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
-                    benchmarkm2_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
                     optimization_greenhouse_dict['greenhouse_name'] = greenhouse.greenhouse_name
-
-                    benchmarkkg_data_set_list = []
-                    benchmarkm2_data_set_list = []
 
                     # calculate the plot data for the 3 plots total, normalizedkg and normalizedm2:
                     total_data_set_list, normalizedkg_data_set_list, normalizedm2_data_set_list = \
                         calc_total_and_normalized_data(
                             greenhouse_data, all_measurements, calculation_ids, h2o_calculation_names)
-                    # append only the most recent data set to the benchmarkkg_data_set_list
-                    benchmarkkg_data_set_list.append(normalizedkg_data_set_list[len(normalizedkg_data_set_list) - 1])
-                    benchmarkm2_data_set_list.append(normalizedm2_data_set_list[len(normalizedm2_data_set_list) - 1])
 
                     # calculate the normalized plot data for the direct water usage
                     direct_h2o_calculation_names = [
@@ -297,8 +285,7 @@ class GetCalculatedH2OFootprint(APIView):
                     calculation_name_kg = "h2o_footprint_norm_kg"
                     calculation_name_m2 = "h2o_footprint_norm_m2"
                     # retrieve the best and worst performer and add them to the greenhouse_dicts
-                    normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict, \
-                    benchmarkkg_greenhouse_dict, benchmarkm2_greenhouse_dict = add_best_and_worst_performer(
+                    normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict = add_best_and_worst_performer(
                         recent_dataset_is_biologic,
                         calculation_name_kg,
                         calculation_name_m2,
@@ -307,20 +294,14 @@ class GetCalculatedH2OFootprint(APIView):
                         all_measurements,
                         normalizedkg_greenhouse_dict,
                         normalizedm2_greenhouse_dict,
-                        benchmarkkg_greenhouse_dict,
-                        benchmarkm2_greenhouse_dict,
                         normalizedkg_data_set_list,
                         normalizedm2_data_set_list,
-                        benchmarkkg_data_set_list,
-                        benchmarkm2_data_set_list
                     )
 
                     total_greenhouse_dict['greenhouse_datasets'] = total_data_set_list
                     total_response_data.append(total_greenhouse_dict)
                     normalizedkg_response_data.append(normalizedkg_greenhouse_dict)
                     normalizedm2_response_data.append(normalizedm2_greenhouse_dict)
-                    benchmarkkg_response_data.append(benchmarkkg_greenhouse_dict)
-                    benchmarkm2_response_data.append(benchmarkm2_greenhouse_dict)
 
                     directkg_greenhouse_dict['greenhouse_datasets'] = direct_h2o_kg_data_set_list
                     directm2_greenhouse_dict['greenhouse_datasets'] = direct_h2o_m2_data_set_list
@@ -344,7 +325,7 @@ class GetCalculatedH2OFootprint(APIView):
                 return Response({'Error': 'Data could not be generated'},
                                 status=status.HTTP_400_BAD_REQUEST)
 
-        if total_response_data == []:
+        if not total_response_data:
             print("GetCalculatedH2OFootprint: no greenhouse for user")
             return Response({'Error': 'Not found', 'Message': 'This user has no greenhouse'},
                         status=status.HTTP_204_NO_CONTENT)
@@ -355,8 +336,6 @@ class GetCalculatedH2OFootprint(APIView):
         response_data["fruitsizem2"] = fruitsizem2_response_data
         response_data["directkg"] = directkg_response_data
         response_data["directm2"] = directm2_response_data
-        response_data["benchmarkkg"] = benchmarkkg_response_data
-        response_data["benchmarkm2"] = benchmarkm2_response_data
         print("getCalculatedH2OFootprint: request success")
         return Response(response_data, status=status.HTTP_200_OK)
 

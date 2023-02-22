@@ -30,7 +30,9 @@ const mapStateToProps = (state: RootState) => ({
     directWaterkg: state.h2o.directWaterkg,
     directWaterm2: state.h2o.directWaterm2,
     benchmarkkg: state.h2o.benchmarkkg,
-    benchmarkm2: state.h2o.benchmarkm2
+    benchmarkm2: state.h2o.benchmarkm2,
+    optimizationkg: state.h2o.optimizationkg,
+    optimizationm2: state.h2o.optimizationm2,
 });
 
 const connector = connect(mapStateToProps, {loadH2OFootprint});
@@ -51,8 +53,9 @@ type H2OFootprintProps = ReduxProps & {}
  * loadCO2Footprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
-const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, directWaterkg, directWaterm2, benchmarkkg, benchmarkm2, loadH2OFootprint}: H2OFootprintProps) => {
-    // load Water-Footprint data
+const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, directWaterkg, directWaterm2, benchmarkkg, benchmarkm2, optimizationkg, optimizationm2, loadH2OFootprint}: H2OFootprintProps) => {
+
+    // load H2O-Footprint data
     React.useEffect(() => {
         loadH2OFootprint(
             true,
@@ -218,7 +221,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 </TabPanel>
                 <TabPanel index={5} value={tab}>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
-                    <H2OFootprintOptimisation data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data} normalizedUnit={normalizedType}/>
+                    <H2OFootprintOptimisation data={selectNormalizedPlotData(optimizationkg, optimizationm2, normalizedType)[curGreenHouseIndex].data} normalizedUnit={normalizedType}/>
                 </TabPanel>
             </div>
         )

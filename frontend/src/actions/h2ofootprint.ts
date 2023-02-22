@@ -14,12 +14,11 @@ import {
     GreenhouseFootprint,
     H2OFP_ERROR,
     H2OFP_LOADED,
-    H2OFP_LOADING, H2OFP_NO_CONTENT
+    H2OFP_LOADING, H2OFP_NO_CONTENT, OptimizationData
 } from "../types/reduxTypes";
 import axios from "axios";
 import {AppDispatch, ReduxStateHook} from "../store";
 import {tokenConfig} from "./auth";
-import {format} from "date-fns";
 import {formatLabel} from "./co2footprint";
 
 
@@ -137,8 +136,10 @@ export const loadH2OFootprint = (
                     payload5: toH2OFootprintPlot(response.data.fruitsizem2),
                     payload6: toDirectH2OFootprintPlot(response.data.directkg),
                     payload7: toDirectH2OFootprintPlot(response.data.directm2),
-                    payload8: toH2OBenchmarkPlot(response.data.benchmarkkg),
-                    payload9: toH2OBenchmarkPlot(response.data.benchmarkm2)
+                    payload8: toH2OBenchmarkPlot(response.data.normalizedkg),
+                    payload9: toH2OBenchmarkPlot(response.data.normalizedkg),
+                    payload10: toH2OOptimizationData(response.data.normalizedkg),
+                    payload11: toH2OOptimizationData(response.data.normalizedm2)
                 })
                 successCB()
             }
@@ -160,7 +161,14 @@ export const loadH2OFootprint = (
  */
 export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseFootprint[] => {
 
-    return responseData.map(greenhouse => {
+     const footprintData = responseData.map(greenhouse => {
+        return {...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter(dataset => {
+            return dataset.label != "Worst Performer"
+        })}
+    })
+
+    return footprintData.map(greenhouse => {
         return {
             greenhouse: greenhouse.greenhouse_name,
             performerProductionType: greenhouse.performer_productiontype ?? "",
@@ -308,6 +316,8 @@ export const toH2OFootprintPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
         }
     });
 }
+
+
 /**
  * Takes the raw h2o-footprint data (how it is provided by the server) and
  * transforms it into a data structure, that chart.js can use to create a
@@ -391,8 +401,14 @@ export const toDirectH2OFootprintPlot = (responseData: RawGreenhouseDirectH2ODat
  */
 export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): GreenhouseBenchmark[] => {
 
+     const benchmarkData = responseData.map(greenhouse => {
+        return {...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter((dataset, i, datasets) => {
+            return !(i < datasets.length - 3)
+        })}
+    })
 
-    return responseData.map(greenhouse => {
+    return benchmarkData.map(greenhouse => {
         let konstruktion: number[] = []
         let waermetraeger: number[] = []
         let strom: number[] = []
@@ -474,3 +490,77 @@ export const toH2OBenchmarkPlot = (responseData: RawGreenhouseH2ODataset[]): Gre
         }
     });
 }
+
+
+/**
+ * Takes the raw h2o-footprint data (how it is provided by the server) and
+ * transforms it into a data structure, that can be used to create a rating table and efficiency bar
+ *
+ * @param responseData - The h2o footprint data provided by the server
+ */
+export const toH2OOptimizationData = (responseData: RawGreenhouseH2ODataset[]): OptimizationData[] => {
+
+    // only use the data from most recent data set, best performer, and worst performer
+     const optimizationData = responseData.map(greenhouse => {
+        return {...greenhouse,
+            greenhouse_datasets: greenhouse.greenhouse_datasets.filter((dataset, i, datasets) => {
+            return !(i < datasets.length - 3)
+        })}
+    })
+
+    const response = optimizationData.map(greenhouse => {
+        return {
+            greenhouse: greenhouse.greenhouse_name,
+            data: [
+                {
+                    label: "Wasserverbrauch",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.brunnenwasser_h2o +
+                        dataset.regenwasser_h2o +
+                        dataset.stadtwasser_h2o +
+                        dataset.oberflaechenwasser_h2o
+                    ).toFixed(2))),
+                }, {
+                    label: "Gewächshaus Konstruktion",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                            dataset.konstruktion_h2o +
+                            dataset.energieschirm_h2o +
+                            dataset.bodenabdeckung_h2o +
+                            dataset.produktionssystem_h2o +
+                            dataset.bewaesserung_h2o +
+                            dataset.heizsystem_h2o +
+                            dataset.zusaetzliches_heizsystem_h2o
+                    ).toFixed(2))),
+                },  {
+                    label: "Wärmeträger",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((dataset.energietraeger_h2o).toFixed(2))),
+                }, {
+                    label: "Strom",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((dataset.strom_h2o).toFixed(2))),
+                }, {
+                    label: "Hilfsstoffe",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.co2_zudosierung_h2o +
+                        dataset.duengemittel_h2o +
+                        dataset.psm_h2o
+                    ).toFixed(2))),
+                }, {
+                    label: "Betriebsstoffe",
+                    data: greenhouse.greenhouse_datasets.map(dataset => parseFloat((
+                        dataset.pflanzenbehaelter_h2o +
+                        dataset.substrat_h2o +
+                        dataset.jungpflanzen_substrat_h2o +
+                        dataset.jungpflanzen_transport_h2o +
+                        dataset.schnuere_h2o +
+                        dataset.klipse_h2o +
+                        dataset.rispenbuegel_h2o +
+                        dataset.verpackung_h2o +
+                        dataset.sonstige_verbrauchsmaterialien_h2o
+                    ).toFixed(2))),
+                }
+            ]
+        }
+    });
+    return response
+}
+
