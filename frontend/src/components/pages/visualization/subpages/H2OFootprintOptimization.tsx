@@ -6,6 +6,9 @@ import RatingTable, {
     createRatingValues,
 } from "../../../utils/visualization/RatingTable";
 import EfficiencyBar, {calculateEfficiency} from "../../../utils/visualization/EfficiencyBar";
+import {OptimizationTable} from "../../../utils/visualization/OptimizationTable";
+import {optimizationTableData} from "./CO2FootprintOptimization";
+import DroughtDevelopmentGif from "../../../../assets/drought_development.gif"
 
 type H2OFootprintOptimizationData = {
     data: OptimizationDataset[]
@@ -41,6 +44,18 @@ export const H2OFootprintOptimisation = ({data, normalizedUnit}: H2OFootprintOpt
             </Grid>
             <Grid item xs={12}>
                 <Typography sx={{textDecoration: 'underline'}} display={"inline"} variant={"h3"}>Optimierung</Typography>
+            </Grid>
+            <Grid item xs={12}>
+                Um den H2O Footprint zu minimieren, können Sie mehrere Änderungen an Ihrem Gewächshaus vornehmen. Im folgenden sind ein paar ressourcenshonende Optionen aufgelistet:
+            </Grid>
+            <Grid item xs={12}>
+                <OptimizationTable tableData={optimizationTableData} ratingTableData={ratingTableData}/>
+            </Grid>
+            <Grid item xs={12}>
+                <Typography sx={{textDecoration: 'underline'}} display={"inline"} variant={"h3"}>Dürre Entwicklung in Deutschland</Typography>
+            </Grid>
+            <Grid item xs={12}>
+                <img src={DroughtDevelopmentGif} alt={"Dürre entwicklung"}/>
             </Grid>
         </Grid>
     )
