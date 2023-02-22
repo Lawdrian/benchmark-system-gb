@@ -71,25 +71,6 @@ class GetCalculatedCO2Footprint(APIView):
                             ...
                         ],
                         fruitsizem2: [<same structure as fruitsizekg>],
-                        benchmarkkg: [
-                            {
-                                greenhouse_name: <name of greenhouse>,
-                                best_performer_date: <date of best performer>,
-                                worst_performer_date: <date of worst performer>,
-                                performer_productiontype: <productiontype of performer,
-                                greenhouse_datasets: [
-                                    {
-                                        label: <date>,
-                                        konstruktion_co2: <construction co2 value>,
-                                        ...
-                                    },
-                                    ...
-                                ]
-                            },
-                            ...
-                        ],
-                        benchmarkm2: [ <same structure as benchmarkkg>],
-                        optimization: [],
                 ]
         """
 
@@ -98,7 +79,6 @@ class GetCalculatedCO2Footprint(APIView):
         normalizedm2_response_data = []
         fruitsizekg_response_data = []
         fruitsizem2_response_data = []
-        optimization_response_data = []
         response_data = dict()
 
         user_id = self.request.user.id
@@ -190,6 +170,7 @@ class GetCalculatedCO2Footprint(APIView):
 
                     calculation_name_kg = "co2_footprint_norm_kg"
                     calculation_name_m2 = "co2_footprint_norm_m2"
+
                     # retrieve the best and worst performer and add them to the greenhouse_dicts
                     normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict = add_best_and_worst_performer(
                         recent_dataset_is_biologic,
@@ -203,7 +184,6 @@ class GetCalculatedCO2Footprint(APIView):
                         normalizedkg_data_set_list,
                         normalizedm2_data_set_list,
                     )
-#                   optimization_response_data.append(create_co2optimization_data())
 
                     total_greenhouse_dict['greenhouse_datasets'] = total_data_set_list
                     total_response_data.append(total_greenhouse_dict)
@@ -219,9 +199,6 @@ class GetCalculatedCO2Footprint(APIView):
                     fruitsizem2_greenhouse_dict['greenhouse_datasets'] = fruitsizem2_data_set_list
                     fruitsizekg_response_data.append(fruitsizekg_greenhouse_dict)
                     fruitsizem2_response_data.append(fruitsizem2_greenhouse_dict)
-
-                    # add optimization data
-                    optimization_response_data.append(co2Optimization.create_co2optimization_data(recent_dataset))
 
             except IndexError:
                 print("getCalculatedCO2Footprint: greenhouse without greenhouse data")

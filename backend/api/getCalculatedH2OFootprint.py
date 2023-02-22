@@ -88,25 +88,6 @@ class GetCalculatedH2OFootprint(APIView):
                             ...
                         ],
                         directm2: [<same structure as directkg>],
-                        benchmarkkg: [
-                            {
-                                greenhouse_name: <name of greenhouse>,
-                                best_performer_date: <date of best performer>,
-                                worst_performer_date: <date of worst performer>,
-                                performer_productiontype: <productiontype of performer,
-                                greenhouse_datasets: [
-                                    {
-                                        label: <date>,
-                                        konstruktion_h2o: <construction h2o value>,
-                                        ...
-                                    },
-                                    ...
-                                ]
-                            },
-                            ...
-                        ],
-                        benchmarkm2: [<same structure as benchmarkkg>],
-                        optimization: [],
                 ]
         """
 
@@ -117,7 +98,6 @@ class GetCalculatedH2OFootprint(APIView):
         fruitsizem2_response_data = []
         directkg_response_data = []
         directm2_response_data = []
-        optimization_response_data = []
         response_data = dict()
 
         user_id = self.request.user.id
@@ -284,6 +264,7 @@ class GetCalculatedH2OFootprint(APIView):
 
                     calculation_name_kg = "h2o_footprint_norm_kg"
                     calculation_name_m2 = "h2o_footprint_norm_m2"
+
                     # retrieve the best and worst performer and add them to the greenhouse_dicts
                     normalizedkg_greenhouse_dict, normalizedm2_greenhouse_dict = add_best_and_worst_performer(
                         recent_dataset_is_biologic,
@@ -316,9 +297,6 @@ class GetCalculatedH2OFootprint(APIView):
                     fruitsizem2_greenhouse_dict['greenhouse_datasets'] = fruitsizem2_data_set_list
                     fruitsizekg_response_data.append(fruitsizekg_greenhouse_dict)
                     fruitsizem2_response_data.append(fruitsizem2_greenhouse_dict)
-
-                    # add optimization data
-                    # optimization_response_data.append(co2Optimization.create_co2optimization_data(recent_dataset))
 
             except IndexError:
                 print("getCalculatedH2OFootprint: data couldn't be generated")

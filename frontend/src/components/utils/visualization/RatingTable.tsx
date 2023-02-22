@@ -35,6 +35,12 @@ type ratingTableProps = {
 export const createRatingValues = (data: OptimizationDataset[], recentDataset: number, bestPerformer: number, worstPerformer: number) => {
 
     return data.map((dataset) => {
+        if(dataset.data[recentDataset] < dataset.data[bestPerformer]) {
+            return 1.1 // 5 stars
+        }
+        if(dataset.data[recentDataset] > dataset.data[worstPerformer]) {
+            return -0.1 // 0 stars
+        }
         console.log("category: " + dataset.label)
         console.log("recentDataset: " + dataset.data[recentDataset])
         console.log("bestPerformer: " + dataset.data[bestPerformer])
