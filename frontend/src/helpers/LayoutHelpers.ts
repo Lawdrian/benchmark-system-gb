@@ -9,3 +9,6 @@ import {LayoutOutletContext} from "../types/SharedLayoutTypes";
 export function useLayoutOutletContext() {
     return useOutletContext<LayoutOutletContext>()
 }
+
+export const CO2 = "CO\u2082"
+export const H2O = "H\u2082O"

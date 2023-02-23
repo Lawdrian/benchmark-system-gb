@@ -6,6 +6,7 @@ import RatingTable, {
 } from "../../../utils/visualization/RatingTable";
 import EfficiencyBar, {calculateEfficiency} from "../../../utils/visualization/EfficiencyBar";
 import {OptimizationTableData, OptimizationTable} from "../../../utils/visualization/OptimizationTable";
+import {CO2} from "../../../../helpers/LayoutHelpers";
 
 type CO2FootprintOptimizationData = {
     data: OptimizationDataset[]
@@ -123,7 +124,7 @@ export const CO2FootprintOptimisation = ({data, normalizedUnit}: CO2FootprintOpt
                 <Typography sx={{textDecoration: 'underline'}} display={"inline"} variant={"h3"}>Optimierung</Typography>
             </Grid>
             <Grid item xs={12}>
-                Um den CO2 Footprint zu minimieren, können Sie mehrere Änderungen an Ihrem Gewächshaus vornehmen. Im folgenden sind ein paar ressourcenshonende Optionen aufgelistet:
+                Um den {CO2} Footprint zu minimieren, können Sie mehrere Änderungen an Ihrem Gewächshaus vornehmen. Im folgenden sind ein paar ressourcenshonende Optionen aufgelistet:
             </Grid>
             <Grid item xs={12}>
                 <OptimizationTable tableData={optimizationTableData} ratingTableData={ratingTableData}/>

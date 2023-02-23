@@ -20,6 +20,7 @@ import {
     selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
 import {H2OFootprintOptimisation} from "./subpages/H2OFootprintOptimization";
+import {H2O} from "../../../helpers/LayoutHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     total: state.h2o.total,
@@ -50,7 +51,7 @@ type H2OFootprintProps = ReduxProps & {}
  * If there is no data, it shows a generic error message.
  *
  * @param {C02FootprintProps} - Divided into plot data and
- * loadCO2Footprint (a function to fetch the necessary data from the backend)
+ * loadH2OFootprint (a function to fetch the necessary data from the backend)
  * @return JSX.Element
  */
 const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruitsizem2, directWaterkg, directWaterm2, benchmarkkg, benchmarkm2, optimizationkg, optimizationm2, loadH2OFootprint}: H2OFootprintProps) => {
@@ -119,7 +120,7 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     else if(noWaterData) {
         return (
             <p> Sie haben keine Daten zu Ihrem Wasserverbrauch angegeben. <br/>
-                Deswegen können wir Ihnen keinen H2O-Footprint anzeigen.
+                Deswegen können wir Ihnen keinen {H2O}-Footprint anzeigen.
             </p>
         )
     }
@@ -139,82 +140,92 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
-                    <p>
-                        Der Gesamtfußabdruck bildet den allgemeinen Fußabdruck der durch die Kultur und das entsprechende Kulturjahr verursacht wurde.
-                        Unterteilt ist dieser in unterscheidliche Emittentenkategorien. Zudem besteht die Möglichkeit einzelne Kategorien auszublenden um eine bessere Vergleichbarkeit & Darstellung der Kategorien zu gewährleisten.
-                        Dies ist insbesondere interessant, wenn Sie zu dem Haus Daten aus mehreren Jahren hinterlegt haben.
-                        Wenn Sie mit der Maus über die Kategorien in den einzelnen Säulen wischen, werden Ihnen weitere Informationen aus den entsprechenden Kategorien angezeigt.<br/>
-                        Wenn Sie auf den grünen Gewächshausnamen klicken, können Sie die Daten eines anderen Hauses abrufen. (falls hinterlegt)
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Der Gesamtfootprint bildet den allgemeinen Footprint der durch die Kultur und das entsprechende Kulturjahr verursacht wurde.
+                            Unterteilt ist dieser in unterscheidliche Emittentenkategorien. Zudem besteht die Möglichkeit einzelne Kategorien auszublenden um eine bessere Vergleichbarkeit & Darstellung der Kategorien zu gewährleisten.
+                            Dies ist insbesondere interessant, wenn Sie zu dem Haus Daten aus mehreren Jahren hinterlegt haben.
+                            Wenn Sie mit der Maus über die Kategorien in den einzelnen Säulen wischen, werden Ihnen weitere Informationen aus den entsprechenden Kategorien angezeigt.
+                            Wenn Sie auf den grünen Gewächshausnamen klicken, können Sie die Daten eines anderen Hauses abrufen. (falls hinterlegt)
+                        </p>
+                    </Grid>
                     <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                                     currentIndex={curGreenHouseIndex}
                     />
                     <FootprintPlotObject
-                        title={("H2O-Footprint für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'H2O-Äquivalente [Liter]'}
-                        tooltipLabel={"Liter H2O-Äq."}
+                        title={(`${H2O}-Footprint für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${H2O}-Äquivalente [Liter]`}
+                        tooltipLabel={`Liter ${H2O}-Äq.`}
                         data={total[curGreenHouseIndex].data}
                     />
                     <SectionDivider
-                        title={`H2O Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length - 1]}`}
+                        title={`${H2O} Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length - 1]}`}
                     />
                     <p>
-                        In der Tabelle können Sie die verschiedenen H2O-Fußabdruckfaktoren genauer betrachten.
+                        In der Tabelle können Sie die verschiedenen {H2O}-Footprintfaktoren genauer betrachten.
                     </p>
-                    <FootprintTable footprintData={total[curGreenHouseIndex]} unit="Liter H2O Äq"/>
+                    <FootprintTable footprintData={total[curGreenHouseIndex]} unit={`Liter ${H2O} Äq`}/>
                 </TabPanel>
                 <TabPanel index={1} value={tab}>
-                    <p>
-                        Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
-                        Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Der normierte Footprint lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.
+                            Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
+                        </p>
+                    </Grid>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
-                        title={("H2O-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'H2O-Äquivalente [Liter]'}
-                        tooltipLabel={"Liter H2O-Äq."}
+                        title={(`${H2O}-Footprint Normiert für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${H2O}-Äquivalente [Liter]`}
+                        tooltipLabel={`Liter ${H2O}-Äq.`}
                         data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
                 <TabPanel index={2} value={tab}>
-                    <p>
-                        Hier können Sie die spezifischen Fußabdrücke der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
-                        Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Hier können Sie die spezifischen Footprints der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
+                            Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
+                        </p>
+                    </Grid>
                      {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                      <FootprintPlotObject
-                        title={("H2O-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'H2O-Äquivalente [Liter]'}
-                        tooltipLabel={"Liter H2O-Äq."}
+                        title={(`${H2O}-Footprint Klassenspezifisch für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${H2O}-Äquivalente [Liter]`}
+                        tooltipLabel={`Liter ${H2O}-Äq.`}
                         data={selectNormalizedPlotData(fruitsizekg, fruitsizem2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
                 <TabPanel index={3} value={tab}>
-                    <p>
-                        Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
-                        Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Der normierte Footprint lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.
+                            Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
+                        </p>
+                    </Grid>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
-                        title={("H2O-Footprint direkter Wasserverbrauch für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'H2O-Äquivalente [Liter]'}
-                        tooltipLabel={"Liter H2O-Äq."}
+                        title={(`${H2O}-Footprint direkter Wasserverbrauch für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${H2O}-Äquivalente [Liter]`}
+                        tooltipLabel={`Liter ${H2O}-Äq.`}
                         data={selectNormalizedPlotData(directWaterkg, directWaterm2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
                 <TabPanel index={4} value={tab}>
-                    <p>
-                        Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
+                        </p>
+                    </Grid>
                     <>
                         {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                         {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? benchmarkkg: benchmarkm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
-                            title={"H2O-Benchmark für " + greenhouses[curGreenHouseIndex]}
-                            yLabel={'H2O-Äquivalente [Liter]'}
-                            tooltipLabel={"Liter H2O-Äq."}
+                            title={`${H2O}-Benchmark für ${greenhouses[curGreenHouseIndex]}`}
+                            yLabel={`${H2O}-Äquivalente [Liter]`}
+                            tooltipLabel={`Liter ${H2O}-Äq.`}
                             data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                         />
                     </>

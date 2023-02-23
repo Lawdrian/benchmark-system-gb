@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from backend.models import GreenhouseData, Greenhouses, Calculations, Results
 
 
-class GetProfileSummary(APIView):
+class GetDatasetSummary(APIView):
     """API endpoint for retrieving a summary of all data sets a user owns.
 
      This includes label, co2 footprint, h2o footprint. This endpoint is used by the profile page

@@ -48,7 +48,7 @@ export const loadLookupValues = (
             })
             successCB()
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: LOOKUP_FAILED
             })

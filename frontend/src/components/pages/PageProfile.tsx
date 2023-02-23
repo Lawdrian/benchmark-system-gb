@@ -20,6 +20,7 @@ import {DatasetSummary} from "../../types/reduxTypes";
 import {loadDatasets} from "../../actions/dataset";
 import {fillInputState, parseStringToArray, emptyDataset} from "../../helpers/InputHelpers";
 import PageInputData, {DataToSubmit, InputMode} from "./input/PageInputData";
+import {CO2, H2O} from "../../helpers/LayoutHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     dataset: state.dataset,
@@ -83,10 +84,10 @@ const PageProfile = ({deleteUser, user, profileData, dataset, loadProfile, loadD
                         Footprints
                     </Typography>
                     <Typography color="text.secondary">
-                        CO2: {data.co2Footprint} kg
+                        <b>{CO2}:</b> {data.co2Footprint} kg
                     </Typography>
                     <Typography  color="text.secondary">
-                        H2O: {data.h2oFootprint} Liter
+                        <b>{H2O}:</b> {data.h2oFootprint} Liter
                     </Typography>
                 </CardContent>
                 <CardActions sx={{mb: 1.5}}>

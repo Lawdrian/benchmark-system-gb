@@ -9,7 +9,7 @@ from django.urls import path
 from .api.createGreenhouseData import CreateGreenhouseData
 from .api.getCalculatedCO2Footprint import GetCalculatedCO2Footprint
 from .api.getCalculatedH2OFootprint import GetCalculatedH2OFootprint
-from .api.getProfileSummary import GetProfileSummary
+from .api.getProfileSummary import GetDatasetSummary
 from .api.getDatasets import GetDatasets
 from .api.getOptionGroupValues import GetOptionGroupValues
 from .api.getUnitValues import GetUnitValues
@@ -23,5 +23,5 @@ urlpatterns = [
     path('get-lookup-values', GetOptionGroupValues.as_view()),
     path('get-unit-values', GetUnitValues.as_view()),
     path('get-datasets', GetDatasets.as_view()),
-    path('get-profile-summary', GetProfileSummary.as_view())
+    path('get-dataset-summary', GetDatasetSummary.as_view())
 ]
