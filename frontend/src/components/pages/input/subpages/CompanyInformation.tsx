@@ -22,6 +22,7 @@ import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../../utils/input/InputPaginationButtons";
 import {SectionDivider} from "../../../utils/input/layout";
 import {parseToFloat} from "../../../../helpers/InputHelpers";
+import {CO2, H2O} from "../../../../helpers/LayoutHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -579,8 +580,8 @@ const CompanyInformationInput = ({values, provideCompanyInformation, paginationP
     return (
         <Grid container xs={12} spacing={8}>
             <Grid container item xs={12} sx={{marginTop:5}}>
-                <Paper sx={{p:2}}>
-                    Im Folgenden können Sie die Daten für Ihre Tomatenkultur eingeben. Bei der Dateneingabe ist es wichtig, dass Sie sich auf die Daten eines spezifischen Gewächshauses, oder Gewächshausabteils beziehen. Somit werden Ungenauigkeiten bei der Berechnung der CO2- und H2O-Footprints vermieden.
+                <Paper sx={{textAlign:"justify", p:2}}>
+                    Im Folgenden können Sie die Daten für Ihre Tomatenkultur eingeben. Bei der Dateneingabe ist es wichtig, dass Sie sich auf die Daten eines spezifischen Gewächshauses, oder Gewächshausabteils beziehen. Somit werden Ungenauigkeiten bei der Berechnung der {CO2}- und {H2O}-Footprints vermieden.
                 </Paper>
             </Grid>
             <SectionDivider title="Allgemeine Daten"/>

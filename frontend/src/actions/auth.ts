@@ -45,7 +45,7 @@ export const loadUser = () => (dispatch: AppDispatch, getState: ReduxStateHook) 
                 payload: response.data
             })
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: AUTH_ERROR
             })
@@ -62,7 +62,7 @@ export const logout = () => (dispatch: AppDispatch, getState: ReduxStateHook) =>
                 type: LOGOUT_SUCCESS,
             })
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             console.log(error)
         })
 }

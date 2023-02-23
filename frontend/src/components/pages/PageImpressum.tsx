@@ -24,7 +24,6 @@ const PageImpressum = () => {
             <p style={{textAlign: "start"}}>
                 Dr. Eric Veulliet<br/>
                 T +49 8161 71-3340<br/>
-                praesident@hswt.de
             </p>
             <Typography variant={"h6"}>
                 Anschrift

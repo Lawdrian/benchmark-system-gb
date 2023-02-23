@@ -19,6 +19,7 @@ import {
     createFootprintProductionTypeHeader, handleNormalizedTypeChange, NormalizedType, selectNormalizedPlotData
 } from "../../utils/visualization/FootprintHeader";
 import {CO2FootprintOptimisation} from "./subpages/CO2FootprintOptimization";
+import {CO2} from "../../../helpers/LayoutHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     total: state.co2.total,
@@ -118,68 +119,76 @@ const PageC02Footprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
                 </Tabs>
 
                 <TabPanel index={0} value={tab}>
-                    <p>
-                        Der Gesamtfußabdruck bildet den allgemeinen Fußabdruck der durch die Kultur und das entsprechende Kulturjahr verursacht wurde.
-                        Unterteilt ist dieser in unterscheidliche Emittentenkategorien. Zudem besteht die Möglichkeit einzelne Kategorien auszublenden um eine bessere Vergleichbarkeit & Darstellung der Kategorien zu gewährleisten.
-                        Dies ist insbesondere interessant, wenn Sie zu dem Haus Daten aus mehreren Jahren hinterlegt haben.
-                        Wenn Sie mit der Maus über die Kategorien in den einzelnen Säulen wischen, werden Ihnen weitere Informationen aus den entsprechenden Kategorien angezeigt.<br/>
-                        Wenn Sie auf den grünen Gewächshausnamen klicken, können Sie die Daten eines anderen Hauses abrufen. (falls hinterlegt)
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Der Gesamtfootprint bildet den allgemeinen Footprint der durch die Kultur und das entsprechende Kulturjahr verursacht wurde.
+                            Unterteilt ist dieser in unterscheidliche Emittentenkategorien. Zudem besteht die Möglichkeit einzelne Kategorien auszublenden um eine bessere Vergleichbarkeit & Darstellung der Kategorien zu gewährleisten.
+                            Dies ist insbesondere interessant, wenn Sie zu dem Haus Daten aus mehreren Jahren hinterlegt haben.
+                            Wenn Sie mit der Maus über die Kategorien in den einzelnen Säulen wischen, werden Ihnen weitere Informationen aus den entsprechenden Kategorien angezeigt.
+                            Wenn Sie auf den grünen Gewächshausnamen klicken, können Sie die Daten eines anderen Hauses abrufen. (falls hinterlegt)
+                        </p>
+                    </Grid>
                     <GreenhouseMenu greenhouses={greenhouses} setIndexCB={setCurGreenHouseIndex}
                                     currentIndex={curGreenHouseIndex}
                     />
                     <FootprintPlotObject
-                        title={("CO2-Footprint für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'CO2-Äquivalente [kg]'}
-                        tooltipLabel={"kg CO2-Äq."}
+                        title={(`${CO2}-Footprint für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${CO2}-Äquivalente [kg]`}
+                        tooltipLabel={`kg ${CO2}-Äq.`}
                         data={total[curGreenHouseIndex].data}
                     />
                     <SectionDivider
                         title={`CO2 Daten des Datensatzes aus dem Jahr ${total[curGreenHouseIndex].data.labels[total[curGreenHouseIndex].data.labels.length - 1]}`}
                     />
                     <p>
-                        In der Tabelle können Sie die verschiedenen CO2-Fußabdruckfaktoren genauer betrachten.
+                        In der Tabelle können Sie die verschiedenen {CO2}-Footprintfaktoren genauer betrachten.
                     </p>
-                    <FootprintTable footprintData={total[curGreenHouseIndex]} unit="kg CO2 Äq"/>
+                    <FootprintTable footprintData={total[curGreenHouseIndex]} unit={`kg ${CO2} Äq`}/>
                 </TabPanel>
                 <TabPanel index={1} value={tab}>
-                    <p>
-                        Der normierte Fußabdruck lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.<br/>
-                        Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Der normierte Footprint lässt sich pro Ertrag (kg) oder pro Quadratmeter anzeigen. Auch hier lässt sich zwischen den hinterlegten Häusern wechseln, sowie Kategorien ausblenden.
+                            Zusätzlich wird hier der normierte Footprint des Bestperformers der gleichen Anbauweise angezeigt.
+                        </p>
+                    </Grid>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value),(event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? normalizedkg: normalizedm2, curGreenHouseIndex)}
                     <FootprintPlotObject
-                        title={("CO2-Footprint Normiert für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'CO2-Äquivalente [kg]'}
-                        tooltipLabel={"kg CO2-Äq."}
+                        title={(`${CO2}-Footprint Normiert für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${CO2}-Äquivalente [kg]`}
+                        tooltipLabel={`kg ${CO2}-Äq.`}
                         data={selectNormalizedPlotData(normalizedkg, normalizedm2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
                 <TabPanel index={2} value={tab}>
-                    <p>
-                        Hier können Sie die spezifischen Fußabdrücke der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
-                        Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Hier können Sie die spezifischen Footprints der einzelnen Tomatengrößen vergleichen, sofern Sie unterschiedliche Sorten in diesem Gewächshaus kultivieren.
+                            Auch hier lässt sich zwischen Footprint pro Ertragseinheit oder Quadratmeter unterscheiden, sowie einzelne Kategorien ausblenden.
+                        </p>
+                    </Grid>
                     {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                     <FootprintPlotObject
-                        title={("CO2-Footprint Klassenspezifisch für " + greenhouses[curGreenHouseIndex])}
-                        yLabel={'CO2-Äquivalente [kg]'}
-                        tooltipLabel={"kg CO2-Äq."}
+                        title={(`${CO2}-Footprint Klassenspezifisch für ${greenhouses[curGreenHouseIndex]}`)}
+                        yLabel={`${CO2}-Äquivalente [kg]`}
+                        tooltipLabel={`kg ${CO2}-Äq.`}
                         data={selectNormalizedPlotData(fruitsizekg, fruitsizem2, normalizedType)[curGreenHouseIndex].data}
                     />
                 </TabPanel>
                 <TabPanel index={3} value={tab}>
-                    <p>
-                        Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
-                    </p>
+                    <Grid container item xs={10} sx={{textAlign:"justify"}}>
+                        <p>
+                            Hier können Sie betrachten, wie der normierte Kategorienfootprint im Wettbewerb einzuordnen ist. Dementsprechend sind hierfür jeweils ein Best- und ein Worst-Performer eingezeichnet.
+                        </p>
+                    </Grid>
                     <>
                         {createFootprintPageHeader(normalizedType, greenhouses, curGreenHouseIndex, (value) => setCurGreenHouseIndex(value), (event: React.ChangeEvent<HTMLInputElement>) => handleNormalizedTypeChange(event, (type: NormalizedType) => setNormalizedType(type)))}
                         {createFootprintProductionTypeHeader(normalizedType==NormalizedType.kg ? benchmarkkg: benchmarkm2, curGreenHouseIndex)}
                         <BenchmarkPlotObject
-                            title={"CO2-Benchmark für " + greenhouses[curGreenHouseIndex]}
-                            yLabel={'CO2-Äquivalente [kg]'}
-                            tooltipLabel={"kg CO2-Äq."}
+                            title={`${CO2}-Benchmark für ${greenhouses[curGreenHouseIndex]}`}
+                            yLabel={`${CO2}-Äquivalente [kg]`}
+                            tooltipLabel={`kg ${CO2}-Äq.`}
                             data={selectNormalizedPlotData(benchmarkkg, benchmarkm2, normalizedType)[curGreenHouseIndex].data}
                         />
                     </>

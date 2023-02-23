@@ -26,7 +26,7 @@ export const loadProfile = (
     loadingCB();
 
     // send request
-    axios.get('/backend/get-profile-summary', withAuth ? tokenConfig(getState) : undefined)
+    axios.get('/backend/get-dataset-summary', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
             console.log("Profile response", response)
             if (response.status == 200) {

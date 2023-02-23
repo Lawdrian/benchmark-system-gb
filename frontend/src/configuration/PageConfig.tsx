@@ -31,6 +31,7 @@ import PageResetPW from "../components/pages/user/PageResetPW";
 import PagePreInputData from "../components/pages/input/PagePreInputData";
 import PageDataInformation from "../components/pages/PageDataInformation";
 import PageH2OFootprint from "../components/pages/visualization/PageH2OFootprint";
+import {CO2, H2O} from "../helpers/LayoutHelpers";
 
 /**
  * Url slugs used by the web application.
@@ -50,7 +51,7 @@ export const pageConfig: PageConfig = {
  */
 const pageDefinitions: Array<Page> = [
     generatePage(<PageHome/>, "/")
-        .withHeaderTitle("Process simulation based on plant response - Benchmark Tool für den Tomatenanbau im Gewächshaus")
+        .withHeaderTitle(`Benchmark System für Tomaten-produktion unter Glas - Fokus: ${CO2} und ${H2O}`)
         .includeInDrawer(<HomeIcon/>, "Startseite ", Section.Home)
         .finalize(),
     generatePage(<PagePreInputData/>, "input-data")
@@ -58,12 +59,12 @@ const pageDefinitions: Array<Page> = [
         .includeInDrawer(<NoteAddIcon/>, "Dateneingabe", Section.Input)
         .finalize(),
     generatePage(<PageH2OFootprint/>, "h2o-footprint")
-        .withHeaderTitle("H2O Footprint - Berechnung des Wasserverbrauchs")
-        .includeInDrawer(<InvertColorsIcon/>, "H2O Footprint", Section.Diagrams)
+        .withHeaderTitle(`${H2O} Footprint - Berechnung des Wasserverbrauchs`)
+        .includeInDrawer(<InvertColorsIcon/>, `${H2O} Footprint`, Section.Diagrams)
         .finalize(),
     generatePage(<PageC02Footprint/>, "co2-footprint")
-        .withHeaderTitle("CO2 Footprint - Berechnung des CO2-Verbrauchs")
-        .includeInDrawer(<Co2Icon/>, "CO2 Footprint", Section.Diagrams)
+        .withHeaderTitle(`${CO2} Footprint - Berechnung des ${CO2}-Verbrauchs`)
+        .includeInDrawer(<Co2Icon/>, `${CO2} Footprint`, Section.Diagrams)
         .finalize(),
     generatePage(<PageProfile/>, "profile")
         .withHeaderTitle("Dein Profil")

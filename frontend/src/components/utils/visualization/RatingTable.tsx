@@ -35,7 +35,7 @@ type ratingTableProps = {
 export const createRatingValues = (data: OptimizationDataset[], recentDataset: number, bestPerformer: number, worstPerformer: number) => {
 
     return data.map((dataset) => {
-        if(dataset.data[recentDataset] < dataset.data[bestPerformer]) {
+        if(dataset.data[recentDataset] == 0 || dataset.data[recentDataset] < dataset.data[bestPerformer]) {
             return 1.1 // 5 stars
         }
         if(dataset.data[recentDataset] > dataset.data[worstPerformer]) {
@@ -45,7 +45,7 @@ export const createRatingValues = (data: OptimizationDataset[], recentDataset: n
         console.log("recentDataset: " + dataset.data[recentDataset])
         console.log("bestPerformer: " + dataset.data[bestPerformer])
         console.log("worstPerformer: " + dataset.data[worstPerformer])
-        const result = (1 - (dataset.data[recentDataset] - dataset.data[bestPerformer]) / (dataset.data[worstPerformer] - dataset.data[bestPerformer])) || 0
+        const result = ((dataset.data[recentDataset] - dataset.data[worstPerformer]) / (dataset.data[bestPerformer] - dataset.data[worstPerformer])) || 0
         console.log("result: " + result)
         return result
     })
