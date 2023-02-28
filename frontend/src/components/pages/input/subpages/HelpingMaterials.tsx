@@ -17,6 +17,7 @@ import {SubpageProps} from "../PageInputData";
 import InputPaginationButtons from "../../../utils/input/InputPaginationButtons";
 import {SectionDivider} from "../../../utils/input/layout";
 import {parseToFloat} from "../../../../helpers/InputHelpers";
+import {CO2} from "../../../../helpers/LayoutHelpers";
 
 const mapStateToProps = (state: RootState) => ({
     lookupValues: state.lookup.lookupValues,
@@ -66,8 +67,8 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
 
     // properties of the input fields
     const co2HerkunftProps: DynamicInputUnitSelectProps = {
-        title: "CO2-Zudosierung",
-        label: "Wie und in welcher Menge führen Sie der Kultur CO2 zu? (falls zutreffend)",
+        title: `${CO2}-Zudosierung`,
+        label: `Wie und in welcher Menge führen Sie der Kultur ${CO2} zu? (falls zutreffend)`,
         optional: true,
         submissionSuccess: submissionSuccess,
         textFieldProps:{},
@@ -92,7 +93,7 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
 
     const duengemittelSimpleProps: DynamicInputProps = {
         title: "Vereinfachte Angaben",
-        label: "Tragen Sie die Mengen der verwendeten Düngemittel für das zu berechnende Haus ein. Die vereinfachte Angabe kann ggf. Ungenauigkeiten bei der Berechnung der Fußabdrücke führen.",
+        label: "Tragen Sie die Mengen der verwendeten Düngemittel für das zu berechnende Haus ein. Die vereinfachte Angabe kann ggf. Ungenauigkeiten bei der Berechnung der Footprints führen.",
         optional: true,
         submissionSuccess: submissionSuccess,
         unitProps: {
@@ -226,7 +227,7 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
 
     return (
         <Grid container xs={12} spacing={8}>
-            <SectionDivider title={"CO2"}/>
+            <SectionDivider title={CO2}/>
             <Grid item container xs={12} spacing={4}>
                 <DynamicInputUnitSelectField {...co2HerkunftProps} />
             </Grid>

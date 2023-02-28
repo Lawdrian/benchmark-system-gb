@@ -154,11 +154,11 @@ export type User = {
 }
 
 /**
- * @type FootprintDataset
+ * @type FootprintCategory
  *
- * Represents a single dataset of a footprint plot.
+ * Represents a single category of a footprint plot.
  */
-type FootprintDataset = {
+type FootprintCategory = {
     label: string
     data: number[]
     backgroundColor: string
@@ -174,6 +174,25 @@ type BenchmarkDataset = {
     label: string
     data: number[]
     backgroundColor: string
+
+}/**
+ * @type OptimizationDataset
+ *
+ * Represents a single category for the optimization.
+ */
+export type OptimizationDataset = {
+    label: string
+    data: number[]
+}
+
+/**
+ * @type OptimizationData
+ *
+ * Represents a single category for the optimization.
+ */
+export type OptimizationData = {
+    greenhouse: string
+    data: OptimizationDataset[]
 }
 
 /**
@@ -191,7 +210,7 @@ type Plot = {
  * Contains the data for a complete footprint visualization.
  */
 export type FootprintPlot = Plot & {
-    datasets: FootprintDataset[]
+    datasets: FootprintCategory[]
 }
 
 /**

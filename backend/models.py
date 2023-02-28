@@ -33,8 +33,8 @@ class Greenhouses(models.Model):
     It represents the actual data set.
     """
 
-    user = models.ForeignKey(User, null=False,
-                             on_delete=models.CASCADE)
+    user = models.ForeignKey(User, null=True,
+                             on_delete=models.SET_NULL)
 
     greenhouse_name = models.CharField(max_length=100, unique=False, null=False)
 

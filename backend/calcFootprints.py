@@ -64,12 +64,17 @@ def calc_footprints(data):
         "sonstige_verbrauchsmaterialien_co2": sonstige_verbrauchsmaterialien_co2
     }
 
-    co2_footprint = sum(co2_results.values())
+    # round every result to 2 decimal places
+    rounded_co2_results = {k: round(v, 2) for k, v in co2_results.items()}
+
+    co2_footprint = sum(rounded_co2_results.values())
     print("co2_footprint: " + str(co2_footprint))
 
-    co2_results["co2_footprint"] = co2_footprint
-    co2_results["co2_footprint_norm_kg"] = co2_footprint / helping_values["total_harvest"]
-    co2_results["co2_footprint_norm_m2"] = co2_footprint / helping_values["gh_size"]
+    rounded_co2_results["co2_footprint"] = co2_footprint
+    co2_footprint_norm_kg = round(co2_footprint / helping_values["total_harvest"], 2)
+    print("co2_footprint_norm_kg: " + str(co2_footprint_norm_kg))
+    rounded_co2_results["co2_footprint_norm_kg"] = co2_footprint_norm_kg
+    rounded_co2_results["co2_footprint_norm_m2"] = round(co2_footprint / helping_values["gh_size"], 2)
 
     h2o_results = {
         "konstruktion_h2o": konstruktion_h2o,
@@ -99,21 +104,28 @@ def calc_footprints(data):
         "sonstige_verbrauchsmaterialien_h2o": sonstige_verbrauchsmaterialien_h2o
     }
 
-    h2o_footprint = sum(h2o_results.values())
+    # round every result to 2 decimal places
+    rounded_h2o_results = {k: round(v, 2) for k, v in h2o_results.items()}
+
+    h2o_footprint = sum(rounded_h2o_results.values())
     print("h2o_footprint: " + str(h2o_footprint))
 
-    h2o_results["h2o_footprint"] = h2o_footprint
-    h2o_results["h2o_footprint_norm_kg"] = h2o_footprint / helping_values["total_harvest"]
-    h2o_results["h2o_footprint_norm_m2"] = h2o_footprint / helping_values["gh_size"]
-    direct_h2o_footprint = regenwasser_h2o + brunnenwasser_h2o + stadtwasser_h2o + oberflaechenwasser_h2o
+    rounded_h2o_results["h2o_footprint"] = h2o_footprint
+    rounded_h2o_results["h2o_footprint_norm_kg"] = round(h2o_footprint / helping_values["total_harvest"], 2)
+    rounded_h2o_results["h2o_footprint_norm_m2"] = round(h2o_footprint / helping_values["gh_size"], 2)
+    direct_h2o_footprint = rounded_h2o_results["regenwasser_h2o"] + \
+                           rounded_h2o_results["brunnenwasser_h2o"] + \
+                           rounded_h2o_results["stadtwasser_h2o"] + \
+                           rounded_h2o_results["oberflaechenwasser_h2o"]
+
     print("direct_h2o_footprint", direct_h2o_footprint)
     print("direct_h2o_footprint_norm_kg", direct_h2o_footprint / helping_values["total_harvest"])
     print("direct_h2o_footprint_norm_m2", direct_h2o_footprint / helping_values["gh_size"])
-    h2o_results["direct_h2o_footprint"] = direct_h2o_footprint
-    h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
-    h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
+    rounded_h2o_results["direct_h2o_footprint"] = direct_h2o_footprint
+    rounded_h2o_results["direct_h2o_footprint_norm_kg"] = direct_h2o_footprint / helping_values["total_harvest"]
+    rounded_h2o_results["direct_h2o_footprint_norm_m2"] = direct_h2o_footprint / helping_values["gh_size"]
 
-    return co2_results | h2o_results
+    return rounded_co2_results | rounded_h2o_results
 
 
 def calc_helping_values(data, all_options):
@@ -1006,35 +1018,35 @@ def calc_fertilizer(data, all_options):
                 duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
                 duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Vinasse":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 2
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 2
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Pferdemist":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 3
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 3
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Kompost":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 4
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 4
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Hornmehl, -griess, -spaene":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 5
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 5
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Blutmehl":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 6
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 6
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Mist":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 7
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 7
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Gruenduengung":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 8
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 8
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Knochenmehl":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 9
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 9
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "Pflanzkali":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 10
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 10
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             elif duengemittel_einfachtyp == "org. Vollduenger":
-                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 11
-                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 11
+                duengemittel_einfach_co2 = duengemittel_einfach_co2 + menge * 1
+                duengemittel_einfach_h2o = duengemittel_einfach_h2o + menge * 1
             else:
                 raise ValueError('No valid option for Duengemittel:VereinfachteAngabe has been selected')
 
@@ -1070,59 +1082,59 @@ def calc_fertilizer(data, all_options):
                 duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 1.62
                 duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 1.62
             elif duengemittel_detaillierttyp == "Eisen DDTPA 3%":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 1
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 1
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Eisen EDDHA 6 %":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 2
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 2
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "25 % Cu Kupfersulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 3
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 3
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "32 % Mn Mangansulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 4
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 4
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Natriummolybdat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 5
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 5
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Zinksulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 6
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 6
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Chlorbleichlauge":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 7
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 7
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Bittersalz":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 8
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 8
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Phosphorsaeure 75%":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 9
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 9
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Salpetersaeure 65%":
                 duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
                 duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Salpetersaeure 38%":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 11
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 11
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Kalksalpeter":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 12
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 12
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Magnesiumnitrat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 13
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 13
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Magnesiumsulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 14
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 14
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Kalisilikat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 15
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 15
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Mangansulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 16
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 16
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Kupfersulfat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 17
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 17
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             elif duengemittel_detaillierttyp == "Ammoniummolybdat":
-                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 18
-                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 18
+                duengemittel_detailliert_co2 = duengemittel_detailliert_co2 + menge * 10
+                duengemittel_detailliert_h2o = duengemittel_detailliert_h2o + menge * 10
             else:
                 raise ValueError('No valid option for Duengemittel:DetaillierteAngabe has been selected')
 

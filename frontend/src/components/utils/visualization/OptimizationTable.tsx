@@ -1,54 +1,75 @@
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
 import React from "react";
+import {RatingTableData} from "./RatingTable";
 
-export type OptimisationTableData = {
+type OptimizationRowData = {
     name: string
-    percentage: number
-    value: number
+    optimal: string
 }
 
-type OptimisationTableProps = {
-    unit: string
-    data: OptimisationTableData[]
+export type OptimizationTableData = {
+    section: string
+    data: OptimizationRowData[]
+}
 
+type OptimizationTableProps = {
+    tableData: OptimizationTableData[],
+    ratingTableData: RatingTableData[]
 }
 
 /**
  * This functional component renders an optimization table.
- * @param props - unit is the name of the unit and data is the data used to display the optimization data
+ *
+ * It displays resource friendly options for the various aspects, that the greenhouse cultivation consists off.
+ *
+ * @param tableData - The data to be displayed in the table
+ * @param ratingTableData - Ratings, to determine what categories to display
  */
-export const OptimizationTable = (props:OptimisationTableProps) => {
+export const OptimizationTable = ({tableData, ratingTableData}: OptimizationTableProps) => {
 
-    const selectedOption = props.data[0]
-    const improvingOptions = props.data.slice(1) // returns all elements of the array apart from the first one
+     ratingTableData = ratingTableData.filter(rating => {
+         return rating.rating == 5 // 5 stars
+    })
+
+    // delete categories from the tableData, where the user has scored 5 stars
+    tableData = tableData.filter(data => {
+        return !ratingTableData.some(rating => rating.name == data.section);
+    })
 
     return(
-        <TableContainer sx={{ maxWidth: 650 }} component={Paper}>
-            <Table  aria-label="simple table">
-                <TableHead  sx={{borderBottom: "2px solid black", "& th": {fontSize: "1.25rem", color: "rgba(96, 96, 96)"}}}>
-                    <TableRow>
-                        <TableCell width={300}>{"Auswahl"}</TableCell>
-                        <TableCell>{"%"}</TableCell>
-                        <TableCell>{props.unit}</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    <TableRow key={selectedOption.name}>
-                        <TableCell width={300}><b>{selectedOption.name}</b></TableCell>
-                        <TableCell sx={{ fontSize: "1rem"}}><b>{selectedOption.percentage}</b></TableCell>
-                        <TableCell sx={{ fontSize: "1rem"}}><b>{selectedOption.value}</b></TableCell>
-                    </TableRow>
-                    {improvingOptions.map(option => {
-                        return(
-                            <TableRow key="Gesamt">
-                                <TableCell width={300}>{option.name}</TableCell>
-                                <TableCell sx={{ fontSize: "1rem"}}>{option.percentage}</TableCell>
-                                <TableCell sx={{ fontSize: "1rem"}}>{option.value}</TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    )
+        <TableContainer component={Paper}>
+                <Table  aria-label="simple table">
+                    <TableHead  sx={{
+                                borderBottom: "2px solid black",
+                                "& th": {
+                                  fontSize: "1.25rem",
+                                  color: "rgba(96, 96, 96)"
+                                }
+                              }}
+                    >
+                        <TableRow>
+                            <TableCell width={500}>Kategorie</TableCell>
+                            <TableCell width={500}>Option</TableCell>
+                            <TableCell width={500}>optimale Lösung</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    {tableData.map((table) => (
+                        <>
+                            <TableBody>
+                                {table.data.map((row) => (
+                                    <TableRow
+                                        key={row.name}
+                                    >
+                                        <TableCell width={500}>{table.section}</TableCell>
+                                        <TableCell width={500}>{row.name}</TableCell>
+                                        <TableCell width={500}>{row.optimal}</TableCell>
+                                    </TableRow>
+                              ))}
+                            </TableBody>
+                        </>
+                    ))}
+                </Table>
+            </TableContainer>
+        )
+
 }

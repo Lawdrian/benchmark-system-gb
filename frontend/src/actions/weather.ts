@@ -41,7 +41,7 @@ export const loadWeatherData = (postalCode: number, startDate: Date, endDate: Da
                     payload: toWeatherData(response.data)
                 })
             })
-            .catch((error) => {// TODO: Proper Error handling
+            .catch((error) => {
                 dispatch({
                     type: WEATHER_ERROR
                 })

@@ -47,9 +47,6 @@ class UpdateGreenhouseData(APIView):
             return Response({'Error': 'No valid user!', 'Message': generic_error_message},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        if not self.request.session.exists(self.request.session.session_key):
-            self.request.session.create()
-
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
             print("UpdateGreenhouseData: format error")
@@ -90,12 +87,16 @@ class UpdateGreenhouseData(APIView):
             calculation_result = calcFootprints.calc_footprints(standardized_data)
             calculation_variables = Calculations.objects.in_bulk(
                 field_name='calculation_name')
+            print(calculation_result.items())
+            print("##########################")
+            print(calculation_variables)
             for variable, value in calculation_result.items():
                 result = Results.objects.get(
                     greenhouse_data=greenhouse_data, calculation_id=calculation_variables[variable].id)
                 if result is not None:
                     # the old value can be simply overwritten, since the amount of result values per data set is always
                     # the same
+                    print("update: result=" + str(variable) + " value=" + str(value))
                     result.result_value = round(value, 2)
                     result.save()
                 else:

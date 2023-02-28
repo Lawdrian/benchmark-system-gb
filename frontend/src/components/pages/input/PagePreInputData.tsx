@@ -116,7 +116,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
     const renderFilledInputPages = () => {
         if (selectedGreenhouse != null && dataset.datasets != "" && typeof dataset.datasets != "string") {
             const initialDataset = dataset.datasets.filter(value => parseInt(parseStringToArray(value.greenhouse_specs)[0]) == selectedGreenhouse)[0]
-            // Set the state with the last created greenhouse data
+            // set the state with the last created greenhouse data
             setInputFieldData(fillInputState(initialDataset.greenhouse_datasets[initialDataset.greenhouse_datasets.length-1]))
             resetSubmissionState()
             setPageStatus(PageStatus.OldGH)
@@ -218,11 +218,11 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
                         </Typography>
                     </Grid>
                     <Grid container item alignItems={"center"} justifyContent={"center"}  xs={12}>
-                        <Grid item xs={8}>
+                        <Grid sx={{textAlign:"justify"}} item xs={8}>
                             <p>
                                 Sie haben den ersten Schritt getätigt um einen neuen Datensatz anzulegen. Nun haben Sie zwei Optionen zur Auswahl.
                                 Entweder Sie legen einen komplett neuen Datensatz an (bei Erstnutzung oder Hinzufügen eines weiteren Gewächshauses), oder Sie wählen ein bestehendes/ bereits hinterlegtes Haus aus und nehmen Änderungen am Datensatz vor.
-                                Dies ist besonders sinnvoll, wenn Sie für ein bestehendes Haus ein weiteres Kulturjahr hinterlegen wollen um die Veränderungen der Fußabdrücke über die Jahre betrachten zu wollen.
+                                Dies ist besonders sinnvoll, wenn Sie für ein bestehendes Haus ein weiteres Kulturjahr hinterlegen wollen um die Veränderungen der Footprints über die Jahre betrachten zu wollen.
                                 In diesem Fall ändern Sie im Datensatz bspw. das Kulturjahr, bauliche Änderungen, Erträge, Verbräuche und so weiter.
                             </p>
                         </Grid>
