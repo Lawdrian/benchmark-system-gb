@@ -20,6 +20,8 @@ environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# only http only cookies
+CSRF_COOKIE_HTTPONLY = True
 
 # quick-start development settings - unsuitable for production
 # see https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
