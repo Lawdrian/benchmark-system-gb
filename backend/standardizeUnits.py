@@ -126,7 +126,7 @@ def standardize_units(data):
 
                 elif selected_optionunit_name == "%":
                     if data["VorlaufmengeGesamt"] == default_value:
-                        new_value = data["VorlaufmengeAnteile"][index][1] * 1 / 100  # TODO update 1 to correct value
+                        new_value = data["VorlaufmengeAnteile"][index][1] * 25 / 100
                     else:
                         new_value = data["VorlaufmengeAnteile"][index][1] * data["VorlaufmengeGesamt"][0] / 100
 

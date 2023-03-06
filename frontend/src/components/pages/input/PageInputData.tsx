@@ -269,8 +269,8 @@ const processDataToSubmit = (dataToSubmit: DataToSubmit): GreenhouseData => {
         Verpackungsmaterial: formatOptionValues(companyMaterials.verpackungsmaterial),
         SonstigeVerbrauchsmaterialien: formatOptionValues(companyMaterials.sonstVerbrauchsmaterialien),
     }
-    console.log("SubmissionData:")
-    console.log(submissionData)
+    // console.log("SubmissionData:")
+    // console.log(submissionData)
     return submissionData
 }
 

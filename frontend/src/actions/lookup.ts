@@ -41,7 +41,7 @@ export const loadLookupValues = (
     // send request
     axios.get('/backend/get-lookup-values', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("Lookup Response", response)
+            // console.log("Lookup Response", response)
             dispatch({
                 type: LOOKUP_LOADED,
                 payload: response.data
@@ -80,7 +80,7 @@ export const loadUnitValues = (
     // send request
     axios.get('/backend/get-unit-values', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("Unit Response", response)
+            // console.log("Unit Response", response)
             dispatch({
                 type: UNITS_LOADED,
                 payload: response.data

@@ -1,7 +1,7 @@
 import React from 'react';
-import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip, TooltipItem,} from 'chart.js'; // TODO clean up imports
+import {BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Title, Tooltip, TooltipItem,} from 'chart.js';
 import {Bar} from 'react-chartjs-2';
-import {BenchmarkPlot, FootprintPlot} from "../../../types/reduxTypes";
+import {BenchmarkPlot} from "../../../types/reduxTypes";
 
 ChartJS.register(
     CategoryScale,

@@ -86,13 +86,11 @@ const PageH2OFootprint = ({total, normalizedkg, normalizedm2, fruitsizekg, fruit
     }
 
     const handleLoadError = () => {
-        console.log("Watterrr")
         setOpenDialog(false)
         setLoadError(true)
     }
 
     const handleNoWaterData = () => {
-        console.log("Watter", noWaterData)
         setOpenDialog(false)
         setNoWaterData(true)
     }

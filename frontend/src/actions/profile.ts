@@ -28,7 +28,7 @@ export const loadProfile = (
     // send request
     axios.get('/backend/get-dataset-summary', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("Profile response", response)
+            // console.log("Profile response", response)
             if (response.status == 200) {
                 dispatch({
                     type: PROFILE_LOADED,

@@ -6,6 +6,10 @@ type efficiencyBarProps = {
     currentEfficiency: number
 }
 
+/**
+ * This function calculates, how close a rating is to a perfect rating. The value is expressed as a percentage value.
+ * @param percentageIncreases - Scalar rating values of the footprint categories of a data set
+ */
  export const calculateEfficiency = (percentageIncreases: number[]) => {
     if (percentageIncreases != null && percentageIncreases.length != 0) {
         const percentageSum = percentageIncreases.reduce((a, b) => {
@@ -13,19 +17,14 @@ type efficiencyBarProps = {
         }, 0)
         const percentageAvg = (percentageSum / percentageIncreases.length)
         return percentageAvg / 5 * 100
-        /*
-        const percentageSum = percentageIncreases.reduce((a, b) => {return a+b})
-        const percentageAvg = (percentageSum / percentageIncreases.length)
-        console.log("avg: " + percentageAvg + "; sum: " + percentageSum)
-        if (percentageAvg < 100) {
-            return Math.min(100 - percentageAvg, 100)
-        }
-        */
     }
     return 0
 }
 
-
+/**
+ * This functional component renders a progress bar consisting of four small progress bars side by side.
+ * @param currentEfficiency - Value, that the progress bar should display
+ */
 const EfficiencyBar = ({currentEfficiency}: efficiencyBarProps) => {
     const [progress1, setProgress1] = useState(0)
     const [progress2, setProgress2] = useState(0)

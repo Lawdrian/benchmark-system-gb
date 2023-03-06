@@ -39,7 +39,7 @@ export const loadUser = () => (dispatch: AppDispatch, getState: ReduxStateHook) 
     // Send request
     axios.get('/accounts/auth/user', tokenConfig(getState))
         .then((response) => {
-            console.log("User Response", response)
+            // console.log("User Response", response)
             dispatch({
                 type: USER_LOADED,
                 payload: response.data
@@ -63,7 +63,7 @@ export const logout = () => (dispatch: AppDispatch, getState: ReduxStateHook) =>
             })
         })
         .catch((error) => {
-            console.log(error)
+            // console.log(error)
         })
 }
 
