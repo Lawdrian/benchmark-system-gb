@@ -8,6 +8,9 @@ type StyledAppBarProps = AppBarProps & DrawerState & {
 
 }
 
+/**
+ * This component renders the animated transition, when clicking on the '>' icon on the expanded app bar.
+ */
 const StyledAppBar = styled(
       MuiAppBar,
       { shouldForwardProp: (prop) => prop !== 'open',}

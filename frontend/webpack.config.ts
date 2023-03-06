@@ -25,7 +25,14 @@ const config: Configuration = {
                         ],
                     },
                 },
-            }
+            },
+            {
+                test: /\.(png|jpe?g|gif|jp2|webp)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[name].[ext]',
+                },
+            },
         ]
     },
     resolve: {
@@ -36,15 +43,12 @@ const config: Configuration = {
     },
     plugins: [
         new DefinePlugin({
-            "process.env": {
-                // This has effect on the react lib size
-                NODE_ENV: JSON.stringify("production")
-            }
+            'process.env.NODE_ENV' : JSON.stringify('production')
         }),
         new ForkTsCheckerWebpackPlugin({
           async: false
         }),
-    ]
+    ],
 }
 
 export default config;

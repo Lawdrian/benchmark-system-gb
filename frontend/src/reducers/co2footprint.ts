@@ -6,8 +6,8 @@
 import {
     CO2FP_ERROR,
     CO2FP_LOADED,
-    CO2FP_LOADING,
-    GreenhouseFootprint,
+    CO2FP_LOADING, GreenhouseBenchmark,
+    GreenhouseFootprint, OptimizationData,
     RESET_DATA
 } from "../types/reduxTypes";
 
@@ -15,19 +15,34 @@ import {
  * @type CO2FootprintState
  *
  * Contains the necessary data to visualize the co2-footprint.
- *
  * @property {boolean} [isLoading] - True, while the data is loaded from the server
  * @property {GreenhouseFootprint[]} [plotData] - The data to create the plot
  */
 export type CO2FootprintState = {
     isLoading: boolean
-    plotData: GreenhouseFootprint[]
+    total: GreenhouseFootprint[]
+    normalizedkg: GreenhouseFootprint[]
+    normalizedm2: GreenhouseFootprint[]
+    fruitsizekg: GreenhouseFootprint[]
+    fruitsizem2: GreenhouseFootprint[]
+    benchmarkkg: GreenhouseBenchmark[]
+    benchmarkm2: GreenhouseBenchmark[]
+    optimizationkg: OptimizationData[]
+    optimizationm2: OptimizationData[]
 }
 
-// Initialize the co2-footprint state
+// initialize the co2-footprint state
 const initialState: CO2FootprintState = {
     isLoading: false,
-    plotData: []
+    total: [],
+    normalizedkg: [],
+    normalizedm2: [],
+    fruitsizekg: [],
+    fruitsizem2: [],
+    benchmarkkg: [],
+    benchmarkm2: [],
+    optimizationkg: [],
+    optimizationm2: []
 }
 
 /**
@@ -35,7 +50,6 @@ const initialState: CO2FootprintState = {
  *
  * @param state - The current co2-footprint state
  * @param action - The action to dispatch
- *
  * @returns The updated co2-footprint state
  */
 export default function (state: CO2FootprintState = initialState, action: any): CO2FootprintState {
@@ -46,18 +60,23 @@ export default function (state: CO2FootprintState = initialState, action: any): 
                 isLoading: true
             };
         case CO2FP_LOADED:
-            console.log("CO2-Plot Data:", action.payload)
+            console.log("CO2-Plot Data:", action.payload1)
+            console.log("CO2-Benchmark Data:", action.payload6)
+            console.log("CO2-FruitSize-Plot Data:", action.payload3)
             return {
                 ...state,
                 isLoading: false,
-                plotData: action.payload
+                total: action.payload1,
+                normalizedkg: action.payload2,
+                normalizedm2: action.payload3,
+                fruitsizekg: action.payload4,
+                fruitsizem2: action.payload5,
+                benchmarkkg: action.payload6,
+                benchmarkm2: action.payload7,
+                optimizationkg: action.payload8,
+                optimizationm2: action.payload9
             };
         case CO2FP_ERROR:
-            return {
-                ...state,
-                isLoading: false,
-                plotData: []
-            };
         case RESET_DATA:
             return initialState
         default:

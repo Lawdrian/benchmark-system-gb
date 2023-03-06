@@ -7,6 +7,8 @@ import {ReactNode} from "react";
 
 export enum Section {
     Default,
+    Home,
+    Input,
     Diagrams,
     Profile,
     FurtherReading
@@ -44,6 +46,9 @@ export type Page = {
 export type PageConfig = {
     readonly loginUrl: string
     readonly registerUrl: string
+    readonly userActivationUrl: string
+    readonly forgotPWUrl: string
+    readonly resetPWUrl: string
+    readonly dataInfoUrl: string
     readonly homeUrl: string
-    readonly proceedUrl: string
 }

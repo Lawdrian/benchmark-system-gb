@@ -2,9 +2,9 @@
  * #############################################################################
  * auth.ts: Redux action generators for authentication purposes
  *
- *     This file defines functions to register a new user, login an existing user
- *     or logout the current user. To check, whether the current user is
- *     authenticated, the backend provides an authentication token, which is
+ *     This file defines functions to register a new user, validate a user account, login an existing user
+ *     or logout the current user, change a user's password and delete a user's account.
+ *     To check, whether the current user is authenticated, the backend provides an authentication token, which is
  *     stored in the {@link AuthenticationState}.
  *
  * For further information on action generators see:
@@ -12,12 +12,14 @@
  * #############################################################################
  */
 import {
-    AUTH_ERROR,
+    ACTIVATE_FAIL, ACTIVATE_LOADING,
+    ACTIVATE_SUCCESS,
+    AUTH_ERROR, DELETE_FAIL, DELETE_SUCCESS,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
     REGISTER_FAIL,
-    REGISTER_SUCCESS,
+    REGISTER_SUCCESS, RESETPW_FAIL, RESETPW_PENDING, RESETPW_SUCCESS, User,
     USER_LOADED,
     USER_LOADING
 } from "../types/reduxTypes";
@@ -37,13 +39,13 @@ export const loadUser = () => (dispatch: AppDispatch, getState: ReduxStateHook) 
     // Send request
     axios.get('/accounts/auth/user', tokenConfig(getState))
         .then((response) => {
-            console.log("User Response", response)
+            // console.log("User Response", response)
             dispatch({
                 type: USER_LOADED,
                 payload: response.data
             })
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: AUTH_ERROR
             })
@@ -60,33 +62,37 @@ export const logout = () => (dispatch: AppDispatch, getState: ReduxStateHook) =>
                 type: LOGOUT_SUCCESS,
             })
         })
-        .catch((error) => {// TODO: Proper Error handling
-            console.log(error)
+        .catch((error) => {
+            // console.log(error)
         })
 }
 
 /**
  * Register a new user.
  *
- * @param username - The new username
+ * @param username - The username (same as email)
  * @param email - The users' email
  * @param password - The password to use
  * @param companyName - The company, the user works at
+ * @param successCB - Function that should be executed, when the registration was a success
+ * @param errorCB - Function that should be executed, when an error occurred during registration
  */
 export const register = (
     username: string,
     email: string,
     password: string,
-    companyName: string
+    companyName: string,
+    successCB: Function = () => {},
+    errorCB: Function = () => {}
 ) => (dispatch: any) => {
-    // Create request headers
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
         },
     };
 
-    // Create request body for post request
+    // create request body for post request
     const body = JSON.stringify({
         username: username,
         email: email,
@@ -96,41 +102,195 @@ export const register = (
         }
     });
 
-    // Send the http request
+    // send the http request
     axios.post('/accounts/auth/register', body, config)
         .then((response) => {
             dispatch({
                 type: REGISTER_SUCCESS,
-                payload: response.data,
             });
+            successCB()
         })
         .catch((error) => {
-            dispatch({// TODO: Proper Error handling
+            dispatch({
                 type: REGISTER_FAIL,
             });
+            errorCB(error.response.data.Error)
         });
 };
 
 /**
- * Login a user using the provided credentials.
+ * Activate a newly created account.
  *
- * @param username - The username
- * @param password - The users' password
- * @param onError - Error callback. Gets called if the login process fails.
+ * @param uidb64 - Encoded user id
+ * @param token - User-specific activation token
  */
-export const login = (
-    username: string,
-    password: string,
-    onError: Function = () => { /*NOOP*/ }
-) => (dispatch: AppDispatch) => {
-    // Headers
+export const activate = (
+    uidb64: string,
+    token: string
+) => (dispatch: any) => {
+
+    // create request headers
     const config = {
         headers: {
             'Content-Type': 'application/json',
         },
     };
 
-    // Request Body
+    const url = `/accounts/auth/activate?uid=${uidb64}&token=${token}`
+    dispatch({type: ACTIVATE_LOADING});
+    axios.patch(url, {}, config)
+        .then((response) => {
+            dispatch({
+                type: ACTIVATE_SUCCESS,
+            });
+        })
+        .catch((error) => {
+            dispatch({
+                type: ACTIVATE_FAIL,
+            });
+        });
+}
+
+/**
+ * Send password change link to user email via back end.
+ *
+ * @param email - The users' email
+ */
+export const forgotPW = (
+    email: string
+) => (dispatch: any) => {
+
+
+    // create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const body = {
+        email: email
+    }
+
+    const url = `/accounts/auth/forgotpw`
+
+    axios.post(url, body, config)
+        .then((response) => {
+            dispatch({
+                type: RESETPW_PENDING,
+            });
+        })
+        .catch((error) => {
+            dispatch({
+                type: RESETPW_FAIL,
+            });
+        });
+}
+
+
+/**
+ * Change a user's password.
+ *
+ * @param uidb64 - Encoded user id
+ * @param token - User-specific activation token
+ * @param password - The new password to use
+ * @param callbackSucc - Function that should be executed, when the password change was a success
+ * @param callbackErr - Function that should be executed, when an error occurred during password change
+ */
+export const resetPW = (
+    uidb64: string,
+    token: string,
+    password: string,
+    callbackSucc: Function = () => {},
+    callbackErr: Function = () => {}
+) => (dispatch: any) => {
+
+    // create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    const body = {
+        password: password
+    }
+
+    const url = `/accounts/auth/resetpw?uid=${uidb64}&token=${token}`
+
+    axios.patch(url, body, config)
+        .then((response) => {
+            dispatch({
+                type: RESETPW_SUCCESS,
+            });
+            callbackSucc()
+        })
+        .catch((error) => {
+            dispatch({
+                type: RESETPW_FAIL,
+            });
+            callbackErr()
+        });
+}
+
+/**
+ * Delete a users account.
+ *
+ * @param withAuth - User needs to be logged in to use this function
+ * @param successCB - Function that should be executed, when the account deletion was a success
+ * @param errorCB - Function that should be executed, when an error occurred during account deletion
+ */
+export const deleteUser = (
+    withAuth: boolean = true,
+    successCB: Function = () => {},
+    errorCB: Function = () => {}
+) => (dispatch: any, getState: ReduxStateHook) => {
+
+    // create request headers
+    const config = withAuth ? tokenConfig(getState) : {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+
+    const url = `/accounts/auth/delete`
+
+    axios.delete(url, config)
+        .then((response) => {
+            dispatch({
+                type: DELETE_SUCCESS,
+            });
+            successCB()
+        })
+        .catch((error) => {
+            dispatch({
+                type: DELETE_FAIL,
+            });
+            errorCB()
+        });
+}
+
+/**
+ * Login a user using the provided credentials.
+ *
+ * @param username - The username
+ * @param password - The users' password
+ * @param errorCB - Function that should be executed, when an error occurred during login
+ */
+export const login = (
+    username: string,
+    password: string,
+    errorCB: Function = () => { /*NOOP*/ }
+) => (dispatch: AppDispatch) => {
+    // create request headers
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    // create request body
     const body = JSON.stringify({
         username: username,
         password: password
@@ -143,11 +303,11 @@ export const login = (
                 payload: response.data,
             });
         })
-        .catch((error) => {// TODO: Proper Error handling
+        .catch((error) => {
             dispatch({
                 type: LOGIN_FAIL,
             });
-            onError();
+            errorCB();
         });
 }
 
@@ -159,23 +319,23 @@ export const login = (
  * @param getState - Handle to retrieve the redux state
  */
 export const tokenConfig = (getState: ReduxStateHook): AxiosRequestConfig => {
-    // Get token from state
+    // get token from state
     const token = getState().auth.token;
 
-    // Create headers
+    // create headers
     const headers: AxiosRequestHeaders = {
         'Content-Type': 'application/json'
     }
 
-    // If token, add to header
+    // append authorization token to header if available
     if (token) {
         headers['Authorization'] = "Token " + token;
     }
 
-    // Get csrftoken
+    // get csrftoken
     const csrftoken = Cookies.get('csrftoken');
 
-    // Append token to header if available
+    // append token to header if available
     if (csrftoken) {
         headers['X-CSRFToken'] = csrftoken
     }

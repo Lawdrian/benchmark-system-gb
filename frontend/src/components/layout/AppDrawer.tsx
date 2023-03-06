@@ -9,6 +9,7 @@ import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import StyledDrawer from "../styled/StyledDrawer";
 import { DrawerListItem, SharedDrawerProps } from "../../types/SharedLayoutTypes";
 import { Section } from "../../types/PageConfigTypes";
+import Logo from "../../assets/app_drawer_logo.png"
 
 type DrawerProps = SharedDrawerProps & {
     listItems: DrawerListItem[]
@@ -17,7 +18,7 @@ type DrawerProps = SharedDrawerProps & {
 const generateNodes = (listItems: DrawerListItem[]): ReactNode => {
     return listItems.map<ReactNode>(listItem => {
        return (
-           <ListItemButton to={listItem.url} component={Link}>
+           <ListItemButton key={listItem.url} to={listItem.url} component={Link}>
                <ListItemIcon>
                    { listItem.icon }
                </ListItemIcon>
@@ -31,7 +32,15 @@ const getSectionDivider = (): ReactNode => {
     return (<Divider sx={{ my: 1 }} />);
 }
 
-
+/**
+ * This component renders the app drawer seen on the left side of the website. It contains all buttons that lead to
+ * the different pages of the web application.
+ *
+ * @param open - Boolean if the app drawer should be visible or not
+ * @param toggleDrawer - Function that will be called, when the icon button at the top of the drawer is clicked
+ * @param drawerWidth - Determines the width of the drawer
+ * @param listItems - List, that contains the Buttons that lead to different pages of the web application
+ */
 const AppDrawer = (
     {
         open,
@@ -40,6 +49,8 @@ const AppDrawer = (
         listItems
     }: DrawerProps
 ) => {
+    const homeSection = listItems.filter(item => item.section == Section.Home);
+    const inputSection = listItems.filter(item => item.section == Section.Input);
     const diagramSection = listItems.filter(item => item.section == Section.Diagrams);
     const profileSection = listItems.filter(item => item.section == Section.Profile);
     const fReadingSection = listItems.filter(item => item.section == Section.FurtherReading);
@@ -49,17 +60,25 @@ const AppDrawer = (
             <Toolbar
                 sx={{
                     display: 'flex',
-                    alignItems: 'center',
+                    alignItems: 'start',
                     justifyContent: 'flex-end',
                     px: [1],
+                    ml: 4,
+                    mb: 1,
+                    mt: 1
                 }}
             >
+                <img src={Logo} alt="Website logo"/>
                 <IconButton onClick={toggleDrawer}>
                     <ChevronLeftIcon />
                 </IconButton>
             </Toolbar>
             <Divider />
             <List component="nav">
+                {generateNodes(homeSection)}
+                {homeSection.length && diagramSection.length ? getSectionDivider() : undefined}
+                {generateNodes(inputSection)}
+                {inputSection.length && diagramSection.length ? getSectionDivider() : undefined}
                 {generateNodes(diagramSection)}
                 {diagramSection.length && profileSection.length ? getSectionDivider() : undefined}
                 {generateNodes(profileSection)}

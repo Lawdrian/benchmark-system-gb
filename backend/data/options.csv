@@ -1,146 +1,351 @@
-1,Venlo,1
-2,Deutsche Norm,1
-3,Folientunnel,1
-4,<6,2
-5,6 bis 10,2
-6,10 bis 15,2
-7,15 bis 20,2
-8,>20,2
-9,Einfachglas,3
-10,Doppelglas,3
-11,Doppelstegplatte,3
-12,Dreifachstegplatte,3
-13,Einfachfolie,3
-14,Doppelfolie,3
-15,<10,4
-16,10-25,4
-17,>10,4
-18,Einfachglas,5
-19,Doppelglas,5
-20,Doppelstegplatte,5
-21,Dreifachstegplatte,5
-22,Einfachfolie,5
-23,Doppelfolie,5
-24,kein,6
-25,einfach,6
-26,doppelt,6
-27,"einfach, aluminisiert",6
-28,"doppelt, aluminisiert",6
-29,Konventionell,7
-30,Biologisch,7
-31,Boden,8
-32,Hydroponik offen,8
-33,Hydroponik geschlossen,8
-34,10-30,10
-35,30-100,10
-36,100-150,10
-37,>150,10
-38,1-fach,12
-39,2-fach,12
-40,3-fach,12
-41,4-fach,12
-42,Erdgas,15
-43,Heizoel,15
-44,Steinkohle,15
-45,Braunkohle,15
-46,Hackschnitzel,15
-47,Biogas,15
-48,Geothermie,15
-49,BHKW,15
-50,Deutscher Strommix,16
-51,Ökostrom (Durschnitt Deutschland),16
-52,Photovoltaik,16
-53,Windenergie (Land),16
-54,Windenergie (See),16
-55,Wasserkraft,16
-56,Tiefengeothermie,16
-57,Biomethan,16
-58,BHKW,16
-59,technisches CO2,19
-60,eigenes BHKW,19
-61,A/B Bag: Standardduengung,21
-62,Vinasse,21
-63,Pferdemist,21
-64,Kompost,21
-65,"Hornmehl, -griess, -spaene",21
-66,Blutmehl,21
-67,Mist,21
-68,Gruenduengung,21
-69,Knochenmehl,21
-70,Pflanzkali,21
-71,org. Vollduenger,21
-72,Ammoniumnitrat,20
-73,Kaliumnitrat (Kalisalpeter),20
-74,Calciumnitrat fluessig (Kalksalpeter),20
-75,Calciumnitrat fest,20
-76,"Kaliumcholird, KCL, muriate of potash",20
-77,Kaliumsulfat,20
-78,Monokaliumphosphat (Flory6),20
-79,Borax,20
-80,Eisen DDTPA 3%,20
-81,Eisen EDDHA 6 %,20
-82,25 % Cu Kupfersulfat,20
-83,32 % Mn Mangansulfat,20
-84,Natriummolybdat,20
-85,Zinksulfat,20
-86,Chlorbleichlauge,20
-87,Bittersalz,20
-88,Phosphorsaeure 75%,20
-89,Salpetersaeure 65%,20
-90,Salpetersaeure 38%,20
-91,Kalksalpeter,20
-92,Magnesiumnitrat,20
-93,Magnesiumsulfat,20
-94,Kalisilikat,20
-95,Mangansulfat,20
-96,Cupfersulfat,20
-97,Ammoniummolybdat,20
-98,Standardsubstrat,24
-99,Kokos,24
-100,Kompost,24
-101,Steinwolle,24
-102,Perlite,24
-103,Kunststoff,25
-104,Jute,25
-105,Sisal,25
-106,Zellulose,25
-107,andere Nachhaltige/abbaubare Option,25
-108,Bambusstab,25
-109,Kunststoff,26
-110,Metall,26
-111,Nachhaltige / kompostierbare Option,26
-112,Kunststoff,27
-113,Metall,27
-114,Nachhaltige / kompostierbare Option,27
-115,Folie,30
-116,Eisen,30
-117,Alluminium,30
-118,Kunststoff,30
-119,Holz,30
-120,Tropfschlaeuche,28
-121,Bodensprenkler,28
-122,Handschlauch,28
-123,Hummeln,22
-124,"Erzwespe (Encasia, Eretmocerus, oder vergleichbares)",22
-125,Macrolophus (oder vergleichbares),22
-126,"Schlupfwespen (Aphidius, Dacnusa, Diglyphus, oder vergleichbares)",22
-127,"Raubmilben (Phytoseiulus, Amblyseius, oder vergleichbares)",22
-128,"Gallmuecken (Aphidoletes, oder vergleichbares)",22
-129,"Florfliegen (Chrysoperla, oder vergleichbares)",22
-130,"Futter fuer Macrolophus (Ephestia-Eier, Sitrotroga-Eier, Artemia, oder vergleichbares)",22
-131,ja,9
-132,nein,9
-133,ja,11
-134,nein,11
-135,ja,13
-136,nein,13
-137,ja,17
-138,nein,17
-139,ja,18
-140,nein,18
-141,ja,23
-142,nein,23
-143,ja,29
-144,nein,29
-145,ja,31
-146,nein,31
+0,default,
+1,ja,1
+2,nein,1
+3,Venlo,2
+4,Deutsche Norm,2
+5,Folientunnel,2
+6,Einfachglas,3
+7,Doppelglas,3
+8,Doppelstegplatte,3
+9,Dreifachstegplatte,3
+10,Einfachfolie,3
+11,Doppelfolie,3
+12,Einfachglas,4
+13,Doppelglas,4
+14,Doppelstegplatte,4
+15,Dreifachstegplatte,4
+16,Einfachfolie,4
+17,Doppelfolie,4
+19,einfach,5
+20,doppelt,5
+21,"einfach, aluminisiert",5
+22,"doppelt, aluminisiert",5
+23,Transportsystem,6
+24,"Rohrheizung (hoch, niedrig, etc.)",6
+25,Konventionell,7
+26,Biologisch,7
+27,Boden,8
+28,Hydroponik offen,8
+29,Hydroponik geschlossen,8
+30,Transportsystem,9
+31,"Rohrheizung (hoch, niedrig, etc.)",9
+32,ja,10
+33,nein,10
+34,ja,11
+35,nein,11
+36,ja,12
+37,nein,12
+38,ja,13
+39,nein,13
+40,ja,14
+41,nein,14
+44,Erdgas,16
+45,Biogas,16
+46,Heizoel,16
+47,Steinkohle,16
+48,Braunkohle,16
+49,Hackschnitzel,16
+50,Geothermie(oberflaechennah),16
+51,Tiefengeothermie,16
+52,BHKW Biomethan,16
+53,BHKW Erdgas,16
+54,Deutscher Strommix,18
+55,Oekostrom (Durschnitt Deutschland),18
+56,Photovoltaik,18
+57,Windenergie (Land),18
+58,Windenergie (See),18
+59,Wasserkraft,18
+60,Tiefengeothermie,18
+61,BHKW Biomethan,18
+62,BHKW Erdgas,18
+63,Diesel,18
+64,ja,19
+65,nein,19
+66,ja,20
+67,nein,20
+68,technisches CO2,21
+69,direkte Gasverbrennung,21
+70,eigenes BHKW,21
+71,A/B Bag: Standardduengung,22
+72,Blutmehl,22
+73,Gruenduengung,22
+74,"Hornmehl, -griess, -spaene",22
+75,Knochenmehl,22
+76,Kompost,22
+77,Mist,22
+78,org. Vollduenger,22
+79,Pferdemist,22
+80,Pflanzkali,22
+81,Vinasse,22
+82,Ammoniummolybdat,23
+83,Ammoniumnitrat,23
+84,Bittersalz,23
+85,Borax,23
+86,Calciumnitrat fest,23
+87,Calciumnitrat fluessig (Kalksalpeter),23
+88,Chlorbleichlauge,23
+89,Eisen DDTPA 3%,23
+90,Eisen EDDHA 6 %,23
+91,Kalisilikat,23
+92,"Kaliumchlorid, KCL, muriate of potash",23
+93,Kaliumnitrat (Kalisalpeter),23
+94,Kaliumsulfat,23
+95,Kalksalpeter,23
+96,Kupfersulfat,23
+97,25 % Cu Kupfersulfat,23
+98,Magnesiumnitrat,23
+99,Magnesiumsulfat,23
+100,Mangansulfat,23
+101,32 % Mn Mangansulfat,23
+102,Monokaliumphosphat (Flory6),23
+103,Natriummolybdat,23
+104,Phosphorsaeure 75%,23
+105,Salpetersaeure 38%,23
+106,Salpetersaeure 65%,23
+107,Zinksulfat,23
+117,Growbags,25
+118,"Andere Kulturgefaesse (Topf, Kuebel)",25
+119,nichts,25
+121,Standardsubstrat,27
+122,Kokos,27
+123,Steinwolle,27
+124,Perlite,27
+125,Nachhaltiges Substrat,27
+126,Kunststoff,28
+127,Jute,28
+128,Sisal,28
+129,Zellulose,28
+130,andere Nachhaltige/abbaubare Option,28
+131,Bambusstab,28
+132,Edelstahl,28
+133,Kunststoff,29
+134,Metall,29
+135,Nachhaltige / kompostierbare Option,29
+136,Kunststoff,30
+137,Metall,30
+138,Nachhaltige / kompostierbare Option,30
+139,Tropfschlaeuche,31
+140,Bodensprinkler,31
+141,Handschlauch,31
+144,ja,33
+145,nein,33
+146,Standardsubstrat,34
+147,Kokos,34
+148,Steinwolle,34
+149,Perlite,34
+150,Nachhaltiges Substrat,34
+151,Karton,35
+152,Plastik,35
+153,Folie,36
+154,Eisen,36
+155,Alluminium,36
+156,Kunststoff,36
+157,Holz,36
+158,Pappe,36
+160,kWh,38
+161,Angaben,38
+163,ja,39
+164,nein,39
+165,ja,40
+166,nein,40
+167,Bodenfolie,32
+168,Bodengewebe,32
+169,Beton,32
+171,ja,41
+172,nein,41
+173,ja,42
+174,nein,42
+175,ja,43
+176,nein,43
+177,Konvektionsheizung,6
+178,Deckenlufterhitzer,6
+179,Keines,6
+180,Konvektionsheizung,9
+181,Deckenlufterhitzer,9
+182,Vegetationsheizung,9
+183,Afghanistan,45
+184,Albania,45
+185,Algeria,45
+186,Andorra,45
+187,Angola,45
+188,Argentina,45
+189,Armenia,45
+190,Australia,45
+191,Austria,45
+192,Azerbaijan,45
+193,Bahrain,45
+194,Bangladesh,45
+195,Belarus,45
+196,Belgium,45
+197,Belize,45
+198,Benin,45
+199,Bhutan,45
+200,Bolivia,45
+201,Bosnia and Herzegovina,45
+202,Botswana,45
+203,Brazil,45
+204,Brunei,45
+205,Bulgaria,45
+206,Burkina Faso,45
+207,Burundi,45
+208,Cambodia,45
+209,Cameroon,45
+210,Canada,45
+211,Central African Republic,45
+212,Chad,45
+213,Chile,45
+214,China,45
+215,Colombia,45
+216,Costa Rica,45
+217,"Cote d'Ivoire",45
+218,Croatia,45
+219,Cuba,45
+220,Cyprus,45
+221,Czech Republic,45
+222,Democratic Republic of the Congo,45
+223,Denmark,45
+224,Djibouti,45
+225,Dominican Republic,45
+226,Ecuador,45
+227,Egypt,45
+228,El Salvador,45
+229,Equatorial Guinea,45
+230,Eritrea,45
+231,Estonia,45
+232,Ethiopia,45
+233,Finland,45
+234,France,45
+235,Gabon,45
+236,Gambia,45
+237,Georgia,45
+238,Germany,45
+239,Ghana,45
+240,Greece,45
+241,Guatemala,45
+242,Guinea,45
+243,Guinea-Bissau,45
+244,Guyana,45
+245,Haiti,45
+246,Honduras,45
+247,Hungary,45
+248,Iceland,45
+249,India,45
+250,Indonesia,45
+251,Iran,45
+252,Iraq,45
+253,Ireland,45
+254,Israel,45
+255,Italy,45
+256,Jamaica,45
+257,Japan,45
+258,Jordan,45
+259,Kazakhstan,45
+260,Kenya,45
+261,Kuwait,45
+262,Kyrgyzstan,45
+263,Laos,45
+264,Latvia,45
+265,Lebanon,45
+266,Lesotho,45
+267,Liberia,45
+268,Libya,45
+269,Liechtenstein,45
+270,Lithuania,45
+271,Luxembourg,45
+272,Macedonia,45
+273,Madagascar,45
+274,Malawi,45
+275,Malaysia,45
+276,Mali,45
+277,Mauritania,45
+278,Mexico,45
+279,Moldova,45
+280,Mongolia,45
+281,Montenegro,45
+282,Morocco,45
+283,Mozambique,45
+284,Myanmar,45
+285,Namibia,45
+286,Nepal,45
+287,Netherlands,45
+288,New Zealand,45
+289,Nicaragua,45
+290,Niger,45
+291,Nigeria,45
+292,North Korea,45
+293,Norway,45
+294,Oman,45
+295,Pakistan,45
+296,Panama,45
+297,Papua New Guinea,45
+298,Paraguay,45
+299,Peru,45
+300,Philippines,45
+301,Poland,45
+302,Portugal,45
+303,Qatar,45
+304,Republic of Congo,45
+305,Romania,45
+306,Russia,45
+307,Rwanda,45
+308,San Marino,45
+309,Saudi Arabia,45
+310,Senegal,45
+311,Serbia,45
+312,Sierra Leone,45
+313,Slovakia,45
+314,Slovenia,45
+315,Somalia,45
+316,South Africa,45
+317,South Korea,45
+318,South Sudan,45
+319,Spain,45
+320,Sri Lanka,45
+321,Sudan,45
+322,Suriname,45
+323,Swaziland,45
+324,Sweden,45
+325,Switzerland,45
+326,Syria,45
+327,Tajikistan,45
+328,Tanzania,45
+329,Thailand,45
+330,Timor-Leste,45
+331,Togo,45
+332,Tunisia,45
+333,Turkey,45
+334,Turkmenistan,45
+335,Uganda,45
+336,Ukraine,45
+337,United Arab Emirates,45
+338,United Kingdom,45
+339,United States,45
+340,Uruguay,45
+341,Uzbekistan,45
+342,Venezuela,45
+343,Vietnam,45
+344,Yemen,45
+345,Zambia,45
+346,Zimbabwe,45
+347,Brunnenwasser,44
+348,Regenwasser,44
+349,Stadtwasser,44
+350,Oberflaechenwasser,44
+351,Baden-Wuerttemberg,46
+352,Bayern,46
+353,Berlin,46
+354,Brandenburg,46
+355,Bremen,46
+356,Hamburg,46
+357,Hessen,46
+358,Mecklenburg-Vorpommern,46
+359,Niedersachsen,46
+360,Nordrhein-Westfalen,46
+361,Rheinland-Pfalz,46
+362,Saarland,46
+363,Sachsen,46
+364,Sachsen-Anhalt,46
+365,Schleswig-Holstein,46
+366,Thueringen,46
+367,ja,47
+368,nein,47

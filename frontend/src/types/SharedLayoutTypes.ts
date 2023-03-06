@@ -28,3 +28,7 @@ export type SharedDrawerProps = DrawerControl & DrawerState;
 export type LayoutOutletContext = {
     setTitle: Function
 }
+
+export type LayoutConfig = {
+    readonly drawerWidth: number
+}

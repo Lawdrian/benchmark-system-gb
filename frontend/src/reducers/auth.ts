@@ -4,7 +4,9 @@
  * #############################################################################
  */
 import {
-    AUTH_ERROR,
+    ACTIVATE_FAIL, ACTIVATE_LOADING,
+    ACTIVATE_SUCCESS,
+    AUTH_ERROR, DELETE_SUCCESS,
     LOGIN_FAIL,
     LOGIN_SUCCESS,
     LOGOUT_SUCCESS,
@@ -31,27 +33,29 @@ export type AuthenticationState = {
     isAuthenticated: boolean
     isLoading: boolean
     user: User | null
+    isActivated: boolean | null
 }
 
-// Initialize the authentication state
+// initialize the authentication state
 const initialState: AuthenticationState = {
     token: localStorage.getItem('token'),
     isAuthenticated: false,
     isLoading: false,
-    user: null
+    user: null,
+    isActivated: null,
 }
 
 /**
- * Dispatches any actions related to user authentication
+ * Dispatches any actions related to user authentication.
  *
  * @param state - The current authentication state
  * @param action - The action to dispatch
- *
  * @returns The updated authentication state
  */
 export default function (state = initialState, action: any): AuthenticationState {
     switch (action.type) {
         case USER_LOADING:
+        case ACTIVATE_LOADING:
             return {
                 ...state,
                 isLoading: true
@@ -61,31 +65,44 @@ export default function (state = initialState, action: any): AuthenticationState
                 ...state,
                 isAuthenticated: true,
                 isLoading: false,
-                user: action.payload
+                user: action.payload,
             };
         case LOGIN_SUCCESS:
-        case REGISTER_SUCCESS:
             localStorage.setItem('token', action.payload.token)
             return {
                 ...state,
                 ...action.payload,
                 isAuthenticated: true,
-                isLoading: false
+                isLoading: false,
+                isActivationError: true
             }
+        case REGISTER_SUCCESS:
         case AUTH_ERROR:
         case LOGIN_FAIL:
         case LOGOUT_SUCCESS:
         case REGISTER_FAIL:
+        case DELETE_SUCCESS:
             localStorage.removeItem('token')
             return {
                 ...state,
                 token: null,
                 user: null,
                 isAuthenticated: false,
-                isLoading: false
+                isLoading: false,
             };
+        case ACTIVATE_SUCCESS:
+            return {
+                ...state,
+                isActivated: true,
+                isLoading: false,
+            }
+        case ACTIVATE_FAIL:
+            return {
+                ...state,
+                isActivated: false,
+                isLoading: false,
+            }
         default:
             return state;
     }
 }
-

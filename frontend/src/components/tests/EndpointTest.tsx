@@ -9,9 +9,6 @@ import Paper from '@mui/material/Paper';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {loadCO2Footprint} from "../../actions/co2footprint";
 import {submitGreenhouseData} from "../../actions/submission";
-import {loadWaterBenchmark} from "../../actions/waterbenchmark";
-import {loadWaterFootprint} from "../../actions/waterfootprint";
-import {loadWeatherData} from "../../actions/weather";
 import {resetData} from "../../actions/reset";
 import {connect, ConnectedProps} from "react-redux";
 import {RootState} from "../../store";
@@ -19,27 +16,30 @@ import {GreenhouseData} from "../../types/reduxTypes";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import DoubleArrow from "@mui/icons-material/DoubleArrow";
-import {loadLookupValues} from "../../actions/lookup";
+import {loadLookupValues, loadUnitValues} from "../../actions/lookup";
+import {InputMode} from "../pages/input/PageInputData";
+import {loadH2OFootprint} from "../../actions/h2ofootprint";
+import {loadDatasets} from "../../actions/dataset";
+import {loadProfile} from "../../actions/profile";
 
 const mapStateToProps = (state: RootState) => ({
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
     co2: state.co2,
-    water: state.water,
-    benchmark: state.benchmark,
-    weather: state.weather,
+    water: state.h2o,
     submission: state.submission,
     lookup: state.lookup
 });
 
 const mapDispatchToProps = {
     loadCO2Footprint,
-    loadWaterBenchmark,
-    loadWaterFootprint,
-    loadWeatherData,
+    loadH2OFootprint,
     submitGreenhouseData,
     resetData,
-    loadLookupValues
+    loadLookupValues,
+    loadUnitValues,
+    loadDatasets,
+    loadProfile
 }
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -59,13 +59,21 @@ type AuthEPTest = {
 }
 
 type TestResults = {
+    units: AuthEPTest
     lookup: AuthEPTest
     co2: AuthEPTest
+    h2o: AuthEPTest
+    profile: AuthEPTest
+    dataset: AuthEPTest
     submission: AuthEPTest
 }
 
 const initialTestResults: TestResults = {
     co2: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    h2o: {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
@@ -77,6 +85,18 @@ const initialTestResults: TestResults = {
         withAuth: {loading: false, successful: false},
         withoutAuth: {loading: false, successful: false}
     },
+    units: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    profile: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
+    dataset: {
+        withAuth: {loading: false, successful: false},
+        withoutAuth: {loading: false, successful: false}
+    },
 }
 
 const resetTests = (props: EndpointTestProps, setTestResults: Function) => {
@@ -84,100 +104,233 @@ const resetTests = (props: EndpointTestProps, setTestResults: Function) => {
     setTestResults(JSON.parse(JSON.stringify(initialTestResults)));
 }
 
+/**
+ * This function performs an endpoint test, calling all endpoints specified in this function with a predefined data set.
+ * @param props - Properties
+ * @param setTestResults - Function to set the test results after the response from the endpoints came back
+ */
 const performTests = (props: EndpointTestProps, setTestResults: Function) => {
     resetTests(props, setTestResults)
 
-    // Deep copy so initalTestResults do not get modified
+    // deep copy so initalTestResults do not get modified
     const testResults: TestResults = JSON.parse(JSON.stringify(initialTestResults))
 
-    let weatherInput = {
-        postalCode: 82439,
-        startDate: new Date("2020-05-20"),
-        endDate: new Date("2022-06-20")
+    let testData: GreenhouseData = {
+        greenhouse_name: "Haus1",
+        date: "2019-09-29",
+        GWHFlaeche: "(5000,3)",
+        Nutzflaeche: "(4800,35)",
+        WaermeteilungFlaeche: "(0,0)",
+        GWHAlter: "(32,5)",
+        AlterBedachungsmaterial: "(32,6)",
+        AlterStehwandmaterial: "(12,7)",
+        AlterEnergieschirm: "(12,8)",
+        Stehwandhoehe: "(5,9)",
+        Laenge: "(100,10)",
+        Breite: "(50,11)",
+        Kappenbreite: "(4,12)",
+        Scheibenlaenge: "(2,13)",
+        "Reihenabstand(Rinnenabstand)": "(0.85,14)",
+        Vorwegbreite: "(4,15)",
+        AlterHeizsystem: "(32,16)",
+        AlterProduktionssystem: "(12,17)",
+        AlterZusaetzlichesHeizsystem: "(32,18)",
+        SnackReihenanzahl: "(10,19)",
+        SnackPflanzenabstandInDerReihe: "(0.5,20)",
+        SnackTriebzahl: "(4,21)",
+        SnackErtragJahr: "(8000,0)",
+        CocktailReihenanzahl: "(0,0)",
+        CocktailPflanzenabstandInDerReihe: "(0,0)",
+        CocktailTriebzahl: "(0,0)",
+        CocktailErtragJahr: "(0,0)",
+        RispenReihenanzahl: "(112,27)",
+        RispenPflanzenabstandInDerReihe: "(0.5,28)",
+        RispenTriebzahl: "(2,29)",
+        RispenErtragJahr: "(3000,30)",
+        FleischReihenanzahl: "(0,0)",
+        FleischPflanzenabstandInDerReihe: "(0,0)",
+        FleischTriebzahl: "(0,0)",
+        FleischErtragJahr: "(0,0)",
+        KulturBeginn: "(2,36)",
+        KulturEnde: "(48,37)",
+        NebenkulturBeginn: "(30,0)",
+        NebenkulturEnde: "(1,0)",
+        "Belichtung:Stromverbrauch": "(10,51)",
+        "Belichtung:AnzahlLampen": "(0,0)",
+        "Belichtung:AnschlussleistungProLampe": "(0,0)",
+        "Belichtung:LaufzeitProJahr": "(0,0)",
+        VorlaufmengeGesamt: "(3000,76)",
+        Restwasser: "(400,78)",
+        FungizideKg: "(3,55)",
+        FungizideLiter: "(8,44)",
+        InsektizideKg: "(4,57)",
+        InsektizideLiter: "(5,45)",
+        "Kuebel:VolumenProTopf": "(0,0)",
+        "Kuebel:JungpflanzenProTopf": "(0,0)",
+        "Kuebel:Alter": "(0,0)",
+        "SchnuereRankhilfen:Laenge": "(15,66)",
+        "SchnuereRankhilfen:Wiederverwendung": "(1,67)",
+        "Klipse:AnzahlProTrieb": "(15,68)",
+        "Klipse:Wiederverwendung": "(1,69)",
+        "Rispenbuegel:AnzahlProTrieb": "(10,70)",
+        "Rispenbuegel:Wiederverwendung": "(3,71)",
+        "Jungpflanzen:Distanz": "(88,73)",
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": "(6000,74)",
+        Waermeversorgung: "[(2)]",
+        GWHArt: "[(3)]",
+        Land: "[(238)]",
+        Region: "[(352)]",
+        Bedachungsmaterial: "[(6)]",
+        Stehwandmaterial: "[(12)]",
+        Energieschirm: "[(173)]",
+        EnergieschirmTyp: "[(20)]",
+        Heizsystem: "[(23)]",
+        Produktionstyp: "[(25)]",
+        Produktionssystem: "[(29)]",
+        ZusaetzlichesHeizsystem: "[(171)]",
+        ZusaetzlichesHeizsystemTyp: "[(30)]",
+        "10-30Gramm(Snack)": "[(32)]",
+        "30-100Gramm(Cocktail)": "[(35)]",
+        "100-150Gramm(Rispen)": "[(36)]",
+        ">150Gramm(Fleisch)": "[(39)]",
+        Nebenkultur: "[(40)]",
+        Energietraeger: "[(44,40000,45),(45,16000,48),(46,700,51)]",
+        Stromherkunft: "[(54,20000,63),(55,2400,65),(56,13,67)]",
+        Zusatzbelichtung: "[(64)]",
+        Belichtungsstrom: "[(67)]",
+        WasserVerbrauch: "[(367)]",
+        VorlaufmengeAnteile: "[(347,200,211),(348,400,213),(349,60,218)]",
+        "CO2-Herkunft": "[(68,60,88),(70,50,94)]",
+        "Duengemittel:VereinfachteAngabe": "[(71,10,96),(81,8,106),(79,3,104),(76,5,101),(74,4,99),(72,3,97),(77,2,102),(73,1,98),(75,88,100),(80,21,105),(78,2145,103)]",
+        "Duengemittel:DetaillierteAngabe": "[(83,3,108),(93,5,118),(87,8,112),(86,4,111),(92,5,117),(94,8,119),(85,5,110),(89,85,114),(90,5,115),(97,8,122),(101,44,126),(103,5,128),(107,8,132),(88,8,113),(84,5,109),(104,54,129),(106,4,131),(105,55,130),(95,8,120),(98,5,123),(99,4,124),(91,4,116),(100,5,125),(96,54,121),(82,4,107)]",
+        GrowbagsKuebel: "[(117)]",
+        Substrat: "[(124,5,149)]",
+        Schnur: "[(175)]",
+        "SchnuereRankhilfen:Material": "[(129)]",
+        Klipse: "[(163)]",
+        "Klipse:Material": "[(133)]",
+        Rispenbuegel: "[(165)]",
+        "Rispenbuegel:Material": "[(136)]",
+        Bewaesserungsart: "[(139)]",
+        Bodenabdeckung: "[(167,12,192)]",
+        "Jungpflanzen:Zukauf": "[(144)]",
+        "Jungpflanzen:Substrat": "[(148)]",
+        Verpackungsmaterial: "[(152,350,177),(151,150,176)]",
+        SonstigeVerbrauchsmaterialien: "[(157,200,182,20), (153,1000,178,10),(154,8000,179,15),(155,120,180,10),(156,300,181,2),(158,100,183,2)]",
+        BelichtungsstromEinheit: "[(160)]"
     }
 
-    let testData: GreenhouseData = {
-        greenhouse_name: "Testhaus",
-        date: "2022-06-17",
-        PLZ: 82362,
-        AlterEnergieschirm: 1,
-        Stehwandhoehe: 2,
-        Laenge: 3,
-        Breite: 4,
-        Kappenbreite: 5,
-        "Scheibenlaenge(Bedachung)": 6,
-        AlterKultursystem: 7,
-        Reihenabstand: 8,
-        Kulturflaeche: 9,
-        KulturBeginn: 10,
-        KulturEnde: 11,
-        Ertrag: 20,
-        Pflanzdichte: 4,
-        MittlereSolltemperaturTag: 12,
-        MittlereSolltemperaturNacht: 13,
-        KulturmassnahmeAusgeizen: 14,
-        KulturmassnahmeAusblattenAnzahlMonat: 15,
-        KulturmassnahmeAblassen: 16,
-        Strom: 200,
-        StromverbrauchBelichtungAnschlussleistung: 180,
-        StromverbrauchBelichtungAnzahlLampen: 50,
-        StromverbrauchBelichtungLaufzeitTag: 8,
-        "CO2-Zudosierung": 300,
-        Fungizide: 20,
-        Insektizide: 12,
-        VolumenGrowbags: 20,
-        LaengeGrowbags: 1,
-        PflanzenproBag: 3,
-        "SchnuereRankhilfen:Laenge": 0.3,
-        "SchnuereRankhilfen:Wiederverwendung": 2,
-        "Klipse:Menge": 200,
-        "Klipse:Wiederverwendung": 12,
-        "Rispenbuegel:Menge": 200,
-        "Rispenbuegel:Wiederverwendung": 12,
-        "SonstigeVerbrauchsmaterialien:Wiederverwendung": 20,
-        "Verpackungsmaterial:Karton": 12,
-        "Verpackungsmaterial:Plastik": 22,
-        "TransportderWare:Auslieferungen": 5,
-        "TransportderWare:Distanz": 50,
-        "GWHArt": "[(1)]",
-        "GWHAlter": "[(5)]",
-        "Bedachungsmaterial": "[(9)]",
-        "AlterdesBedachungsmaterials": "[(16)]",
-        "ArtdesStehwandmaterial": "[(20)]",
-        "Energieschirm": "[(25)]",
-        "Produktion": "[(30)]",
-        "Kultursystem": "[(32)]",
-        "Transportsystem": "[(131)]",
-        "Fruchtgewicht": "[(34)]",
-        "Nebenkultur": "[(134)]",
-        "AnzahlTriebe": "[(40)]",
-        "Entfeuchtung": "[(135, 20.3)]",
-        "KulturmassnahmeAusblattenMenge": 50,
-        "Energietraeger": "[(42,22.5),(44,50)]",
-        "Stromherkunft": "[(50,40),(51,60)]",
-        "Zusatzbelichtung": "[(137)]",
-        "Belichtungsstrom": "[(140)]",
-        "CO2-Herkunft": "[(59)]",
-        "Duengemittel:DetalierteAngabe": "[(62,22.5),(64,10.5),(67,20)]",
-        "Duengemittel:VereinfachteAngabe": "[(72,22.5),(78,10.5),(97,20)]",
-        "Nuetzlinge": "[(123),(125)]",
-        "Growbags": "[(141)]",
-        "Substrat": "[(98,22.5),(99,10.5)]",
-        "SchnuereRankhilfen:Material": "[(105),(106)]",
-        "Klipse:Material": "[(110),(111)]",
-        "Rispenbuegel:Material": "[(112),(114)]",
-        "Bewaesserungsart": "[(120),(122)]",
-        "Bodenfolien": "[(143)]",
-        "SonstigeVerbrauchsmaterialien": "[(116)]",
-        "JungpflanzenZukauf": "[(145)]"
+    // real company data: RothenbucherA
+    let testData2: GreenhouseData = {
+         "10-30Gramm(Snack)": "[(33)]",
+        "30-100Gramm(Cocktail)": "[(35)]",
+        "100-150Gramm(Rispen)": "[(36)]",
+        ">150Gramm(Fleisch)": "[(38)]",
+        AlterBedachungsmaterial: "(8,6)",
+        AlterEnergieschirm: "(8,8)",
+        AlterHeizsystem: "(8,16)",
+        AlterProduktionssystem: "(8,17)",
+        AlterStehwandmaterial: "(8,7)",
+        AlterZusaetzlichesHeizsystem: "(0,0)",
+        Bedachungsmaterial: "[(6)]",
+        Land: "[(238)]",
+        Region: "[(352)]",
+        "Belichtung:AnschlussleistungProLampe": "(0,0)",
+        "Belichtung:AnzahlLampen": "(0,0)",
+        "Belichtung:LaufzeitProJahr": "(0,0)",
+        "Belichtung:Stromverbrauch": "(0,0)",
+        Belichtungsstrom: "[(66)]",
+        BelichtungsstromEinheit: "[(0,)]",
+        Bewaesserungsart: "[(139)]",
+        Bodenabdeckung: "[(168,5,193),(167,1,192)]",
+        Breite: "(176,11)",
+        "CO2-Herkunft": "[(68,375926,87)]",
+        CocktailErtragJahr: "(0,0)",
+        CocktailPflanzenabstandInDerReihe: "(0,0)",
+        CocktailReihenanzahl: "(0,0)",
+        CocktailTriebzahl: "(0,0)",
+        "Duengemittel:DetaillierteAngabe": "[(93,6265,118),(87,1566,112),(86,7832,111),(94,1566,119),(102,1566,127),(85,31,110),(90,313,115),(97,13,122),(101,31,126),(103,19,128),(84,3133,109),(106,1253,131)]",
+        "Duengemittel:VereinfachteAngabe": "[(0,)]",
+        Energieschirm: "[(173)]",
+        EnergieschirmTyp: "[(22)]",
+        Energietraeger: "[(44,3000000,44),(52,13000000,61)]",
+        FleischErtragJahr: "(434555,34)",
+        FleischPflanzenabstandInDerReihe: "(0.5,32)",
+        FleischReihenanzahl: "(37,31)",
+        FleischTriebzahl: "(3.33,33)",
+        FungizideKg: "(15,55)",
+        FungizideLiter: "(0,0)",
+        GWHAlter: "(8,5)",
+        GWHArt: "[(3)]",
+        GWHFlaeche: "(24360,3)",
+        GrowbagsKuebel: "[(117)]",
+        Heizsystem: "[(23)]",
+        InsektizideKg: "(19,57)",
+        InsektizideLiter: "(0,0)",
+        "Jungpflanzen:Distanz": "(540,73)",
+        "Jungpflanzen:Substrat": "[(148)]",
+        "Jungpflanzen:Zukauf": "[(144)]",
+        Kappenbreite: "(4,12)",
+        Klipse: "[(163)]",
+        "Klipse:AnzahlProTrieb": "(40,68)",
+        "Klipse:Material": "[(134)]",
+        "Klipse:Wiederverwendung": "(1,69)",
+        "Kuebel:Alter": "(0,0)",
+        "Kuebel:JungpflanzenProTopf": "(0,0)",
+        "Kuebel:VolumenProTopf": "(0,0)",
+        KulturBeginn: "(1,36)",
+        KulturEnde: "(48,37)",
+        Laenge: "(150,10)",
+        Nebenkultur: "[(41)]",
+        NebenkulturBeginn: "(0,0)",
+        NebenkulturEnde: "(0,0)",
+        Nutzflaeche: "(23656,35)",
+        WasserVerbrauch: "[(367)]",
+        Produktionssystem: "[(29)]",
+        Produktionstyp: "[(25)]",
+        "Reihenabstand(Rinnenabstand)": "(1.6,14)",
+        RispenErtragJahr: "(630200,30)",
+        RispenPflanzenabstandInDerReihe: "(0.5,28)",
+        RispenReihenanzahl: "(74,27)",
+        RispenTriebzahl: "(3.75,29)",
+        Rispenbuegel: "[(165)]",
+        "Rispenbuegel:AnzahlProTrieb": "(3,70)",
+        "Rispenbuegel:Material": "[(138)]",
+        "Rispenbuegel:Wiederverwendung": "(1,71)",
+        Scheibenlaenge: "(2.5,13)",
+        "SchnuereRankhilfen:Laenge": "(14,66)",
+        "SchnuereRankhilfen:Material": "[(130)]",
+        "SchnuereRankhilfen:Wiederverwendung": "(1,67)",
+        Schnur: "[(175)]",
+        SnackErtragJahr: "(0,0)",
+        SnackPflanzenabstandInDerReihe: "(0,0)",
+        SnackReihenanzahl: "(0,0)",
+        SnackTriebzahl: "(0,0)",
+        SonstigeVerbrauchsmaterialien: "[(0,)]",
+        Stehwandhoehe: "(5,9)",
+        VorlaufmengeGesamt: "(3000,76)",
+        Restwasser: "(4,78)",
+        Stehwandmaterial: "[(15)]",
+        Stromherkunft: "[(61,250000,77)]",
+        VorlaufmengeAnteile: "[(347,20,211),(348,40000,213),(349,10,217),(350,30000,219)]",
+        Substrat: "[(123,1,148)]",
+        Verpackungsmaterial: "[(151,50123,176),(152,6265,177)]",
+        "Verpackungsmaterial:AnzahlMehrwegsteigen": "(0,0)",
+        Vorwegbreite: "(4,15)",
+        WaermeteilungFlaeche: "(38880,4)",
+        Waermeversorgung: "[(1)]",
+        ZusaetzlichesHeizsystem: "[(172)]",
+        ZusaetzlichesHeizsystemTyp: "[(0,)]",
+        Zusatzbelichtung: "[(64)]",
+        date: "2021-01-01",
+        greenhouse_name: "Haus2"
     }
 
     const testLoading = (test: EPTest) => { return {...test,  loading: true} }
     const testSuccess = () => { return {successful: true, loading: false} }
     const testFailed = () => { return {successful: false, loading: false} }
 
-    props.loadWeatherData(weatherInput.postalCode, weatherInput.startDate, weatherInput.endDate);
-    props.submitGreenhouseData(testData,
+    props.submitGreenhouseData(testData2,
         () => {
             props.loadCO2Footprint(
                 true,
@@ -188,15 +341,57 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
                 () => {
                     testResults.co2.withAuth = testSuccess()
                     setTestResults(testResults)
-                    console.warn("Co2 with auth successful:", testResults)
                 },
                 () => {
                     testResults.co2.withAuth = testFailed()
                     setTestResults(testResults)
                 }
             );
-            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            props.loadH2OFootprint(
+                true,
+                () => {
+                    testResults.h2o.withAuth = testLoading(testResults.h2o.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadDatasets(
+                true,
+                () => {
+                    testResults.dataset.withAuth = testLoading(testResults.dataset.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadProfile(
+                true,
+                () => {
+                    testResults.profile.withAuth = testLoading(testResults.profile.withAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
         },
         true,
         () => {
@@ -210,10 +405,11 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
-    props.submitGreenhouseData(testData,
+    props.submitGreenhouseData(testData2,
         () => {
             props.loadCO2Footprint(
                 false,
@@ -230,8 +426,51 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
                     setTestResults(testResults)
                 }
             );
-            //props.loadWaterBenchmark(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
-            //props.loadWaterFootprint(); !!! NOT YET IMPLEMENTED ON BACKEND SIDE !!!
+            props.loadH2OFootprint(
+                false,
+                () => {
+                    testResults.h2o.withoutAuth = testLoading(testResults.h2o.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.h2o.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadDatasets(
+                false,
+                () => {
+                    testResults.dataset.withoutAuth = testLoading(testResults.dataset.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.dataset.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
+            props.loadProfile(
+                false,
+                () => {
+                    testResults.profile.withoutAuth = testLoading(testResults.profile.withoutAuth)
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withoutAuth = testSuccess()
+                    setTestResults(testResults)
+                },
+                () => {
+                    testResults.profile.withoutAuth = testFailed()
+                    setTestResults(testResults)
+                }
+            );
         },
         false,
         () => {
@@ -245,7 +484,8 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
         () => {
             testResults.submission.withoutAuth = testFailed()
             setTestResults(testResults)
-        }
+        },
+        InputMode.create
     );
 
     props.loadLookupValues(
@@ -279,49 +519,107 @@ const performTests = (props: EndpointTestProps, setTestResults: Function) => {
             setTestResults(testResults)
         }
     );
+
+    props.loadUnitValues(
+        true,
+        () => {
+            testResults.units.withAuth = testLoading(testResults.units.withAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
+
+    props.loadUnitValues(
+        false,
+        () => {
+            testResults.units.withoutAuth = testLoading(testResults.units.withoutAuth)
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testSuccess()
+            setTestResults(testResults)
+        },
+        () => {
+            testResults.units.withoutAuth = testFailed()
+            setTestResults(testResults)
+        }
+    );
 }
 
+/**
+ * This functional component renders a page, where an endpoint test can be started.
+ *
+ * It shows the result of the endpoint test.
+ * @param props Properties
+ */
 const EndpointTest = (props: EndpointTestProps) => {
-    // Deep copy so initalTestResults do not get modified
+    // deep copy so initalTestResults do not get modified
     const [testResults, setTestResults] = useState<TestResults>(JSON.parse(JSON.stringify(initialTestResults)));
     const rows = [
         {
-            name: "Load CO2-Footprint Data (Authenticated)",
-            loading: testResults.co2.withAuth.loading,
-            successful: testResults.co2.withAuth.successful
-        }, {
-            name: "Load CO2-Footprint Data (Not Authenticated)",
-            loading: testResults.co2.withoutAuth.loading,
-            successful: testResults.co2.withoutAuth.successful
-        },/* {
-            name: "Water Footprint",
-            loading: dataLoading(props.water),
-            successful: dataAvailable(props.water)
-        }, {
-            name: "Water Benchmark",
-            loading: dataLoading(props.benchmark),
-            successful: dataAvailable(props.benchmark)
-        },*/ {
             name: "Save Greenhouse Data (Authenticated)",
             loading: testResults.submission.withAuth.loading,
             successful: testResults.submission.withAuth.successful
         }, {
-            name: "Save Greenhouse Data (Not Authenticated)",
-            loading: testResults.submission.withoutAuth.loading,
-            successful: testResults.submission.withoutAuth.successful
+            name: "Load CO2-Footprint Data (Authenticated)",
+            loading: testResults.co2.withAuth.loading,
+            successful: testResults.co2.withAuth.successful
+        }, {
+            name: "Load H2O-Footprint Data (Authenticated)",
+            loading: testResults.h2o.withAuth.loading,
+            successful: testResults.h2o.withAuth.successful,
+        }, {
+            name: "Load User's Data Sets (Authenticated)",
+            loading: testResults.dataset.withAuth.loading,
+            successful: testResults.dataset.withAuth.successful,
+        }, {
+            name: "Load User's Profile Data (Authenticated)",
+            loading: testResults.profile.withAuth.loading,
+            successful: testResults.profile.withAuth.successful,
         }, {
             name: "Load Lookup Values (Authenticated)",
             loading: testResults.lookup.withAuth.loading,
             successful: testResults.lookup.withAuth.successful
         }, {
+            name: "Load Unit Values (Authenticated)",
+            loading: testResults.units.withAuth.loading,
+            successful: testResults.units.withAuth.successful
+        }, {
+            name: "Save Greenhouse Data (Not Authenticated)",
+            loading: testResults.submission.withoutAuth.loading,
+            successful: testResults.submission.withoutAuth.successful
+        }, {
+            name: "Load CO2-Footprint Data (Not Authenticated)",
+            loading: testResults.co2.withoutAuth.loading,
+            successful: testResults.co2.withoutAuth.successful
+        }, {
+            name: "Load H2O-Footprint Data (Not Authenticated)",
+            loading: testResults.h2o.withoutAuth.loading,
+            successful: testResults.h2o.withoutAuth.successful,
+        }, {
+            name: "Load User's Data Sets (Not Authenticated)",
+            loading: testResults.dataset.withoutAuth.loading,
+            successful: testResults.dataset.withoutAuth.successful,
+        }, {
+            name: "Load User's Profile Data (Not Authenticated)",
+            loading: testResults.profile.withoutAuth.loading,
+            successful: testResults.profile.withoutAuth.successful,
+        }, {
             name: "Load Lookup Values (Not Authenticated)",
             loading: testResults.lookup.withoutAuth.loading,
             successful: testResults.lookup.withoutAuth.successful
         }, {
-            name: "Load Weather Data",
-            loading: props.weather.isLoading,
-            successful: !!props.weather.weatherData
-        },
+            name: "Load Unit Values (Not Authenticated)",
+            loading: testResults.units.withoutAuth.loading,
+            successful: testResults.units.withoutAuth.successful
+        }
     ]
 
     return (

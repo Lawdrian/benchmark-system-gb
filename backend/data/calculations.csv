@@ -1,0 +1,59 @@
+1,konstruktion_co2,kg co2
+2,konstruktion_h2o,Liter h2o
+3,energieschirm_co2,kg co2
+4,energieschirm_h2o,Liter h2o
+5,bodenabdeckung_co2,kg co2
+6,bodenabdeckung_h2o,Liter h2o
+7,produktionssystem_co2,kg co2
+8,produktionssystem_h2o,Liter h2o
+9,bewaesserung_co2,kg co2
+10,bewaesserung_h2o,Liter h2o
+11,heizsystem_co2,kg co2
+12,heizsystem_h2o,Liter h2o
+13,zusaetzliches_heizsystem_co2,kg co2
+14,zusaetzliches_heizsystem_h2o,Liter h2o
+15,energietraeger_co2,kg co2
+16,energietraeger_h2o,Liter h2o
+17,strom_co2,kg co2
+18,strom_h2o,Liter h2o
+19,brunnenwasser_co2,kg co2
+20,brunnenwasser_h2o,Liter h2o
+21,regenwasser_co2,kg co2
+22,regenwasser_h2o,Liter h2o
+23,stadtwasser_co2,kg co2
+24,stadtwasser_h2o,Liter h2o
+25,oberflaechenwasser_co2,kg co2
+26,oberflaechenwasser_h2o,Liter h2o
+29,co2_zudosierung_co2,kg co2
+30,co2_zudosierung_h2o,Liter h2o
+31,duengemittel_co2,kg co2
+32,duengemittel_h2o,Liter h2o
+33,psm_co2,kg co2
+34,psm_h2o,Liter h2o
+35,pflanzenbehaelter_co2,kg co2
+36,pflanzenbehaelter_h2o,Liter h2o
+37,substrat_co2,kg co2
+38,substrat_h2o,Liter h2o
+39,jungpflanzen_substrat_co2,kg co2
+40,jungpflanzen_substrat_h2o,Liter h2o
+41,jungpflanzen_transport_co2,kg co2
+42,jungpflanzen_transport_h2o,Liter h2o
+43,schnuere_co2,kg co2
+44,schnuere_h2o,Liter h2o
+45,klipse_co2,kg co2
+46,klipse_h2o,Liter h2o
+47,rispenbuegel_co2,kg co2
+48,rispenbuegel_h2o,Liter h2o
+49,verpackung_co2,kg co2
+50,verpackung_h2o,Liter h2o
+51,sonstige_verbrauchsmaterialien_co2,kg co2
+52,sonstige_verbrauchsmaterialien_h2o,Liter h2o
+53,co2_footprint,kg co2
+54,co2_footprint_norm_kg,kg co2/kg Ertrag
+55,co2_footprint_norm_m2,kg co2/m2 gh
+56,h2o_footprint,Liter h2o
+57,h2o_footprint_norm_kg,Liter h2o/kg Ertrag
+58,h2o_footprint_norm_m2,Liter h2o/m2 gh
+59,direct_h2o_footprint, Liter h2o
+60,direct_h2o_footprint_norm_kg,Liter h2o/kg Ertrag
+61,direct_h2o_footprint_norm_m2,Liter/m2 gh

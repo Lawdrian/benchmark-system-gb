@@ -6,11 +6,11 @@
 import {combineReducers} from "redux";
 import auth from "./auth";
 import co2 from "./co2footprint";
-import water from "./waterfootprint";
-import benchmark from "./waterbenchmark";
-import weather from "./weather";
+import h2o from "./h2ofootprint";
 import submission from "./submission";
 import lookup from "./lookup"
+import dataset from "./dataset";
+import profile from "./profile";
 
 /**
  * Combine different specialized reducers to one global reducer.
@@ -21,7 +21,6 @@ import lookup from "./lookup"
  *     co2: CO2FootprintState,
  *     water: WaterFootprintState,
  *     benchmark: WaterBenchmarkState,
- *     weather: WeatherState,
  *     submission: SubmissionState,
  *     lookup: LookupState
  * }
@@ -33,9 +32,9 @@ import lookup from "./lookup"
 export default combineReducers({
     auth: auth,
     co2: co2,
-    water: water,
-    benchmark: benchmark,
-    weather: weather,
+    h2o: h2o,
     submission: submission,
-    lookup: lookup
+    lookup: lookup,
+    dataset: dataset,
+    profile: profile,
 })

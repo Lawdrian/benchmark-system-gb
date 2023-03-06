@@ -3,7 +3,7 @@
  * LayoutConfig.ts: Configures the application layout
  * #############################################################################
  */
-import {LayoutConfig} from "../types/LayoutConfigTypes";
+import {LayoutConfig} from "../types/SharedLayoutTypes";
 
 const layoutConfig: LayoutConfig = {
     drawerWidth: 240
