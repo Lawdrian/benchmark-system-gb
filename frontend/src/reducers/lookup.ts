@@ -283,7 +283,7 @@ const initialState: LookupState = {
                 "Kaliumnitrat (Kalisalpeter)": [],
                 "Calciumnitrat fluessig (Kalksalpeter)": [],
                 "Calciumnitrat fest": [],
-                "Kaliumcholird, KCL, muriate of potash": [],
+                "Kaliumchlorid, KCL, muriate of potash": [],
                 "Kaliumsulfat": [],
                 "Monokaliumphosphat (Flory6)": [],
                 "Borax": [],

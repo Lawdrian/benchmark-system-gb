@@ -2,10 +2,9 @@ from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .helper.prepearePlotData import calc_total_and_normalized_data, find_performer_dataset, get_harvest, \
+from .helper.prepearePlotData import calc_total_and_normalized_data, \
     is_productiontype_biologic, calc_fruit_size_data, add_best_and_worst_performer
-from .helper import co2Optimization
-from ..models import GreenhouseData, Measurements, Measures, Greenhouses, Calculations, Results
+from ..models import GreenhouseData, Measurements, Greenhouses, Calculations
 
 
 class GetCalculatedCO2Footprint(APIView):

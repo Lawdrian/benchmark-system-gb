@@ -105,7 +105,7 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
             })
         }
         else if(dataset.datasets == "") {
-            console.log("Dataset corrupted")
+            // console.log("Dataset corrupted")
         }
     }
 
@@ -275,13 +275,13 @@ const PagePreInputData = ({resetSubmissionState,loadDatasets, loadLookupValues, 
         )
     }
     else if(pageStatus == PageStatus.NewGH) {
-        console.log("NEW initialData:")
-        console.log(inputFieldData)
+        // console.log("NEW initialData:")
+        // console.log(inputFieldData)
         return <PageInputData initialData={inputFieldData} mode={InputMode.create}/>
     }
     else if(pageStatus == PageStatus.OldGH) {
-        console.log("OLD initialData:")
-        console.log(inputFieldData)
+        // console.log("OLD initialData:")
+        // console.log(inputFieldData)
         return <PageInputData initialData={inputFieldData} mode={InputMode.create}/>
     }
     else

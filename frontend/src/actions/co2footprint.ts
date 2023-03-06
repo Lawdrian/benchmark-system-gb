@@ -90,7 +90,7 @@ export const loadCO2Footprint = (
     // send request
     axios.get('/backend/get-co2-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("CO2 Response", response)
+            // console.log("CO2 Response", response)
             dispatch({
                 type: CO2FP_LOADED,
                 payload1: toCO2FootprintPlot(response.data.total),

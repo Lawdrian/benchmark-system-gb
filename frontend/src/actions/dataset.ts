@@ -25,7 +25,7 @@ export const loadDatasets = (
     // send request
     axios.get('/backend/get-datasets', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("Dataset response", response)
+            // console.log("Dataset response", response)
             dispatch({
                 type: DATASET_LOADED,
                 payload: response.data

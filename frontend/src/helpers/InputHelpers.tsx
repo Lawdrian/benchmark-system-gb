@@ -3,7 +3,6 @@ import {GreenhouseData, Option, UnitValues} from "../types/reduxTypes";
 import {DataToSubmit} from "../components/pages/input/PageInputData";
 
 export const parseToFloat = (value: string): number|null => {
-
     const num = parseFloat(value)
     if (isNaN(num)) return null
     return num

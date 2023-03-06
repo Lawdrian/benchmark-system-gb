@@ -62,7 +62,6 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
     const setHelpingMaterialsState = (helpingMaterials: HelpingMaterialsState) => {
         setHelpingMaterials(helpingMaterials)
         provideHelpingMaterials(helpingMaterials)
-        console.log(helpingMaterials.duengemittelSimple)
     }
 
     // properties of the input fields
@@ -196,34 +195,6 @@ const HelpingMaterialsInput = ({values, provideHelpingMaterials, paginationProps
             })
         },
     }
-
-    /* // For now this Field won't be used, but might be added again in the future
-    const nuetzlingeProps: DynamicInputProps = {
-        title: "Nützlinge",
-        label: "Welche und wieviele Nützlinge werden in der genannten Kulturdauer ausgebracht?",
-        optional: true,
-        textFieldProps: {
-
-        },
-        selectProps: {
-            lookupValues: lookupValues.Nuetzlinge
-        },
-        onValueChange: values => setHelpingMaterialsState({
-            ...helpingMaterials,
-            nuetzlinge: values.map(value => {
-                return {
-                    selectValue: value.selectValue, textFieldValue:value.textFieldValue, unitFieldValue: value.unitFieldValue
-                }
-            })
-        }),
-        unitSelectProps: {
-            lookupValues: lookupValues.Nuetzlinge,
-            unitValues: unitValues,
-            optionGroup: 'Nuetzlinge'
-        },
-        initValues: values.nuetzlinge
-    }
-    */
 
     return (
         <Grid container xs={12} spacing={8}>

@@ -121,7 +121,7 @@ export const loadH2OFootprint = (
     // send request
     axios.get('/backend/get-h2o-footprint', withAuth ? tokenConfig(getState) : undefined)
         .then((response) => {
-            console.log("H2O Response", response)
+            // console.log("H2O Response", response)
             if (response.status == 204) {
                 dispatch({type: H2OFP_NO_CONTENT})
                 noContentCB()

@@ -32,6 +32,14 @@ type ratingTableProps = {
     useH2OIcon: boolean
 }
 
+/**
+ * This function creates the scalar rating values, by using the data of a data set, of the best performer and the worst performer.
+ *
+ * @param data - Contains all data sets
+ * @param recentDataset - Index of the user's data set
+ * @param bestPerformer - Index of the best performer's data set
+ * @param worstPerformer - Index of the worst performer's data set
+ */
 export const createRatingValues = (data: OptimizationDataset[], recentDataset: number, bestPerformer: number, worstPerformer: number) => {
 
     return data.map((dataset) => {
@@ -68,7 +76,11 @@ export const createRatingTableData = (data: OptimizationDataset[], ratingValues:
 
 }
 
-
+/**
+ * This function transforms a scalar rating value into a rating value from 0 to 5.
+ *
+ * @param ratingValue - Scalar rating value
+ */
 export const calculateRating = (ratingValue: number): number => {
     if (ratingValue != null) {
         switch (true) {
